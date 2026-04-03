@@ -1,0 +1,830 @@
+# RSMViewer — Multi-Source Combine Guide
+
+A detailed walkthrough of the multi-source combine pipeline: how data from
+different sources is fetched, enriched, deduplicated, and merged into a single
+unified motif set.
+
+---
+
+## Table of Contents
+
+1. [Overview](#1-overview)
+2. [Pipeline Steps at a Glance](#2-pipeline-steps-at-a-glance)
+3. [Example 1 — NoBIAS + RMSX (Source 8 + 7)](#3-example-1--nobias--rmsx-source-8--7)
+4. [Example 2 — Atlas + BGSU (Source 1 + 3)](#4-example-2--atlas--bgsu-source-1--3)
+5. [Example 3 — Three Sources (Source 1 + 3 + 7)](#5-example-3--three-sources-source-1--3--7)
+6. [Detailed Code Walkthrough](#6-detailed-code-walkthrough)
+7. [Key Data Structures](#7-key-data-structures)
+8. [FAQ / Troubleshooting](#8-faq--troubleshooting)
+
+---
+
+## 1. Overview
+
+When you run:
+
+```
+rmv_db 8 7
+rmv_fetch 1S72
+rmv_load_motif
+```
+
+RSMViewer enters **combine mode**. Instead of loading motifs from a single
+source, it:
+
+1. Fetches data from **each** source independently
+2. Enriches generic names (for sources 1, 3, 5) via homolog lookup
+3. Stamps each instance with its source origin (source ID + label)
+4. Removes exact duplicates **within** each source
+5. Cascade-merges all sources together using Jaccard similarity
+
+The result is a single unified motif set where overlapping entries are
+resolved by **priority order** (left = highest, right = lowest).
+
+### Priority Order
+
+The order you type the source IDs determines priority:
+
+```
+rmv_db 8 7      # Source 8 = HIGHEST priority, Source 7 = LOWEST
+rmv_db 7 8      # Source 7 = HIGHEST priority, Source 8 = LOWEST
+rmv_db 1 3 7    # Source 1 > Source 3 > Source 7
+```
+
+If the same motif region is found in both sources, the higher-priority
+version is kept and the lower-priority duplicate is discarded.
+
+---
+
+## 2. Pipeline Steps at a Glance
+
+```
+User: rmv_db 8 7  →  rmv_load_motif
+
+  ┌──────────────────────────────────────────────────────┐
+  │ Step 1: Fetch raw motifs from each source            │
+  │   _fetch_from_single_source(pdb, 8)  → NoBIAS data  │
+  │   _fetch_from_single_source(pdb, 7)  → RMSX data    │
+  ├──────────────────────────────────────────────────────┤
+  │ Step 2: Enrich generic sources (1, 3, 5 only)       │
+  │   Sources 7 and 8 are NOT generic → skip            │
+  ├──────────────────────────────────────────────────────┤
+  │ Step 2.5: Source Stamping                            │
+  │   Tag every instance with _source_id + _source_label│
+  ├──────────────────────────────────────────────────────┤
+  │ Step 2.7: Within-Source Deduplication                │
+  │   Remove exact duplicate residue sets per source     │
+  ├──────────────────────────────────────────────────────┤
+  │ Step 3: Cascade Merge                                │
+  │   Right-to-left: merge(Src8, Src7)                   │
+  │   Jaccard ≥ 0.60 → discard lower-priority duplicate  │
+  └──────────────────────────────────────────────────────┘
+
+  Result: unified dict {motif_type: [MotifInstance, ...]}
+```
+
+---
+
+## 3. Example 1 — NoBIAS + RMSX (Source 8 + 7)
+
+This is the simplest combine scenario: two user-annotation sources that
+already have specific motif names (no enrichment needed).
+
+### 3.1 Setup
+
+```python
+# User commands in PyMOL:
+rmv_db 8 /path/to/nobias/output      # Set source 8 + custom data path
+rmv_db 7 /path/to/rmsx/output        # Set source 7 + custom data path
+rmv_db 8 7                            # Combine mode: 8 (high) + 7 (low)
+rmv_fetch 1S72
+rmv_load_motif
+```
+
+### 3.2 What Happens Inside
+
+#### A. `_handle_multi_source()` — Enter Combine Mode
+
+When `rmv_db 8 7` is parsed, two valid source IDs are found, so
+`_handle_multi_source([8, 7])` is called.
+
+```python
+# gui.py — _handle_multi_source()
+def _handle_multi_source(self, source_ids: list):
+    self.combined_source_ids = source_ids       # [8, 7]
+    self.current_source_mode = 'combine'
+    self.current_source_id = '_'.join(str(s) for s in source_ids)  # "8_7"
+
+    # Display priority list
+    for i, sid in enumerate(source_ids, 1):
+        info = SOURCE_ID_MAP[sid]
+        priority = "HIGHEST" if i == 1 else "LOWEST"
+        # Shows: "1. [8] NoBIAS (priority: HIGHEST) | Filtering: ON"
+        # Shows: "2. [7] RNAMotifScanX (RMSX) (priority: LOWEST) | Filtering: ON"
+```
+
+**Console output:**
+```
+Multi-source combine mode: 2 sources
+  1. [8] NoBIAS (priority: HIGHEST) | Filtering: ON
+  2. [7] RNAMotifScanX (RMSX) (priority: LOWEST) | Filtering: ON - custom path
+Features: Homolog enrichment + Cascade merge
+```
+
+> Note: The `- custom path` label appears because source 7 has a per-source
+> custom path stored in `self.user_data_paths[7]`.
+
+#### B. `_load_combined_motifs()` — The Main Pipeline
+
+When `rmv_load_motif` is invoked, the code detects `current_source_mode == 'combine'`
+and calls `_load_combined_motifs(pdb_id, [8, 7])`.
+
+**Step 1 — Fetch from each source:**
+
+```python
+# gui.py — _load_combined_motifs(), Step 1
+raw_sources = {}
+for sid in [8, 7]:
+    motifs = self._fetch_from_single_source(pdb_id, sid)
+    raw_sources[sid] = motifs or {}
+    # e.g., raw_sources[8] = {'K-TURN': [inst1, inst2], 'SARCIN-RICIN': [inst3]}
+    # e.g., raw_sources[7] = {'K-TURN': [inst4, inst5], 'C-LOOP': [inst6]}
+```
+
+Each call to `_fetch_from_single_source` creates a `UserAnnotationProvider`
+and configures it for the specific tool:
+
+```python
+# gui.py — _fetch_from_single_source() for user sources
+provider = UserAnnotationProvider(str(user_dir))
+provider.set_active_tool('nobias')   # or 'rmsx'
+
+# Apply per-source custom data path
+_udp = self.user_data_paths.get(source_id)  # e.g., self.user_data_paths[8]
+if _udp:
+    provider.override_tool_dirs['NoBIAS'] = Path(_udp)
+
+# Apply P-value filtering
+provider.apply_nobias_filtering = self.user_nobias_filtering_enabled
+provider.set_nobias_custom_pvalues(self.user_nobias_custom_pvalues)
+
+return provider.get_motifs_for_pdb(pdb_id)
+```
+
+**Step 2 — Enrichment (skipped for sources 7 & 8):**
+
+Sources 7 (RMSX) and 8 (NoBIAS) are **not** in the `GENERIC_SOURCES` set
+`{1, 3, 5}`, so enrichment is skipped entirely:
+
+```python
+GENERIC_SOURCES = {1, 3, 5}  # Atlas, BGSU, FR3D
+generic_in_selection = [sid for sid in [8, 7] if sid in GENERIC_SOURCES]
+# generic_in_selection = []  → skip enrichment
+```
+
+**Step 2.5 — Source Stamping:**
+
+Every instance gets tagged with metadata identifying its origin:
+
+```python
+# gui.py — Step 2.5
+for sid in [8, 7]:
+    info = SOURCE_ID_MAP[sid]
+    label = info['name']                    # "NoBIAS" or "RNAMotifScanX (RMSX)"
+    for mtype, instances in raw_sources[sid].items():
+        for inst in instances:
+            inst.metadata['_source_id'] = sid       # 8 or 7
+            inst.metadata['_source_label'] = label   # "NoBIAS" or "RNAMotifScanX (RMSX)"
+```
+
+This enables the **SOURCE column** in `rmv_show` instance tables and the
+**source attribution report** in `rmv_summary`.
+
+**Step 2.7 — Within-Source Deduplication:**
+
+Some tools produce duplicate entries with identical residue sets. This step
+removes exact duplicates **within** each source:
+
+```python
+# gui.py — Step 2.7
+for sid in [8, 7]:
+    for mtype, instances in raw_sources[sid].items():
+        seen = set()
+        unique = []
+        for inst in instances:
+            rset = frozenset(
+                (r.chain, r.residue_number) for r in inst.residues
+            )
+            if rset not in seen:
+                seen.add(rset)
+                unique.append(inst)
+        deduped[mtype] = unique
+    raw_sources[sid] = deduped
+```
+
+For example, if RMSX produced two K-TURN instances both covering
+`{(A, 100), (A, 101), (A, 102)}`, only one is kept.
+
+**Step 3 — Cascade Merge:**
+
+With two sources, this is a single pairwise merge:
+
+```python
+# gui.py — Step 3
+ordered_sources = [raw_sources[8], raw_sources[7]]    # [NoBIAS, RMSX]
+ordered_labels  = ['NoBIAS', 'RNAMotifScanX (RMSX)']
+
+merger = CascadeMerger(jaccard_threshold=0.60)
+merged = merger.merge_sources(ordered_sources, ordered_labels)
+```
+
+Inside `merge_sources`, since there are exactly 2 sources:
+
+```python
+# cascade_merger.py — merge_sources()
+result = ordered_sources[-1]   # Start with RMSX (lowest priority)
+# i=0: ref = NoBIAS (source 8), updater = RMSX (source 7)
+result = self._pairwise_merge(ref=NoBIAS, updater=RMSX)
+```
+
+#### C. Pairwise Merge — What Gets Kept vs. Discarded
+
+```python
+# cascade_merger.py — _pairwise_merge()
+def _pairwise_merge(self, ref, updater, ...):
+    # 1. All ref (NoBIAS) motifs go directly into merged result
+    merged = {mtype: list(instances) for mtype, instances in ref.items()}
+
+    # 2. Pre-compute residue sets for all NoBIAS instances
+    ref_residue_sets = []
+    for mtype, instances in ref.items():
+        for inst in instances:
+            rset = _get_residue_set(inst)   # {(chain, resnum), ...}
+            ref_residue_sets.append((mtype, inst, rset))
+
+    # 3. For each RMSX motif, check Jaccard overlap with ALL NoBIAS motifs
+    for u_type, u_instances in updater.items():
+        for u_inst in u_instances:
+            u_rset = _get_residue_set(u_inst)
+
+            is_overlap = False
+            for r_type, r_inst, r_rset in ref_residue_sets:
+                j = _jaccard(u_rset, r_rset)
+                if j >= 0.60:       # Threshold!
+                    is_overlap = True
+                    break
+
+            if is_overlap:
+                # DISCARD: RMSX motif overlaps with a NoBIAS motif
+                stats['discarded'] += 1
+            else:
+                # KEEP: unique RMSX motif, add to merged
+                merged.setdefault(u_type, []).append(u_inst)
+                stats['kept'] += 1
+```
+
+### 3.3 Concrete Example
+
+Suppose the data looks like this:
+
+| Source | Motif Type | Residues (chain, resnum) |
+|--------|-----------|--------------------------|
+| NoBIAS (8) | K-TURN | {(A,100), (A,101), (A,102)} |
+| NoBIAS (8) | SARCIN-RICIN | {(A,200), (A,201), (A,202)} |
+| RMSX (7) | K-TURN | {(A,100), (A,101), (A,102), (A,103)} |
+| RMSX (7) | C-LOOP | {(B,50), (B,51), (B,52)} |
+
+**Jaccard calculations:**
+
+- RMSX K-TURN vs NoBIAS K-TURN:
+  ```
+  A = {(A,100), (A,101), (A,102), (A,103)}   # RMSX
+  B = {(A,100), (A,101), (A,102)}             # NoBIAS
+  J = |{100,101,102}| / |{100,101,102,103}| = 3/4 = 0.75  ≥ 0.60 → DISCARD
+  ```
+- RMSX C-LOOP vs NoBIAS K-TURN:
+  ```
+  A = {(B,50), (B,51), (B,52)}
+  B = {(A,100), (A,101), (A,102)}
+  J = 0/6 = 0.00  < 0.60 → check next ref motif
+  ```
+- RMSX C-LOOP vs NoBIAS SARCIN-RICIN:
+  ```
+  A = {(B,50), (B,51), (B,52)}
+  B = {(A,200), (A,201), (A,202)}
+  J = 0/6 = 0.00  < 0.60 → no overlap with ANY ref motif → KEEP
+  ```
+
+**Final merged result:**
+
+| Motif Type | Instance | Source |
+|-----------|----------|--------|
+| K-TURN | inst1 | NoBIAS |
+| SARCIN-RICIN | inst3 | NoBIAS |
+| C-LOOP | inst6 | RMSX |
+
+The RMSX K-TURN was discarded because it overlapped (J=0.75) with the
+higher-priority NoBIAS K-TURN. The RMSX C-LOOP was kept because it's
+unique — NoBIAS doesn't have any motif in that region.
+
+---
+
+## 4. Example 2 — Atlas + BGSU (Source 1 + 3)
+
+This scenario shows **homolog enrichment**, which is the key difference from
+the NoBIAS+RMSX case above.
+
+### 4.1 Setup
+
+```python
+rmv_db 1 3          # Atlas (high priority) + BGSU (low priority)
+rmv_fetch 1S72
+rmv_load_motif
+```
+
+### 4.2 What Happens Inside
+
+#### Step 1 — Fetch
+
+```python
+raw_sources[1] = atlas_provider.get_motifs_for_pdb('1S72')
+# Returns generic names: {'HL': [inst1, inst2, ...], 'IL': [inst3, ...], 'J3': [...]}
+
+raw_sources[3] = bgsu_api_provider.get_motifs_for_pdb('1S72')
+# Returns: {'GNRA': [inst10], 'K-TURN': [inst11], 'HL': [inst12], ...}
+```
+
+Atlas returns **generic** names (`HL`, `IL`, `J3`, etc.) because its bundled
+JSON data doesn't include semantic annotations. BGSU API returns a mix of
+generic and specific names.
+
+#### Step 2 — Enrichment
+
+Both sources 1 and 3 are in `GENERIC_SOURCES = {1, 3, 5}`, so both get
+enriched via the HomologEnricher:
+
+```python
+# gui.py — Step 2
+enricher = HomologEnricher(rep_loader, bgsu_provider)
+
+# Enrich Atlas data
+raw_sources[1] = enricher.enrich('1S72', raw_sources[1])
+# Before: {'HL': [inst1, inst2]}
+# After:  {'GNRA': [inst1], 'HL': [inst2]}  ← inst1 was in the GNRA motif group
+
+# Enrich BGSU data
+raw_sources[3] = enricher.enrich('1S72', raw_sources[3])
+# BGSU already has some specific names, enricher fills in the rest
+```
+
+**How enrichment works:**
+
+```
+1. Query: 1S72 → NR list → Representative: 4V9F
+2. Fetch 4V9F annotations from BGSU (has full semantic annotations)
+3. Build lookup: motif_group_id → specific_category
+     e.g., HL_75660.8 → GNRA
+           HL_75661.2 → T-LOOP
+4. For each generic instance in 1S72:
+     - Get its motif_group from metadata (e.g., HL_75660.8)
+     - Look up in representative's table → "GNRA"
+     - Rename: HL → GNRA (residues unchanged)
+```
+
+#### Step 2.5 — Source Stamping
+
+```python
+# Atlas instances get: _source_id=1, _source_label="RNA 3D Atlas"
+# BGSU instances get:  _source_id=3, _source_label="BGSU RNA 3D Hub"
+```
+
+#### Step 2.7 — Within-Source Dedup
+
+Atlas rarely produces duplicates, but this step runs for safety.
+
+#### Step 3 — Cascade Merge
+
+```python
+ordered_sources = [raw_sources[1], raw_sources[3]]  # [Atlas, BGSU]
+merger = CascadeMerger(jaccard_threshold=0.60)
+merged = merger.merge_sources(ordered_sources, ['RNA 3D Atlas', 'BGSU RNA 3D Hub'])
+```
+
+Pairwise merge: Atlas (ref/priority) vs BGSU (updater).
+
+- If Atlas has a GNRA motif covering residues {(A,100)-(A,105)} and BGSU
+  also has a GNRA motif covering {(A,100)-(A,105)}, Jaccard = 1.0 → BGSU
+  version is **discarded** (Atlas kept).
+- If BGSU has a SARCIN-RICIN motif that Atlas doesn't cover at all,
+  Jaccard = 0.0 → BGSU version is **kept** and added to the merged set.
+
+### 4.3 Why This Matters
+
+Atlas is bundled and works offline, but it has limited coverage (759 PDBs)
+and uses generic names. BGSU has much broader coverage (~3000+ PDBs) and
+sometimes provides additional motifs that Atlas misses. Combining them gives
+you the best of both worlds:
+
+- Atlas motifs are used where available (they're usually validated)
+- BGSU fills in gaps with additional motifs not present in Atlas
+- Enrichment ensures generic HL/IL names are replaced with GNRA/K-TURN etc.
+
+---
+
+## 5. Example 3 — Three Sources (Source 1 + 3 + 7)
+
+This demonstrates the **right-to-left cascade** with more than two sources.
+
+### 5.1 Setup
+
+```python
+rmv_db 7 /path/to/rmsx/data    # Set custom path for RMSX
+rmv_db 1 3 7                    # Atlas > BGSU > RMSX (priority order)
+rmv_fetch 1S72
+rmv_load_motif
+```
+
+### 5.2 Cascade Order
+
+With three sources `[1, 3, 7]`, the merge proceeds **right-to-left**:
+
+```
+Step A: result = pairwise_merge(Src3_BGSU, Src7_RMSX)
+            ref = BGSU (priority)     updater = RMSX (lower)
+            → intermediate result
+
+Step B: final = pairwise_merge(Src1_Atlas, intermediate)
+            ref = Atlas (priority)    updater = intermediate
+            → final merged result
+```
+
+This is implemented in `CascadeMerger.merge_sources()`:
+
+```python
+# cascade_merger.py — merge_sources()
+def merge_sources(self, ordered_sources, source_labels):
+    # ordered_sources = [Atlas, BGSU, RMSX]  (index 0 = highest priority)
+
+    # Start with last source (lowest priority)
+    result = ordered_sources[-1]    # RMSX data
+
+    # Merge right-to-left
+    for i in range(len(ordered_sources) - 2, -1, -1):
+        ref = ordered_sources[i]    # i=1: BGSU, then i=0: Atlas
+        updater = result            # previous merge result
+        result = self._pairwise_merge(ref, updater)
+
+    return result
+```
+
+### 5.3 Concrete Trace
+
+Suppose:
+
+| Source | Motifs |
+|--------|--------|
+| Atlas (1) | GNRA×2, K-TURN×1, HL×3 |
+| BGSU (3) | GNRA×2, SARCIN-RICIN×1, HL×5 |
+| RMSX (7) | K-TURN×2, C-LOOP×1, SARCIN-RICIN×1 |
+
+**Step A — Merge BGSU (ref) + RMSX (updater):**
+
+| RMSX Motif | Best Jaccard vs BGSU | Decision |
+|-----------|----------------------|----------|
+| K-TURN #1 | 0.10 vs any BGSU motif | KEEP (unique) |
+| K-TURN #2 | 0.05 vs any BGSU motif | KEEP (unique) |
+| C-LOOP #1 | 0.00 vs any BGSU motif | KEEP (unique) |
+| SARCIN-RICIN #1 | 0.85 vs BGSU SARCIN-RICIN | DISCARD (overlap) |
+
+Intermediate = BGSU motifs + RMSX K-TURN×2 + RMSX C-LOOP×1
+(10 motifs total)
+
+**Step B — Merge Atlas (ref) + intermediate (updater):**
+
+| Intermediate Motif | Best Jaccard vs Atlas | Decision |
+|-------------------|----------------------|----------|
+| BGSU GNRA #1 | 0.92 vs Atlas GNRA #1 | DISCARD |
+| BGSU GNRA #2 | 0.88 vs Atlas GNRA #2 | DISCARD |
+| BGSU SARCIN-RICIN #1 | 0.00 vs any Atlas motif | KEEP |
+| BGSU HL #1 | 0.95 vs Atlas HL #1 | DISCARD |
+| BGSU HL #2 | 0.90 vs Atlas HL #2 | DISCARD |
+| BGSU HL #3 | 0.87 vs Atlas HL #3 | DISCARD |
+| BGSU HL #4 | 0.02 vs any Atlas motif | KEEP |
+| BGSU HL #5 | 0.05 vs any Atlas motif | KEEP |
+| RMSX K-TURN #1 | 0.78 vs Atlas K-TURN | DISCARD |
+| RMSX K-TURN #2 | 0.10 vs any Atlas motif | KEEP |
+| RMSX C-LOOP #1 | 0.00 vs any Atlas motif | KEEP |
+
+**Final result:**
+Atlas originals (GNRA×2, K-TURN×1, HL×3) + survivors (BGSU SARCIN-RICIN, BGSU HL×2, RMSX K-TURN #2, RMSX C-LOOP)
+= **10 motifs** from 3 sources, no duplicates.
+
+---
+
+## 6. Detailed Code Walkthrough
+
+### 6.1 Entry Point — `_handle_multi_source()` (gui.py)
+
+**File:** `rsmviewer/gui.py`
+
+Called when `rmv_db` receives more than one source ID. Sets up combine mode:
+
+```python
+self.combined_source_ids = source_ids       # e.g., [8, 7]
+self.current_source_mode = 'combine'
+self.current_source_id = '_'.join(str(s) for s in source_ids)  # "8_7"
+```
+
+The `current_source_id` string is used as a suffix for PyMOL object names
+(e.g., `HL_ALL_S8_7`) so objects from combine mode are visually distinct.
+
+### 6.2 Fetching — `_fetch_from_single_source()` (gui.py)
+
+**File:** `rsmviewer/gui.py`
+
+Routes each source ID to the correct provider:
+
+| Source Type | Provider |
+|------------|----------|
+| `local` (1, 2) | `source_selector.providers['atlas']` or `['rfam']` |
+| `web` (3, 4) | `source_selector.providers['bgsu_api']` or `['rfam_api']` |
+| `user` (5-8) | `UserAnnotationProvider` with tool-specific config |
+
+For user sources, per-source custom paths are applied:
+
+```python
+_udp = self.user_data_paths.get(source_id)
+if _udp:
+    tool_name_map = {
+        'rmsx': 'RNAMotifScanX',
+        'rms': 'RNAMotifScan',
+        'fr3d': 'fr3d',
+        'nobias': 'NoBIAS',
+    }
+    internal_tool = tool_name_map.get(tool.lower(), tool)
+    provider.override_tool_dirs[internal_tool] = Path(_udp)
+```
+
+> **Per-source paths:** Each source stores its custom path independently in
+> `self.user_data_paths` (a dict keyed by source ID int). Setting a path for
+> source 8 does NOT affect source 7's path.
+
+### 6.3 Enrichment — `HomologEnricher.enrich()` (homolog_enricher.py)
+
+**File:** `rsmviewer/database/homolog_enricher.py`
+
+Only runs for sources in `GENERIC_SOURCES = {1, 3, 5}` (Atlas, BGSU, FR3D).
+These sources return generic names like `HL`, `IL`, `J3`.
+
+The enricher uses the BGSU Non-Redundant (NR) representative set:
+
+```
+Query PDB (e.g., 1S72)
+  → NR list lookup
+  → Representative PDB (e.g., 4V9F)
+  → Fetch 4V9F's full annotations from BGSU
+  → Build motif_group → annotation lookup
+  → For each generic motif in 1S72:
+      Check its motif_group ID
+      If the representative has a specific name for that group: rename
+```
+
+**Key function — `_find_homolog_name()`:**
+
+```python
+# For each instance with a generic name:
+motif_group = instance.metadata.get('motif_group', '')  # e.g., "HL_75660.8"
+rep_lookup = self._rep_group_lookup[rep_pdb]             # e.g., {"HL_75660.8": "GNRA"}
+new_name = rep_lookup.get(motif_group)                   # "GNRA"
+```
+
+If a match is found, a new `MotifInstance` is created with:
+- The specific name (e.g., `GNRA`)
+- The original residues (unchanged)
+- Extra metadata: `enriched_from: "HL"`, `enrichment_source: "homolog"`
+
+### 6.4 Source Stamping — Step 2.5 (gui.py)
+
+**File:** `rsmviewer/gui.py`
+
+Every instance is tagged before merging:
+
+```python
+for sid in source_ids:
+    label = SOURCE_ID_MAP[sid]['name']
+    for mtype, instances in raw_sources[sid].items():
+        for inst in instances:
+            if inst.metadata is None:
+                inst.metadata = {}
+            inst.metadata['_source_id'] = sid
+            inst.metadata['_source_label'] = label
+```
+
+This metadata persists through the cascade merge and is used by:
+- `rmv_show TYPE N` — shows `SOURCE` column in instance tables
+- `rmv_summary` — prints source attribution report
+
+### 6.5 Within-Source Deduplication — Step 2.7 (gui.py)
+
+**File:** `rsmviewer/gui.py`
+
+Removes exact duplicates **within** a single source. Two instances are
+considered duplicates if they have the identical set of `(chain, residue_number)` pairs.
+
+```python
+for sid in source_ids:
+    for mtype, instances in raw_sources[sid].items():
+        seen = set()
+        unique = []
+        for inst in instances:
+            rset = frozenset(
+                (r.chain, r.residue_number) for r in inst.residues
+            )
+            if rset not in seen:
+                seen.add(rset)
+                unique.append(inst)
+        deduped[mtype] = unique
+    raw_sources[sid] = deduped
+```
+
+**Why this is needed:**
+Some tools (particularly RMSX) can output the same motif region multiple
+times in their results. The cascade merger (Step 3) only removes duplicates
+**across** sources using Jaccard similarity. Without this step, you'd see
+identical rows in the instance table from the same tool.
+
+**How it differs from the cascade merge:**
+- **Within-source dedup**: exact match (frozenset equality) — same residues = duplicate
+- **Cascade merge**: fuzzy match (Jaccard ≥ 0.60) — overlapping but not identical
+
+### 6.6 Cascade Merge — `CascadeMerger` (cascade_merger.py)
+
+**File:** `rsmviewer/database/cascade_merger.py`
+
+#### Algorithm
+
+```
+Given sources [S1, S2, S3] (S1 = highest priority):
+  result = pairwise_merge(S2, S3)    # S2 wins ties
+  final  = pairwise_merge(S1, result) # S1 wins ties
+```
+
+#### Jaccard Similarity
+
+Two motif instances are compared by their residue sets:
+
+```python
+def _get_residue_set(instance):
+    return {(r.chain, r.residue_number) for r in instance.residues}
+
+def _jaccard(set_a, set_b):
+    if not set_a or not set_b:
+        return 0.0
+    return len(set_a & set_b) / len(set_a | set_b)
+```
+
+- J = 1.0 → identical residue sets
+- J = 0.0 → no shared residues
+- J ≥ 0.60 → considered overlapping (default threshold)
+
+#### Cross-Type Comparison
+
+The Jaccard check is **cross-type**: an RMSX `K-TURN` can be marked as
+overlapping with an Atlas `HL` if they cover the same residues. This prevents
+the same structural region from appearing twice under different names.
+
+```python
+# Pre-compute ALL ref residue sets (across all motif types)
+ref_residue_sets = []
+for mtype, instances in ref.items():      # All types in ref
+    for inst in instances:
+        rset = _get_residue_set(inst)
+        ref_residue_sets.append((mtype, inst, rset))
+
+# Check each updater motif against ALL ref motifs
+for u_type, u_instances in updater.items():
+    for u_inst in u_instances:
+        u_rset = _get_residue_set(u_inst)
+        for r_type, r_inst, r_rset in ref_residue_sets:   # Cross-type!
+            if _jaccard(u_rset, r_rset) >= 0.60:
+                # Overlap found → discard updater motif
+                break
+```
+
+---
+
+## 7. Key Data Structures
+
+### MotifInstance
+
+Each motif instance carries:
+
+```python
+class MotifInstance:
+    instance_id: str          # e.g., "HL_75660.8"
+    motif_id: str             # e.g., "GNRA"
+    pdb_id: str               # e.g., "1S72"
+    residues: List[ResidueSpec]
+    annotation: str           # Display name
+    metadata: dict            # Extra info including:
+        # _source_id: int       (e.g., 8)
+        # _source_label: str    (e.g., "NoBIAS")
+        # enriched_from: str    (e.g., "HL", if enriched)
+        # motif_group: str      (e.g., "HL_75660.8")
+```
+
+### ResidueSpec
+
+```python
+class ResidueSpec:
+    chain: str                # e.g., "A"
+    residue_number: int       # e.g., 100
+    residue_name: str         # e.g., "G" (optional)
+    insertion_code: str       # e.g., "" (optional)
+```
+
+### SOURCE_ID_MAP
+
+Centralized registry in `rsmviewer/database/config.py`:
+
+| ID | Name | Type | Tool |
+|----|------|------|------|
+| 1 | RNA 3D Atlas | local | — |
+| 2 | Rfam | local | — |
+| 3 | BGSU RNA 3D Hub | web | — |
+| 4 | Rfam API | web | — |
+| 5 | FR3D Annotations | user | fr3d |
+| 6 | RNAMotifScan (RMS) | user | rms |
+| 7 | RNAMotifScanX (RMSX) | user | rmsx |
+| 8 | NoBIAS | user | nobias |
+
+### Per-Source Custom Paths
+
+```python
+self.user_data_paths: Dict[int, str] = {}
+# Example state:
+# {
+#     7: "/home/user/rmsx_output",
+#     8: "/home/user/nobias_output",
+# }
+```
+
+Each source stores its path independently. `rmv_db 7 /path/to/data` sets
+`user_data_paths[7]` without affecting any other source.
+
+---
+
+## 8. FAQ / Troubleshooting
+
+### Q: What Jaccard threshold is used?
+
+**0.60** by default, hardcoded in `_load_combined_motifs()`:
+```python
+merger = CascadeMerger(jaccard_threshold=0.60)
+```
+
+### Q: Does the order of source IDs matter?
+
+**Yes, critically.** The first source ID has highest priority. If both sources
+have a motif covering the same residues, the first source's version is kept.
+
+### Q: Can I combine local + web + user sources?
+
+Yes. For example: `rmv_db 1 3 8` combines Atlas (local) + BGSU (web) + NoBIAS (user).
+
+### Q: What if a source returns no data?
+
+That source is simply skipped. The pipeline continues with whatever sources
+returned results. If **no** source returns data, an error is printed.
+
+### Q: How do I see which source each motif came from?
+
+Use `rmv_show TYPE N` — the instance table includes a `SOURCE` column.
+Or use `rmv_summary` which prints a source attribution report at the end.
+
+### Q: I see duplicates in the table — why?
+
+Check if the duplicates are from the **same** source or **different** sources:
+- Same source: the within-source dedup should catch these (exact residue match).
+  If they have slightly different residue sets, they are considered distinct.
+- Different sources: the cascade merge only removes overlaps with Jaccard ≥ 0.60.
+  Two motifs with less than 60% residue overlap are considered independent.
+
+### Q: Does enrichment modify residues?
+
+No. Enrichment only changes the **name** (e.g., `HL` → `GNRA`). The residue
+coordinates are preserved exactly as they came from the original source.
+
+### Q: Do P-value settings carry over into combine mode?
+
+Yes. Configure P-values **before** entering combine mode:
+
+```
+rmv_db 6 K-TURN 0.05       # Set custom P-value for RMS
+rmv_db 8 on                # Enable NoBIAS filtering
+rmv_db 8 7 6               # Now combine — settings are applied per-source
+```
+
+---
+
+*RSMViewer — CBB LAB @Rakib Hasan Rahad*

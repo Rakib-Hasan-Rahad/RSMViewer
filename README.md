@@ -1,4 +1,4 @@
-# RNA Motif Visualizer
+# RSMViewer — RNA Structural Motif Viewer
 
 **A PyMOL plugin for automated visualization and comparative analysis of RNA structural motifs**
 
@@ -10,9 +10,9 @@
 
 ## Overview
 
-RNA Motif Visualizer is a PyMOL plugin designed for structural biologists and computational RNA researchers. It automates the detection, visualization, and comparative analysis of RNA structural motifs. The plugin integrates multiple data sources (BGSU RNA 3D Motif Atlas, Rfam, FR3D, RNAMotifScan) to enable rapid annotation validation, multi-database comparison, and high-quality batch image generation.
+RSMViewer is a PyMOL plugin designed for structural biologists and computational RNA researchers. It automates the detection, visualization, and comparative analysis of RNA structural motifs. The plugin integrates multiple data sources (BGSU RNA 3D Motif Atlas, Rfam, FR3D, RNAMotifScan, RNAMotifScanX, NoBIAS) to enable rapid annotation validation, multi-database comparison, and high-quality batch image generation.
 
-**Key innovation:** A unified framework that standardizes heterogeneous RNA motif annotations across multiple databases and tools, enabling automated, structurally consistent visualization and comparative analysis within PyMOL.
+**Key innovation:** A unified framework that standardizes heterogeneous RNA motif annotations across multiple databases and tools, enabling automated visualization and comparative analysis within PyMOL.
 
 ---
 ## 📦 Installation
@@ -31,7 +31,7 @@ Or download the [ZIP file](https://github.com/Rakib-Hasan-Rahad/rna-motif-visual
 2. Go to **Plugin → Plugin Manager**
 3. Click the **Settings** tab
 4. Click **Add new directory**
-5. Navigate to and select the **`rna_motif_visualizer`** folder
+5. Navigate to and select the **`rsmviewer`** folder
 6. Click **OK** and restart PyMOL
 
 ### Step 3: Verify Installation
@@ -39,7 +39,7 @@ Or download the [ZIP file](https://github.com/Rakib-Hasan-Rahad/rna-motif-visual
 You should see in the PyMOL terminal:
 
 ```
-[SUCCESS] RNA Motif Visualizer GUI initialized
+[SUCCESS] RSMViewer GUI initialized
 ```
 
 ---
@@ -49,13 +49,13 @@ You should see in the PyMOL terminal:
 **Figure 1: Plugin Manager — Add Directory**
 ![Plugin Manager Settings](images/1.jpg)
 
-**Figure 2: Select rna_motif_visualizer Folder**
+**Figure 2: Select rsmviewer Folder**
 ![Select Folder](images/2.jpg)
 
 **Figure 3: Plugin Installed Successfully**
 ![Installation Complete](images/3.jpg)
 
-**Figure 4: PyMOL Ready with RNA Motif Visualizer**
+**Figure 4: PyMOL Ready with RSMViewer**
 ![PyMOL Ready](images/4.jpg)
 
 ---
@@ -71,16 +71,21 @@ rmv_help
 ### 2. Load a Structure & Visualize Motifs
 
 ```
-rmv_fetch 1S72           # Download 23S rRNA structure
-rmv_db 3                 # Select BGSU API source
-rmv_load_motif           # Fetch motif data
-rmv_summary              # Show available motifs
-rmv_show HL              # Highlight hairpin loops
+rmv_fetch 1S72           # Step 1: Download 23S rRNA structure
+rmv_sources              # Step 2: Check available data sources
+rmv_db 3                 # Step 3: Select BGSU API source
+rmv_load_motif           # Step 4: Fetch motif data
+rmv_summary              # Step 5: Show motif types & counts
+rmv_view motif           # Step 6: Highlight all motifs on structure
+rmv_summary HL           # Step 7: Show hairpin loop instances
+rmv_show HL              # Step 8: Render all hairpin loops
+rmv_show HL 1            # Step 9: Zoom to specific instance
 ```
 
 ### 3. Explore Individual Instances
 
 ```
+rmv_summary GNRA         # See all GNRA instances
 rmv_show GNRA 1          # Zoom to first GNRA instance
 rmv_show GNRA 2          # Switch to second instance
 ```
@@ -115,7 +120,7 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 
 ---
 
-## 📖 Complete Command Reference
+## 📖 Complete Command Reference (24 Commands)
 
 ### Loading & Data Management
 
@@ -124,10 +129,11 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 | `rmv_fetch <PDB_ID>` | Fetch PDB structure (no motif data) |
 | `rmv_fetch <PDB_ID> cif_use_auth=0` | Load with mmCIF label chain IDs |
 | `rmv_load_motif` | Fetch motif data from selected source |
-| `rmv_db <N>` | Select data source by ID (1-7) |
-| **`rmv_db <N> /path/to/data` | Select source with custom data path (5–7)**
+| `rmv_db <N>` | Select data source by ID (1-8) |
+| **`rmv_db <N> /path/to/data`** | **Select source with custom data path (5–8)** |
+| **`rmv_db <N> <N>, jaccard_threshold=0.80`** | **Combine with custom merge threshold** |
 | `rmv_sources` | List all available sources with descriptions |
-| `rmv_load <PDB_ID>` | Load structure with auto-visualization |
+| `rmv_load <PDB_ID>` | Legacy: show workflow guide |
 | `rmv_refresh` | Force re-fetch from API (bypass cache) |
 
 ### Visualization & Navigation
@@ -136,7 +142,12 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 |---------|-------------|
 | `rmv_show <MOTIF_TYPE>` | Highlight all instances of motif type |
 | `rmv_show <MOTIF_TYPE> <NO>` | Zoom to specific instance #NO |
+| `rmv_show <TYPE> 1,3,5` | Show multiple specific instances |
+| `rmv_show <TYPE>, padding=N` | Expand residue ranges ±N for visualization |
 | `rmv_show ALL` | Show all motif types with objects |
+| `rmv_view motif` | Highlight all motif regions on structure (no objects) |
+| `rmv_view <TYPE>` | Zoom to motif regions (no objects created) |
+| `rmv_view <TYPE> <NO>` | Zoom to instance & create selection |
 | `rmv_toggle <MOTIF_TYPE> on/off` | Show/hide motif type |
 | `rmv_color <MOTIF_TYPE> <COLOR>` | Change motif color at runtime |
 | `rmv_colors` | Display color legend |
@@ -149,19 +160,39 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 | `rmv_summary` | Show motif type counts |
 | `rmv_summary <MOTIF_TYPE>` | Show instances of specific type |
 | `rmv_chains` | Show chain IDs + CIF mode status |
+| `rmv_loaded` | Show loaded PDB+source combination tags |
 | `rmv_source info` | Show currently active source |
 | `rmv_source info <N>` | Detailed info about a specific source |
 | `rmv_reset` | Delete all objects & reset plugin to defaults |
-| `rmv_help` | Full command reference |
+| `rmv_help` | Full command reference (24 commands) |
 
 ### User Annotations
 
 | Command | Description |
 |---------|-------------|
-| `rmv_user <TOOL> <PDB_ID>` | Load FR3D/RMS/RMSX annotations directly |
+| `rmv_user <TOOL> <PDB_ID>` | Load FR3D/RMS/RMSX/NoBIAS annotations directly |
 | `rmv_db 6 off` | Disable RMS P-value filtering |
 | `rmv_db 6 on` | Enable RMS P-value filtering |
 | `rmv_db 6 MOTIF 0.01` | Set custom P-value threshold |
+| `rmv_db 8 off` | Disable NoBIAS P-value filtering |
+| `rmv_db 8 MOTIF 0.01` | Set custom NoBIAS P-value threshold |
+
+### Structural Superimposition
+
+| Command | Description |
+|---------|-------------|
+| `rmv_super <TYPE>` | Medoid superimposition of all instances (sequence-independent) |
+| `rmv_super <TYPE> 1,3,5` | Superimpose specific instances only |
+| `rmv_super <TYPE>, padding=N` | Expand residue ranges ±N for objects |
+| `rmv_super <TYPE> pdb=X,Y` | Filter instances by PDB ID(s) |
+| `rmv_align <TYPE>` | Same as `rmv_super` but sequence-dependent |
+
+### Base-Pair Visualization
+
+| Command | Description |
+|---------|-------------|
+| `rmv_pair <pdb_ch1_res1_ch2_res2>` | Visualize a single base pair with LW edge labels |
+| `rmv_pair_batch <file>` | Batch visualize base pairs from file |
 
 ### Image Export
 
@@ -204,13 +235,17 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 | **FR3D** | `rmv_db 5` | FR3D analysis output (custom user files) |
 | **RNAMotifScan** | `rmv_db 6` | RNAMotifScan output with P-value filtering |
 | **RNAMotifScanX** | `rmv_db 7` | RNAMotifScanX output with P-value filtering |
+| **NoBIAS** | `rmv_db 8` | NoBIAS output with P-value filtering |
 
-Custom data paths supported:
+Custom data paths supported (per-source, independent):
 ```
 rmv_db 5 /path/to/fr3d/data
 rmv_db 6 ~/my_rms_data
 rmv_db 7 /path/to/rmsx/data
+rmv_db 8 /path/to/nobias/data
 ```
+
+> **Per-source paths:** Each source remembers its own custom path independently. Setting a path for source 7 does not overwrite the path for source 8.
 
 ---
 
@@ -238,7 +273,7 @@ rmv_fetch 1S72 cif_use_auth=0    # Chains: A, AA, AB, ... (PDB-standardized)
 
 API responses are cached for **30 days** at:
 ```
-~/.rna_motif_visualizer_cache/
+~/.rsmviewer_cache/
 ```
 
 **Benefits:**
@@ -248,7 +283,7 @@ API responses are cached for **30 days** at:
 
 **Clear cache manually:**
 ```bash
-rm -rf ~/.rna_motif_visualizer_cache/
+rm -rf ~/.rsmviewer_cache/
 ```
 
 ---
@@ -313,6 +348,7 @@ rmv_fetch 1S72           # Start fresh
 |----------|---------|
 | [TUTORIAL.md](TUTORIAL.md) | Step-by-step walkthroughs with examples |
 | [DEVELOPER.md](DEVELOPER.md) | Architecture, command implementation, how to extend |
+| [COMBINE_GUIDE.md](COMBINE_GUIDE.md) | Detailed guide to multi-source combine pipeline |
 | **README.md** | This file — overview and quick start |
 
 ---
@@ -321,30 +357,45 @@ rmv_fetch 1S72           # Start fresh
 
 ```
 rna-motif-visualizer/
-├── rna_motif_visualizer/
+├── rsmviewer/
 │   ├── __init__.py                  # Package init, version info
 │   ├── plugin.py                    # PyMOL plugin entry point
-│   ├── gui.py                       # Command handlers (18 commands)
+│   ├── gui.py                       # Command handlers (24 commands)
 │   ├── loader.py                    # Rendering & visualization logic
+│   ├── alignment.py                 # Medoid superimposition pipeline
+│   ├── pair_visualizer.py           # Base-pair visualization (LW labels)
 │   ├── colors.py                    # Motif color definitions
+│   ├── image_saver.py               # PNG export with 8 representations
+│   ├── structure_exporter.py        # mmCIF export (original coordinates)
+│   ├── cluster_visualizer.py        # Cluster analysis visualization
 │   ├── database/
+│   │   ├── config.py                # SOURCE_ID_MAP (8 sources), PluginConfig
 │   │   ├── base_provider.py         # Abstract data source interface
-│   │   ├── bgsu_provider.py         # BGSU API integration
-│   │   ├── rfam_provider.py         # Rfam API integration
-│   │   ├── local_provider.py        # Bundled offline database
-│   │   ├── user_annotations/        # FR3D, RNAMotifScan, custom CSVs
-│   │   ├── cache.py                 # 30-day API response cache
-│   │   └── motif_definitions.py     # Motif type taxonomy
-│   ├── motif_database/              # Offline data (7 MB)
-│   │   ├── atlas/                   # RNA 3D Motif Atlas (~5 MB)
-│   │   └── rfam/                    # Rfam motifs (~2 MB)
+│   │   ├── registry.py              # DatabaseRegistry
+│   │   ├── atlas_provider.py        # RNA 3D Atlas JSON provider
+│   │   ├── rfam_provider.py         # Rfam Stockholm provider
+│   │   ├── bgsu_api_provider.py     # BGSU API provider (~3000+ PDBs)
+│   │   ├── rfam_api_provider.py     # Rfam API provider
+│   │   ├── source_selector.py       # Smart source selection
+│   │   ├── source_registry.py       # Source registry
+│   │   ├── cascade_merger.py        # Multi-source merge (Jaccard dedup)
+│   │   ├── homolog_enricher.py      # NR representative lookup
+│   │   ├── cache_manager.py         # 30-day API response cache
+│   │   ├── converters.py            # Format converters
+│   │   ├── representative_set.py    # BGSU NR list loader
+│   │   ├── cluster_analysis/        # Cluster analysis provider
+│   │   └── user_annotations/        # FR3D, RMS, RMSX, NoBIAS loaders
+│   ├── motif_database/              # Offline data (Atlas + Rfam)
 │   └── utils/
-│       ├── selectors.py             # PyMOL selection building
-│       ├── chain_converter.py        # auth ↔ label chain mapping
-│       └── logger.py                # Console logging
-├── README.md                        # This file
-├── TUTORIAL.md                      # Step-by-step guide
-├── DEVELOPER.md                     # Developer guide
+│       ├── logger.py                # Console logging with colors
+│       ├── parser.py                # PDB ID + selection string parsers
+│       └── selectors.py             # 3-layer chain ID protection
+├── feature_documentations/          # Detailed per-feature documentation
+├── README.md                        # This file — overview and quick start
+├── TUTORIAL.md                      # Step-by-step walkthroughs
+├── DEVELOPER.md                     # Architecture & developer guide
+├── COMBINE_GUIDE.md                 # Multi-source combine pipeline guide
+├── CHANGELOG.md                     # Version history
 ├── LICENSE                          # MIT License
 └── .gitignore
 ```
@@ -363,13 +414,13 @@ MIT License — see [LICENSE](LICENSE) file.
 - **Rfam Database** — Conserved RNA family and motif definitions
 - **RNA 3D Motif Atlas** — Historical RNA motif taxonomy and structure analysis
 - **PyMOL** — Schrödinger, LLC; molecular visualization platform
-- **RNAMotifScan & FR3D** — Community tools for motif annotation
+- **RNAMotifScan, RNAMotifScanX, FR3D & NoBIAS** — Community tools for motif annotation
 
 ## 🐛 Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
-| Plugin not appearing | Verify you selected `rna_motif_visualizer` folder (not parent directory) in Plugin Manager |
+| Plugin not appearing | Verify you selected `rsmviewer` folder (not parent directory) in Plugin Manager |
 | No motifs found | Try `rmv_db 1` (local) or check structure is in PDB database |
 | API errors | Check internet connection; try `rmv_db 2` (local only) |
 | Slow first load | Normal—API call + caching. Second load is instant |
@@ -379,7 +430,7 @@ MIT License — see [LICENSE](LICENSE) file.
 ## 📧 Support
 
 - **Issues & Bug Reports:** [GitHub Issues](https://github.com/Rakib-Hasan-Rahad/rna-motif-visualizer/issues)
-- **Documentation:** [TUTORIAL.md](TUTORIAL.md) and [DEVELOPER.md](DEVELOPER.md)
+- **Documentation:** [TUTORIAL.md](TUTORIAL.md), [DEVELOPER.md](DEVELOPER.md), and [feature_documentations/](feature_documentations/)
 - **Questions:** Open a GitHub Discussion
 
 ---

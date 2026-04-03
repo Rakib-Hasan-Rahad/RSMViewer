@@ -1,6 +1,6 @@
-# RNA Motif Visualizer — Tutorial
+# RSMViewer — Tutorial
 
-A complete step-by-step guide for using the RNA Motif Visualizer PyMOL plugin.
+A complete step-by-step guide for using the RSMViewer PyMOL plugin.
 
 ---
 
@@ -11,11 +11,12 @@ A complete step-by-step guide for using the RNA Motif Visualizer PyMOL plugin.
 3. [Exploring Motifs](#3-exploring-motifs)
 4. [Working with Data Sources](#4-working-with-data-sources)
 5. [Multi-Source Comparison](#5-multi-source-comparison)
-6. [User Annotations (FR3D / RMS / RMSX)](#6-user-annotations-fr3d--rms--rmsx)
+6. [User Annotations (FR3D / RMS / RMSX / NoBIAS)](#6-user-annotations-fr3d--rms--rmsx--nobias)
 7. [Customizing Colors](#7-customizing-colors)
 8. [Saving Images](#8-saving-images)
-9. [Label Chain IDs (Advanced)](#9-label-chain-ids-advanced)
-10. [Tips and Tricks](#10-tips-and-tricks)
+9. [Structural Superimposition (Medoid)](#9-structural-superimposition-medoid)
+10. [Label Chain IDs (Advanced)](#10-label-chain-ids-advanced)
+11. [Tips and Tricks](#11-tips-and-tricks)
 
 ---
 
@@ -31,17 +32,17 @@ A complete step-by-step guide for using the RNA Motif Visualizer PyMOL plugin.
 
 1. Open PyMOL
 2. Go to **Plugin → Plugin Manager → Install New Plugin → Install from local file**
-3. Select the `rna_motif_visualizer` folder (inside the ZIP archive)
+3. Select the `rsmviewer` folder (inside the ZIP archive)
 4. Restart PyMOL
 
 After launching PyMOL, you should see:
 
 ```
 ================================================================================
-                    🧬 RNA MOTIF VISUALIZER 🧬
+                    🧬 RSMViewer 🧬
 
  Version 1.0.0
- Last Updated: 23 February 2026
+ Last Updated: 02 April 2026
 ================================================================================
 ```
 
@@ -86,6 +87,7 @@ This selects BGSU RNA 3D Hub API — the most comprehensive source with 3000+ st
 | 5 | FR3D | User annotations | Custom |
 | 6 | RNAMotifScan | User annotations | Custom |
 | 7 | RNAMotifScanX | User annotations | Custom |
+| 8 | NoBIAS | User annotations | Custom |
 
 Run `rmv_sources` to see detailed information about each source.
 
@@ -137,14 +139,18 @@ rmv_show HL
 
 This creates PyMOL objects, colors the hairpin loop residues, and displays them on the gray structure background.
 
-### The Complete Pipeline (5 Lines)
+### The Complete Pipeline
 
 ```
-rmv_fetch 1S72       # Load PDB
-rmv_db 3             # Select BGSU
-rmv_load_motif       # Fetch data
-rmv_summary          # View summary
-rmv_show HL          # Render hairpin loops
+rmv_fetch 1S72       # Step 1: Load PDB structure
+rmv_sources          # Step 2: Check available data sources
+rmv_db 3             # Step 3: Select BGSU API
+rmv_load_motif       # Step 4: Fetch motif data
+rmv_summary          # Step 5: Show motif types & counts
+rmv_summary HL       # Step 6: Show hairpin loop instances
+rmv_show HL          # Step 7: Render all hairpin loops
+rmv_show HL 1        # Step 8: Zoom to specific instance
+rmv_view HL 1        # Step 9: Quick highlight without creating objects
 ```
 
 ---
@@ -194,11 +200,42 @@ rmv_show SARCIN-RICIN # Show all sarcin-ricin motifs
 rmv_show GNRA 1       # Show and color only instance 1 of GNRA
 ```
 
+### Quick View (Highlight Without Creating Objects)
+
+`rmv_view` is a lightweight alternative to `rmv_show` — it highlights and zooms to a motif instance directly on the structure **without** creating separate PyMOL objects:
+
+```
+rmv_view HL            # Highlight all hairpin loop residues
+rmv_view HL 1          # Highlight and zoom to HL instance 1
+rmv_view GNRA 3        # Highlight and zoom to GNRA instance 3
+```
+
+> **Tip:** Use `rmv_view` for quick exploration and `rmv_show` when you need persistent PyMOL objects for alignment, saving, or side-by-side comparison.
+
 ### Show all motif types and create objects
 
 ```
 rmv_show ALL           # Show all motif types with objects
 ```
+
+### Padding — Expand Visualization Range
+
+Use `padding=N` to expand the displayed residue range by ±N positions for visualization. This helps see the structural context around a motif without changing the summary tables or stored data.
+
+```
+rmv_show K-TURN, padding=2       # Show K-TURN with ±2 extra residues
+rmv_show K-TURN 1, padding=3     # Show instance 1 with ±3 padding
+rmv_show HL 1,2,3, padding=5     # Show instances 1,2,3 with ±5 padding
+```
+
+Padding also works with superimposition:
+
+```
+rmv_super K-TURN, padding=3      # Superimpose with expanded residue ranges
+rmv_align SARCIN-RICIN, padding=2
+```
+
+> **Note:** Padding only affects the **visualization** (coloring and PyMOL object creation). Summary tables, instance details, and stored data are **not** affected.
 
 
 
@@ -228,7 +265,7 @@ rmv_db 4               # Rfam API — all Rfam-annotated motif families
 rmv_load_motif
 ```
 
-> **Caching:** API results are cached for 30 days in `~/.rna_motif_visualizer_cache/`. Use `rmv_refresh` to bypass the cache and force a fresh fetch.
+> **Caching:** API results are cached for 30 days in `~/.rsmviewer_cache/`. Use `rmv_refresh` to bypass the cache and force a fresh fetch.
 
 ### Switch Sources Without Reloading PDB
 
@@ -249,7 +286,7 @@ rmv_load_motif         # Fetch from Rfam
 ### Check Source Information
 
 ```
-rmv_sources            # List all 7 sources, their types, and coverage
+rmv_sources            # List all 8 sources, their types, and coverage
 rmv_source info 3      # Detailed information about BGSU source
 rmv_source info        # Show currently active source
 ```
@@ -280,8 +317,12 @@ rmv_summary
 ### How Merging Works
 
 1. **Fetch** — motifs are fetched from each source independently
-2. **Enrich** — First generic names (e.g., "HL") get enriched to specific names (e.g., "GNRA") using NR homolog representative lookup
-3. **Cascade Merge** — right-to-left merging with Jaccard deduplication (≥60% residue overlap = duplicate, kept once)
+2. **Enrich** — Generic names (e.g., "HL") are enriched to specific names (e.g., "GNRA") using NR homolog representative lookup
+3. **Source Stamping** — each instance is tagged with its source (used in the SOURCE column and attribution report)
+4. **Within-Source Dedup** — exact duplicate entries within the same source are removed (same residue set = duplicate)
+5. **Cascade Merge** — right-to-left merging with Jaccard deduplication (≥60% residue overlap = duplicate, higher-priority version kept)
+
+> See [COMBINE_GUIDE.md](COMBINE_GUIDE.md) for a detailed walkthrough of how the combine pipeline works with code references.
 
 ### Source-Tagged PyMOL Objects
 
@@ -306,16 +347,16 @@ align SARCIN_RICIN_3_S3, SARCIN_RICIN_3_S7
 
 ---
 
-## 6. User Annotations (FR3D / RMS / RMSX)
+## 6. User Annotations (FR3D / RMS / RMSX / NoBIAS)
 
-Use your own motif annotation files from FR3D, RNAMotifScan (RMS), or RNAMotifScanX (RMSX).
+Use your own motif annotation files from FR3D, RNAMotifScan (RMS), RNAMotifScanX (RMSX), or NoBIAS.
 
 ### Directory Setup
 
 Place your annotation files in but make sure the output_file format matches the current one:
 
 ```
-rna_motif_visualizer/database/user_annotations/
+rsmviewer/database/user_annotations/
 ├── fr3d/                    # FR3D output files
 │   └── <output_files>
 ├── RNAMotifScan/            # RMS files (organized by motif type)
@@ -345,21 +386,27 @@ rmv_load_motif
 
 rmv_db 7               # RNAMotifScanX (RMSX)
 rmv_load_motif
+
+rmv_db 8               # NoBIAS
+rmv_load_motif
 ```
 
-### Custom Data Paths
+### Custom Data Paths (Per-Source)
 
-You can specify a custom directory for your annotation files:
+You can specify a custom directory for each annotation source independently. Each source remembers its own path:
 
 ```
 rmv_db 5 /path/to/fr3d/data       # FR3D with custom directory
 rmv_db 6 ~/my_rms_data            # RMS with home-relative path
 rmv_db 7 /path/to/rmsx/data       # RMSX with custom directory
+rmv_db 8 /data/nobias_output      # NoBIAS with custom directory
 ```
 
-### P-Value Filtering (RMS/RMSX Only)
+> **Per-source paths:** Setting a custom path for source 7 does **not** overwrite the path for source 8. Each source keeps its own path. This is important when combining sources with different custom directories.
 
-RNAMotifScan and RNAMotifScanX include P-values in their output. The plugin uses these to filter results.
+### P-Value Filtering (RMS/RMSX/NoBIAS)
+
+RNAMotifScan, RNAMotifScanX, and NoBIAS include P-values in their output. The plugin uses these to filter results.
 
 ```
 # Turn filtering off (show ALL results including high P-values)
@@ -371,6 +418,7 @@ rmv_db 6 on
 # Set a custom P-value threshold for a specific motif type
 rmv_db 6 SARCIN-RICIN 0.01
 rmv_db 7 C-LOOP 0.05
+rmv_db 8 KINK-TURN 0.02          # NoBIAS custom threshold
 ```
 
 When filtering is on, only motif instances with P-value ≤ threshold are shown.
@@ -523,7 +571,65 @@ motif_structures/
 
 ---
 
-## 9. Label Chain IDs (Advanced)
+## 9. Structural Superimposition (Medoid)
+
+`rmv_super` and `rmv_align` automatically find the **medoid** (most representative instance) and superimpose all other instances onto it.
+
+- **`rmv_super`** — uses `cmd.super()` (sequence-independent). Best for comparing the same motif across different organisms/PDBs.
+- **`rmv_align`** — uses `cmd.align()` (sequence-dependent). Best when sequences are similar.
+
+### Basic Usage
+
+```
+rmv_fetch 1S72
+rmv_db 3
+rmv_load_motif
+rmv_super KTURN                 # Superimpose all K-TURN instances
+```
+
+Each instance gets a unique colour. The medoid is highlighted in **green**.
+
+### Specific Instances
+
+```
+rmv_super KTURN 1,3,5           # Only instances 1, 3, 5
+```
+
+### Cross-PDB Superimposition
+
+```
+rmv_fetch 1S72
+rmv_db 3
+rmv_load_motif
+
+rmv_fetch 4V88
+rmv_load_motif
+
+rmv_super KTURN                 # All K-TURNs across both PDBs
+rmv_super KTURN pdb=1S72,4V88   # Explicit: only these 2 PDBs
+rmv_super KTURN pdb=1S72        # Only instances from 1S72
+```
+
+### Motif Name Aliasing
+
+The command resolves common name variants automatically. For example, typing `KTURN` will match `K-TURN` instances loaded from RMSX.
+
+### Output
+
+A summary table is printed showing:
+- The medoid instance and its average RMSD
+- Each instance's colour and RMSD to the medoid
+- Overall average RMSD and any skipped pairs
+
+For manual pairwise alignment of any two PyMOL objects, use PyMOL natively:
+```
+super obj1, obj2
+align obj1, obj2
+```
+
+---
+
+## 10. Label Chain IDs (Advanced)
 
 ### Background
 
@@ -581,7 +687,7 @@ rmv_summary SARCIN-RICIN
 
 ---
 
-## 10. Tips and Tricks
+## 11. Tips and Tricks
 
 ### Force API Refresh (Bypass Cache)
 
@@ -626,10 +732,12 @@ rmv_load_motif
 
 rmv_summary                    # What motifs are available?
 rmv_summary GNRA               # How many GNRA instances?
+rmv_view GNRA 1                # Quick highlight instance 1
 rmv_show GNRA                  # Color them on structure
 rmv_show GNRA 1                # Zoom to instance 1
 rmv_show GNRA 2                # Zoom to instance 2
 rmv_show ALL                    # Show all motif types
+rmv_pair GNRA 1                # Show base-pair interactions
 rmv_save GNRA sticks           # Save all GNRA images as sticks
 rmv_save current               # Save current view
 rmv_save GNRA cif              # Export GNRA structures as mmCIF
@@ -659,18 +767,26 @@ This clears the entire PyMOL session (all objects, selections) and resets the pl
 | Step | Command | Purpose |
 |------|---------|---------|
 | Load | `rmv_fetch <PDB>` | Download and load structure |
-| Source | `rmv_db <N>` | Select data source (1-7) |
+| Sources | `rmv_sources` | Check available data sources |
+| Source | `rmv_db <N>` | Select data source (1-8) |
 | Motifs | `rmv_load_motif` | Fetch motif data |
 | Summary | `rmv_summary` | View motif counts |
 | Summary | `rmv_summary <TYPE>` | View instances of a type |
 | Summary | `rmv_summary <TYPE> <N>` | View single instance details |
 | Render | `rmv_show <TYPE>` | Render all instances of a type |
 | Render | `rmv_show <TYPE> <N>` | Render a specific instance |
-| Zoom | `rmv_show <TYPE> <N>` | Zoom to instance |
+| View | `rmv_view <TYPE>` | Quick highlight (no objects created) |
+| View | `rmv_view <TYPE> <N>` | Highlight and zoom to instance |
+| Padding | `rmv_show <TYPE>, padding=N` | Expand view ±N residues |
 | Show All | `rmv_show ALL` | Show all motif types with objects |
+| Pair | `rmv_pair <TYPE> <N>` | Show base-pair interactions (LW) |
+| Pair | `rmv_pair_batch <TYPE>` | Batch base-pair analysis |
+| Super | `rmv_super <TYPE>` | Superimpose instances (medoid) |
+| Align | `rmv_align <TYPE>` | Sequence-based alignment (medoid) |
 | Save | `rmv_save ALL` | Save all motif images |
 | Save | `rmv_save ALL cif` | Export all motif structures as mmCIF |
 | Save | `rmv_save current` | Save current view (high-res) |
+| Loaded | `rmv_loaded` | List all loaded PDBs and sources |
 | Help | `rmv_help` | Full command reference |
 | Info | `rmv_sources` | List all data sources |
 | Info | `rmv_source info` | Show currently active source |
@@ -684,4 +800,4 @@ This clears the entire PyMOL session (all objects, selections) and resets the pl
 
 ---
 
-*RNA Motif Visualizer — CBB LAB KU @Rakib Hasan Rahad*
+*RSMViewer — CBB LAB KU @Rakib Hasan Rahad*
