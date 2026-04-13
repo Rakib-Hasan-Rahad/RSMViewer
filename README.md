@@ -1,4 +1,4 @@
-# RSMViewer — RNA Structural Motif Viewer
+# RSMViewer: RNA Structural Motif Viewer
 
 **A PyMOL plugin for automated visualization and comparative analysis of RNA structural motifs**
 
