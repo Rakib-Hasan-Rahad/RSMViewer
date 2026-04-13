@@ -14,7 +14,7 @@ It handles:
 - Graceful fallback when sources fail
 
 Author: Structural Biology Lab
-Version: 2.0.0
+Version: 1.0.0
 """
 
 from __future__ import annotations

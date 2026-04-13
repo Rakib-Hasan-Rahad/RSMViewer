@@ -6,7 +6,7 @@ This provider loads motif data from Rfam SEED files in Stockholm format.
 Each motif type (GNRA, T-loop, etc.) is in its own subdirectory.
 
 Author: Structural Biology Lab
-Version: 2.0.0
+Version: 1.0.0
 """
 
 from __future__ import annotations

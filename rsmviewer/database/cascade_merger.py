@@ -31,7 +31,7 @@ Uses Jaccard similarity: J(A,B) = |A ∩ B| / |A ∪ B|
 Threshold: 0.60 by default
 
 Author: CBB Lab
-Version: 1.1.0
+Version: 1.0.0
 """
 
 from __future__ import annotations

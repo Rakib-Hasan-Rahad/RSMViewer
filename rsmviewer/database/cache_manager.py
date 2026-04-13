@@ -7,7 +7,7 @@ Cache is stored in ~/.rsmviewer_cache/ with:
 - {pdb_id}_{source}.meta.json: Metadata including fetch time and expiry
 
 Author: Structural Biology Lab
-Version: 2.0.0
+Version: 1.0.0
 """
 
 from __future__ import annotations

@@ -11,7 +11,7 @@ Each converter takes input in its native format and produces standardized
 MotifInstance and MotifType objects.
 
 Author: CBB Lab
-Version: 2.0.0
+Version: 1.0.0
 """
 
 from __future__ import annotations

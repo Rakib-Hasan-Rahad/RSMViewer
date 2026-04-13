@@ -9,7 +9,7 @@ The Stockholm data is parsed with the same StockholmConverter used by the
 local Rfam provider (Source 2), producing identical residue-level annotations.
 
 Author: Structural Biology Lab
-Version: 2.1.0
+Version: 1.0.0
 """
 
 from __future__ import annotations

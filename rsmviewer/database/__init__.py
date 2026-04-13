@@ -16,7 +16,7 @@ Supported databases:
 - Rfam API (online, named motifs)
 
 Author: CBB LAB KU @Rakib Hasan Rahad
-Version: 2.1.0
+Version: 1.0.0
 """
 
 from .base_provider import (

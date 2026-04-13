@@ -9,7 +9,7 @@ The registry allows:
 - Automatic discovery and initialization of providers
 
 Author: Structural Biology Lab
-Version: 2.0.0
+Version: 1.0.0
 """
 
 from __future__ import annotations

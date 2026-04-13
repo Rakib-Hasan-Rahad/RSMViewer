@@ -6,7 +6,7 @@ This provider loads motif data from the RNA 3D Motif Atlas format,
 which contains hairpin loops (HL), internal loops (IL), and junctions (J3-J7).
 
 Author: CBB Lab
-Version: 2.0.0
+Version: 1.0.0
 """
 
 from __future__ import annotations

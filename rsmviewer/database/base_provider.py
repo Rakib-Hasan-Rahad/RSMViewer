@@ -13,7 +13,7 @@ All database providers (RNA 3D Atlas, Rfam, etc.) must inherit from BaseProvider
 and implement the required methods to ensure consistent behavior across the plugin.
 
 Author: Structural Biology Lab
-Version: 2.0.0
+Version: 1.0.0
 """
 
 from __future__ import annotations
