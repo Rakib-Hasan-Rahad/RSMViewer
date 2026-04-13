@@ -15,7 +15,7 @@ RSMViewer is a PyMOL plugin designed for structural biologists and computational
 **Key capabilities:**
 
 - **Unified annotation retrieval** from 8 heterogeneous sources (2 locally integrated, 2 web API, 4 supporting annotation tool formats)
-- **Automatic standardization** — chain ID harmonization (auth_asym_id ↔ label_asym_id), canonical motif naming, homolog-based enrichment, and P-value filtering
+- **Automatic standardization**  chain ID harmonization (auth_asym_id ↔ label_asym_id), canonical motif naming, homolog-based enrichment, and P-value filtering
 - **Multi-source cascade merge** with category-aware Jaccard deduplication and source attribution
 - **Medoid-based structural superimposition** across single or multiple PDB structures
 - **Batch export** of motif instances as high-resolution PNG images or  mmCIF files with original coordinates
