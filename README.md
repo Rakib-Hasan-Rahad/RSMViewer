@@ -80,9 +80,12 @@ rmv_db 3                 # Step 3: Select BGSU API source
 rmv_load_motif           # Step 4: Fetch motif data
 rmv_summary              # Step 5: Show motif types & counts
 rmv_view all             # Step 6: Highlight all motifs on structure
-rmv_summary HL           # Step 7: Show hairpin loop instances
-rmv_show HL              # Step 8: Render all hairpin loops
-rmv_show HL 1            # Step 9: Zoom to specific instance
+rmv_summary K-TURN       # Step 7: Show detailed summary of motif type and ID of each instance** (copy the motif family name from rmv_summary table)**
+rmv_view K-TURN          # Step 8: Highlight all K-TURN motifs (copy the motif family name from rmv_summary table)
+rmv_view K-TURN 2        # Step 9: Highlight specific motif instance with ID
+rmv_summary HL           # Step 10: Show hairpin loop instances
+rmv_show HL              # Step 11: Render all hairpin loops
+rmv_show HL 1            # Step 12: Zoom to specific instance
 ```
 
 ### 3. Explore Individual Instances
@@ -93,7 +96,7 @@ rmv_show GNRA 1          # Zoom to first GNRA instance
 rmv_show GNRA 2          # Switch to second instance
 ```
 
-### 4. Compare Data Sources
+### 4. Switch Data Sources
 
 The PDB structure stays loaded while you switch sources:
 
@@ -126,6 +129,7 @@ rmv_super KTURN 1,3,5    # Superimpose specific instances only
 ```
 rmv_save current         # Save high-res PNG of current view (2400×1800, ~300 DPI)
 rmv_save ALL             # Batch export all motif instances as PNG
+rmv_save HL              # Batch export all HL motif instances as PNG
 rmv_save ALL cif         # Export all motif instances as mmCIF
 rmv_save HL cif          # Export all hairpin loop instances as mmCIF
 rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
@@ -240,17 +244,17 @@ RSMViewer provides 8 data sources organized in three categories:
 
 | ID | Source | Command | Coverage |
 |----|--------|---------|----------|
-| 3 | **BGSU RNA 3D Hub** | `rmv_db 3` | ~3000+ PDB structures (most comprehensive) |
-| 4 | **Rfam API** | `rmv_db 4` | 34 named motif families (RM00001–RM00034) |
+| 3 | **RNA 3D Motif Atlas (online)** | `rmv_db 3` | ~3000+ PDB structures (most comprehensive) |
+| 4 | **Rfam (online)** | `rmv_db 4` | 34 named motif families (RM00001–RM00034) |
 
-### Offline (Bundled, Pre-computed)
+### Offline
 
 | ID | Source | Command | Motif Types |
 |----|--------|---------|-------------|
-| 1 | **RNA 3D Motif Atlas** | `rmv_db 1` | 7 types (HL, IL, J3–J7) |
-| 2 | **Rfam Local** | `rmv_db 2` | 19 named motifs (GNRA, UNCG, K-TURN, T-LOOP, C-LOOP, etc.) |
+| 1 | **RNA 3D Motif Atlas (Local)** | `rmv_db 1` | 7 types (HL, IL, J3–J7) |
+| 2 | **Rfam (Local)** | `rmv_db 2` | 19 named motifs (GNRA, UNCG, K-TURN, T-LOOP, C-LOOP, etc.) |
 
-### User-Provided (Custom Annotations)
+### Annotation tool formats
 
 | ID | Source | Command | P-Value Filtering |
 |----|--------|---------|-------------------|
