@@ -745,4 +745,4 @@ MIT License — see [LICENSE](LICENSE) file.
 
 ---
 
-*RSMViewer v1.0.0 — CBB LAB KU @Rakib Hasan Rahad*
+*RSMViewer v1.0.0 — CBB LAB KU @Dr. Zhong*
