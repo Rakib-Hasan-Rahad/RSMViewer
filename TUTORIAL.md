@@ -759,6 +759,7 @@ Output:
 Structure: 1S72  |  cif_use_auth = 0 (label_asym_id)  |  Chains: 293
 Label chains: A AA AB AC AD ...
 ```
+![chain_id Pymol command ss](images/chain_id.png)
 
 ### Example: Auth vs. Label
 
