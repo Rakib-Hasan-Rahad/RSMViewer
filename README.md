@@ -374,12 +374,12 @@ rmv_load_motif             # Runs the full combine pipeline
 2. **Enrich** — generic names (HL, IL) are enriched to specific names (GNRA, C-LOOP) using NR homolog representative lookup
 3. **Source stamp** — each instance is tagged with its source origin
 4. **Within-source dedup** — exact duplicate entries within the same source are removed
-5. **Cascade merge** — right-to-left merging with category-aware Jaccard deduplication (default threshold: 60% residue overlap)
+5. **Cascade merge** — right-to-left, category-aware. Phase 1 (subset containment) discards the smaller residue set or replaces ref with the larger updater; Phase 2 falls back to a Jaccard threshold (default 60% residue overlap)
 6. **Cross-source attribution** — overlapping instances are tagged with `_also_found_in` metadata
 
 ### Source Priority
 
-Sources listed first have **highest priority**. When two instances overlap (Jaccard ≥ threshold), the higher-priority version is kept:
+Sources listed first have **highest priority**. When two instances cover the same residues in the same biological category, the cascade merger applies subset containment first and Jaccard ≥ threshold as a fallback; in either case the higher-priority version is kept:
 
 ```
 rmv_db 6 7                 # RMS (higher priority) + RMSX
@@ -404,7 +404,7 @@ rmv_show K-TURN shared     # Only instances found in both sources
 rmv_show K-TURN            # All instances (no filter)
 ```
 
-Supported keywords: `rmsx`, `rms`, `fr3d`, `rfam`, `atlas`, `bgsu`, `shared`.
+Supported keywords: `rmsx`, `rms`, `fr3d`, `rfam`, `atlas`, `bgsu`, `nobias`, `shared`. Full source names also work (e.g. `RNAMotifScanX (RMSX)`, `BGSU RNA 3D Hub`).
 
 ---
 

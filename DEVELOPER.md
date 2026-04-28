@@ -659,13 +659,14 @@ Exact duplicates within the same source are removed. Two instances are considere
 
 ### Step 5 — Cascade Merge (`cascade_merger.py`)
 
-Sources are merged right-to-left with Jaccard deduplication:
+Sources are merged right-to-left, category-aware. The pairwise step runs in two phases:
 
 **Key parameters:**
-- Default Jaccard threshold: `0.60` (60% residue overlap = duplicate)
-- Category-aware: only compares motifs within the same base category
-- `MOTIF_CANONICAL_MAP` harmonizes variant names (KTURN → K-TURN, CLOOP → C-LOOP, etc.)
-- Higher-priority source version kept on overlap
+- **Phase 1 — subset containment** (always wins, ignores priority): if `updater_residues ⊆ ref_residues`, the updater is discarded; if `ref_residues ⊆ updater_residues`, the ref's residue set is replaced by the updater's larger one (kept under ref's key, ref's source label retained).
+- **Phase 2 — Jaccard fallback**: only when neither side is a subset, compute Jaccard. Default threshold `0.60` (60% residue overlap = duplicate). User-configurable via `jaccard_threshold=`.
+- Category-aware: only compares motifs within the same base category.
+- `MOTIF_CANONICAL_MAP` harmonizes variant names (KTURN → K-TURN, CLOOP → C-LOOP, etc.).
+- Surviving updater motifs are filed under the ref's key when the category has exactly one ref-side key (priority naming); otherwise they keep their own key.
 
 ### Step 6 — Cross-Source Attribution
 
@@ -673,7 +674,7 @@ Sources are merged right-to-left with Jaccard deduplication:
 
 ### Step 7 — Source Filter Resolution
 
-In combine mode, `_resolve_source_filter()` (`gui.py`) categorizes merged instances as **unique** (single `_source_label`) or **shared** (`_also_found_in` not empty). Keywords (rms, rmsx, shared, etc.) resolve to lists of instance numbers for per-source rendering.
+In combine mode, `_resolve_source_filter()` (`gui.py`) categorizes merged instances as **unique** (single `_source_label`) or **shared** (`_also_found_in` not empty). Keywords (rms, rmsx, nobias, shared, etc.) resolve to lists of instance numbers for per-source rendering. Aliases include the SOURCE_ID_MAP full label, the label with parenthesised shorthand stripped (`RNAMotifScanX (RMSX)` → `RNAMotifScanX`), the `tool`/`subtype` shorthand, and any individual word in the label — a longest-first multi-token scan in `show_motif` lets full names like `BGSU RNA 3D Hub` be passed without quoting.
 
 ### Storage
 
@@ -774,43 +775,479 @@ motif_structures/
 
 ## 11. Adding a New Data Source
 
-To add a new data source (e.g., "Source 9 — MyDB"):
+There are two integration paths depending on what the new source looks like:
 
-### Step 1 — Create Provider
+| Path | When to use | Examples |
+|------|-------------|---------|
+| **A — Local / Web provider** | The source has its own data format and returns `MotifInstance` objects directly | RNA 3D Motif Atlas (local JSON), BGSU API (HTML scraping) |
+| **B — User annotation provider** | The source is a motif-scan tool with per-structure output files that users drop in | RNAMotifScan, RNAMotifScanX, NoBIAS |
 
-Create `database/mydb_provider.py`:
+Both paths require touching the same five files: `config.py`, `registry.py` (Path A) or `user_annotations/converters.py` + `user_annotations/user_provider.py` (Path B), `gui.py`, and `colors.py`.
+
+---
+
+### Path A — Local or Web Provider
+
+Use this path when you have a bundled database file or a remote API that returns motif data in a proprietary format. You implement a `BaseProvider` subclass, register it in the provider registry, then wire it into the source dispatch table.
+
+#### A-1 — Implement `BaseProvider`
+
+Create `rsmviewer/database/mydb_provider.py`. All seven abstract methods must be implemented; the four marked with `(*)` are the ones actually called during a normal workflow:
 
 ```python
-from .base_provider import BaseProvider, MotifType, MotifInstance, ResidueSpec
+# rsmviewer/database/mydb_provider.py
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Dict, List, Optional
+
+from .base_provider import (
+    BaseProvider,
+    DatabaseInfo,
+    DatabaseSourceType,
+    MotifInstance,
+    MotifType,
+    ResidueSpec,
+)
+
 
 class MyDBProvider(BaseProvider):
-    def get_motifs(self, pdb_id: str) -> list:
-        # Fetch/parse motif data for pdb_id
-        # Return list of MotifType objects
-        ...
+    """Provider for MyDB motif database."""
 
-    def get_available_pdb_ids(self) -> list:
-        return [...]
+    def __init__(self, database_path: str):
+        super().__init__(database_path)
+        self._version = '1.0'
+        # Internal index: {pdb_id_upper: {motif_type: [MotifInstance, ...]}}
+        self._index: Dict[str, Dict[str, List[MotifInstance]]] = {}
 
-    def get_available_motif_types(self) -> list:
-        return [...]
+    # ------------------------------------------------------------------ #
+    # Required: database metadata
+    # ------------------------------------------------------------------ #
+
+    @property
+    def info(self) -> DatabaseInfo:
+        return DatabaseInfo(
+            id='mydb',
+            name='MyDB Motif Database',
+            description='Short description of what MyDB annotates',
+            version=self._version,
+            source_type=DatabaseSourceType.LOCAL_DIRECTORY,  # or API
+            motif_types=list(self._motif_types.keys()),
+            pdb_count=len(self._index),
+        )
+
+    # ------------------------------------------------------------------ #
+    # (*) Required: called once at startup by registry.register_provider()
+    # ------------------------------------------------------------------ #
+
+    def initialize(self) -> bool:
+        """Load all data files and build internal index."""
+        try:
+            for data_file in self.database_path.glob('*.json'):
+                self._parse_file(data_file)
+            self._initialized = True
+            return True
+        except Exception as e:
+            print(f"[MYDB] Initialization failed: {e}")
+            return False
+
+    def _parse_file(self, path: Path) -> None:
+        """Parse one data file and populate self._index."""
+        import json
+        with open(path) as fh:
+            data = json.load(fh)
+        for entry in data.get('instances', []):
+            pdb = entry['pdb_id'].upper()
+            motif_type = entry['type'].upper()         # e.g. 'K-TURN', 'GNRA'
+            residues = [
+                ResidueSpec(
+                    chain=r['chain'],
+                    residue_number=int(r['number']),
+                    nucleotide=r.get('nucleotide', ''),
+                    insertion_code=r.get('insertion_code', ''),
+                    model=int(r.get('model', 1)),
+                )
+                for r in entry.get('residues', [])
+            ]
+            instance = MotifInstance(
+                instance_id=entry['id'],              # unique within source
+                motif_id=motif_type,
+                pdb_id=pdb,
+                residues=residues,
+                annotation=entry.get('annotation', motif_type),
+                metadata={
+                    # Keep source-native extras here; the loader will add
+                    # _source_id / _source_label when stamping in step 2.5
+                    'score': entry.get('score'),
+                    'motif_group': entry.get('group_id', ''),
+                },
+            )
+            self._index.setdefault(pdb, {}).setdefault(motif_type, []).append(instance)
+
+    # ------------------------------------------------------------------ #
+    # (*) Required: called by _fetch_from_single_source() in gui.py
+    # ------------------------------------------------------------------ #
+
+    def get_motifs_for_pdb(self, pdb_id: str) -> Dict[str, List[MotifInstance]]:
+        """Return all motifs for a PDB — the main retrieval entry-point."""
+        return self._index.get(pdb_id.upper(), {})
+
+    # ------------------------------------------------------------------ #
+    # (*) Required: used by rmv_summary / registry bookkeeping
+    # ------------------------------------------------------------------ #
+
+    def get_available_pdb_ids(self) -> List[str]:
+        return sorted(self._index.keys())
+
+    def get_available_motif_types(self) -> List[str]:
+        types = set()
+        for motifs in self._index.values():
+            types.update(motifs.keys())
+        return sorted(types)
+
+    # ------------------------------------------------------------------ #
+    # Required (rarely called directly, but needed by ABC)
+    # ------------------------------------------------------------------ #
+
+    def get_motif_type(self, type_id: str) -> Optional[MotifType]:
+        instances = [
+            inst
+            for pdb_motifs in self._index.values()
+            for inst in pdb_motifs.get(type_id.upper(), [])
+        ]
+        if not instances:
+            return None
+        mt = MotifType(type_id=type_id.upper(), name=type_id.upper(), source='mydb')
+        mt.instances = instances
+        return mt
+
+    def get_motif_residues(
+        self, pdb_id: str, motif_type: str, instance_id: str
+    ) -> List[ResidueSpec]:
+        for inst in self._index.get(pdb_id.upper(), {}).get(motif_type.upper(), []):
+            if inst.instance_id == instance_id:
+                return inst.residues
+        return []
 ```
 
-### Step 2 — Register in SOURCE_ID_MAP
+> **Important:** `get_motifs_for_pdb()` must return `{motif_type_string: [MotifInstance, ...]}`. The keys must be uppercase strings that match the color definitions you will add in step A-5.
 
-In `database/config.py`, add entry 9 with `name`, `type`, `category`, `subtype`, `description`, `coverage`, `mode`, and `command` fields.
+For a **web/API provider**, the same interface applies. Use `urllib.request` or `requests` to fetch data in `initialize()` or lazily in `get_motifs_for_pdb()`, and cache responses via `cache_manager`:
 
-### Step 3 — Wire into Source Selector
+```python
+class MyAPIProvider(BaseProvider):
+    def __init__(self, cache_manager=None):
+        super().__init__('')             # no local path needed
+        self.cache_manager = cache_manager
 
-In `database/source_selector.py`, add routing for the new source subtype.
+    def get_motifs_for_pdb(self, pdb_id: str) -> Dict[str, List[MotifInstance]]:
+        pdb_id = pdb_id.upper()
+        # Try cache first
+        if self.cache_manager:
+            cached = self.cache_manager.get_cached(pdb_id, 'mydb_api')
+            if cached:
+                return cached
+        # Fetch
+        data = self._fetch_from_api(pdb_id)
+        motifs = self._parse_api_response(data)
+        # Store to cache
+        if self.cache_manager and motifs:
+            self.cache_manager.cache(pdb_id, 'mydb_api', motifs)
+        return motifs
+```
 
-### Step 4 — Register Provider
+#### A-2 — Register in `SOURCE_ID_MAP`
 
-In `database/registry.py`, register the provider so it's discovered during initialization.
+Edit `rsmviewer/database/config.py`. The `type` and `subtype` fields are load-bearing: they drive the dispatch in `_fetch_from_single_source()`.
 
-### Step 5 — Add Color Support
+```python
+# config.py  —  inside SOURCE_ID_MAP = { ... }
+9: {
+    'name': 'MyDB Motif Database',
+    'type': 'local',              # 'local' | 'web'
+    'category': 'LOCAL SOURCES',  # displayed by rmv_sources
+    'subtype': 'mydb',            # MUST match the key used in registry.register_provider()
+    'description': 'MyDB (bundled, offline)',
+    'coverage': '~500 PDB structures',
+    'mode': 'local',
+    'command': 'rmv_db 9',
+},
+```
 
-Add any new motif type names to `MOTIF_COLORS` in `colors.py`. Unknown types fall back to orange.
+For a web/API source use `'type': 'web'` and note that the dispatch in `gui.py` maps `subtype` through `web_map`:
+
+```python
+# In _fetch_from_single_source() in gui.py  (see step A-4):
+web_map = {'bgsu': 'bgsu_api', 'rfam_api': 'rfam_api', 'mydb': 'mydb_api'}
+```
+
+So a web source with `'subtype': 'mydb'` must be registered as `'mydb_api'` in the registry.
+
+#### A-3 — Register Provider in `registry.py`
+
+Edit the `initialize_registry()` function in `rsmviewer/database/registry.py` to import and register your provider:
+
+```python
+# registry.py — inside initialize_registry()
+
+# ======================================
+# LOCAL PROVIDERS (add after existing ones)
+# ======================================
+mydb_path = db_path / 'MyDB'     # adjust to actual directory name
+if mydb_path.exists():
+    from .mydb_provider import MyDBProvider
+    mydb_provider = MyDBProvider(str(mydb_path))
+    registry.register_provider(mydb_provider, 'mydb')   # key = subtype in config.py
+```
+
+For a web/API provider (no `database_path`):
+
+```python
+if enable_api:
+    try:
+        from .mydb_api_provider import MyAPIProvider
+        mydb_api = MyAPIProvider(cache_manager=cache_manager)
+        registry.register_provider(mydb_api, 'mydb_api')  # key = web_map value
+    except Exception as e:
+        print(f"Note: MyDB API provider not available ({e})")
+```
+
+After this, the provider is available in `source_selector.providers` automatically, because `initialize_source_selector(registry.get_all_providers(), ...)` is called at the end of `initialize_registry()`.
+
+#### A-4 — Wire the Dispatch in `gui.py`
+
+The function `_fetch_from_single_source()` in `rsmviewer/gui.py` is the single dispatch point. For most local and web sources the existing code already handles the mapping by reading `info.get('subtype')`, so you only need to act if your subtype needs a non-trivial name mapping (e.g., `'mydb'` → `'mydb_api'` for web):
+
+```python
+# gui.py — inside _fetch_from_single_source(), in the 'web' branch
+web_map = {
+    'bgsu': 'bgsu_api',
+    'rfam_api': 'rfam_api',
+    'mydb': 'mydb_api',      # ← add this line
+}
+```
+
+No changes are needed for `'local'` sources — the `subtype` is used directly as the provider key.
+
+If your source introduces a new `type` value (not `'local'`, `'web'`, or `'user'`), you also need to add a branch to `_fetch_from_single_source()`:
+
+```python
+elif source_type == 'mytype':
+    from .database.mydb_provider import MyDBProvider
+    provider = MyDBProvider(...)
+    return provider.get_motifs_for_pdb(pdb_id)
+```
+
+#### A-5 — Add Color Definitions
+
+Edit `rsmviewer/colors.py`. Any motif type your provider returns that is not in `MOTIF_COLORS` will fall back to orange. Add specific colors:
+
+```python
+# colors.py — inside MOTIF_COLORS = { ... }
+'MY-MOTIF-TYPE':   (0.2, 0.6, 1.0),   # blue
+'MY-MOTIF-TYPE-2': (0.9, 0.4, 0.1),   # orange-red
+```
+
+Add underscore aliases if the type name contains hyphens (both are looked up):
+
+```python
+'MY_MOTIF_TYPE':   (0.2, 0.6, 1.0),   # underscore alias
+```
+
+#### A-6 — (Optional) Handle Generic Names
+
+If your provider returns generic names (e.g., `HL`, `IL`, `J3`) that should be enriched via the homolog pipeline, add those names to `GENERIC_SOURCES` in `_load_combined_motifs()` in `gui.py`:
+
+```python
+# gui.py — _load_combined_motifs()
+GENERIC_SOURCES = {1, 3, 5, 9}   # ← add your source ID
+```
+
+And if it returns new generic name strings not currently in `GENERIC_NAMES`, add them to `homolog_enricher.py`:
+
+```python
+# homolog_enricher.py
+GENERIC_NAMES: Set[str] = {
+    'HL', 'IL', 'J3', ...
+    'MY-GENERIC-NAME',   # ← add here
+}
+```
+
+---
+
+### Path B — User Annotation Provider
+
+Use this path when the new source produces per-run output files that users place in the `user_annotations/` directory. The plugin loads those files when `rmv_db <N>` + `rmv_load_motif` is called.
+
+#### B-1 — Write a Format Parser
+
+Add a parser class to `rsmviewer/database/user_annotations/converters.py`. Follow the existing pattern for `RMSXConverter`:
+
+```python
+# user_annotations/converters.py
+
+class MyToolConverter:
+    """Parse MyTool output files for a given PDB."""
+
+    # Default P-value thresholds per motif type (leave empty if no filtering)
+    DEFAULT_PVALUE_THRESHOLDS: Dict[str, float] = {
+        'K-TURN': 0.05,
+        'SARCIN-RICIN': 0.02,
+    }
+
+    def parse_file(self, filepath: Path, pdb_id: str) -> Dict[str, List[MotifInstance]]:
+        """
+        Parse a single MyTool result file.
+
+        Returns:
+            {motif_type: [MotifInstance, ...]}
+        """
+        results: Dict[str, List[MotifInstance]] = {}
+        with open(filepath) as fh:
+            for line in fh:
+                if line.startswith('#'):
+                    continue
+                parts = line.strip().split('\t')
+                if len(parts) < 4:
+                    continue
+                motif_type = parts[0].upper()
+                chain       = parts[1]
+                residues_raw = parts[2].split(',')   # e.g. ["101", "102", "103"]
+                p_value     = float(parts[3])
+
+                residues = [
+                    ResidueSpec(chain=chain, residue_number=int(r.strip()))
+                    for r in residues_raw
+                ]
+                instance = MotifInstance(
+                    instance_id=f"mytool_{pdb_id}_{motif_type}_{len(results.get(motif_type, []))+1}",
+                    motif_id=motif_type,
+                    pdb_id=pdb_id.upper(),
+                    residues=residues,
+                    annotation=motif_type,
+                    metadata={'p_value': p_value, 'source': 'mytool'},
+                )
+                results.setdefault(motif_type, []).append(instance)
+        return results
+
+    def apply_pvalue_filter(
+        self,
+        motifs: Dict[str, List[MotifInstance]],
+        custom_thresholds: Optional[Dict[str, float]] = None,
+    ) -> Dict[str, List[MotifInstance]]:
+        thresholds = {**self.DEFAULT_PVALUE_THRESHOLDS, **(custom_thresholds or {})}
+        filtered = {}
+        for mtype, instances in motifs.items():
+            cutoff = thresholds.get(mtype.upper())
+            if cutoff is None:
+                filtered[mtype] = instances
+            else:
+                filtered[mtype] = [
+                    inst for inst in instances
+                    if inst.metadata.get('p_value', 1.0) <= cutoff
+                ]
+        return filtered
+```
+
+#### B-2 — Hook into `UserAnnotationProvider`
+
+Edit `rsmviewer/database/user_annotations/user_provider.py` so the new tool is recognised:
+
+```python
+# user_provider.py — in UserAnnotationProvider.get_motifs_for_pdb() or a helper
+
+from .converters import MyToolConverter   # ← import
+
+# Inside the dispatch that calls tool-specific converters:
+elif self.active_tool == 'mytool':
+    converter = MyToolConverter()
+    # Discover result files — adapt glob pattern to your tool's naming scheme
+    tool_dir = self.tool_dirs.get('MyTool', self.root_dir / 'MyTool')
+    result_files = list(tool_dir.glob(f'{pdb_id}*.txt'))
+    for f in result_files:
+        partial = converter.parse_file(f, pdb_id)
+        if self.apply_mytool_filtering:
+            partial = converter.apply_pvalue_filter(
+                partial, self.mytool_custom_pvalues
+            )
+        for mtype, instances in partial.items():
+            motifs.setdefault(mtype, []).extend(instances)
+```
+
+#### B-3 — Register in `SOURCE_ID_MAP`
+
+```python
+# config.py
+9: {
+    'name': 'MyTool Annotations',
+    'type': 'user',                # must be 'user'
+    'category': 'USER ANNOTATIONS',
+    'tool': 'mytool',              # MUST match active_tool string in user_provider.py
+    'description': 'MyTool analysis output (custom user files)',
+    'coverage': 'Custom uploads',
+    'mode': 'user',
+    'command': 'rmv_db 9',
+    'supports_filtering': True,    # set True to enable rmv_db 9 on|off
+    'command_with_filtering': 'rmv_db 9 [on|off]',
+    'command_with_custom_pvalues': 'rmv_db 9 MOTIF_NAME p_value ...',
+},
+```
+
+#### B-4 — Add Filtering State to `gui.py`
+
+`_fetch_from_single_source()` in `gui.py` already handles the `user` type by calling `UserAnnotationProvider.set_active_tool(tool)`. For P-value filtering, add the state and wiring analogous to the existing `user_nobias_*` block:
+
+```python
+# gui.py — __init__ of MotifVisualizerGUI
+
+self.user_mytool_filtering_enabled = True
+self.user_mytool_custom_pvalues: Dict[str, float] = {}
+
+# gui.py — in _fetch_from_single_source(), user-type branch
+
+elif tool_lower in ['mytool']:
+    provider.apply_mytool_filtering = self.user_mytool_filtering_enabled
+    provider.set_mytool_custom_pvalues(self.user_mytool_custom_pvalues)
+```
+
+Also add parsing of the `on|off` and custom P-value arguments in `_handle_source_by_id()` by following the `source_id == 8` (NoBIAS) block as a template.
+
+#### B-5 — Place Data Files
+
+Create the expected directory for the tool's files:
+
+```
+rsmviewer/database/user_annotations/
+└── MyTool/
+    ├── 1S72_results.txt
+    └── 4V88_results.txt
+```
+
+The user can override this location at runtime with:
+
+```
+rmv_db 9 /absolute/path/to/MyTool/data
+```
+
+#### B-6 — Add Color Definitions
+
+Same as Path A step A-5 — add entries to `MOTIF_COLORS` in `colors.py`.
+
+---
+
+### End-to-End Checklist
+
+| Step | File(s) touched | Path A | Path B |
+|------|----------------|--------|--------|
+| Write provider / parser | `database/mydb_provider.py` or `user_annotations/converters.py` | ✓ | ✓ |
+| Register source | `database/config.py` (SOURCE_ID_MAP) | ✓ | ✓ |
+| Register provider | `database/registry.py` | ✓ | — |
+| Hook user_provider | `user_annotations/user_provider.py` | — | ✓ |
+| Extend web_map (web only) | `gui.py` (`_fetch_from_single_source`) | web only | — |
+| Add filtering state | `gui.py` (MotifVisualizerGUI) | — | if P-values |
+| Add generic-name support | `gui.py` + `homolog_enricher.py` | if generic names | — |
+| Add color definitions | `colors.py` | ✓ | ✓ |
+| Data directory | `motif_database/` or `user_annotations/` | ✓ | ✓ |
 
 ---
 

@@ -353,7 +353,7 @@ rmv_summary
 2. **Enrich** — generic names (e.g., "HL") are enriched to specific names (e.g., "GNRA") using NR homolog representative lookup
 3. **Source stamp** — each instance is tagged with its source (used for attribution)
 4. **Within-source dedup** — exact duplicate entries within the same source are removed (same residue set = duplicate)
-5. **Cascade merge** — right-to-left merging with Jaccard deduplication (≥60% residue overlap = duplicate; higher-priority version kept)
+5. **Cascade merge** — right-to-left, category-aware. Subset containment is checked first (smaller residue set discarded, or ref replaced when the updater is a strict superset); Jaccard ≥ 0.60 acts as a fallback when neither side is a subset.
 6. **Cross-source attribution** — overlapping instances are tagged with `_also_found_in` metadata
 
 ### Source Priority
@@ -391,7 +391,7 @@ rmv_show K-TURN shared                # Only instances found in both sources
 rmv_show K-TURN                       # All K-TURN instances (no filter)
 ```
 
-Supported keywords: `rmsx`, `rms`, `fr3d`, `rfam`, `atlas`, `bgsu`, `shared`.
+Supported keywords: `rmsx`, `rms`, `fr3d`, `rfam`, `atlas`, `bgsu`, `nobias`, `shared`. Full source labels are also accepted, e.g. `rmv_show K-TURN "RNAMotifScanX (RMSX)"` or `rmv_show K-TURN "BGSU RNA 3D Hub"`.
 
 > **Tip:** After running `rmv_summary <TYPE>` in combine mode, the Next Steps section automatically suggests source filter commands for the active sources.
 
