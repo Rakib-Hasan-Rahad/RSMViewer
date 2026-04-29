@@ -1252,6 +1252,95 @@ Same as Path A step A-5 — add entries to `MOTIF_COLORS` in `colors.py`.
 
 ---
 
+### End-to-End Walkthrough — From Code to Use
+
+After completing the checklist above, the new source should be reachable from the PyMOL command line. The walkthrough below shows the **complete user-facing path**, assuming a hypothetical new source registered as **ID 9** (replace with your actual ID).
+
+#### 1. Reload the plugin in PyMOL
+
+```
+# In the PyMOL command line:
+run /path/to/rsmviewer/__init__.py
+```
+
+If the plugin is already loaded as an installed package, restart PyMOL or use the Plugin Manager → Reinstall to pick up code changes.
+
+#### 2. Verify the source is registered
+
+```
+rmv_sources
+```
+
+Your new source must appear in the printed list with the correct **ID, name, category, and command**. If it does not, `SOURCE_ID_MAP` in `database/config.py` was not updated (or the plugin was not reloaded).
+
+#### 3. Fetch a structure
+
+```
+rmv_fetch 1S72
+```
+
+This loads the raw PDB but does **not** yet pull motif data.
+
+#### 4. Activate the new source and load motifs
+
+**Single-source mode:**
+
+```
+rmv_db 9                      # activate source 9 alone
+rmv_load_motif                # fetch motifs from source 9 only
+rmv_summary                   # confirm motif categories + counts
+rmv_show <MOTIF_TYPE>         # render a specific category
+```
+
+**For user-annotation sources (Path B) with custom data path:**
+
+```
+rmv_db 9 ~/my_data_dir        # point source 9 at a custom directory
+rmv_load_motif
+```
+
+**For sources supporting P-value filtering (Path B):**
+
+```
+rmv_db 9 off                          # disable filtering
+rmv_db 9 on                           # enable filtering
+rmv_db 9 K-TURN 0.05 C-LOOP 0.02      # custom per-motif thresholds
+```
+
+#### 5. Combine the new source with existing sources
+
+```
+rmv_db 3 9                    # combine BGSU (priority) + your new source 9
+rmv_load_motif                # cascade-merge across both sources
+rmv_summary <MOTIF_TYPE>      # attribution report (unique vs. shared)
+```
+
+#### 6. Use the source-alias filter on the merged result
+
+The alias must be one of: the source's full `name`, the parens-stripped name, the `tool` short-hand, the `subtype` short-hand, or any single word from the name. These are all defined by your `SOURCE_ID_MAP[9]` entry (see § 11.A-2 / § 11.B-2).
+
+```
+rmv_show <MOTIF_TYPE> <alias>     # only instances unique to source 9
+rmv_show <MOTIF_TYPE> bgsu        # only instances unique to BGSU (source 3)
+rmv_show <MOTIF_TYPE> shared      # instances found in both sources
+rmv_show <MOTIF_TYPE>             # full merged set (no filter)
+```
+
+If `rmv_summary <MOTIF_TYPE>` is run in combine mode, the **Next Steps** section auto-prints suggested `rmv_show … <alias>` lines for every active source — use that as the source of truth for which alias your new source exposes.
+
+#### 7. Sanity checklist before shipping
+
+| Check | How |
+|-------|-----|
+| Source listed in `rmv_sources` | Output of `rmv_sources` |
+| Provider returns motifs | `rmv_db 9 && rmv_load_motif && rmv_summary` |
+| Color rendered correctly | `rmv_show <TYPE>` — motifs must appear in your assigned color |
+| Combines with at least one other source | `rmv_db 3 9 && rmv_load_motif` finishes with `Merge complete: …` |
+| Alias filter resolves | `rmv_show <TYPE> <alias>` returns a non-zero count, **not** "Motif type 'X Y' not loaded" |
+| Generic-name enrichment (Path A only, if generic) | After load, motif keys are specific (e.g., `GNRA`) instead of generic (`HL`) |
+
+---
+
 ## 12. Key Classes & Methods
 
 ### `MotifVisualizerGUI` (`gui.py`)

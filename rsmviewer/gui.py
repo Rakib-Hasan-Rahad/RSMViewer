@@ -2037,15 +2037,36 @@ class MotifVisualizerGUI:
                               (caller should treat the word as part of the
                               motif name instead).
         """
-        if self.current_source_mode != 'combine':
+        # Treat any state where two or more sources are combined as combine
+        # mode for filter resolution.  current_source_mode can drift to other
+        # values after `rmv_load_motif` reload sequences, but if
+        # combined_source_ids still has 2+ entries the alias filter is still
+        # meaningful.
+        if self.current_source_mode != 'combine' and len(self.combined_source_ids or []) < 2:
             return None
 
         loaded_motifs = self._get_current_source_motifs()
-        if motif_type not in loaded_motifs:
+        # Case + whitespace insensitive lookup so 'KINK-TURN'/'kink-turn'/
+        # ' KINK-TURN ' all resolve to the same key as the loader stored.
+        def _key_norm(s: str) -> str:
+            return ''.join((s or '').upper().split())
+        target_key = _key_norm(motif_type)
+        resolved_motif_key = None
+        for k in loaded_motifs.keys():
+            if _key_norm(k) == target_key:
+                resolved_motif_key = k
+                break
+        if resolved_motif_key is None:
+            self.logger.debug(
+                f"_resolve_source_filter: motif '{motif_type}' not found in "
+                f"loaded_motifs (keys={list(loaded_motifs.keys())})")
             return None
+        motif_type = resolved_motif_key
 
         motif_details = loaded_motifs[motif_type].get('motif_details', [])
         if not motif_details:
+            self.logger.debug(
+                f"_resolve_source_filter: motif '{motif_type}' has no details")
             return None
 
         # Categorise instances exactly like _print_source_attribution_report
@@ -2113,6 +2134,9 @@ class MotifVisualizerGUI:
 
         matched_label = alias_to_label.get(_norm(source_filter))
         if matched_label is None:
+            self.logger.debug(
+                f"_resolve_source_filter: alias '{source_filter}' not in "
+                f"{sorted(alias_to_label.keys())}")
             return None  # not a recognized source filter
 
         ids = source_only.get(matched_label, [])

@@ -395,6 +395,33 @@ Supported keywords: `rmsx`, `rms`, `fr3d`, `rfam`, `atlas`, `bgsu`, `nobias`, `s
 
 > **Tip:** After running `rmv_summary <TYPE>` in combine mode, the Next Steps section automatically suggests source filter commands for the active sources.
 
+### Worked Example — K-turn from BGSU + RMSX
+
+The figure below illustrates a complete combine workflow on PDB **1S72** using two sources: **BGSU RNA 3D Hub** (source 3) and **RNAMotifScanX** (source 7).
+
+![Multi-source comparison overview](images/comparision.png)
+
+![Multi-source comparison detail](images/comparision%202.png)
+
+**Figure.** (A) K-turn motif instances extracted from Source 3 (BGSU RNA 3D Hub). (B) K-turn motif instances collected from Source 7 (RNAMotifScanX). (C) Combined results after cascade merging, with source attribution for each detected instance. (D) Summary analysis report with source attribution, providing direct visualization of motif instances based on their source alias.
+
+Reproduce the four panels with the following commands:
+
+```
+rmv_fetch 1S72
+rmv_db 3 7                       # Combine BGSU (priority) + RMSX
+rmv_load_motif
+
+rmv_summary KINK-TURN            # Panel D — attribution report
+
+rmv_show KINK-TURN bgsu          # Panel A — BGSU-only instances
+rmv_show KINK-TURN rmsx          # Panel B — RMSX-only instances
+rmv_show KINK-TURN shared        # Instances found in both sources
+rmv_show KINK-TURN               # Panel C — full merged set
+```
+
+The alias after the motif name (`bgsu`, `rmsx`, `shared`) selects which subset of the merged result is rendered, allowing direct side-by-side visual comparison of source provenance on the same structure.
+
 ---
 
 ## 6. User Annotations (FR3D / RMS / RMSX)
