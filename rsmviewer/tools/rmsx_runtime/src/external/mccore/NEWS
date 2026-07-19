@@ -1,0 +1,148 @@
+;                      -*- Mode: Outline -*-
+; NEWS
+; Copyright © 2000-06 Laboratoire de Biologie Informatique et Théorique.
+;                     Université de Montréal.
+; Author           : Martin Larose
+; Created On       : Tue Sep 19 18:15:25 2000
+; $Revision: 1.12 $
+; $Id: NEWS,v 1.12 2006-06-29 19:12:07 thibaup Exp $
+
+
+* Version 1.6.1
+
+
+** HomogeneousTransfo class reimplemented
+
+New implementation of HomogeneousTransfo class. Replaced the 16 float
+array by 12 independent float variables for first three row of the 4X4
+matrix. Last row is implicit (always {0,0,0,1}). The interface is
+unchanged.
+
+Using default gcc optimization (-O2), matrix multiplication is now
+100X faster and matrix inversion is near 200X faster. Multiplication
+by a 3D point (Vector3D) at same speed, however.
+
+New implementation of matrix inversion. Previous implementation was
+using the analytical simplification applicable to rigid body
+transformation. However, this method shows unstable numerical
+error. Therefore it was replaced by a general inversion method
+applicable to any invertible matrix. This method isn't more precise
+than the latter method as a one-shot, but numerical errors are
+stable. Even if more floating point operations are needed to do so,
+performance with default gcc optimization (-O2) is not
+affected. Previous implementation was still conserved and renamed
+invert_unstable(). 
+
+
+
+* Version 1.6.0
+
+--> complete me!
+
+Using 3-digits version number.
+
+** Annotation
+   o bit mask to specify major annotation families: adjacent,
+   stacked, paired or backbone HBonded. Individual masks are
+   accessible in class Relation an can be passed to annotation
+   processes to restrict annotation. All four families are annotated
+   by default.
+
+
+
+
+* Version 1.5
+
+** Model
+
+Models are no longer lists.  The container is replaced with a vector to enable
+us to create GraphModels.
+
+** Data structure updates:
+  o The Residue class contains only global coordinates and doesn't remember its referential.
+  o The ExtendedResidue keeps its referential and its local coordinates.
+  o New set of methods to build a ribose from a Residue.
+  o AtomSet are passed to Residue::iterator as reference and are cloned within the iterator class.
+    Thus the user is responsible for its own AtomSet objects.
+  o Residue::atomCopy is deprecated: there is no guarantee in atom order within Residue.
+  o The Molecule class is viewed as a list of Model& instead of Model*
+    (follows Model class implementation).
+
+** Types updates (AtomType, ResidueType and PropertyType):  
+  o Implementation now uses STL strings.
+  o Improved hierarchy.
+  o String representation is in an internal format.
+  o Type table for Pdbstream representation in either PDB or Amber file format.
+
+** Revised HomogeneousTransfo distance metric:
+  Let M place m' on m (M: m -> m') and N place n' on n (N: n -> n').
+  Then D(M,N) = S( M^(-1) * N ), where S(M), the strength of a matrix, is computed as in v1.4.
+  The matrix M^(-1) * N is the transfo that align m' on n' in m' referential,
+  when m and n are aligned.
+  
+** Horton's minimal cycle base and base union implementation in Graph.
+
+** New SQL reader and writer class using MySQL++ library (enable at configure).
+
+** Annotation updates:
+  o Four different stack annotation to identify plane direction alignment
+    (aligned or opposed) and target base position relative to its reference
+    (upward or downward), regardless of strand direction in the case of adjacent
+    stack.
+  o Identify base plane direction as parallel or antiparallel in base pairing,
+    deprecating cis and trans annotation.
+  o Gautheret annotations corrected with the usage of pairing base plane
+    orientation to differenciate them.
+  o cis and trans torsion angle calculation is now based on the geometric
+    center of pyrimidine rings of the residues. It's no longer based on the
+    mean h-bonds vectors.  
+    
+
+* Version 1.4
+
+Redesign of almost all the classes.
+- PropertyType B (Bifurcated) was removed.
+- PropertyType Bh and Bs inherits directly from PropertyType.
+- Using standard C++ headers.
+- Vector3D and HomogeneousTransfo are not compliant with standard
+mathematical convention (i.e. concerning the order of application of
+operations).
+- Using Basic residue that is as small in memory as possible.
+- Elimination of the McCore file and all global variables as well as
+the need to initialize the library in every program.
+- Parsing some of the PDB headers.
+- Atom, residue types have been recoded and the hierarchy adapted to
+the need to have residue type wildcards.
+- Rmsd algo now has its own class.
+- HBonds are simplified.
+- Graphs (directed or undirected) are now templated and thus can be
+used to store any types of nodes and edges (special care was taken not
+to copy nodes and edges when not need in algorithms). They are also
+part of a hierarchy.
+- All annotation code is now part of mccore.
+- All motif related code is now part of mccore.
+
+
+* Version 1.3
+
+The library must link with librnamlc++ to enable rnaml reader and writer
+classes.
+
+New stream classes.  For compatibility with GCC 3 and the most recent
+C++ standard library, all stream classes have been recoded.
+
+* Version 1.2
+
+New Residue classes.  An abstract residue has been created to get the
+possibility to use different kind of models.  The abstract class contains a
+CResId, a residue type, a CTransfo and the iterators.  To implement a new
+residue and use it in a model, create an implementation of
+ResidueFactoryMethod and set it in the model constructor.
+
+New Model class.  It stores pointers over AbstractResidues.  Its methods
+and iterators returns AbstractResidues pointers and references.
+
+New ResidueFactoryMethod abstract class.  It defines an interface for
+creating residues of a given type inside models.  It's only method,
+createResidue returns a new residue pointer for the implemented residue
+class.  It is mainly used in the Model read methods.
