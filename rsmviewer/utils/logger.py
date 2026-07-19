@@ -35,7 +35,7 @@ class PluginLogger:
         
         if self.log_file:
             try:
-                with open(self.log_file, 'a') as f:
+                with open(self.log_file, 'a', encoding='utf-8') as f:
                     f.write(formatted_msg + '\n')
             except Exception as e:
                 print(f"Warning: Could not write to log file: {e}")

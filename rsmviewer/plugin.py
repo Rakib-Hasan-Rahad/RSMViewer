@@ -30,6 +30,20 @@ from .gui import initialize_gui
 from .utils import initialize_logger
 from .database import initialize_registry, get_registry
 from datetime import datetime
+import sys
+
+# ── Terminal encoding guard ──────────────────────────────────────────────────
+# On Linux/macOS with LANG=C or Windows with a legacy code-page, sys.stdout may
+# be ASCII-only.  Reconfigure it to UTF-8 with 'replace' so that Unicode output
+# from rmv_help / rmv_sources never raises UnicodeEncodeError in terminal mode.
+try:
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 def __init_plugin__(app):
@@ -54,22 +68,16 @@ def __init_plugin__(app):
     # Print welcome banner first
     last_updated = "02 April 2026"
     print("\n" + "="*80)
-    print("\u250c" + " "*78 + "\u2510")
-    print("\u2502" + " "*26 + "\U0001f9ec RSMViewer \U0001f9ec" + " "*38 + "\u2502")
-    print("\u2502" + " "*78 + "\u2502")
-    print("\u2502" + " Version 1.0.0" + " "*63 + "\u2502")
-    print("\u2502" + " Last Updated: " + last_updated + " "*42 + "\u2502")
-    print("\u2502" + " "*78 + "\u2502")
-    print("\u2502" + " RSMViewer \u2014 RNA Structural Motif Viewer for PyMOL" + " "*26 + "\u2502")
-    print("\u2502" + " Fast loading: Load PDB first, select source, fetch motifs" + " "*19 + "\u2502")
-    print("\u2502" + " "*78 + "\u2502")
-    print("\u2514" + " "*78 + "\u2518")
+    print("RSMViewer")
+    print(f"Version 1.0.0 | Last Updated: {last_updated}")
+    print("RNA Structural Motif Viewer for PyMOL")
+    print("Fast loading: Load PDB first, select source, fetch motifs")
     print("="*80)
-    print("\n\U0001f4ca AVAILABLE DATA SOURCES:")
-    print("   \u2022 Local:       RNA 3D Motif Atlas [1], Rfam [2] (offline)")
-    print("   \u2022 Online:      BGSU RNA 3D Hub [3], Rfam API [4]")
-    print("   \u2022 Annotations: FR3D [5], RNAMotifScan [6], RNAMotifScanX [7], NoBIAS [8]")
-    print("\n\u26a1 QUICK START:")
+    print("\nAVAILABLE DATA SOURCES:")
+    print("   - Local:       RNA 3D Motif Atlas [1], Rfam [2] (offline)")
+    print("   - Online:      BGSU RNA 3D Hub [3], Rfam API [4]")
+    print("   - Annotations: FR3D [5], RNAMotifScan [6], RNAMotifScanX [7], NoBIAS [8]")
+    print("\nQUICK START:")
     print("   rmv_fetch 1S72            # Step 1: Load PDB structure")
     print("   rmv_sources               # Step 2: Check available data sources")
     print("   rmv_db 3                  # Step 3: Select BGSU API source")
@@ -78,7 +86,7 @@ def __init_plugin__(app):
     print("   rmv_summary HL            # Step 6: Show hairpin loop instances")
     print("   rmv_show HL               # Step 7: Render all hairpin loops")
     print("   rmv_show HL 1             # Step 8: Zoom to specific instance")
-    print("\n\U0001f4da COMMANDS & HELP:")
+    print("\nCOMMANDS & HELP:")
     print("   rmv_help                  # All available commands")
     print("   rmv_sources               # List all data sources")
     print("   rmv_source info           # Show currently selected source")

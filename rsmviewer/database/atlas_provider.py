@@ -104,7 +104,7 @@ class RNA3DAtlasProvider(BaseProvider):
         registry_path = self.database_path / 'motif_registry.json'
         if registry_path.exists():
             try:
-                with open(registry_path, 'r') as f:
+                with open(registry_path, 'r', encoding='utf-8') as f:
                     self._registry = json.load(f)
             except Exception:
                 self._registry = {}

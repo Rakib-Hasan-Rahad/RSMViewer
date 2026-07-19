@@ -85,7 +85,7 @@ class AtlasJSONConverter(BaseConverter):
     def convert_file(self, file_path: Path) -> List[MotifType]:
         """Convert Atlas JSON file to MotifType objects."""
         try:
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
             # Infer motif type from filename (e.g., hl_4.5.json -> HL)
@@ -232,7 +232,7 @@ class StockholmConverter(BaseConverter):
     def convert_file(self, file_path: Path) -> List[MotifType]:
         """Convert Stockholm SEED file to MotifType objects."""
         try:
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
             
             # Get motif name from parent directory or file

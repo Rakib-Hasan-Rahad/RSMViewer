@@ -137,7 +137,7 @@ class UserAnnotationProvider(BaseProvider):
                         for result_file in motif_folder.glob('result_*.log'):
                             # Try to extract PDB ID from file content
                             try:
-                                with open(result_file, 'r') as f:
+                                with open(result_file, 'r', encoding='utf-8') as f:
                                     first_line = f.readline()
                                     # Look for pattern like "1S72_0:..." in fragment IDs
                                     import re
@@ -258,17 +258,25 @@ class UserAnnotationProvider(BaseProvider):
             
             if tool_name.lower() == 'fr3d':
                 # FR3D: Look for files directly in fr3d/ folder
-                # Search case-insensitively for PDB files
+                # Search case-insensitively for PDB files and load only the
+                # freshest match. This avoids stale CSV outputs overriding the
+                # current FR3D run when both formats exist in the same folder.
+                fr3d_candidates = []
                 for file_path in tool_dir.iterdir():
-                    if file_path.is_file() and file_path.suffix in ['.csv', '.tsv', '.txt']:
-                        # Check if filename starts with PDB ID (case-insensitive)
-                        if file_path.stem.lower().startswith(pdb_id_lower):
-                            try:
-                                motifs = self._load_file(file_path, tool_name, pdb_id)
-                                all_motifs.update(motifs)
-                            except Exception as e:
-                                print(f"Warning: Could not load {file_path}: {e}")
-                                continue
+                    if not file_path.is_file() or file_path.suffix not in ['.csv', '.tsv', '.txt']:
+                        continue
+                    if file_path.stem.lower().startswith(pdb_id_lower):
+                        fr3d_candidates.append(file_path)
+
+                if fr3d_candidates:
+                    fr3d_candidates.sort(key=lambda candidate: candidate.stat().st_mtime, reverse=True)
+                    selected_file = fr3d_candidates[0]
+                    try:
+                        motifs = self._load_file(selected_file, tool_name, pdb_id)
+                        all_motifs.update(motifs)
+                    except Exception as e:
+                        print(f"Warning: Could not load {selected_file}: {e}")
+                        continue
             
             elif tool_name == 'RNAMotifScan':
                 # RNAMotifScan: Look in motif-type subfolders for Res_<pdb_id> files
@@ -301,7 +309,7 @@ class UserAnnotationProvider(BaseProvider):
                         if flat_file.stat().st_size == 0:
                             continue
                         try:
-                            with open(flat_file, 'r') as f:
+                            with open(flat_file, 'r', encoding='utf-8') as f:
                                 content = f.read(500)
                                 if pdb_id.upper() not in content and pdb_id.lower() not in content:
                                     continue
@@ -334,7 +342,7 @@ class UserAnnotationProvider(BaseProvider):
                         if candidate.exists() and candidate.stat().st_size > 0:
                             # Check if file contains the PDB ID
                             try:
-                                with open(candidate, 'r') as f:
+                                with open(candidate, 'r', encoding='utf-8') as f:
                                     content = f.read(500)
                                     if pdb_id.upper() in content or pdb_id.lower() in content:
                                         result_file = candidate
@@ -347,7 +355,7 @@ class UserAnnotationProvider(BaseProvider):
                         for result_file_candidate in motif_folder.glob("result_*.log"):
                             if result_file_candidate.stat().st_size > 0:
                                 try:
-                                    with open(result_file_candidate, 'r') as f:
+                                    with open(result_file_candidate, 'r', encoding='utf-8') as f:
                                         content = f.read(500)
                                         if pdb_id.upper() in content or pdb_id.lower() in content:
                                             result_file = result_file_candidate
@@ -378,7 +386,7 @@ class UserAnnotationProvider(BaseProvider):
                         if flat_file.stat().st_size == 0:
                             continue
                         try:
-                            with open(flat_file, 'r') as f:
+                            with open(flat_file, 'r', encoding='utf-8') as f:
                                 content = f.read(500)
                                 if pdb_id.upper() not in content and pdb_id.lower() not in content:
                                     continue
@@ -420,7 +428,7 @@ class UserAnnotationProvider(BaseProvider):
                         if flat_file.stat().st_size == 0:
                             continue
                         try:
-                            with open(flat_file, 'r') as f:
+                            with open(flat_file, 'r', encoding='utf-8') as f:
                                 content = f.read(500)
                                 if pdb_id.upper() not in content and pdb_id.lower() not in content:
                                     continue

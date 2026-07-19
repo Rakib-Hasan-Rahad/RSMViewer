@@ -11,6 +11,7 @@ Each converter follows this pattern:
 """
 
 import csv
+import re
 from typing import Dict, List, Tuple
 from pathlib import Path
 
@@ -92,20 +93,179 @@ class MotifInstanceSimple:
 
 
 class FR3DConverter:
-    """Convert FR3D output CSV format to standard motif format.
-    
-    FR3D CSV format (comma-delimited):
-    - Motif order: Sequential number
-    - Motif type: Type of motif (e.g., "Hairpin", "Internal loop", "Bulge")
-    - Resolution: Resolution value (e.g., "NA" or numeric)
-    - Positions: Format "PDB_ID|model|chain|start-end"
-    - Sequence: The nucleotide sequence
-    - cWW/other: Count or descriptor
-    - Description: Human-readable description
-    
-    Example:
-    1,Hairpin,NA,"1S72|1|0|13-530","GCCAGCUGGUUGCG...",278,"Hairpin with 10 base pairs"
+    """Convert FR3D output formats to standard motif format.
+
+    Supported formats:
+    1. BGSU loops CSV (downloaded from rna.bgsu.edu/rna3dhub/loops/download/<PDB>):
+       "HL_1S72_001","1S72|1|0|U|55,1S72|1|0|G|56,..."
+       Loop-ID prefix: HL = Hairpin Loop, IL = Internal Loop, J3/J4/... = Junction
+
+    2. FR3D motif CSV (range-based, comma-delimited):
+       1,Hairpin,NA,"1S72|1|0|13-530","GCCAGCUGGUUGCG...",278,"Hairpin with 10 base pairs"
+
+    3. FR3D pairwise TXT (basepair annotations from NA_pairwise_interactions):
+       1S72|1|A|G|71\tcWW\t1S72|1|A|C|83\t0
     """
+
+    # Map BGSU loop-ID prefix to human-readable motif type name
+    _LOOP_TYPE_NAMES = {
+        'HL': 'Hairpin Loop',
+        'IL': 'Internal Loop',
+        'J3': '3-Way Junction',
+        'J4': '4-Way Junction',
+        'J5': '5-Way Junction',
+        'J6': '6-Way Junction',
+        'J7': '7-Way Junction',
+        'J8': '8-Way Junction',
+    }
+
+    @staticmethod
+    def _detect_bgsu_loops(file_path: str) -> bool:
+        """Return True if the file looks like a BGSU loops download CSV."""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                first_line = f.readline().strip()
+            # BGSU loops CSV starts with a quoted loop ID like "HL_" or "IL_" or "J3_"
+            return bool(re.match(r'^"?(HL|IL|J\d)_', first_line))
+        except Exception:
+            return False
+
+    @staticmethod
+    def _convert_bgsu_loops_csv(file_path: str) -> Dict[str, List[MotifInstanceSimple]]:
+        """Parse the BGSU loops download CSV into structural motif instances.
+
+        Format per line:
+            "HL_1S72_001","1S72|1|0|U|55,1S72|1|0|G|56,..."
+
+        Each residue token: pdb_id|model|chain|nucleotide|residue_number
+        """
+        motifs_by_type: Dict[str, List[MotifInstanceSimple]] = {}
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                stripped = line.strip()
+                if not stripped:
+                    continue
+
+                # Strip surrounding quotes and split at first ","
+                # Line format: "HL_1S72_001","res1,res2,..."
+                parts = re.split(r'","', stripped.strip('"'))
+                if len(parts) < 2:
+                    continue
+
+                loop_id = parts[0].strip('"')
+                residues_str = parts[1].strip('"')
+
+                # Determine motif type from loop_id prefix (HL_, IL_, J3_, …)
+                prefix_match = re.match(r'^(HL|IL|J\d+)_', loop_id)
+                if not prefix_match:
+                    continue
+                prefix = prefix_match.group(1)
+                motif_type = FR3DConverter._LOOP_TYPE_NAMES.get(prefix, prefix)
+
+                # Parse each residue token
+                residues = []
+                for token in residues_str.split(','):
+                    token = token.strip()
+                    if not token:
+                        continue
+                    token_parts = token.split('|')
+                    if len(token_parts) < 5:
+                        continue
+                    nucleotide = token_parts[3].strip() or 'N'
+                    try:
+                        res_num = int(re.match(r'^(-?\d+)', token_parts[4].strip()).group(1))
+                    except (AttributeError, ValueError):
+                        continue
+                    chain = token_parts[2].strip()
+                    residues.append((nucleotide, res_num, chain))
+
+                if not residues:
+                    continue
+
+                instance = MotifInstanceSimple(
+                    motif_id=motif_type,
+                    instance_id=f"FR3D_{loop_id}",
+                    residues=residues,
+                    annotation=f"FR3D/BGSU {motif_type} ({loop_id})",
+                    metadata={'loop_id': loop_id, 'source_format': 'bgsu_loops_csv'},
+                )
+                motifs_by_type.setdefault(motif_type, []).append(instance)
+
+        return motifs_by_type
+
+    @staticmethod
+    def _parse_unit_id(unit_id: str) -> Tuple[str, str, int, str]:
+        """Parse FR3D unit ID into (pdb_id, chain, residue_number, nucleotide)."""
+        parts = unit_id.split('|')
+        if len(parts) < 5:
+            raise ValueError(f"Invalid FR3D unit ID: {unit_id}")
+
+        pdb_id = parts[0].strip().upper()
+        chain = parts[2].strip()
+        nucleotide = parts[3].strip() or 'N'
+        residue_token = parts[4].strip()
+
+        match = re.match(r'^(-?\d+)', residue_token)
+        if not match:
+            raise ValueError(f"Invalid FR3D residue token: {residue_token}")
+        residue_number = int(match.group(1))
+
+        return pdb_id, chain, residue_number, nucleotide
+
+    @staticmethod
+    def _convert_pairwise_txt(file_path: str) -> Dict[str, List[MotifInstanceSimple]]:
+        """Convert FR3D pairwise interaction TXT output to motif instances."""
+        motifs_by_type: Dict[str, List[MotifInstanceSimple]] = {}
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for idx, line in enumerate(f, start=1):
+                stripped = line.strip()
+                if not stripped or stripped.startswith('#'):
+                    continue
+
+                cols = stripped.split('\t')
+                if len(cols) < 3:
+                    continue
+
+                unit1 = cols[0].strip()
+                interaction = cols[1].strip()
+                unit2 = cols[2].strip()
+                if not unit1 or not interaction or not unit2:
+                    continue
+
+                try:
+                    pdb1, chain1, res1, nt1 = FR3DConverter._parse_unit_id(unit1)
+                    pdb2, chain2, res2, nt2 = FR3DConverter._parse_unit_id(unit2)
+                except ValueError:
+                    continue
+
+                # Keep a predictable motif key for summaries and filtering.
+                motif_type = interaction.upper()
+                instance_id = f"FR3D_{pdb1}_{chain1}{res1}_{chain2}{res2}_{idx}"
+                residues = [(nt1, res1, chain1), (nt2, res2, chain2)]
+                annotation = f"FR3D pairwise interaction {interaction}"
+
+                metadata = {
+                    'source_format': 'fr3d_pairwise_txt',
+                    'unit_1': unit1,
+                    'unit_2': unit2,
+                    'interaction': interaction,
+                    'pdb_id_1': pdb1,
+                    'pdb_id_2': pdb2,
+                }
+
+                instance = MotifInstanceSimple(
+                    motif_id=motif_type,
+                    instance_id=instance_id,
+                    residues=residues,
+                    annotation=annotation,
+                    metadata=metadata,
+                )
+
+                motifs_by_type.setdefault(motif_type, []).append(instance)
+
+        return motifs_by_type
     
     @staticmethod
     def parse_positions(positions_str: str) -> tuple:
@@ -146,6 +306,14 @@ class FR3DConverter:
             Dict mapping motif types to lists of MotifInstanceSimple
         """
         motifs_by_type = {}
+
+        file_ext = Path(csv_path).suffix.lower()
+        if file_ext == '.txt':
+            return FR3DConverter._convert_pairwise_txt(csv_path)
+
+        # Detect BGSU loops download format before falling back to the motif CSV parser
+        if FR3DConverter._detect_bgsu_loops(csv_path):
+            return FR3DConverter._convert_bgsu_loops_csv(csv_path)
         
         try:
             with open(csv_path, 'r', encoding='utf-8') as f:

@@ -59,3 +59,27 @@ Thumbs.db
 
 # Release housekeeping
 # v1.0.0
+
+# Local runtime caches and vendored env internals
+rsmviewer/tools/**/__pycache__/
+rsmviewer/tools/fr3d_runtime/python/venv/
+rsmviewer/tools/fr3d_runtime/python/fr3d-python/.git/
+rsmviewer/tools/fr3d_runtime/python/fr3d-python/**/__pycache__/
+rsmviewer/tools/fr3d_runtime/python/fr3d-python/**/*.pyc
+rsmviewer/tools/fr3d_runtime/python/fr3d-python/fr3d.egg-info/
+rsmviewer/tools/rmsx_runtime/__pycache__/
+
+# Local/generated structure and pipeline outputs
+1s72.cif
+RNAMotifScanX/
+rmsx_pipeline_config.json
+RSMViewer_Tutorial_Supplement.docx
+rsmviewer/database/user_annotations/fr3d/.fr3d_wrapper.json
+rsmviewer/database/user_annotations/fr3d/*.cif
+rsmviewer/database/user_annotations/fr3d/*.cif.gz
+rsmviewer/database/user_annotations/fr3d/*_basepair.txt
+rsmviewer/database/user_annotations/fr3d/*_motifs.csv
+rsmviewer/database/user_annotations/fr3d/*_fr3d_loops.csv
+rsmviewer/database/user_annotations/RNAMotifScanX/*.pdb
+rsmviewer/database/user_annotations/RNAMotifScanX/*.rmsx.in
+rsmviewer/database/user_annotations/RNAMotifScanX/*_mc_annotate.out

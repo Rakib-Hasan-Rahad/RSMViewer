@@ -14,6 +14,12 @@ Last Updated: 02 April 2026
 """
 
 from typing import List, Optional, Dict, Tuple
+import json
+import os
+import re
+import shlex
+import subprocess
+import sys
 from pymol import cmd
 from .loader import VisualizationManager
 from .utils import get_logger
@@ -21,11 +27,12 @@ from . import colors
 from .database import get_registry
 from .database.config import SOURCE_ID_MAP
 from pathlib import Path
+import platform
 
 
-# ---------------------------------------------------------------------------
-# Semantic normalisation constants (shared between Atlas & BGSU pipelines)
-# ---------------------------------------------------------------------------
+ # ---------------------------------------------------------------------------
+ # Semantic normalisation constants (shared between Atlas & BGSU pipelines)
+ # ---------------------------------------------------------------------------
 _SEMANTIC_PATTERNS = {
     'Kink-turn': ['Kink-turn', 'kink turn'],
     'C-loop': ['C-loop', 'mini C-loop'],
@@ -93,25 +100,25 @@ def _normalize_motif_groups(available_motifs):
 
 class MotifVisualizerGUI:
     """PyMOL GUI for RNA motif visualization with multi-database support."""
-    
+
     def __init__(self):
         """Initialize GUI components."""
         self.logger = get_logger()
-        
+
         # Get path to motif database
         plugin_dir = Path(__file__).parent
         self.database_dir = plugin_dir / 'motif_database'
-        
+
         # Initialize visualization manager
         self.viz_manager = VisualizationManager(cmd, str(self.database_dir))
-        
+
         # Track UI state
         self.motif_visibility = {}
-        
+
         # Track currently loaded PDB
         self.loaded_pdb = None
         self.loaded_pdb_id = None
-        
+
         # Track current source mode
         self.current_source_mode = None
         self.current_user_tool = None
@@ -119,35 +126,261 @@ class MotifVisualizerGUI:
         self.current_web_source = None         # 'bgsu', 'rfam', or None (for auto)
         self.combined_source_ids = []          # List of source IDs for combining
         self.current_source_id = None          # Numeric source ID (1-8) for object tagging
-        
+
         # Track filtering state for RMS, RMSX, and NoBIAS (for user annotations)
         self.user_rms_filtering_enabled = True   # Default: filters ON
         self.user_rmsx_filtering_enabled = True  # Default: filters ON
         self.user_nobias_filtering_enabled = True  # Default: filters ON
-        
+
         # Track custom P-values for RMS, RMSX, and NoBIAS
         self.user_rms_custom_pvalues = {}        # Dict: {motif_name: p_value}
         self.user_rmsx_custom_pvalues = {}       # Dict: {motif_name: p_value}
         self.user_nobias_custom_pvalues = {}     # Dict: {motif_name: p_value}
-        
+
         # Track chain ID convention: 1 = auth_asym_id (default), 0 = label_asym_id
         self.cif_use_auth = 1
-        self.auth_to_label_map = {}   # auth_asym_id → label_asym_id chain mapping
-        
+        self.auth_to_label_map = {}   # auth_asym_id -> label_asym_id chain mapping
+
         # Track custom user annotation data paths per source (for rmv_db 5/6/7/8 with path)
         self.user_data_paths = {}  # Dict: {source_id_int: path_str}
-        
+
         # Jaccard similarity threshold for cascade merge (0.0–1.0)
         self.jaccard_threshold = 0.60
-        
+
         # Store within-source dedup stats for display in source attribution report
         # Dict: {source_id: (before_count, after_count)}
         self.dedup_stats = {}
-        
+
         # Track loaded PDB+source combinations for cross-PDB superimposition
         # Each entry is a tuple (pdb_id_upper, source_suffix) e.g. ("1S72", "_S7")
         self.loaded_sources = set()
-    
+
+        # FR3D wrapper runtime settings (persisted in user_annotations/fr3d)
+        fr3d_dir = plugin_dir / 'database' / 'user_annotations' / 'fr3d'
+        self.fr3d_config_file = fr3d_dir / '.fr3d_wrapper.json'
+        self.fr3d_root_path = ''
+        self.fr3d_python_path = ''
+        self.fr3d_input_path = ''
+        self.fr3d_output_path = str(fr3d_dir.resolve())
+        self.fr3d_auto_run_on_fetch = False
+        self.fr3d_runtime_dir = str((plugin_dir / 'tools' / 'fr3d_runtime').resolve())
+        self.fr3d_setup_attempted = False
+        # Local FR3D pipeline config (set via rmv_db 5 /path/to/fr3d_pipeline_config.json)
+        self.fr3d_pipeline_config_path = ''
+        self.fr3d_pipeline_config = {}
+        self._load_fr3d_wrapper_config()
+
+        # RNAMotifScanX wrapper runtime settings (persisted in user_annotations/RNAMotifScanX)
+        rmsx_dir = plugin_dir / 'database' / 'user_annotations' / 'RNAMotifScanX'
+        self.rmsx_config_file = rmsx_dir / '.rmsx_wrapper.json'
+        self.rmsx_executable_path = ''
+        self.rmsx_output_path = str(rmsx_dir.resolve())
+        self.rmsx_working_dir = ''
+        self.rmsx_args_template = ''
+        self.rmsx_auto_run_on_fetch = False
+        # RMSX runtime config (integrated source-7 runtime)
+        self.rmsx_pipeline_config_path = ''
+        self.rmsx_pipeline_config = {}
+        self.rmsx_runtime_dir = str((plugin_dir / 'tools' / 'rmsx_runtime').resolve())
+        self.rmsx_setup_attempted = False
+        self._load_rmsx_wrapper_config()
+
+    def _normalize_filter_motif_name(self, motif_name: str) -> str:
+        """Normalize user-entered motif names for RMS/RMSX/NoBIAS P-value maps.
+
+        Accepts common aliases and consensus suffix variants, and returns a
+        canonical uppercase family key used by converters.
+        """
+        key = str(motif_name or '').strip().upper()
+        if not key:
+            return key
+
+        key = key.replace(' ', '-').replace('_', '-')
+        if key.endswith('-CONSENSUS'):
+            key = key[:-10]
+
+        aliases = {
+            'KTURN': 'K-TURN',
+            'KINK-TURN': 'K-TURN',
+            'CLOOP': 'C-LOOP',
+            'SARCIN': 'SARCIN-RICIN',
+            'SARCINRICIN': 'SARCIN-RICIN',
+            'REVERSE-KTURN': 'REVERSE-K-TURN',
+            'REVERSEKTURN': 'REVERSE-K-TURN',
+            'ELOOP': 'E-LOOP',
+        }
+
+        no_dash = key.replace('-', '')
+        return aliases.get(key, aliases.get(no_dash, key))
+
+    def _is_placeholder_path(self, value: str) -> bool:
+        """Return True when a config path is clearly a template placeholder."""
+        text = str(value or '').strip()
+        if not text:
+            return False
+        upper = text.upper()
+        return ('ABSOLUTE/PATH' in upper) or ('/PATH/TO/' in upper) or upper.startswith('/ABSOLUTE/')
+
+    def _find_first_existing_path(self, candidates: List[Path]) -> str:
+        """Return first existing candidate path or empty string."""
+        for candidate in candidates:
+            if candidate.exists() and candidate.is_file():
+                return str(candidate.resolve())
+        return ''
+
+    def _build_internal_rmsx_config(self) -> Dict:
+        """Build Source-7 RMSX runtime config from bundled plugin assets."""
+        runtime_dir = Path(self.rmsx_runtime_dir)
+        bin_root = runtime_dir / 'bin'
+        queries_dir = runtime_dir / 'queries'
+
+        system = platform.system().lower()
+        machine = platform.machine().lower()
+        if system == 'darwin':
+            platform_dir = 'macos-arm64' if machine in ('arm64', 'aarch64') else 'macos-x86_64'
+        elif system == 'windows':
+            platform_dir = 'windows-x86_64'
+        else:
+            platform_dir = 'linux-x86_64'
+
+        platform_bin_dir = bin_root / platform_dir
+        candidate_bin_dirs = []
+        if platform_bin_dir.exists():
+            candidate_bin_dirs.append(platform_bin_dir)
+        if bin_root.exists():
+            for p in sorted(bin_root.iterdir()):
+                if p.is_dir() and p not in candidate_bin_dirs:
+                    candidate_bin_dirs.append(p)
+
+        rmsx_exe = ''
+        mc_exe = ''
+        for bdir in candidate_bin_dirs:
+            if not rmsx_exe:
+                rmsx_exe = self._find_first_existing_path([
+                    bdir / 'RNAMotifScanX',
+                    bdir / 'scan',
+                    bdir / 'RNAMotifScanX.exe',
+                    bdir / 'scan.exe',
+                ])
+            if not mc_exe:
+                mc_exe = self._find_first_existing_path([
+                    bdir / 'MC-Annotate',
+                    bdir / 'mc-annotate',
+                    bdir / 'MC-Annotate.exe',
+                    bdir / 'mc-annotate.exe',
+                ])
+            if rmsx_exe and mc_exe:
+                break
+
+        return {
+            'rmsx_executable': rmsx_exe,
+            'mc_annotate_executable': mc_exe,
+            'query_motifs_dir': str(queries_dir.resolve()) if queries_dir.exists() else '',
+            'cif_input_dir': '',
+            'output_dir': self.rmsx_output_path,
+            'auto_download_cif': False,
+            'motif_families': ['k-turn', 'c-loop', 'sarcin-ricin', 'reverse-kturn', 'e-loop'],
+            'target_chains': ['0'],
+            'max_strands': 3,
+            'num_threads': 4,
+        }
+
+    def _run_rmsx_runtime_setup(self, build: bool = False) -> Dict:
+        """Run integrated RMSX runtime doctor/setup script and return parsed report."""
+        setup_script = Path(self.rmsx_runtime_dir) / 'setup_runtime.py'
+        if not setup_script.exists():
+            return {
+                'ok': False,
+                'missing': ['setup_runtime.py'],
+                'setup_message': f'Missing setup script: {setup_script}',
+            }
+
+        cmdline = [
+            sys.executable,
+            str(setup_script),
+            '--runtime-dir',
+            self.rmsx_runtime_dir,
+            '--json',
+        ]
+        if build:
+            cmdline.append('--build')
+
+        try:
+            proc = subprocess.run(cmdline, capture_output=True, text=True, check=False)
+            output = (proc.stdout or '').strip()
+            if not output:
+                return {
+                    'ok': False,
+                    'missing': ['runtime setup output'],
+                    'setup_message': (proc.stderr or 'runtime setup produced no output').strip(),
+                }
+            report = json.loads(output)
+            return report
+        except Exception as e:
+            return {
+                'ok': False,
+                'missing': ['runtime setup execution'],
+                'setup_message': f'Failed to run setup script: {type(e).__name__}: {e}',
+            }
+
+    def ensure_rmsx_runtime_ready(self, auto_setup: bool = True) -> bool:
+        """Ensure integrated Source-7 runtime is present. Attempts setup once per session."""
+        report = self._run_rmsx_runtime_setup(build=False)
+        if report.get('ok'):
+            return True
+
+        if auto_setup and not self.rmsx_setup_attempted:
+            self.rmsx_setup_attempted = True
+            self.logger.info('RMSX runtime missing; attempting first-run setup...')
+            report = self._run_rmsx_runtime_setup(build=True)
+            if report.get('ok'):
+                self.logger.success('RMSX runtime setup completed successfully')
+                return True
+
+        missing = report.get('missing', []) or []
+        if missing:
+            self.logger.error(f"RMSX runtime is incomplete: {', '.join(str(x) for x in missing)}")
+        setup_message = str(report.get('setup_message', '') or '').strip()
+        if setup_message:
+            self.logger.error(setup_message)
+        self.logger.info('Run: rmv_rmsx_doctor')
+        return False
+
+    def rmsx_doctor(self, auto_setup: bool = False):
+        """Print integrated Source-7 runtime diagnostics."""
+        report = self._run_rmsx_runtime_setup(build=auto_setup)
+
+        print('\n' + '=' * 70)
+        print('RMSX Doctor')
+        print('=' * 70)
+        print(f"Runtime dir     : {self.rmsx_runtime_dir}")
+        print(f"Platform dir    : {report.get('platform_dir', '(unknown)')}")
+        print(f"Binary dir      : {report.get('bin_dir', '(unknown)')}")
+        print(f"RMSX executable : {report.get('rmsx_executable', '(missing)') or '(missing)'}")
+        print(f"MC-Annotate     : {report.get('mc_annotate_executable', '(missing)') or '(missing)'}")
+        print(f"Status          : {'OK' if report.get('ok') else 'NOT READY'}")
+
+        missing = report.get('missing', []) or []
+        if missing:
+            print('\nMissing items:')
+            for item in missing:
+                print(f"  - {item}")
+
+        mq = report.get('missing_queries', []) or []
+        if mq:
+            print('\nMissing query files:')
+            for item in mq:
+                print(f"  - {item}")
+
+        setup_message = str(report.get('setup_message', '') or '').strip()
+        if setup_message:
+            print(f"\nSetup message: {setup_message}")
+
+        print('\nHints:')
+        print('  - Put platform binaries into rsmviewer/tools/rmsx_runtime/bin/<platform>')
+        print('  - Then run rmv_rmsx run_current or rmv_load_motif with source 7 active')
+        print('=' * 70 + '\n')
+
     def _get_source_suffix(self):
         """Get source suffix for PyMOL object naming (e.g., '_S3' for source 3).
         Returns empty string if no source is explicitly set."""
@@ -157,7 +390,166 @@ class MotifVisualizerGUI:
                 return f"_S_{cid}"
             return f"_S{cid}"
         return ""
-    
+
+    def _load_fr3d_wrapper_config(self):
+        """Load persisted FR3D wrapper settings if available."""
+        try:
+            cfg_path = self.fr3d_config_file
+            if not cfg_path.exists():
+                return
+
+            with open(cfg_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            self.fr3d_root_path = str(data.get('fr3d_root_path', '') or '').strip()
+            self.fr3d_python_path = str(data.get('fr3d_python_path', '') or '').strip()
+            self.fr3d_input_path = str(data.get('fr3d_input_path', '') or '').strip()
+            output_path = str(data.get('fr3d_output_path', '') or '').strip()
+            if output_path:
+                self.fr3d_output_path = output_path
+        except Exception as e:
+            self.logger.warning(f"Could not read FR3D wrapper config from {self.fr3d_config_file}: {type(e).__name__}: {e}")
+
+    def _save_fr3d_wrapper_config(self):
+        """Persist FR3D wrapper settings."""
+        try:
+            self.fr3d_config_file.parent.mkdir(parents=True, exist_ok=True)
+            payload = {
+                'fr3d_root_path': self.fr3d_root_path,
+                'fr3d_python_path': self.fr3d_python_path,
+                'fr3d_input_path': self.fr3d_input_path,
+                'fr3d_output_path': self.fr3d_output_path,
+            }
+            with open(self.fr3d_config_file, 'w', encoding='utf-8') as f:
+                json.dump(payload, f, indent=2)
+        except Exception as e:
+            self.logger.warning(f"Could not save FR3D wrapper config to {self.fr3d_config_file}: {type(e).__name__}: {e}")
+
+    def print_fr3d_wrapper_status(self):
+        """Print current FR3D wrapper settings and quick usage hints."""
+        print("\n" + "=" * 70)
+        print("FR3D Wrapper Status")
+        print("=" * 70)
+        print(f"Output path    : {self.fr3d_output_path}")
+        print(f"Auto on fetch  : {'on' if self.fr3d_auto_run_on_fetch else 'off'}")
+
+        # Show local pipeline config if loaded
+        pipe_cfg = getattr(self, 'fr3d_pipeline_config', {})
+        pipe_path = getattr(self, 'fr3d_pipeline_config_path', '')
+        if pipe_path:
+            print(f"\nLocal Pipeline Config : {pipe_path}")
+            print(f"  FR3D dir     : {pipe_cfg.get('fr3d_python_dir', '(not set)')}")
+            print(f"  Python       : {pipe_cfg.get('python_executable', 'python3')}")
+            print(f"  CIF input    : {pipe_cfg.get('cif_input_dir', '(use output dir)') or '(use output dir)'}")
+            print(f"  Auto DL CIF  : {pipe_cfg.get('auto_download_cif', True)}")
+        else:
+            print(f"\nLocal Pipeline Config : (not set - will use BGSU download)")
+
+        print("\nCommands:")
+        print("  rmv_db 5 /path/to/fr3d_pipeline_config.json  Configure local FR3D pipeline")
+        print("  rmv_fr3d run <PDB_ID>     Run pipeline (local if configured, else BGSU download)")
+        print("  rmv_fr3d run_current      Run for the currently loaded PDB")
+        print("  rmv_fr3d status           Show this status")
+        print("\nExecution order for 'run':")
+        print("  1. If {PDB_ID}_fr3d_loops.csv already exists -> load directly (no run)")
+        print("  2. Elif local FR3D pipeline configured -> run locally (Motif Atlas approach)")
+        print("  3. Else -> download from https://rna.bgsu.edu/rna3dhub/loops/download/<PDB_ID>")
+        print("\nSkeleton config: RSMViewer/rsmviewer/tools/fr3d_pipeline_config.json")
+        print("=" * 70 + "\n")
+
+    def configure_fr3d_wrapper(self, fr3d_root: str, output_dir: str = '', input_dir: str = '', python_executable: str = ''):
+        """Set FR3D wrapper paths using absolute paths and persist them."""
+        if not fr3d_root:
+            self.logger.error("FR3D root path is required")
+            self.logger.info("Usage: rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [INPUT_DIR] [PYTHON]")
+            return False
+
+        expanded_root = os.path.abspath(os.path.expanduser(fr3d_root))
+        if not os.path.isdir(expanded_root):
+            self.logger.error(f"FR3D root directory not found: {expanded_root}")
+            return False
+
+        expected_pkg = os.path.join(expanded_root, 'fr3d', '__init__.py')
+        if not os.path.isfile(expected_pkg):
+            self.logger.error("Invalid FR3D root: expected fr3d package not found")
+            self.logger.info("Expected file: <FR3D_ROOT>/fr3d/__init__.py")
+            return False
+
+        self.fr3d_root_path = expanded_root
+
+        if output_dir:
+            self.fr3d_output_path = os.path.abspath(os.path.expanduser(output_dir))
+        if input_dir:
+            self.fr3d_input_path = os.path.abspath(os.path.expanduser(input_dir))
+        if python_executable:
+            self.fr3d_python_path = os.path.abspath(os.path.expanduser(python_executable))
+        elif not self.fr3d_python_path:
+            detected_python = self._auto_detect_fr3d_python()
+            if detected_python:
+                self.fr3d_python_path = detected_python
+
+        os.makedirs(self.fr3d_output_path, exist_ok=True)
+        if self.fr3d_input_path and not os.path.isdir(self.fr3d_input_path):
+            os.makedirs(self.fr3d_input_path, exist_ok=True)
+
+        if self.fr3d_python_path and not os.path.isfile(self.fr3d_python_path):
+            self.logger.error(f"Python executable not found: {self.fr3d_python_path}")
+            return False
+
+        self._save_fr3d_wrapper_config()
+
+        self.logger.success("FR3D wrapper configuration updated")
+        self.logger.info(f"FR3D root path: {self.fr3d_root_path}")
+        self.logger.info(f"Python path: {self.fr3d_python_path or '(auto-detect)'}")
+        self.logger.info(f"Output path: {self.fr3d_output_path}")
+        if self.fr3d_input_path:
+            self.logger.info(f"Input path: {self.fr3d_input_path}")
+        else:
+            self.logger.info("Input path: (empty, FR3D will auto-download when needed)")
+        return True
+
+    def _python_has_fr3d_deps(self, python_executable: str) -> bool:
+        """Check whether a candidate Python executable can import FR3D dependencies."""
+        if not python_executable or not os.path.isfile(python_executable):
+            return False
+
+        try:
+            result = subprocess.run(
+                [python_executable, '-c', 'import scipy, pdbx'],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=10,
+            )
+            return result.returncode == 0
+        except Exception:
+            return False
+
+    def _auto_detect_fr3d_python(self) -> str:
+        """Try to find a Python executable that can import scipy and pdbx."""
+        candidates = []
+
+        if self.fr3d_root_path:
+            venv_python = Path(self.fr3d_root_path) / '.fr3d-venv' / 'bin' / 'python'
+            candidates.append(str(venv_python))
+
+        if self.fr3d_python_path:
+            candidates.append(self.fr3d_python_path)
+        candidates.extend([
+            '/opt/homebrew/bin/python3',
+            '/usr/local/bin/python3',
+            sys.executable,
+        ])
+
+        seen = set()
+        for candidate in candidates:
+            candidate = os.path.abspath(os.path.expanduser(candidate))
+            if candidate in seen:
+                continue
+            seen.add(candidate)
+            if self._python_has_scipy(candidate):
+                return candidate
+        return ''
     def _get_current_source_motifs(self):
         """Return a *filtered copy* of loaded_motifs showing only instances
         belonging to the current PDB + source.
@@ -194,7 +586,7 @@ class MotifVisualizerGUI:
         return filtered
     
     def _build_auth_label_chain_mapping(self, pdb_id):
-        """Parse CIF file to build auth_asym_id → label_asym_id chain mapping.
+        """Parse CIF file to build auth_asym_id -> label_asym_id chain mapping.
         
         When cif_use_auth=0, PyMOL uses label_asym_id as 'chain' and loses
         auth_asym_id from the model. But all motif databases reference auth chains.
@@ -234,7 +626,7 @@ class MotifVisualizerGUI:
         mapping = {}
         
         try:
-            with open(cif_path, 'r') as f:
+            with open(cif_path, 'r', encoding='utf-8') as f:
                 for line in f:
                     stripped = line.strip()
                     
@@ -280,18 +672,739 @@ class MotifVisualizerGUI:
                             auth_id = tokens[auth_col]
                             label_id = tokens[label_col]
                             # Keep first mapping per auth chain (ATOM records come before HETATM,
-                            # so polymer chains are mapped first — correct for motif data)
+                            # so polymer chains are mapped first - correct for motif data)
                             if auth_id not in mapping:
                                 mapping[auth_id] = label_id
             
             if mapping:
-                self.logger.debug(f"CIF auth→label mapping ({len(mapping)} chains): "
+                self.logger.debug(f"CIF auth->label mapping ({len(mapping)} chains): "
                                  f"{dict(list(mapping.items())[:8])}")
             return mapping
             
         except Exception as e:
             self.logger.debug(f"Error parsing CIF for chain mapping: {e}")
             return {}
+
+    def _build_internal_fr3d_config(self) -> Dict:
+        """Build Source-5 FR3D runtime config from bundled runtime assets."""
+        runtime_dir = Path(self.fr3d_runtime_dir)
+        cache_dir = runtime_dir / 'cache'
+        scripts_dir = runtime_dir / 'scripts'
+        python_dir = runtime_dir / 'python'
+        bin_dir = runtime_dir / 'bin'
+
+        return {
+            'runtime_dir': str(runtime_dir.resolve()),
+            'fr3d_python_dir': self.fr3d_root_path,
+            'python_executable': self.fr3d_python_path or sys.executable,
+            'output_dir': self.fr3d_output_path,
+            'cache_dir': str(cache_dir.resolve()),
+            'scripts_dir': str(scripts_dir.resolve()),
+            'python_dir': str(python_dir.resolve()),
+            'bin_dir': str(bin_dir.resolve()),
+            'cif_input_dir': self.fr3d_input_path,
+            'auto_download_cif': True,
+            'loop_types': ['HL', 'IL', 'J3', 'J4', 'J5', 'J6', 'J7', 'J8'],
+        }
+
+    def _run_fr3d_runtime_setup(self, build: bool = False) -> Dict:
+        """Run integrated Source-5 runtime doctor/setup script and return parsed report."""
+        setup_script = Path(self.fr3d_runtime_dir) / 'setup_runtime.py'
+        if not setup_script.exists():
+            return {
+                'ok': False,
+                'runtime_mode': 'not_ready',
+                'missing': ['setup_runtime.py'],
+                'setup_message': f'Missing setup script: {setup_script}',
+                'fr3d_python_dir': '',
+                'python_executable': '',
+                'output_dir': self.fr3d_output_path,
+                'cache_dir': str((Path(self.fr3d_runtime_dir) / 'cache').resolve()),
+            }
+
+        cmdline = [
+            sys.executable,
+            str(setup_script),
+            '--runtime-dir',
+            self.fr3d_runtime_dir,
+            '--json',
+        ]
+        if build:
+            cmdline.append('--build')
+
+        try:
+            proc = subprocess.run(cmdline, capture_output=True, text=True, check=False)
+            output = (proc.stdout or '').strip()
+            if not output:
+                return {
+                    'ok': False,
+                    'runtime_mode': 'not_ready',
+                    'missing': ['runtime setup output'],
+                    'setup_message': (proc.stderr or 'runtime setup produced no output').strip(),
+                    'fr3d_python_dir': '',
+                    'python_executable': '',
+                    'output_dir': self.fr3d_output_path,
+                    'cache_dir': str((Path(self.fr3d_runtime_dir) / 'cache').resolve()),
+                }
+            return json.loads(output)
+        except Exception as e:
+            return {
+                'ok': False,
+                'runtime_mode': 'not_ready',
+                'missing': ['runtime setup execution'],
+                'setup_message': f'Failed to run setup script: {type(e).__name__}: {e}',
+                'fr3d_python_dir': '',
+                'python_executable': '',
+                'output_dir': self.fr3d_output_path,
+                'cache_dir': str((Path(self.fr3d_runtime_dir) / 'cache').resolve()),
+            }
+
+    def ensure_fr3d_runtime_ready(self, auto_setup: bool = True) -> bool:
+        """Ensure integrated Source-5 runtime is available for local pipeline execution."""
+        report = self._run_fr3d_runtime_setup(build=False)
+        if auto_setup and not self.fr3d_setup_attempted:
+            self.fr3d_setup_attempted = True
+            report = self._run_fr3d_runtime_setup(build=True)
+
+        setup_message = str(report.get('setup_message', '') or '').strip()
+        if setup_message:
+            self.logger.info(setup_message)
+
+        self.fr3d_root_path = str(report.get('fr3d_python_dir', '') or self.fr3d_root_path).strip()
+        self.fr3d_python_path = str(report.get('python_executable', '') or self.fr3d_python_path).strip()
+        output_dir = str(report.get('output_dir', '') or '').strip()
+        if output_dir:
+            self.fr3d_output_path = output_dir
+
+        if report.get('ok'):
+            return True
+
+        missing = report.get('missing', []) or []
+        if missing:
+            self.logger.error(f"FR3D runtime is incomplete: {', '.join(str(x) for x in missing)}")
+        self.logger.info('Run: rmv_fr3d doctor')
+        return False
+
+    def fr3d_doctor(self, auto_setup: bool = False):
+        """Print integrated Source-5 runtime diagnostics."""
+        report = self._run_fr3d_runtime_setup(build=auto_setup)
+
+        print('\n' + '=' * 70)
+        print('FR3D Doctor')
+        print('=' * 70)
+        print(f"Runtime dir     : {self.fr3d_runtime_dir}")
+        print(f"Runtime mode    : {report.get('runtime_mode', 'not_ready')}")
+        print(f"FR3D root       : {report.get('fr3d_python_dir', '(not found)') or '(not found)'}")
+        print(f"Python          : {report.get('python_executable', '(not found)') or '(not found)'}")
+        print(f"Output dir      : {report.get('output_dir', self.fr3d_output_path)}")
+        print(f"Cache dir       : {report.get('cache_dir', '(not set)')}")
+        print(f"Status          : {'LOCAL PIPELINE READY' if report.get('ok') else 'NOT READY'}")
+
+        missing = report.get('missing', []) or []
+        if missing:
+            print('\nMissing local runtime items:')
+            for item in missing:
+                print(f"  - {item}")
+
+        setup_message = str(report.get('setup_message', '') or '').strip()
+        if setup_message:
+            print(f"\nSetup message: {setup_message}")
+
+        print('\nHints:')
+        print('  - Normal workflow does not require manual config: rmv_db 5 -> rmv_fetch -> rmv_load_motif')
+        print('  - Source 5 runs local FR3D pipeline only (no BGSU fallback)')
+        print('  - Set FR3D_ROOT and FR3D_PYTHON env vars to enable local pipeline mode')
+        print('=' * 70 + '\n')
+
+    def _load_fr3d_wrapper_config(self):
+        """Load persisted FR3D wrapper settings if available."""
+        try:
+            cfg_path = self.fr3d_config_file
+            if not cfg_path.exists():
+                return
+
+            with open(cfg_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            self.fr3d_root_path = str(data.get('fr3d_root_path', '') or '').strip()
+            self.fr3d_input_path = str(data.get('fr3d_input_path', '') or '').strip()
+            self.fr3d_python_path = str(data.get('fr3d_python_path', '') or '').strip()
+            self.fr3d_auto_run_on_fetch = bool(data.get('fr3d_auto_run_on_fetch', False))
+            output_path = str(data.get('fr3d_output_path', '') or '').strip()
+            if output_path:
+                self.fr3d_output_path = output_path
+        except Exception as e:
+            self.logger.warning(f"Could not read FR3D wrapper config: {e}")
+
+    def _save_fr3d_wrapper_config(self):
+        """Persist FR3D wrapper settings."""
+        try:
+            self.fr3d_config_file.parent.mkdir(parents=True, exist_ok=True)
+            payload = {
+                'fr3d_root_path': self.fr3d_root_path,
+                'fr3d_python_path': self.fr3d_python_path,
+                'fr3d_input_path': self.fr3d_input_path,
+                'fr3d_output_path': self.fr3d_output_path,
+                'fr3d_auto_run_on_fetch': self.fr3d_auto_run_on_fetch,
+            }
+            with open(self.fr3d_config_file, 'w', encoding='utf-8') as f:
+                json.dump(payload, f, indent=2)
+        except Exception as e:
+            self.logger.warning(f"Could not save FR3D wrapper config: {e}")
+
+    def print_fr3d_wrapper_status(self):
+        """Print current FR3D wrapper settings and quick usage hints."""
+        report = self._run_fr3d_runtime_setup(build=False)
+        print("\n" + "=" * 70)
+        print("FR3D Wrapper Status")
+        print("=" * 70)
+        print(f"Runtime dir    : {self.fr3d_runtime_dir}")
+        print(f"Runtime mode   : {report.get('runtime_mode', 'not_ready')}")
+        print(f"FR3D tool path : {report.get('fr3d_python_dir', self.fr3d_root_path) or '(auto-detect)'}")
+        print(f"Python path    : {report.get('python_executable', self.fr3d_python_path) or '(auto-detect)'}")
+        print(f"Output path    : {self.fr3d_output_path}")
+        print(f"Auto on fetch  : {'on' if self.fr3d_auto_run_on_fetch else 'off'}")
+        print("\nCommands:")
+        print("  rmv_fr3d status               Show runtime status")
+        print("  rmv_fr3d doctor               Diagnose runtime readiness")
+        print("  rmv_fr3d setup                Run first-time runtime setup")
+        print("  rmv_fr3d refresh [PDB_ID]     Force rerun for current/specified PDB")
+        print("  rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [AUTO_ON_FETCH]  (advanced)")
+        print("  rmv_fr3d run <PDB_ID>         Run local FR3D pipeline")
+        print("  rmv_fr3d run_current          Run for the currently loaded PDB")
+        print("\nNormal workflow:")
+        print("  rmv_db 5 -> rmv_fetch <PDB_ID> -> rmv_load_motif")
+        print("  (always runs fresh pipeline; no cached FR3D result reuse)")
+        print("=" * 70 + "\n")
+
+    def configure_fr3d_wrapper(self, fr3d_root: str, output_dir: str = '', input_dir: str = '', python_executable: str = ''):
+        """Set FR3D wrapper settings and persist them.
+
+        Current motif pipeline uses BGSU loops download; FR3D root path is kept
+        as an optional compatibility setting for users who want a configured
+        local FR3D location in the plugin settings.
+        """
+        if fr3d_root:
+            expanded_root = os.path.abspath(os.path.expanduser(fr3d_root))
+            if not os.path.isdir(expanded_root):
+                self.logger.error(f"FR3D root directory not found: {expanded_root}")
+                return False
+            self.fr3d_root_path = expanded_root
+
+        if output_dir:
+            self.fr3d_output_path = os.path.abspath(os.path.expanduser(output_dir))
+
+        if input_dir:
+            auto_val = input_dir.strip().lower()
+            if auto_val in ('1', 'on', 'true', 'yes'):
+                self.fr3d_auto_run_on_fetch = True
+            elif auto_val in ('0', 'off', 'false', 'no'):
+                self.fr3d_auto_run_on_fetch = False
+            else:
+                self.logger.error("AUTO_ON_FETCH must be one of: on/off, true/false, 1/0")
+                return False
+
+        try:
+            os.makedirs(self.fr3d_output_path, exist_ok=True)
+        except Exception as e:
+            self.logger.error(f"Could not create FR3D output directory {self.fr3d_output_path}: {type(e).__name__}: {e}")
+            return False
+
+        self._save_fr3d_wrapper_config()
+
+        self.logger.success("FR3D wrapper configuration updated")
+        self.logger.info(f"FR3D tool path: {self.fr3d_root_path or '(not set)'}")
+        self.logger.info(f"Output path: {self.fr3d_output_path}")
+        self.logger.info(f"Auto run on rmv_fetch: {'on' if self.fr3d_auto_run_on_fetch else 'off'}")
+        return True
+    def _python_has_scipy(self, python_executable: str) -> bool:
+        """Check whether a candidate Python executable can import scipy."""
+        if not python_executable or not os.path.isfile(python_executable):
+            return False
+
+        try:
+            result = subprocess.run(
+                [python_executable, '-c', 'import scipy'],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=10,
+            )
+            return result.returncode == 0
+        except Exception:
+            return False
+
+    def _auto_detect_fr3d_python(self) -> str:
+        """Try to find a Python executable that can import scipy."""
+        candidates = []
+
+        if self.fr3d_root_path:
+            candidates.append(str(Path(self.fr3d_root_path) / '.fr3d-venv' / 'bin' / 'python'))
+
+        if self.fr3d_python_path:
+            candidates.append(self.fr3d_python_path)
+        candidates.extend([
+            '/opt/homebrew/bin/python3',
+            '/usr/local/bin/python3',
+            sys.executable,
+        ])
+
+        seen = set()
+        for candidate in candidates:
+            candidate = os.path.abspath(os.path.expanduser(candidate))
+            if candidate in seen:
+                continue
+            seen.add(candidate)
+            self.logger.debug(f"Checking FR3D Python candidate: {candidate}")
+            if self._python_has_fr3d_deps(candidate):
+                self.logger.debug(f"Selected FR3D Python interpreter: {candidate}")
+                return candidate
+
+        self.logger.error("No FR3D Python interpreter with scipy and pdbx was found.")
+        self.logger.info("Tried: local FR3D venv, /opt/homebrew/bin/python3, /usr/local/bin/python3, and the current interpreter.")
+        return ''
+
+    def _auto_detect_fr3d_root(self) -> str:
+        """Try to auto-detect a sibling fr3d-python checkout."""
+        here = Path(__file__).resolve()
+        candidates = [
+            here.parents[2] / 'fr3d-python',
+            here.parents[1] / 'fr3d-python',
+        ]
+        for candidate in candidates:
+            if (candidate / 'fr3d' / '__init__.py').exists():
+                return str(candidate)
+        return ''
+
+    def run_fr3d_wrapper(self, pdb_id: str, category: str = 'motif', force_refresh: bool = False):
+        """Run FR3D source-5 pipeline and load motifs.
+
+                Source-5 policy:
+                    - Always run local FR3D pipeline fresh.
+                    - Never reuse cached FR3D loop outputs.
+                    - Never fall back to BGSU loop download.
+        """
+        pdb_upper = str(pdb_id).strip().upper()
+        if not pdb_upper:
+            self.logger.error("PDB ID is required")
+            self.logger.info("Usage: rmv_fr3d run <PDB_ID>")
+            return False
+
+        try:
+            os.makedirs(self.fr3d_output_path, exist_ok=True)
+        except Exception as e:
+            self.logger.error(f"Could not create FR3D output directory {self.fr3d_output_path}: {type(e).__name__}: {e}")
+            return False
+
+        out_file = Path(self.fr3d_output_path) / f"{pdb_upper}_fr3d_loops.csv"
+
+        # Source-5 always runs fresh pipeline and does not reuse cached outputs.
+        if out_file.exists():
+            try:
+                out_file.unlink()
+                self.logger.info(f"Removed previous FR3D output: {out_file.name}")
+            except Exception as e:
+                self.logger.warning(f"Could not remove previous FR3D output {out_file.name}: {e}")
+
+        # -- Local FR3D pipeline --------------------------------------------
+        if not self.ensure_fr3d_runtime_ready(auto_setup=True):
+            return False
+        runtime_report = self._run_fr3d_runtime_setup(build=False)
+
+        pipeline_cfg = self._build_internal_fr3d_config()
+        pipeline_cfg['fr3d_python_dir'] = str(runtime_report.get('fr3d_python_dir', '') or self.fr3d_root_path).strip()
+        pipeline_cfg['python_executable'] = str(runtime_report.get('python_executable', '') or self.fr3d_python_path or sys.executable).strip()
+        pipeline_cfg['cache_dir'] = str(runtime_report.get('cache_dir', pipeline_cfg.get('cache_dir', '')) or '').strip()
+        pipeline_cfg['force_fresh'] = True
+
+        fr3d_dir = str(pipeline_cfg.get('fr3d_python_dir', '') or '').strip()
+        if not (fr3d_dir and os.path.isdir(fr3d_dir)):
+            self.logger.error("FR3D local runtime not found. Source 5 does not use BGSU fallback.")
+            self.logger.info("Use: rmv_fr3d doctor")
+            return False
+
+        self.logger.info(f"Running local FR3D pipeline fresh for {pdb_upper}...")
+        csv_path = self._run_fr3d_local_pipeline(pdb_upper, pipeline_cfg)
+        if not csv_path or not os.path.isfile(csv_path):
+            self.logger.error("Local FR3D pipeline failed and fallback is disabled.")
+            return False
+
+        # Ensure source 5 points to this output directory and load directly.
+        self.user_data_paths[5] = self.fr3d_output_path
+        self._handle_source_by_id(5, self.fr3d_output_path)
+        self.load_user_annotations_action('fr3d', pdb_upper, auto_pipeline=False)
+
+        loaded_motifs = self.viz_manager.motif_loader.get_loaded_motifs()
+        if loaded_motifs:
+            total_instances = sum(len(info.get('motif_details', [])) for info in loaded_motifs.values())
+            self.logger.success(f"Loaded FR3D motifs (fresh local pipeline): {len(loaded_motifs)} motif types, {total_instances} instances")
+            return True
+
+        self.logger.warning("FR3D pipeline generated output, but no motifs were loaded into RSMViewer.")
+        return False
+
+    def _run_fr3d_local_pipeline(self, pdb_id: str, config: dict) -> str:
+        """Run the local FR3D loop-extraction pipeline via fr3d_loop_extractor.py.
+
+        This implements the RNA 3D Motif Atlas pipeline locally:
+          1. Run NA_pairwise_interactions.py to annotate canonical cWW basepairs
+          2. Apply flankSS logic to extract hairpin (HL) and internal (IL) loops
+          3. Write {PDB_ID}_fr3d_loops.csv in BGSU format to the configured output dir
+
+        Args:
+            pdb_id : PDB ID (uppercase)
+            config : Parsed fr3d_pipeline_config.json dict
+
+        Returns:
+            Path to the output CSV file on success, empty string on failure.
+        """
+        try:
+            # Import the pipeline module from rsmviewer/tools/
+            tools_dir = str(Path(__file__).parent / 'tools')
+            if tools_dir not in sys.path:
+                sys.path.insert(0, tools_dir)
+
+            from fr3d_loop_extractor import run_pipeline  # type: ignore
+
+            # Resolve output directory (may have been set from config earlier)
+            out_dir = str(config.get('output_dir', '') or '').strip()
+            if not out_dir:
+                out_dir = self.fr3d_output_path
+            config_with_outdir = dict(config)
+            config_with_outdir['output_dir'] = out_dir
+
+            csv_path = run_pipeline(config_with_outdir, pdb_id)
+            return csv_path or ''
+
+        except ImportError as e:
+            self.logger.error(f"Could not import FR3D pipeline module: {e}")
+            return ''
+        except Exception as e:
+            self.logger.error(f"Local FR3D pipeline error: {type(e).__name__}: {e}")
+            return ''
+
+    def _load_rmsx_wrapper_config(self):
+        """Load persisted RNAMotifScanX wrapper settings if available."""
+        try:
+            cfg_path = self.rmsx_config_file
+            if not cfg_path.exists():
+                return
+
+            with open(cfg_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            self.rmsx_executable_path = str(data.get('rmsx_executable_path', '') or '').strip()
+            self.rmsx_working_dir = str(data.get('rmsx_working_dir', '') or '').strip()
+            self.rmsx_args_template = str(data.get('rmsx_args_template', '') or '').strip()
+            self.rmsx_auto_run_on_fetch = bool(data.get('rmsx_auto_run_on_fetch', False))
+            output_path = str(data.get('rmsx_output_path', '') or '').strip()
+            if output_path:
+                self.rmsx_output_path = output_path
+        except Exception as e:
+            self.logger.warning(f"Could not read RNAMotifScanX wrapper config: {e}")
+
+    def _save_rmsx_wrapper_config(self):
+        """Persist RNAMotifScanX wrapper settings."""
+        try:
+            self.rmsx_config_file.parent.mkdir(parents=True, exist_ok=True)
+            payload = {
+                'rmsx_executable_path': self.rmsx_executable_path,
+                'rmsx_working_dir': self.rmsx_working_dir,
+                'rmsx_output_path': self.rmsx_output_path,
+                'rmsx_args_template': self.rmsx_args_template,
+                'rmsx_auto_run_on_fetch': self.rmsx_auto_run_on_fetch,
+            }
+            with open(self.rmsx_config_file, 'w', encoding='utf-8') as f:
+                json.dump(payload, f, indent=2)
+        except Exception as e:
+            self.logger.warning(f"Could not save RNAMotifScanX wrapper config: {e}")
+
+    def _is_executable_runnable(self, executable_path: str) -> bool:
+        """Return True if an executable path exists and can be invoked."""
+        if not executable_path:
+            return False
+
+        expanded = os.path.abspath(os.path.expanduser(executable_path))
+        if not os.path.isfile(expanded):
+            return False
+
+        if not os.access(expanded, os.X_OK):
+            return False
+
+        try:
+            # We only care whether the process can start, not whether it exits 0.
+            subprocess.run(
+                [expanded],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=5,
+            )
+            return True
+        except subprocess.TimeoutExpired:
+            return True
+        except Exception:
+            return False
+
+    def print_rmsx_wrapper_status(self):
+        """Print current RNAMotifScanX wrapper settings and quick usage hints."""
+        print("\n" + "=" * 70)
+        print("RNAMotifScanX Wrapper Status")
+        print("=" * 70)
+        print(f"Executable path : {self.rmsx_executable_path or '(not set)'}")
+        print(f"Working dir     : {self.rmsx_working_dir or '(directory of executable)'}")
+        print(f"Output path     : {self.rmsx_output_path}")
+        print(f"Args template   : {self.rmsx_args_template or '(none)'}")
+        print(f"Auto on fetch   : {'on' if self.rmsx_auto_run_on_fetch else 'off'}")
+        print(f"Runtime dir     : {self.rmsx_runtime_dir}")
+        print("\nCommands:")
+        print("  rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+        print("  rmv_rmsx args <ARG_TEMPLATE>")
+        print("  rmv_rmsx doctor")
+        print("  rmv_rmsx setup")
+        print("  rmv_rmsx test")
+        print("  rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
+        print("  rmv_rmsx run_current [EXTRA_ARGS]")
+        print("\nTemplate placeholders:")
+        print("  {pdb_id} {pdb_lower} {output_dir} {work_dir}")
+        print("Example:")
+        print("  rmv_rmsx args --pdb {pdb_id} --out {output_dir}")
+        print("=" * 70 + "\n")
+
+    def configure_rmsx_wrapper(self, executable: str, output_dir: str = '', work_dir: str = '', auto_on_fetch: str = ''):
+        """Set RNAMotifScanX wrapper settings and persist them."""
+        if not executable:
+            self.logger.error("RNAMotifScanX executable path is required")
+            self.logger.info("Usage: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+            return False
+
+        expanded_exe = os.path.abspath(os.path.expanduser(executable))
+        if not os.path.isfile(expanded_exe):
+            self.logger.error(f"RNAMotifScanX executable not found: {expanded_exe}")
+            return False
+        if not os.access(expanded_exe, os.X_OK):
+            self.logger.error(f"RNAMotifScanX executable is not runnable: {expanded_exe}")
+            return False
+
+        self.rmsx_executable_path = expanded_exe
+
+        if output_dir:
+            self.rmsx_output_path = os.path.abspath(os.path.expanduser(output_dir))
+
+        if work_dir:
+            expanded_work = os.path.abspath(os.path.expanduser(work_dir))
+            if not os.path.isdir(expanded_work):
+                self.logger.error(f"Working directory not found: {expanded_work}")
+                return False
+            self.rmsx_working_dir = expanded_work
+
+        if auto_on_fetch:
+            auto_val = auto_on_fetch.strip().lower()
+            if auto_val in ('1', 'on', 'true', 'yes'):
+                self.rmsx_auto_run_on_fetch = True
+            elif auto_val in ('0', 'off', 'false', 'no'):
+                self.rmsx_auto_run_on_fetch = False
+            else:
+                self.logger.error("AUTO_ON_FETCH must be one of: on/off, true/false, 1/0")
+                return False
+
+        try:
+            os.makedirs(self.rmsx_output_path, exist_ok=True)
+        except Exception as e:
+            self.logger.error(f"Could not create RNAMotifScanX output directory {self.rmsx_output_path}: {type(e).__name__}: {e}")
+            return False
+
+        if not self._is_executable_runnable(self.rmsx_executable_path):
+            self.logger.error(f"Configured RNAMotifScanX executable failed test run: {self.rmsx_executable_path}")
+            return False
+
+        self._save_rmsx_wrapper_config()
+        self.logger.success("RNAMotifScanX wrapper configuration updated")
+        self.logger.info(f"Executable path: {self.rmsx_executable_path}")
+        self.logger.info(f"Working dir: {self.rmsx_working_dir or os.path.dirname(self.rmsx_executable_path)}")
+        self.logger.info(f"Output path: {self.rmsx_output_path}")
+        self.logger.info(f"Auto run on rmv_fetch: {'on' if self.rmsx_auto_run_on_fetch else 'off'}")
+        return True
+
+    def set_rmsx_args_template(self, arg_template: str):
+        """Set argument template used by rmv_rmsx run."""
+        self.rmsx_args_template = str(arg_template or '').strip()
+        self._save_rmsx_wrapper_config()
+        self.logger.success("RNAMotifScanX argument template updated")
+        self.logger.info(f"Template: {self.rmsx_args_template or '(none)'}")
+        return True
+
+    def test_rmsx_wrapper(self):
+        """Run executable sanity checks for RNAMotifScanX wrapper."""
+        if not self.rmsx_executable_path:
+            self.logger.error("RNAMotifScanX executable is not configured")
+            self.logger.info("Use: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+            return False
+
+        if not self._is_executable_runnable(self.rmsx_executable_path):
+            self.logger.error(f"RNAMotifScanX executable failed test run: {self.rmsx_executable_path}")
+            return False
+
+        self.logger.success("RNAMotifScanX executable is available and runnable")
+        return True
+
+    def run_rmsx_wrapper(self, pdb_id: str, extra_args: str = ''):
+        """Run configured RNAMotifScanX executable and load results from source 7."""
+        pdb_upper = str(pdb_id).strip().upper()
+        if not pdb_upper:
+            self.logger.error("PDB ID is required")
+            self.logger.info("Usage: rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
+            return False
+
+        if not self.ensure_rmsx_runtime_ready(auto_setup=True):
+            return False
+
+        # Preferred path: run integrated source-7 RMSX runtime config
+        rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
+        self.rmsx_pipeline_config = dict(rmsx_cfg)
+        if rmsx_cfg:
+            try:
+                tools_dir = str(Path(__file__).parent / 'tools')
+                if tools_dir not in sys.path:
+                    sys.path.insert(0, tools_dir)
+
+                from rmsx_runner import run_pipeline as rmsx_run  # type: ignore
+
+                # Ensure output_dir is always defined for predictable loading.
+                if not str(rmsx_cfg.get('output_dir', '') or '').strip():
+                    rmsx_cfg = dict(rmsx_cfg)
+                    rmsx_cfg['output_dir'] = self.rmsx_output_path
+
+                # Source 7 strict mode: always run fresh and never auto-download CIF.
+                rmsx_cfg = dict(rmsx_cfg)
+                rmsx_cfg['auto_download_cif'] = False
+
+                self.logger.info(f"Running RNAMotifScanX pipeline for {pdb_upper}...")
+                if extra_args:
+                    self.logger.info("Note: extra args are ignored when using pipeline config mode.")
+
+                results = rmsx_run(rmsx_cfg, pdb_upper, force_fresh=True)
+                if not results:
+                    out_dir = os.path.abspath(os.path.expanduser(str(rmsx_cfg.get('output_dir', self.rmsx_output_path))))
+                    if sys.platform == 'darwin':
+                        self.logger.warning(f"No RNAMotifScanX result files found for {pdb_upper} in {out_dir}.")
+                        self.logger.warning(
+                            "RNAMotifScanX execution is Linux x86-64 only. "
+                            "Generate results on Linux, then copy result_0_100_withbs.log files to this output directory."
+                        )
+                    else:
+                        self.logger.error(
+                            "RNAMotifScanX pipeline produced no result files. "
+                            "Check executable/query/database paths in the RMSX config."
+                        )
+                    return False
+
+                out_dir = os.path.abspath(os.path.expanduser(str(rmsx_cfg.get('output_dir', self.rmsx_output_path))))
+                self.rmsx_output_path = out_dir
+                self.user_data_paths[7] = out_dir
+
+                self._handle_source_by_id(7, out_dir)
+                self.load_user_annotations_action('rnamotifscanx', pdb_upper)
+
+                loaded_motifs = self.viz_manager.motif_loader.get_loaded_motifs()
+                if loaded_motifs:
+                    total_instances = sum(len(info.get('motif_details', [])) for info in loaded_motifs.values())
+                    self.logger.success(
+                        f"Loaded RNAMotifScanX motifs into RSMViewer: "
+                        f"{len(loaded_motifs)} motif types, {total_instances} instances"
+                    )
+                    self.logger.info(f"RMSX families available: {len(results)}")
+                    return True
+
+                self.logger.warning("RNAMotifScanX pipeline finished, but no motifs were loaded into RSMViewer.")
+                return False
+            except Exception as e:
+                self.logger.error(f"RNAMotifScanX pipeline execution failed: {type(e).__name__}: {e}")
+                return False
+
+        if not self.rmsx_executable_path:
+            self.logger.error("RNAMotifScanX executable is not configured")
+            self.logger.info("Use: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+            return False
+
+        if not self._is_executable_runnable(self.rmsx_executable_path):
+            self.logger.error(f"RNAMotifScanX executable is not runnable: {self.rmsx_executable_path}")
+            return False
+
+        try:
+            os.makedirs(self.rmsx_output_path, exist_ok=True)
+        except Exception as e:
+            self.logger.error(f"Could not create RNAMotifScanX output directory {self.rmsx_output_path}: {type(e).__name__}: {e}")
+            return False
+
+        work_dir = self.rmsx_working_dir or os.path.dirname(self.rmsx_executable_path)
+        if not work_dir or not os.path.isdir(work_dir):
+            self.logger.error(f"RNAMotifScanX working directory not found: {work_dir}")
+            return False
+
+        template_values = {
+            'pdb_id': pdb_upper,
+            'pdb_lower': pdb_upper.lower(),
+            'output_dir': self.rmsx_output_path,
+            'work_dir': work_dir,
+        }
+
+        args = []
+        if self.rmsx_args_template:
+            try:
+                rendered = self.rmsx_args_template.format(**template_values)
+            except KeyError as e:
+                self.logger.error(f"Unknown placeholder in RNAMotifScanX args template: {e}")
+                return False
+            args.extend(shlex.split(rendered))
+
+        if extra_args:
+            args.extend(shlex.split(extra_args))
+
+        command = [self.rmsx_executable_path] + args
+        self.logger.info(f"Running RNAMotifScanX wrapper for {pdb_upper}...")
+        self.logger.debug(f"RNAMotifScanX command: {' '.join(command)}")
+        self.logger.debug(f"RNAMotifScanX cwd: {work_dir}")
+
+        try:
+            proc = subprocess.run(
+                command,
+                cwd=work_dir,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to execute RNAMotifScanX: {type(e).__name__}: {e}")
+            return False
+
+        if proc.returncode != 0:
+            stderr_tail = (proc.stderr or '').strip().splitlines()[-10:]
+            stdout_tail = (proc.stdout or '').strip().splitlines()[-10:]
+            self.logger.error(f"RNAMotifScanX failed (exit code {proc.returncode})")
+            if stderr_tail:
+                self.logger.error("RNAMotifScanX stderr (last lines):")
+                for line in stderr_tail:
+                    self.logger.error(f"  {line}")
+            elif stdout_tail:
+                self.logger.error("RNAMotifScanX output (last lines):")
+                for line in stdout_tail:
+                    self.logger.error(f"  {line}")
+            return False
+
+        self.user_data_paths[7] = self.rmsx_output_path
+        self._handle_source_by_id(7, self.rmsx_output_path)
+        self.load_user_annotations_action('rnamotifscanx', pdb_upper)
+
+        loaded_motifs = self.viz_manager.motif_loader.get_loaded_motifs()
+        if loaded_motifs:
+            total_instances = sum(len(info.get('motif_details', [])) for info in loaded_motifs.values())
+            self.logger.success(f"Loaded RNAMotifScanX motifs into RSMViewer: {len(loaded_motifs)} motif types, {total_instances} instances")
+            return True
+
+        self.logger.warning("RNAMotifScanX finished, but no motifs were loaded into RSMViewer.")
+        self.logger.info("Check that output files exist under the configured output directory and match RNAMotifScanX format.")
+        return False
 
     def load_structure_action(self, pdb_id_or_path, background_color=None,
                               database=None):
@@ -449,13 +1562,13 @@ class MotifVisualizerGUI:
                 self.logger.warning(f"No motifs found for {pdb_id}")
                 return
             
-            # --- Normalise generic keys (HL, IL, J3…) → semantic types ----------
+            # --- Normalise generic keys (HL, IL, J3…) -> semantic types ----------
             # Atlas returns generic keys; this re-categorises them based on
             # per-instance annotation (same logic BGSU API uses).  Providers
             # that already return semantic keys (e.g. BGSU) pass through unchanged.
             available_motifs = _normalize_motif_groups(available_motifs)
             
-            # Use pre-built auth→label chain mapping (from CIF parsing in rmv_fetch)
+            # Use pre-built auth->label chain mapping (from CIF parsing in rmv_fetch)
             # When cif_use_auth=0, motif data has auth_asym_id chains but PyMOL has label_asym_id
             auth_to_label = self.auth_to_label_map if self.cif_use_auth == 0 else {}
             
@@ -836,7 +1949,7 @@ class MotifVisualizerGUI:
                 self.dedup_stats[sid] = (total_before, total_after)
                 if total_before != total_after:
                     self.logger.info(
-                        f"  [{sid}] Within-source dedup: {total_before} → {total_after} "
+                        f"  [{sid}] Within-source dedup: {total_before} -> {total_after} "
                         f"(removed {total_before - total_after} duplicates)")
                 raw_sources[sid] = deduped
             
@@ -949,7 +2062,7 @@ class MotifVisualizerGUI:
         
         return {}
     
-    def load_user_annotations_action(self, tool, pdb_id):
+    def load_user_annotations_action(self, tool, pdb_id, auto_pipeline: bool = True):
         """
         Load motifs from user-uploaded annotation files.
         
@@ -964,10 +2077,71 @@ class MotifVisualizerGUI:
             plugin_dir = Path(__file__).parent
             user_annotations_dir = plugin_dir / 'database' / 'user_annotations'
             provider = UserAnnotationProvider(str(user_annotations_dir))
+            self.logger.debug(f"User annotation loader initialized at {user_annotations_dir}")
             
             # SET ACTIVE TOOL FILTER BEFORE LOADING!
             provider.set_active_tool(tool)
-            
+            self.logger.debug(f"Active user annotation tool set to: {tool}")
+
+            tool_lower = tool.lower() if tool else ''
+
+            # -- FR3D auto-run pipeline (always fresh) ------------------------
+            # Source 5 intentionally mirrors RMSX behavior:
+            # - Always run the local pipeline on rmv_load_motif.
+            # - Do not reuse cached FR3D outputs.
+            # - Do not use BGSU fallback.
+            if tool_lower == 'fr3d' and auto_pipeline:
+                pdb_upper = pdb_id.strip().upper()
+                self.logger.info(
+                    f"Running FR3D pipeline fresh for {pdb_upper} (no cache, no fallback)..."
+                )
+                self.run_fr3d_wrapper(pdb_upper, force_refresh=True)
+                # run_fr3d_wrapper already loads the motifs if it succeeds,
+                # so we can return here to avoid double-loading.
+                return
+
+            # -- RMSX pipeline run (fresh, no cache/no download) --------------
+            # If source 7 (RMSX) is active with a pipeline config, always run
+            # the pipeline fresh for the currently loaded PDB before loading.
+            # This intentionally avoids cached results and external CIF download.
+            elif tool_lower in ['rmsx', 'rnamotifscanx']:
+                if not self.ensure_rmsx_runtime_ready(auto_setup=True):
+                    return
+                rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
+                self.rmsx_pipeline_config = dict(rmsx_cfg)
+                if rmsx_cfg:
+                    try:
+                        tools_dir = str(Path(__file__).parent / 'tools')
+                        if tools_dir not in sys.path:
+                            sys.path.insert(0, tools_dir)
+                        from rmsx_runner import run_pipeline as rmsx_run  # type: ignore
+                        pdb_upper = pdb_id.strip().upper()
+
+                        run_cfg = dict(rmsx_cfg)
+                        run_cfg['auto_download_cif'] = False
+
+                        families = rmsx_cfg.get('motif_families', [])
+                        out_dir = os.path.abspath(os.path.expanduser(str(run_cfg.get('output_dir', self.rmsx_output_path))))
+                        self.logger.info(
+                            f"Running RMSX pipeline fresh for {pdb_upper} (no cache, no external download) in {out_dir}..."
+                        )
+                        existing = rmsx_run(run_cfg, pdb_upper, force_fresh=True)
+
+                        if existing:
+                            self.logger.info(
+                                f"RMSX fresh run complete: {len(existing)}/{len(families) or len(existing)} families"
+                            )
+                        else:
+                            self.logger.warning(
+                                "RMSX fresh run produced no result files. "
+                                "Ensure rmsx_executable, mc_annotate_executable, query_motifs_dir are configured "
+                                "and CIF is available locally (auto_download_cif is forced off for source 7)."
+                            )
+                            return
+                    except Exception as _rmsx_e:
+                        self.logger.debug(f"RMSX pipeline check error: {_rmsx_e}")
+            # ----------------------------------------------------------------
+
             # If custom data path is set for this source, override the tool directory
             _udp = self.user_data_paths.get(self.current_source_id)
             if _udp:
@@ -979,11 +2153,14 @@ class MotifVisualizerGUI:
                     'fr3d': 'fr3d',
                     'nobias': 'NoBIAS',
                 }
-                internal_tool = tool_name_map.get(tool.lower(), tool)
+                internal_tool = tool_name_map.get(tool_lower, tool)
                 provider.override_tool_dirs[internal_tool] = Path(_udp)
+                if tool_lower == 'fr3d':
+                    self.logger.info(f"Using custom FR3D data path: {_udp}")
+                else:
+                    self.logger.info(f"Using custom data path for {tool.upper()}: {_udp}")
             
             # Set filtering state based on current settings (for RMS, RMSX, and NoBIAS)
-            tool_lower = tool.lower() if tool else ''
             if tool_lower in ['rms', 'rnamotifscan']:
                 provider.apply_rms_filtering = self.user_rms_filtering_enabled
                 provider.set_rms_custom_pvalues(self.user_rms_custom_pvalues)
@@ -1000,7 +2177,22 @@ class MotifVisualizerGUI:
             
             if not available_motifs:
                 self.logger.warning(f"No {tool.upper()} annotation files found for {pdb_id}")
-                self.logger.info(f"Please place files in: database/user_annotations/{tool}/")
+                if tool_lower == 'fr3d':
+                    self.logger.info(f"Checked FR3D annotation path: {_udp or user_annotations_dir / 'fr3d'}")
+                    self.logger.info("Expected either FR3D CSV motif files or FR3D pairwise TXT output.")
+                    self.logger.info("If you just ran rmv_fr3d, confirm the output directory contains a matching file.")
+                else:
+                    rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) if tool_lower in ['rmsx', 'rnamotifscanx'] else {}
+                    configured_out = str(rmsx_cfg.get('output_dir', '') or '').strip()
+                    expected_root = _udp or configured_out or str(user_annotations_dir / 'RNAMotifScanX')
+                    if tool_lower in ['rmsx', 'rnamotifscanx']:
+                        self.logger.info(f"Checked RMSX path: {expected_root}")
+                        self.logger.info(
+                            "Expected files per family, e.g. "
+                            "<output_dir>/k-turn_consensus/result_0_100_withbs.log"
+                        )
+                    else:
+                        self.logger.info(f"Please place files in: {expected_root}")
                 return
             
             # Structure name is the raw PDB name (set by rmv_fetch, no source suffix)
@@ -1081,6 +2273,9 @@ class MotifVisualizerGUI:
                             'residues': residues_to_use,
                             'annotation': instance.annotation,
                             'metadata': instance_metadata,
+                            '_source_suffix': source_suffix,
+                            '_pdb_id': pdb_id_upper,
+                            '_structure_name': structure_name,
                         })
                         
                         
@@ -1140,8 +2335,57 @@ class MotifVisualizerGUI:
             for mtype_key, mtype_info in motif_summary.items():
                 mtype_info['motif_details'].sort(key=_get_min_residue)
             
-            # Store in viz_manager
-            self.viz_manager.motif_loader.loaded_motifs = motif_summary
+            # Accumulate into existing loaded_motifs (supports cross-PDB and
+            # multi-source workflows).  Loading a user-annotation source must NOT
+            # wipe motif data previously loaded from other sources/PDBs, otherwise
+            # cross-source superimposition (e.g. rmv_super K-TURN 1S72_S7, 1S72_S3)
+            # would silently lose instances while the tag registry still
+            # advertises them.  Display commands filter to the current source.
+            existing_loaded = self.viz_manager.motif_loader.loaded_motifs
+
+            # --- Clean sweep: remove ALL instances matching this PDB+suffix ---
+            for key in list(existing_loaded.keys()):
+                ex = existing_loaded[key]
+                ex['motif_details'] = [
+                    d for d in ex.get('motif_details', [])
+                    if not (d.get('_pdb_id', ex.get('pdb_id', '')) == pdb_id_upper
+                            and d.get('_source_suffix', ex.get('source_suffix', '')) == source_suffix)
+                ]
+                ex['count'] = len(ex['motif_details'])
+                if not ex['motif_details']:
+                    del existing_loaded[key]
+
+            for key, new_info in motif_summary.items():
+                if key in existing_loaded:
+                    ex = existing_loaded[key]
+                    new_suffix = new_info.get('source_suffix', '')
+                    new_pdb = new_info.get('pdb_id', '')
+                    ex['motif_details'] = [
+                        d for d in ex['motif_details']
+                        if not (d.get('_pdb_id', ex.get('pdb_id', '')) == new_pdb
+                                and d.get('_source_suffix', ex.get('source_suffix', '')) == new_suffix)
+                    ]
+                    ex['motif_details'].extend(new_info['motif_details'])
+                    ex['motifs'].extend(new_info.get('motifs', []))
+                    ex['count'] = len(ex['motif_details'])
+                    new_sel = new_info.get('main_selection', '')
+                    if new_sel:
+                        if ex.get('main_selection'):
+                            ex['main_selection'] = f"{ex['main_selection']} or {new_sel}"
+                        else:
+                            ex['main_selection'] = new_sel
+                    ex['object_name'] = None
+                    ex['visible'] = False
+                else:
+                    existing_loaded[key] = new_info
+
+            # Re-sort after accumulation
+            for mtype_key, mtype_info in existing_loaded.items():
+                mtype_info['motif_details'].sort(key=_get_min_residue)
+
+            # Register this PDB+source combo for cross-PDB tracking
+            if source_suffix:
+                self.loaded_sources.add((pdb_id_upper, source_suffix))
             
             # CRITICAL: Also set structure_loader fields so rmv_save can find them
             self.viz_manager.structure_loader.current_structure = structure_name
@@ -1160,7 +2404,9 @@ class MotifVisualizerGUI:
                 self.logger.info("")
             
         except Exception as e:
-            self.logger.error(f"Failed to load user annotations: {str(e)}")
+            self.logger.error(f"Failed to load user annotations for tool={tool}, pdb_id={pdb_id}: {type(e).__name__}: {e}")
+            if tool and str(tool).lower() == 'fr3d':
+                self.logger.info("FR3D loading failed after execution; check the output file format and selected Python interpreter.")
             import traceback
             traceback.print_exc()
     
@@ -1568,7 +2814,7 @@ class MotifVisualizerGUI:
     def print_sources(self):
         """Print available data sources with ID numbers - new format."""
         print("\n" + "="*80)
-        print("  🗄️  AVAILABLE DATA SOURCES")
+        print("  [DB]  AVAILABLE DATA SOURCES")
         print("="*80)
         
         try:
@@ -1652,95 +2898,102 @@ class MotifVisualizerGUI:
         print("="*80 + "\n")
     
     def print_help(self):
-        """Print all available commands in box format (24 commands total)."""
-        print("\n" + "┌" + "─"*78 + "┐")
-        print("│" + "  RSMViewer v1.0.0 — COMMAND REFERENCE (24 commands)".center(78) + "│")
-        print("│" + "  Last Updated: 02 April 2026".center(78) + "│")
-        print("└" + "─"*78 + "┘\n")
+        """Print all available commands in box format."""
+        print("\n" + "+" + "-"*78 + "+")
+        print("|" + "  RSMViewer v1.0.0 - COMMAND REFERENCE".center(78) + "|")
+        print("|" + "  Last Updated: 02 April 2026".center(78) + "|")
+        print("+" + "-"*78 + "+\n")
         
-        print("┌" + "─"*78 + "┐")
-        print("│  🔧 DATABASE SELECTION                                                  │")
-        print("├" + "─"*78 + "┤")
-        print("│  rmv_sources               List all available data sources (1-8)        │")
-        print("│  rmv_db <N>                Select motif data source by ID (1-8)          │")
-        print("│  rmv_db <N> <N>            Combine multiple sources (e.g., 8 7)         │")
-        print("│  rmv_db <N> /path/to/data  Use custom data path (sources 5-8)           │")
-        print("│  rmv_db <N> <N>, jaccard_threshold=0.80  Set merge threshold            │")
-        print("├" + "─"*78 + "┤")
-        print("│  📥 LOADING & DATA                                                      │")
-        print("├" + "─"*78 + "┤")
-        print("│  rmv_fetch <PDB_ID>        Load PDB structure (no motif data)            │")
-        print("│  rmv_fetch /path/to/file   Load local PDB or mmCIF file                  │")
-        print("│  rmv_fetch <ID> cif_use_auth=0  Load with label_asym_id chains          │")
-        print("│  rmv_load_motif            Fetch motif data from selected source         │")
-        print("│  rmv_load <PDB_ID>         Legacy: show workflow guide                  │")
-        print("│  rmv_refresh               Force refresh cache and collect again       │")
-        print("├" + "─"*78 + "┤")
-        print("│  🎨 VISUALIZATION                                                       │")
-        print("├" + "─"*78 + "┤")
-        print("│  rmv_show ALL              Show all motif types with objects            │")
-        print("│  rmv_show <TYPE>           Highlight all instances of a motif type      │")
-        print("│  rmv_show <TYPE> <NO>      Zoom to specific instance with details       │")
-        print("│  rmv_show <TYPE> 1,3,5     Show multiple specific instances             │")
-        print("│  rmv_show <TYPE>, padding=N  Expand residue ranges ±N for visualization │")
-        print("│  rmv_view all              Highlight all motif regions on structure     │")
-        print("│  rmv_view <TYPE>           Zoom to motif regions (no objects created)   │")
-        print("│  rmv_view <TYPE> <NO>      Zoom to instance & create selection          │")
-        print("│  rmv_view hide             Reset all view coloring to gray              │")
-        print("│  rmv_view <TYPE> hide      Reset coloring for a specific motif type     │")
-        print("│  rmv_toggle <TYPE> on/off  Toggle motif visibility                      │")
-        print("│  rmv_bg_color <COLOR>      Change background (non-motif) color          │")
-        print("│  rmv_color <TYPE> <COLOR>  Change motif color                           │")
-        print("│  rmv_colors                Show color legend for motif types             │")
-        print("├" + "─"*78 + "┤")
-        print("│  💾 SAVE & EXPORT COMMANDS                                              │")
-        print("├" + "─"*78 + "┤")
-        print("│  rmv_save ALL [rep]        Save all motif instance images to disk        │")
-        print("│  rmv_save <TYPE> [rep]     Save all instances of specific motif type    │")
-        print("│  rmv_save <TYPE> <NO> [rep]Save specific motif instance by ID           │")
-        print("│                            (Saves MOTIF ONLY - no background structure) │")
-        print("│  rmv_save current          Save current PyMOL view (like png command)   │")
-        print("│  rmv_save current <FILE>   Save current view to specific filename       │")
-        print("│  [rep]: cartoon (default), sticks, spheres, ribbon, lines, etc.         │")
-        print("│                            (Output: plugin_dir/motif_images/pdb_id/)    │")
-        print("│                                                                          │")
-        print("│  mmCIF Structure Export (original coordinates from disk):                │")
-        print("│  rmv_save ALL cif          Export all motif structures as mmCIF          │")
-        print("│  rmv_save <TYPE> cif       Export all instances of type as mmCIF         │")
-        print("│  rmv_save <TYPE> <NO> cif  Export specific instance as mmCIF             │")
-        print("│                            (Output: plugin_dir/motif_structures/pdb_id/)│")
-        print("├" + "─"*78 + "┤")
-        print("│  📊 INFORMATION COMMANDS                                                │")
-        print("├" + "─"*78 + "┤")
-        print("│  rmv_summary               Show all motif types & counts                 │")
-        print("│  rmv_summary <TYPE>        Show instances of specific type               │")
-        print("│  rmv_summary <TYPE> <NO>   Show specific instance details                │")
-        print("│  rmv_source info           Show currently selected source                 │")
-        print("│  rmv_source info <N>       Show detailed info about source N              │")
-        print("│  rmv_chains [structure]    Show chain ID diagnostics (auth/label mapping)│")
-        print("│  rmv_loaded                Show loaded PDB+source combination tags       │")
-        print("│  rmv_reset                 Reset plugin: delete all objects & clear state │")
-        print("│  rmv_help                  Show this command reference                   │")
-        print("├" + "─"*78 + "┤")
-        print("│  📁 USER ANNOTATIONS (Sources 5-8)                                      │")
-        print("├" + "─"*78 + "┤")
-        print("│  rmv_user <TOOL> <PDB_ID>  Load FR3D/RMS/RMSX/NoBIAS annotations       │")
-        print("│  rmv_db <N> /path/to/data  Use custom data directory (any source 1-8)   │")
-        print("│  rmv_db 7 off              Disable P-value filtering                    │")
-        print("│  rmv_db 7 on               Enable P-value filtering                     │")
-        print("│  rmv_db 7 MOTIF 0.01       Set custom P-value threshold for motif       │")
-        print("├" + "─"*78 + "┤")
-        print("│  🔬 STRUCTURAL SUPERIMPOSITION                                          │")
-        print("├" + "─"*78 + "┤")
-        print("│  rmv_super <TYPE>              Medoid superimposition (all instances)     │")
-        print("│  rmv_super <TYPE>, PDB1_SN, PDB2_SN  Cross-PDB superimposition          │")
-        print("│  rmv_super <TYPE> 1,3,5        Superimpose specific instances only        │")
-        print("│  rmv_super <TYPE>, padding=N   Expand residue ranges ±N for objects      │")
-        print("│  rmv_align <TYPE>              Same as rmv_super but sequence-dependent   │")
-        print("└" + "─"*78 + "┘")
+        print("+" + "-"*78 + "+")
+        print("|  [DB] DATABASE SELECTION                                                  |")
+        print("+" + "-"*78 + "+")
+        print("|  rmv_sources               List all available data sources (1-8)        |")
+        print("|  rmv_db <N>                Select motif data source by ID (1-8)          |")
+        print("|  rmv_db <N> <N>            Combine multiple sources (e.g., 8 7)         |")
+        print("|  rmv_db <N> /path/to/data  Use custom data path (sources 5-8)           |")
+        print("|  rmv_db <N> <N>, jaccard_threshold=0.80  Set merge threshold            |")
+        print("+" + "-"*78 + "+")
+        print("|  [LD] LOADING & DATA                                                      |")
+        print("+" + "-"*78 + "+")
+        print("|  rmv_fetch <PDB_ID>        Load PDB structure (no motif data)            |")
+        print("|  rmv_fetch /path/to/file   Load local PDB or mmCIF file                  |")
+        print("|  rmv_fetch <ID> cif_use_auth=0  Load with label_asym_id chains          |")
+        print("|  rmv_load_motif            Fetch motif data from selected source         |")
+        print("|  rmv_load <PDB_ID>         Legacy: show workflow guide                  |")
+        print("|  rmv_refresh               Force refresh cache and collect again       |")
+        print("+" + "-"*78 + "+")
+        print("|  [VZ] VISUALIZATION                                                       |")
+        print("+" + "-"*78 + "+")
+        print("|  rmv_show ALL              Show all motif types with objects            |")
+        print("|  rmv_show <TYPE>           Highlight all instances of a motif type      |")
+        print("|  rmv_show <TYPE> <NO>      Zoom to specific instance with details       |")
+        print("|  rmv_show <TYPE> 1,3,5     Show multiple specific instances             |")
+        print("|  rmv_show <TYPE>, padding=N  Expand residue ranges +/-N for visualization |")
+        print("|  rmv_view all              Highlight all motif regions on structure     |")
+        print("|  rmv_view <TYPE>           Zoom to motif regions (no objects created)   |")
+        print("|  rmv_view <TYPE> <NO>      Zoom to instance & create selection          |")
+        print("|  rmv_view hide             Reset all view coloring to gray              |")
+        print("|  rmv_view <TYPE> hide      Reset coloring for a specific motif type     |")
+        print("|  rmv_toggle <TYPE> on/off  Toggle motif visibility                      |")
+        print("|  rmv_bg_color <COLOR>      Change background (non-motif) color          |")
+        print("|  rmv_color <TYPE> <COLOR>  Change motif color                           |")
+        print("|  rmv_colors                Show color legend for motif types             |")
+        print("+" + "-"*78 + "+")
+        print("|  [SV] SAVE & EXPORT COMMANDS                                              |")
+        print("+" + "-"*78 + "+")
+        print("|  rmv_save ALL [rep]        Save all motif instance images to disk        |")
+        print("|  rmv_save <TYPE> [rep]     Save all instances of specific motif type    |")
+        print("|  rmv_save <TYPE> <NO> [rep]Save specific motif instance by ID           |")
+        print("|                            (Saves MOTIF ONLY - no background structure) |")
+        print("|  rmv_save current          Save current PyMOL view (like png command)   |")
+        print("|  rmv_save current <FILE>   Save current view to specific filename       |")
+        print("|  [rep]: cartoon (default), sticks, spheres, ribbon, lines, etc.         |")
+        print("|                            (Output: plugin_dir/motif_images/pdb_id/)    |")
+        print("|                                                                          |")
+        print("|  mmCIF Structure Export (original coordinates from disk):                |")
+        print("|  rmv_save ALL cif          Export all motif structures as mmCIF          |")
+        print("|  rmv_save <TYPE> cif       Export all instances of type as mmCIF         |")
+        print("|  rmv_save <TYPE> <NO> cif  Export specific instance as mmCIF             |")
+        print("|                            (Output: plugin_dir/motif_structures/pdb_id/)|")
+        print("+" + "-"*78 + "+")
+        print("|  [IF] INFORMATION COMMANDS                                                |")
+        print("+" + "-"*78 + "+")
+        print("|  rmv_summary               Show all motif types & counts                 |")
+        print("|  rmv_summary <TYPE>        Show instances of specific type               |")
+        print("|  rmv_summary <TYPE> <NO>   Show specific instance details                |")
+        print("|  rmv_source info           Show currently selected source                 |")
+        print("|  rmv_source info <N>       Show detailed info about source N              |")
+        print("|  rmv_chains [structure]    Show chain ID diagnostics (auth/label mapping)|")
+        print("|  rmv_loaded                Show loaded PDB+source combination tags       |")
+        print("|  rmv_reset                 Reset plugin: delete all objects & clear state |")
+        print("|  rmv_help                  Show this command reference                   |")
+        print("+" + "-"*78 + "+")
+        print("|  [AN] USER ANNOTATIONS (Sources 5-8)                                      |")
+        print("+" + "-"*78 + "+")
+        print("|  rmv_user <TOOL> <PDB_ID>  Load FR3D/RMS/RMSX/NoBIAS annotations       |")
+        print("|  rmv_fr3d status           Show FR3D wrapper configuration              |")
+        print("|  rmv_fr3d config <ROOT>    Configure local FR3D absolute path(s)        |")
+        print("|  rmv_fr3d run <PDB_ID>     Download FR3D structural motifs (BGSU)       |")
+        print("|  rmv_rmsx status           Show integrated RNAMotifScanX runtime status |")
+        print("|  rmv_rmsx_doctor           Diagnose RMSX runtime & dependencies          |")
+        print("|  rmv_rmsx setup            Attempt automatic RMSX runtime setup          |")
+        print("|  rmv_rmsx run <PDB_ID>     Run integrated RNAMotifScanX pipeline        |")
+        print("|  rmv_db <N> /path/to/data  Use custom data directory (any source 1-8)   |")
+        print("|  rmv_db 7 off              Disable P-value filtering                    |")
+        print("|  rmv_db 7 on               Enable P-value filtering                     |")
+        print("|  rmv_db 7 MOTIF 0.01       Set custom P-value threshold for motif       |")
+        print("+" + "-"*78 + "+")
+        print("|  [SP] STRUCTURAL SUPERIMPOSITION                                          |")
+        print("+" + "-"*78 + "+")
+        print("|  rmv_super <TYPE>              Medoid superimposition (current PDB+src)   |")
+        print("|  rmv_super <TYPE>, PDB1_SN, PDB2_SN  Cross-PDB superimposition          |")
+        print("|  rmv_super <TYPE> 1,3,5        Superimpose specific instances only        |")
+        print("|  rmv_super <TYPE>, padding=N   Expand residue ranges +/-N for objects      |")
+        print("|  rmv_align <TYPE>              Same as rmv_super but sequence-dependent   |")
+        print("+" + "-"*78 + "+")
         
         print("\n  QUICK EXAMPLES:")
-        print("  ───────────────")
+        print("  ---------------")
         print("  1. Standard workflow (recommended):")
         print("     rmv_fetch 1S72            # Load PDB structure")
         print("     rmv_sources               # Check available data sources")
@@ -1777,16 +3030,21 @@ class MotifVisualizerGUI:
         print("     rmv_show K-TURN           # Render (with source attribution)")
         print()
         print("  6. Cross-PDB superimposition:")
-        print("     rmv_fetch 1S72 && rmv_db 3 && rmv_load_motif")
-        print("     rmv_fetch 4V88 && rmv_load_motif")
+        print("     rmv_fetch 1S72; rmv_db 3; rmv_load_motif")
+        print("     rmv_fetch 4V9F; rmv_load_motif")
         print("     rmv_loaded                # See all loaded tags")
-        print("     rmv_super K-TURN, 1S72_S3, 4V88_S3")
+        print("     rmv_super K-TURN, 1S72_S3, 4V9F_S3")
         print()
         print("  7. Export images + structures:")
         print("     rmv_save ALL               Save all motif images (PNG)")
         print("     rmv_save ALL cif           Export all structures (mmCIF)")
         print("     rmv_save HL 3 cif          Export HL instance #3")
         print("     rmv_save current           Save current view (high-res)")
+        print()
+        print("  8. Run FR3D locally, then visualize immediately:")
+        print("     rmv_fr3d config /abs/path/to/fr3d-python")
+        print("     rmv_fr3d run_current       # Uses currently loaded PDB")
+        print("     rmv_summary                # Shows FR3D interaction families")
         print()
 
 
@@ -1853,7 +3111,7 @@ class MotifVisualizerGUI:
                 database_id = 'Online APIs'
         
         elif self.current_source_mode == 'auto':
-            database_id = 'Auto-selected (Local First → API)'
+            database_id = 'Auto-selected (Local First -> API)'
         
         elif self.current_source_mode == 'combine':
             database_id = 'Combined (Multiple Sources)'
@@ -1882,6 +3140,8 @@ class MotifVisualizerGUI:
             print("\nNo motifs loaded. Use 'rmv_fetch <PDB_ID>' first.\n")
             return
         
+        motif_arg = self._resolve_loaded_motif_type(motif_arg, loaded_motifs)
+
         if motif_arg not in loaded_motifs:
             available = ', '.join(loaded_motifs.keys())
             print(f"\nMotif type '{motif_arg}' not loaded.")
@@ -1979,7 +3239,7 @@ class MotifVisualizerGUI:
                 sid_for_label[lbl] = sid
 
         print("\n" + "-" * 70)
-        print(f"  INSTANCES BY SOURCE — {motif_type}")
+        print(f"  INSTANCES BY SOURCE - {motif_type}")
         print("-" * 70)
 
         # Show within-source deduplication counts if available
@@ -1991,7 +3251,7 @@ class MotifVisualizerGUI:
                     before, after = self.dedup_stats[sid]
                     removed = before - after
                     if removed > 0:
-                        print(f"    {label}: {before} → {after} (removed {removed} duplicates)")
+                        print(f"    {label}: {before} -> {after} (removed {removed} duplicates)")
                     else:
                         print(f"    {label}: {after} (no duplicates)")
             # Also show labels not in source_only (they may only appear in shared)
@@ -2002,7 +3262,7 @@ class MotifVisualizerGUI:
                         before, after = self.dedup_stats[sid]
                         removed = before - after
                         if removed > 0:
-                            print(f"    {label}: {before} → {after} (removed {removed} duplicates)")
+                            print(f"    {label}: {before} -> {after} (removed {removed} duplicates)")
                         else:
                             print(f"    {label}: {after} (no duplicates)")
 
@@ -2024,12 +3284,69 @@ class MotifVisualizerGUI:
         print(f"\n  Total merged instances: {total}")
         print("-" * 70)
 
+    def _resolve_loaded_motif_type(self, motif_type: str, loaded_motifs: Optional[Dict] = None) -> str:
+        """Resolve user motif aliases (HL/IL/Jn) to an available loaded motif key.
+
+        This keeps CLI examples stable across sources where keys may be short
+        aliases (e.g., HL) or semantic names (e.g., HAIRPIN LOOP).
+        """
+        raw = str(motif_type or '').strip()
+        if not raw:
+            return raw
+
+        if loaded_motifs is None:
+            loaded_motifs = self._get_current_source_motifs() or {}
+
+        if not loaded_motifs:
+            return raw.upper()
+
+        def _norm(s: str) -> str:
+            return ''.join(ch for ch in (s or '').upper() if ch.isalnum())
+
+        target = raw.upper()
+        target_norm = _norm(target)
+
+        # 1) Exact canonical match (case/space/punctuation-insensitive)
+        for key in loaded_motifs.keys():
+            if _norm(key) == target_norm:
+                return key
+
+        # 2) Common loop aliases used in help/docs
+        loop_aliases = {
+            'HL': ['HAIRPIN LOOP', 'HAIRPINLOOP', 'HAIRPIN'],
+            'IL': ['INTERNAL LOOP', 'INTERNALLOOP', 'INTERNAL'],
+        }
+        junction_match = re.fullmatch(r'J(\d+)', target)
+        if junction_match:
+            n = junction_match.group(1)
+            loop_aliases[target] = [f'{n}-WAY JUNCTION', f'{n}WAYJUNCTION', f'{n} WAY JUNCTION']
+
+        for alias, candidates in loop_aliases.items():
+            if target != alias:
+                continue
+            candidate_norms = {_norm(c) for c in candidates}
+            for key in loaded_motifs.keys():
+                key_upper = key.upper()
+                key_norm = _norm(key_upper)
+                key_no_parens_norm = _norm(re.sub(r'\s*\([^)]*\)\s*', ' ', key_upper))
+                if key_norm in candidate_norms or key_no_parens_norm in candidate_norms:
+                    return key
+
+        # 3) Heuristic fallback for semantic names carrying alias in parentheses
+        if target in ('HL', 'IL'):
+            needle = 'HAIRPIN LOOP' if target == 'HL' else 'INTERNAL LOOP'
+            for key in loaded_motifs.keys():
+                if needle in key.upper():
+                    return key
+
+        return target
+
     def _resolve_source_filter(self, motif_type: str, source_filter: str):
         """Resolve a source-filter keyword to instance numbers for a motif type.
 
         Args:
             motif_type: Uppercased motif type key (e.g., 'K-TURN')
-            source_filter: Case-insensitive keyword — a source name/alias
+            source_filter: Case-insensitive keyword - a source name/alias
                            (e.g., 'nobias', 'rmsx') or 'shared'.
 
         Returns:
@@ -2113,7 +3430,7 @@ class MotifVisualizerGUI:
                 continue
             # Full name (with parentheses), normalised
             alias_to_label[_norm(full_name)] = full_name
-            # Full name with parentheses stripped — e.g. "RNAMotifScanX"
+            # Full name with parentheses stripped - e.g. "RNAMotifScanX"
             # for "RNAMotifScanX (RMSX)"
             no_parens = _re.sub(r'\s*\([^)]*\)\s*', ' ', full_name)
             alias_to_label[_norm(no_parens)] = full_name
@@ -2122,7 +3439,7 @@ class MotifVisualizerGUI:
             if tool:
                 alias_to_label[_norm(tool)] = full_name
             # Subtype shorthand for local/web sources (e.g., 'bgsu',
-            # 'atlas', 'rfam', 'rfam_api') — these sources use 'subtype'
+            # 'atlas', 'rfam', 'rfam_api') - these sources use 'subtype'
             # rather than 'tool' in SOURCE_ID_MAP.
             subtype = info.get('subtype', '')
             if subtype:
@@ -2159,6 +3476,8 @@ class MotifVisualizerGUI:
             print("\nNo motifs loaded. Use 'rmv_fetch <PDB_ID>' first.\n")
             return
         
+        motif_arg = self._resolve_loaded_motif_type(motif_arg, loaded_motifs)
+
         if motif_arg not in loaded_motifs:
             available = ', '.join(loaded_motifs.keys())
             print(f"\nMotif type '{motif_arg}' not loaded.")
@@ -2535,7 +3854,7 @@ class MotifVisualizerGUI:
         self.current_local_source = None
         self.current_web_source = None
         self.combined_source_ids = []
-        # Per-source custom paths: no reset needed — each source has its own entry
+        # Per-source custom paths: no reset needed - each source has its own entry
         
         # BUG FIX: Clear specific_source for user annotation sources (they use tool-based loading)
         from .database import get_config
@@ -2562,8 +3881,39 @@ class MotifVisualizerGUI:
                extra_str.startswith('./') or extra_str.startswith('..'):
                 # Expand user home directory
                 expanded_path = os.path.expanduser(extra_str)
-                if os.path.isdir(expanded_path):
+
+                # Special case: JSON pipeline config for FR3D (source 5) or RMSX (source 7)
+                if (source_id == 5
+                        and os.path.isfile(expanded_path)
+                        and expanded_path.lower().endswith('.json')):
+                    try:
+                        with open(expanded_path, 'r', encoding='utf-8') as _f:
+                            _cfg = json.load(_f)
+                        _out = str(_cfg.get('output_dir', '') or '').strip()
+                        if source_id == 5:
+                            self.fr3d_pipeline_config_path = expanded_path
+                            self.fr3d_pipeline_config = _cfg
+                            if _out:
+                                self.fr3d_output_path = os.path.abspath(os.path.expanduser(_out))
+                                os.makedirs(self.fr3d_output_path, exist_ok=True)
+                            self.logger.success(f"FR3D pipeline config loaded: {expanded_path}")
+                            self.logger.info(f"  FR3D dir : {_cfg.get('fr3d_python_dir', '(not set)')}")
+                            self.logger.info(f"  Output   : {self.fr3d_output_path}")
+                            self.logger.info(f"  Python   : {_cfg.get('python_executable', 'python3')}")
+                    except Exception as _e:
+                        self.logger.error(f"Failed to parse pipeline config (source {source_id}): {_e}")
+                elif (source_id == 7
+                      and os.path.isfile(expanded_path)
+                      and expanded_path.lower().endswith('.json')):
+                    self.logger.warning(
+                        "Source 7 now uses integrated runtime config; external JSON config is ignored."
+                    )
+                elif os.path.isdir(expanded_path):
                     self.user_data_paths[source_id] = expanded_path
+                    if source_id == 7:
+                        self.rmsx_output_path = os.path.abspath(os.path.expanduser(expanded_path))
+                        os.makedirs(self.rmsx_output_path, exist_ok=True)
+                        self.rmsx_pipeline_config = self._build_internal_rmsx_config()
                     self.logger.success(f"Custom data path set: {expanded_path}")
                 elif os.path.isfile(expanded_path):
                     self.user_data_paths[source_id] = expanded_path
@@ -2586,7 +3936,7 @@ class MotifVisualizerGUI:
                         if i + 1 < len(parts):
                             try:
                                 pvalue = float(parts[i + 1])
-                                motif_name = parts[i].upper()
+                                motif_name = self._normalize_filter_motif_name(parts[i])
                                 custom_pvalues[motif_name] = pvalue
                                 i += 2
                             except ValueError:
@@ -2601,6 +3951,8 @@ class MotifVisualizerGUI:
         elif tool in ['rmsx', 'rnamotifscanx']:
             self.user_rmsx_filtering_enabled = filtering_enabled
             self.user_rmsx_custom_pvalues = custom_pvalues
+            if source_id == 7:
+                self.rmsx_pipeline_config = self._build_internal_rmsx_config()
         elif tool in ['nobias']:
             self.user_nobias_filtering_enabled = filtering_enabled
             self.user_nobias_custom_pvalues = custom_pvalues
@@ -2672,7 +4024,7 @@ class MotifVisualizerGUI:
             print("\n" + "=" * 60 + "\n")
             return
         
-        # Single source mode — determine source ID
+        # Single source mode - determine source ID
         try:
             source_id = int(self.current_source_id)
         except (ValueError, TypeError):
@@ -2738,16 +4090,67 @@ class MotifVisualizerGUI:
         
         # Source-specific information
         if info['type'] == 'user':
-            print(f"\nAvailable motif types will be shown after loading a structure")
-            print(f"with rmv_fetch <PDB_ID>")
+            if source_id == 5:
+                # FR3D - integrated runtime info
+                report = self._run_fr3d_runtime_setup(build=False)
+                print("\n--- Pipeline ---")
+                print("  Extracts Hairpin Loops (HL) and Internal Loops (IL) from any PDB")
+                print("  using the RNA 3D Motif Atlas flankSS algorithm (Petrov et al. 2013).")
+                print("  Uses integrated runtime auto-discovery for local FR3D when available.")
+                print("\n--- Execution order (rmv_load_motif) ---")
+                print("  1. If {PDB}_fr3d_loops.csv already exists  ->  load from disk (instant)")
+                print("  2. Elif local runtime detected             ->  run fr3d_loop_extractor.py")
+                print("  3. Else                                    ->  download from BGSU RNA 3D Hub")
+                print("\n--- Current configuration ---")
+                print("  Mode         : integrated runtime (no external config)")
+                print(f"  Runtime mode : {report.get('runtime_mode', 'not_ready')}")
+                print(f"  FR3D dir     : {report.get('fr3d_python_dir', '(auto-detect / not found)')}")
+                print(f"  Python       : {report.get('python_executable', '(auto-detect / not found)')}")
+                print(f"  Output dir   : {self.fr3d_output_path}")
+                print("\n--- One-time setup ---")
+                print("  1. Optional: install FR3D locally (for offline/local pipeline mode)")
+                print("  2. Optional: set FR3D_ROOT and FR3D_PYTHON environment variables")
+                print("  3. In PyMOL: rmv_fr3d doctor")
+            elif source_id == 7:
+                pipe_cfg = getattr(self, 'rmsx_pipeline_config', {})
+                print("\n--- Pipeline ---")
+                print("  Runs RNAMotifScanX per motif family, parses result_*.log files,")
+                print("  and loads source 7 motifs directly into RSMViewer.")
+                print("\n--- Current configuration ---")
+                print("  Mode         : integrated runtime (no external config)")
+                print(f"  Runtime dir  : {self.rmsx_runtime_dir}")
+                print(f"  Executable   : {pipe_cfg.get('rmsx_executable', '(not found)')}")
+                print(f"  Output dir   : {self.rmsx_output_path}")
+                print(f"  Families     : {', '.join(pipe_cfg.get('motif_families', [])) or 'all defaults'}")
+                print("\n--- Suggested workflow ---")
+                print("  1. rmv_db 7")
+                print("  2. rmv_fetch <PDB_ID>")
+                print("  3. rmv_rmsx run_current     (or: rmv_rmsx run <PDB_ID>)")
+                print("  4. rmv_summary / rmv_show")
+            else:
+                print(f"\nAvailable motif types will be shown after loading a structure")
+                print(f"with rmv_fetch <PDB_ID>")
         
         # Display sample commands
-        print(f"\nSample commands:")
-        print(f"  rmv_db {source_id}                 Select this source")
-        print(f"  rmv_fetch 1S72                  Load structure")
-        print(f"  rmv_load_motif                  Fetch motif data")
-        print(f"  rmv_summary                     Show available motifs")
-        print(f"  rmv_show HL                     Render motif")
+        print(f"\n--- Sample commands ---")
+        if source_id == 5:
+            print(f"  rmv_db 5                               Select integrated FR3D source")
+            print(f"  rmv_fetch 1S72                          Load PDB structure")
+            print(f"  rmv_load_motif                          Run pipeline if needed, then load")
+            print(f"  rmv_summary                             Show HAIRPIN LOOP / INTERNAL LOOP counts")
+            print(f"  rmv_show HAIRPIN LOOP                   Render all hairpin loops")
+            print(f"  rmv_show INTERNAL LOOP 1                Zoom to internal loop instance 1")
+            print(f"  rmv_fr3d run 1S72                       Force re-run for 1S72")
+            print(f"  rmv_fr3d doctor                         Show runtime diagnostics")
+            print(f"\n--- Combine FR3D with other sources ---")
+            print(f"  rmv_db 5 7                              FR3D + RMSX combined")
+            print(f"  rmv_db 5 3                              FR3D + BGSU API combined")
+        else:
+            print(f"  rmv_db {source_id}                 Select this source")
+            print(f"  rmv_fetch 1S72                  Load structure")
+            print(f"  rmv_load_motif                  Fetch motif data")
+            print(f"  rmv_summary                     Show available motifs")
+            print(f"  rmv_show HL                     Render motif")
         
         # RMS/RMSX/NoBIAS specific features
         if info.get('supports_filtering'):
@@ -2756,8 +4159,8 @@ class MotifVisualizerGUI:
             print(f"  rmv_db {source_id} on               Enable filtering (default)")
             print(f"\nWith custom P-values:")
             print(f"  rmv_db {source_id} C-LOOP 0.05 KINK-TURN 0.02")
-            print(f"    → Apply custom thresholds for specific motif types")
-            print(f"    → Other motif types use default thresholds")
+            print(f"    -> Apply custom thresholds for specific motif types")
+            print(f"    -> Other motif types use default thresholds")
         
         print("\n" + "="*70 + "\n")
     
@@ -2983,7 +4386,7 @@ class MotifVisualizerGUI:
             pdb_id (str): PDB ID to refresh (uses currently loaded PDB if not specified)
         """
         try:
-            # Determine PDB ID — use current if not specified
+            # Determine PDB ID - use current if not specified
             if not pdb_id:
                 pdb_id = self.loaded_pdb_id
             
@@ -3075,10 +4478,10 @@ class MotifVisualizerGUI:
         elif self.current_source_mode == 'local':
             if self.current_local_source == 'atlas':
                 print(f"  Source: [1] RNA 3D Motif Atlas")
-                print(f"  Type: Local (offline) — 759 PDB structures")
+                print(f"  Type: Local (offline) - 759 PDB structures")
             elif self.current_local_source == 'rfam':
                 print(f"  Source: [2] Rfam")
-                print(f"  Type: Local (offline) — 173 PDB structures")
+                print(f"  Type: Local (offline) - 173 PDB structures")
             else:
                 print(f"  Source: [1] RNA 3D Motif Atlas + [2] Rfam")
                 print(f"  Type: Local (offline)")
@@ -3086,10 +4489,10 @@ class MotifVisualizerGUI:
         elif self.current_source_mode == 'web':
             if self.current_web_source == 'bgsu_api':
                 print(f"  Source: [3] BGSU RNA 3D Hub")
-                print(f"  Type: Online API — ~3000+ PDB structures")
+                print(f"  Type: Online API - ~3000+ PDB structures")
             elif self.current_web_source == 'rfam_api':
                 print(f"  Source: [4] Rfam API")
-                print(f"  Type: Online API — All Rfam motifs")
+                print(f"  Type: Online API - All Rfam motifs")
             else:
                 print(f"  Source: Online API (auto-select)")
                 print(f"  Type: Online API")
@@ -3100,7 +4503,7 @@ class MotifVisualizerGUI:
             for sid in self.combined_source_ids:
                 info = SOURCE_ID_MAP.get(sid, {})
                 names.append(f"[{sid}] {info.get('name', 'Unknown')}")
-            print(f"  Source: Combined — {' + '.join(names)}")
+            print(f"  Source: Combined - {' + '.join(names)}")
             print(f"  Type: Multi-source merge (IDs: {ids_str})")
             
         else:
@@ -3110,13 +4513,13 @@ class MotifVisualizerGUI:
         
         # Always show workflow steps
         print("\n" + "-"*70)
-        print("  ⚡ WORKFLOW:")
+        print("   WORKFLOW:")
         print("     Step 1: rmv_fetch <PDB_ID>       # Load PDB structure")
         print("     Step 2: rmv_sources               # Check available sources")
         print("     Step 3: rmv_db <N>                # Select data source (1-8)")
         print("     Step 4: rmv_load_motif            # Fetch motif data")
         print("-"*70)
-        print("  📋 AVAILABLE SOURCES:")
+        print("   AVAILABLE SOURCES:")
         print("     [1] RNA 3D Motif Atlas   [2] Rfam          (offline)")
         print("     [3] BGSU API       [4] Rfam API      (online)")
         print("     [5] FR3D           [6] RMS   [7] RMSX  [8] NoBIAS (user annotations)")
@@ -3147,7 +4550,9 @@ def initialize_gui():
         """PyMOL command: Load raw PDB structure only (no motif data).
         
         Downloads and loads the PDB/mmCIF structure into PyMOL.
-        Use rmv_db + rmv_load_motif after to select source and fetch motif data.
+        Use rmv_db; rmv_load_motif after to select source and fetch motif data.
+        Previously loaded PDB+source motif datasets are preserved for cross-PDB
+        superimposition (rmv_super / rmv_align) until rmv_reset is called.
         
         Usage:
             rmv_fetch 1S72                           # Load PDB structure
@@ -3169,7 +4574,7 @@ def initialize_gui():
         pdb_arg = str(pdb_id).strip()
         bg_arg = str(background_color).strip() if background_color else None
         
-        # Handle cif_use_auth parameter — may be embedded in pdb_id or bg_color
+        # Handle cif_use_auth parameter - may be embedded in pdb_id or bg_color
         # because PyMOL's cmd.extend doesn't always separate keyword args correctly.
         # User might type: rmv_fetch 1S72 cif_use_auth=0  (space, no comma)
         #              or: rmv_fetch 1S72, cif_use_auth=0  (comma-separated)
@@ -3260,10 +4665,10 @@ def initialize_gui():
                 pass
             
             if expanded:
-                # Local file — use cmd.load
+                # Local file - use cmd.load
                 cmd.load(expanded, structure_name)
             else:
-                # PDB ID — use cmd.fetch
+                # PDB ID - use cmd.fetch
                 cmd.fetch(pdb_arg, structure_name)
 
             # Apply uniform cartoon tube radius to the loaded structure so
@@ -3277,7 +4682,6 @@ def initialize_gui():
                 pass
 
             # Store loaded PDB info
-            prev_pdb = gui.loaded_pdb_id
             gui.loaded_pdb = structure_name
             gui.loaded_pdb_id = display_id
             
@@ -3285,13 +4689,11 @@ def initialize_gui():
             gui.viz_manager.structure_loader.current_structure = structure_name
             gui.viz_manager.structure_loader.current_pdb_id = display_id
             
-            # Clear stale motif data when switching to a different PDB.
-            # Keeps data when re-fetching the SAME PDB (source-switch workflow).
-            if prev_pdb and prev_pdb != display_id:
-                gui.viz_manager.motif_loader.loaded_motifs.clear()
-                gui.loaded_sources.clear()
+            # Preserve previously loaded motif datasets across PDB switches.
+            # Cross-PDB rmv_super / rmv_align rely on accumulated per-instance
+            # metadata (_pdb_id + _source_suffix). Use rmv_reset to clear.
             
-            # Build auth→label chain mapping if in label mode
+            # Build auth->label chain mapping if in label mode
             gui.auth_to_label_map = {}
             if cif_auth_val == 0:
                 gui.auth_to_label_map = gui._build_auth_label_chain_mapping(display_id)
@@ -3319,6 +4721,23 @@ def initialize_gui():
                 gui.logger.info("  rmv_db <N>                 Select a motif data source (1-8)")
             gui.logger.info("  rmv_sources                List all available sources")
             gui.logger.info("")
+
+            # Optional automation: run FR3D structural motif download right after fetch.
+            if gui.fr3d_auto_run_on_fetch:
+                gui.logger.info("FR3D auto-run is ON: fetching FR3D structural motifs...")
+                ok = gui.run_fr3d_wrapper(display_id)
+                if ok:
+                    gui.logger.success("FR3D motifs loaded automatically after rmv_fetch")
+                else:
+                    gui.logger.warning("FR3D auto-run after rmv_fetch failed; structure is still loaded")
+
+            if gui.rmsx_auto_run_on_fetch:
+                gui.logger.info("RNAMotifScanX auto-run is ON: running RNAMotifScanX wrapper...")
+                ok = gui.run_rmsx_wrapper(display_id)
+                if ok:
+                    gui.logger.success("RNAMotifScanX motifs loaded automatically after rmv_fetch")
+                else:
+                    gui.logger.warning("RNAMotifScanX auto-run after rmv_fetch failed; structure is still loaded")
             
         except Exception as e:
             gui.logger.error(f"Failed to load {pdb_arg}: {str(e)}")
@@ -3371,7 +4790,7 @@ def initialize_gui():
         """PyMOL command: Load structure and automatically show all motifs.
         
         NOTE: This command is deprecated in the recommended workflow.
-        Users should use rmv_fetch first, then rmv_db + rmv_load_motif.
+        Users should use rmv_fetch first, then rmv_db; rmv_load_motif.
         
         Usage:
             rmv_load <pdb_id_or_path>
@@ -3511,9 +4930,26 @@ def initialize_gui():
             rmv_db 8 /path/to/nobias/data     - NoBIAS with custom data directory
         """
         if not mode:
-            gui.logger.error("Usage: rmv_db <SOURCE_ID> [options]")
-            gui.logger.error("Use 'rmv_sources' to list all available sources")
-            gui.logger.error("Use 'rmv_source info' to see current source info")
+            print("\n  [rmv_db] Data source selection")
+            print("\n  Usage:")
+            print("    rmv_db <SOURCE_ID> [options]")
+            print("\n  Common examples:")
+            print("    rmv_db 3                              Select BGSU API")
+            print("    rmv_db 5                              Select FR3D (strict local pipeline)")
+            print("    rmv_db 7                              Select RMSX")
+            print("    rmv_db 8 7                            Combine NoBIAS + RMSX")
+            print("    rmv_db 8 7, jaccard_threshold=0.80    Combine with custom merge threshold")
+            print("    rmv_db 7 off                          Disable RMSX P-value filtering")
+            print("    rmv_db 7 K-TURN 0.02                  Set custom P-value for one motif")
+            print("\n  Path override examples (sources 5-8):")
+            print("    rmv_db 5 /path/to/fr3d/data")
+            print("    rmv_db 7 /path/to/rmsx/data")
+            print("\n  Stage status:")
+            print(f"    Current source ID: {gui.current_source_id if gui.current_source_id is not None else '(not selected)'}")
+            print(f"    Loaded structure : {gui.loaded_pdb_id if gui.loaded_pdb_id else '(none)'}")
+            print("\n  Related:")
+            print("    rmv_sources      List all source IDs")
+            print("    rmv_source info  Show selected source details")
             return
         
         # --- Parse optional jaccard_threshold kwarg ---
@@ -3523,7 +4959,7 @@ def initialize_gui():
             jt_clean = jt_str.rstrip('%')
             try:
                 jt_val = float(jt_clean)
-                # Values > 1 are treated as percentages (e.g., 80 → 0.80)
+                # Values > 1 are treated as percentages (e.g., 80 -> 0.80)
                 if jt_val > 1.0:
                     jt_val = jt_val / 100.0
                 if not (0.0 < jt_val <= 1.0):
@@ -3635,6 +5071,11 @@ def initialize_gui():
         # Check if full_arg exactly matches a loaded motif type
         if full_arg in loaded_motifs:
             return full_arg, None
+
+        # Resolve user aliases (HL/IL/Jn) to loaded semantic keys when possible
+        resolved_full = gui._resolve_loaded_motif_type(full_arg, loaded_motifs)
+        if resolved_full in loaded_motifs:
+            return resolved_full, None
         
         # Check if the last token is a number (instance ID)
         # Try removing the last word and see if the rest matches a motif type
@@ -3642,9 +5083,12 @@ def initialize_gui():
         if len(parts) == 2 and parts[1].isdigit():
             candidate_type = parts[0]
             instance_no = int(parts[1])
+            resolved_candidate = gui._resolve_loaded_motif_type(candidate_type, loaded_motifs)
+            if resolved_candidate in loaded_motifs:
+                return resolved_candidate, instance_no
             if candidate_type in loaded_motifs:
                 return candidate_type, instance_no
-            # Also try without matching — maybe it's a simple type like 'HL 1'
+            # Also try without matching - maybe it's a simple type like 'HL 1'
             return candidate_type, instance_no
         
         # No instance number found
@@ -3701,11 +5145,25 @@ def initialize_gui():
                 return
         
         if not all_parts:
-            gui.logger.error("Usage: rmv_show <MOTIF_TYPE> [<INSTANCE_NO>]")
-            gui.logger.error("Example: rmv_show GNRA")
-            gui.logger.error("Example: rmv_show HL 1")
-            gui.logger.error("Example: rmv_show HL 1,3,5  (multiple instances)")
-            gui.logger.error("Example: rmv_show ALL    (show all motif types)")
+            print("\n  [rmv_show] Render motif objects")
+            print("\n  Usage:")
+            print("    rmv_show ALL")
+            print("    rmv_show <MOTIF_TYPE>")
+            print("    rmv_show <MOTIF_TYPE> <INSTANCE_NO>")
+            print("    rmv_show <MOTIF_TYPE> 1,3,5")
+            print("\n  Examples:")
+            print("    rmv_show HL")
+            print("    rmv_show HL 1")
+            print("    rmv_show HL 1,3,5")
+            print("    rmv_show K-TURN shared   (combine mode source attribution)")
+            print("\n  Stage checks:")
+            if not gui.loaded_pdb_id:
+                print("    ERROR: No structure loaded. Run: rmv_fetch <PDB_ID>")
+            loaded = gui.viz_manager.motif_loader.get_loaded_motifs() if gui.viz_manager and gui.viz_manager.motif_loader else {}
+            if not loaded:
+                print("    ERROR: No motifs loaded. Run: rmv_load_motif")
+            else:
+                print(f"    OK: {len(loaded)} motif types are loaded for display")
             return
         
         # Handle 'ALL' keyword
@@ -3765,7 +5223,7 @@ def initialize_gui():
                 return
             instance_nums = source_filter_ids
         
-        # Source filter params — restrict display to current PDB + source
+        # Source filter params - restrict display to current PDB + source
         fpdb = gui.loaded_pdb_id or ''
         fsuf = gui._get_source_suffix()
         
@@ -3791,7 +5249,7 @@ def initialize_gui():
             rmv_view hide             Reset all view coloring to gray
             rmv_view K-TURN hide      Reset only K-TURN view coloring
         """
-        # Build parts list — split first arg by spaces for robustness
+        # Build parts list - split first arg by spaces for robustness
         # (PyMOL may pass 'K-TURN hide' as a single string)
         first_parts = str(motif_type).split() if motif_type else []
         rest_parts = [str(a) for a in extra_args]
@@ -3799,10 +5257,29 @@ def initialize_gui():
         all_parts = [p.strip() for p in all_parts if p.strip()]
 
         if not all_parts:
-            gui.logger.error("Usage: rmv_view all | rmv_view <TYPE> [<NO>] | rmv_view hide")
+            print("\n  [rmv_view] Highlight motif regions (no motif objects)")
+            print("\n  Usage:")
+            print("    rmv_view all")
+            print("    rmv_view <MOTIF_TYPE>")
+            print("    rmv_view <MOTIF_TYPE> <INSTANCE_NO>")
+            print("    rmv_view hide")
+            print("    rmv_view <MOTIF_TYPE> hide")
+            print("\n  Examples:")
+            print("    rmv_view all")
+            print("    rmv_view K-TURN")
+            print("    rmv_view K-TURN 1")
+            print("    rmv_view K-TURN hide")
+            print("\n  Stage checks:")
+            if not gui.loaded_pdb_id:
+                print("    ERROR: No structure loaded. Run: rmv_fetch <PDB_ID>")
+            loaded = gui.viz_manager.motif_loader.get_loaded_motifs() if gui.viz_manager and gui.viz_manager.motif_loader else {}
+            if not loaded:
+                print("    ERROR: No motifs loaded. Run: rmv_load_motif")
+            else:
+                print(f"    OK: {len(loaded)} motif types available for view operations")
             return
 
-        # Handle 'rmv_view hide' — reset ALL view coloring
+        # Handle 'rmv_view hide' - reset ALL view coloring
         if len(all_parts) == 1 and all_parts[0].upper() == 'HIDE':
             fpdb = gui.loaded_pdb_id or ''
             fsuf = gui._get_source_suffix()
@@ -3827,7 +5304,7 @@ def initialize_gui():
                     motif_arg, filter_pdb=fpdb, filter_suffix=fsuf)
             return
 
-        # Handle 'rmv_view all' — highlight all motif regions on structure
+        # Handle 'rmv_view all' - highlight all motif regions on structure
         if len(all_parts) == 1 and all_parts[0].upper() in ('ALL', 'MOTIF'):
             structure_name = None
             if gui.viz_manager and gui.viz_manager.structure_loader:
@@ -3844,7 +5321,7 @@ def initialize_gui():
             instance_nums.insert(0, int(all_parts.pop()))
 
         if not all_parts:
-            gui.logger.error("Usage: rmv_view all | rmv_view <TYPE> [<NO>] | rmv_view hide")
+            print("\n  [rmv_view] Usage: rmv_view all | rmv_view <TYPE> [<NO>] | rmv_view hide")
             return
 
         raw_motif = " ".join(all_parts)
@@ -3895,13 +5372,30 @@ def initialize_gui():
             print("\nSupported tools:")
             print("  fr3d            FR3D output format")
             print("  rnamotifscan    RNAMotifScan output format")
+            print("  rnamotifscanx   RNAMotifScanX output format")
             print("\nExamples:")
             print("  rmv_user fr3d 1S72")
             print("  rmv_user rnamotifscan 1A00")
+            print("  rmv_user rnamotifscanx 1A00")
             print("  rmv_user list               Show available files")
             print("\nFile locations:")
             print("  FR3D files:        database/user_annotations/fr3d/")
             print("  RNAMotifScan:      database/user_annotations/rnamotifscan/")
+            print("  RNAMotifScanX:     database/user_annotations/RNAMotifScanX/")
+            print("\nFR3D wrapper commands (strict local FR3D pipeline, no fallback):")
+            print("  rmv_fr3d status")
+            print("  rmv_fr3d doctor")
+            print("  rmv_fr3d setup")
+            print("  rmv_fr3d run 1S72            Download hairpin/internal loop/junction motifs")
+            print("  rmv_fr3d refresh [PDB_ID]    Force rerun and replace cached file")
+            print("  rmv_fr3d run_current         Run for the currently loaded structure")
+            print("  rmv_fr3d config /path/to/fr3d-python /abs/output on   (advanced)")
+            print("\nRNAMotifScanX wrapper commands:")
+            print("  rmv_db 7                     Activate integrated Source-7 runtime")
+            print("  rmv_rmsx_doctor             Validate Source-7 runtime installation")
+            print("  rmv_rmsx setup              Attempt first-run runtime setup")
+            print("  rmv_rmsx test")
+            print("  rmv_rmsx run 1S72")
             print("="*60 + "\n")
             return
         
@@ -3917,6 +5411,165 @@ def initialize_gui():
             return
         
         gui.load_user_annotations_action(tool_arg, pdb_arg)
+
+    def fr3d_wrapper(action='', arg1='', *extra_args, **_kwargs):
+        """PyMOL command: Run Source-5 FR3D local pipeline.
+
+        Usage:
+            rmv_fr3d status
+            rmv_fr3d doctor
+            rmv_fr3d setup
+            rmv_fr3d refresh [PDB_ID]
+            rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [AUTO_ON_FETCH]
+            rmv_fr3d run <PDB_ID>
+            rmv_fr3d run_current
+
+        'run' executes local FR3D extraction for Hairpin Loops (HL), Internal
+        Loops (IL), and Junctions and loads them as structural RNA motifs in
+        RSMViewer (source 5).
+        """
+        action_arg = str(action).strip() if action else ''
+        arg1_str = str(arg1).strip() if arg1 else ''
+
+        # Handle combined-string invocation from PyMOL
+        if action_arg and not arg1_str:
+            parts = action_arg.split()
+            if len(parts) > 1:
+                action_arg = parts[0]
+                arg1_str = parts[1]
+
+        sub = action_arg.lower() if action_arg else 'status'
+
+        if sub in ['', 'status', 'show']:
+            gui.print_fr3d_wrapper_status()
+            return
+
+        if sub == 'doctor':
+            gui.fr3d_doctor(auto_setup=False)
+            return
+
+        if sub == 'setup':
+            gui.fr3d_doctor(auto_setup=True)
+            return
+
+        if sub == 'refresh':
+            target_pdb = arg1_str or gui.loaded_pdb_id
+            if not target_pdb:
+                gui.logger.error("No active structure. Use rmv_fetch <PDB_ID> first or pass PDB ID.")
+                return
+            gui.run_fr3d_wrapper(target_pdb, force_refresh=True)
+            return
+
+        if sub == 'config':
+            if not arg1_str:
+                gui.logger.error("Usage: rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [AUTO_ON_FETCH]")
+                gui.logger.info("Example: rmv_fr3d config /path/to/fr3d-python /abs/fr3d_out on")
+                return
+
+            extras = [str(x).strip() for x in extra_args if str(x).strip()]
+            output_dir = extras[0] if len(extras) >= 1 else ''
+            auto_on_fetch = extras[1] if len(extras) >= 2 else ''
+            gui.configure_fr3d_wrapper(arg1_str, output_dir, auto_on_fetch)
+            return
+
+        if sub == 'run':
+            if not arg1_str:
+                gui.logger.error("Usage: rmv_fr3d run <PDB_ID>")
+                return
+            gui.run_fr3d_wrapper(arg1_str)
+            return
+
+        if sub in ['run_current', 'current']:
+            if not gui.loaded_pdb_id:
+                gui.logger.error("No active structure. Use rmv_fetch <PDB_ID> first.")
+                return
+            gui.run_fr3d_wrapper(gui.loaded_pdb_id)
+            return
+
+        gui.logger.error(f"Unknown rmv_fr3d subcommand: {sub}")
+        gui.logger.info("Use: rmv_fr3d status | doctor | setup | refresh [PDB_ID] | config | run <PDB_ID> | run_current")
+
+    def rmsx_wrapper(action='', arg1='', *extra_args, **_kwargs):
+        """PyMOL command: Configure and run external RNAMotifScanX through RSMViewer.
+
+        Usage:
+            rmv_rmsx status
+            rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]
+            rmv_rmsx args <ARG_TEMPLATE>
+            rmv_rmsx doctor
+            rmv_rmsx setup
+            rmv_rmsx test
+            rmv_rmsx run <PDB_ID> [EXTRA_ARGS]
+            rmv_rmsx run_current [EXTRA_ARGS]
+        """
+        action_arg = str(action).strip() if action else ''
+        arg1_str = str(arg1).strip() if arg1 else ''
+
+        if action_arg and not arg1_str:
+            parts = action_arg.split()
+            if len(parts) > 1:
+                action_arg = parts[0]
+                arg1_str = parts[1]
+
+        sub = action_arg.lower() if action_arg else 'status'
+
+        if sub in ['', 'status', 'show']:
+            gui.print_rmsx_wrapper_status()
+            return
+
+        if sub == 'config':
+            if not arg1_str:
+                gui.logger.error("Usage: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+                return
+            extras = [str(x).strip() for x in extra_args if str(x).strip()]
+            output_dir = extras[0] if len(extras) >= 1 else ''
+            work_dir = extras[1] if len(extras) >= 2 else ''
+            auto_on_fetch = extras[2] if len(extras) >= 3 else ''
+            gui.configure_rmsx_wrapper(arg1_str, output_dir, work_dir, auto_on_fetch)
+            return
+
+        if sub == 'args':
+            parts = [arg1_str] if arg1_str else []
+            parts.extend(str(x).strip() for x in extra_args if str(x).strip())
+            template = ' '.join(parts).strip()
+            gui.set_rmsx_args_template(template)
+            return
+
+        if sub == 'doctor':
+            gui.rmsx_doctor(auto_setup=False)
+            return
+
+        if sub == 'setup':
+            gui.rmsx_doctor(auto_setup=True)
+            return
+
+        if sub == 'test':
+            gui.test_rmsx_wrapper()
+            return
+
+        if sub == 'run':
+            if not arg1_str:
+                gui.logger.error("Usage: rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
+                return
+            extras = ' '.join(str(x).strip() for x in extra_args if str(x).strip())
+            gui.run_rmsx_wrapper(arg1_str, extras)
+            return
+
+        if sub in ['run_current', 'current']:
+            if not gui.loaded_pdb_id:
+                gui.logger.error("No active structure. Use rmv_fetch <PDB_ID> first.")
+                return
+            extras = [arg1_str] if arg1_str else []
+            extras.extend(str(x).strip() for x in extra_args if str(x).strip())
+            gui.run_rmsx_wrapper(gui.loaded_pdb_id, ' '.join(extras).strip())
+            return
+
+        gui.logger.error(f"Unknown rmv_rmsx subcommand: {sub}")
+        gui.logger.info("Use: rmv_rmsx status | config | args | doctor | setup | test | run <PDB_ID> | run_current")
+
+    def rmsx_doctor_cmd(*_args, **_kwargs):
+        """PyMOL command: Show integrated RMSX runtime diagnostics."""
+        gui.rmsx_doctor(auto_setup=False)
     
     # Add commands to PyMOL
     cmd.extend('rmv_fetch', fetch_raw_pdb)
@@ -3933,6 +5586,9 @@ def initialize_gui():
     cmd.extend('rmv_show', show_motif)
     cmd.extend('rmv_view', view_motif)
     cmd.extend('rmv_user', load_user_annotations)
+    cmd.extend('rmv_fr3d', fr3d_wrapper)
+    cmd.extend('rmv_rmsx', rmsx_wrapper)
+    cmd.extend('rmv_rmsx_doctor', rmsx_doctor_cmd)
     
     def show_colors():
         """PyMOL command: Show color legend for all motif types."""
@@ -4021,7 +5677,8 @@ def initialize_gui():
         
         mmCIF export extracts ORIGINAL coordinates from the on-disk CIF file,
         NOT PyMOL's internal coordinates (which may be slightly modified).
-        Each exported file is a standalone mmCIF that can be loaded independently.
+        Output is a minimal coordinates-only mmCIF containing filtered
+        _atom_site rows for motif residues.
         
         Available representations (for image save):
             - cartoon       (default) - Shows RNA backbone ribbon
@@ -4056,6 +5713,7 @@ def initialize_gui():
             print("  rmv_save HL 3 cif        Export HL instance #3 as mmCIF")
             print("\n  Note: mmCIF export uses ORIGINAL coordinates from the on-disk CIF,")
             print("        not PyMOL's internal coordinates.")
+            print("        Output is coordinates-only (_atom_site loop for motif residues).")
             print("\nRepresentations: cartoon, sticks, spheres, ribbon, lines, licorice, surface, cartoon+sticks")
             print("\nOutput goes to:")
             print("  Images:     plugin_dir/motif_images/pdb_id/MOTIF_TYPE/")
@@ -4137,22 +5795,22 @@ def initialize_gui():
                 return
             
             if len(arguments) == 1:
-                # rmv_save HL  →  save all HL images (default cartoon)
+                # rmv_save HL  ->  save all HL images (default cartoon)
                 gui.save_motif_type_images_action(motif_type, representation=representation)
             
             elif len(arguments) == 2:
                 arg2 = arguments[1]
                 if _is_cif(arg2):
-                    # rmv_save HL cif  →  export all HL structures
+                    # rmv_save HL cif  ->  export all HL structures
                     gui.export_motif_type_structures_action(motif_type)
                 else:
                     try:
                         instance_id = int(arg2)
-                        # rmv_save HL 3  →  save HL instance #3 image
+                        # rmv_save HL 3  ->  save HL instance #3 image
                         gui.save_motif_instance_by_id_action(motif_type, instance_id,
                                                             representation=representation)
                     except ValueError:
-                        # rmv_save HL sticks  →  save all HL images as sticks
+                        # rmv_save HL sticks  ->  save all HL images as sticks
                         representation = arg2.lower()
                         gui.save_motif_type_images_action(motif_type, representation=representation)
             
@@ -4162,15 +5820,15 @@ def initialize_gui():
                 try:
                     instance_id = int(arg2)
                     if _is_cif(arg3):
-                        # rmv_save HL 3 cif  →  export HL instance #3 as mmCIF
+                        # rmv_save HL 3 cif  ->  export HL instance #3 as mmCIF
                         gui.export_motif_instance_by_id_action(motif_type, instance_id)
                     else:
-                        # rmv_save HL 3 spheres  →  save HL instance #3 as spheres
+                        # rmv_save HL 3 spheres  ->  save HL instance #3 as spheres
                         representation = arg3.lower()
                         gui.save_motif_instance_by_id_action(motif_type, instance_id,
                                                             representation=representation)
                 except ValueError:
-                    # arg2 is not an integer — treat as representation
+                    # arg2 is not an integer - treat as representation
                     representation = arg2.lower()
                     gui.save_motif_type_images_action(motif_type, representation=representation)
     
@@ -4259,7 +5917,7 @@ def initialize_gui():
     cmd.extend('rmv_loaded', show_loaded_tags)
 
     def reset_plugin():
-        """PyMOL command: Reset everything — delete all objects and reset plugin to defaults.
+        """PyMOL command: Reset everything - delete all objects and reset plugin to defaults.
         
         Usage:
             rmv_reset              Delete all PyMOL objects, reset plugin state

@@ -544,7 +544,7 @@ def print_medoid_report(method, motif_type, objects, medoid_idx,
 def _save_matrix_csv(path, objects, matrix):
     """Write the pairwise RMSD matrix to a CSV file."""
     import csv
-    with open(path, 'w', newline='') as f:
+    with open(path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow([""] + objects)
         for i, obj in enumerate(objects):
@@ -765,13 +765,13 @@ def _validate_pdb_src_tags(tags):
             continue
 
         if kind == "missing_underscore":
-            print(f"\n  ✗  '{raw_tag}' is not valid. Did you mean '{suggestion}'?")
+            print(f"\n  '{raw_tag}' is not valid. Did you mean '{suggestion}'?")
             print(f"     Use underscore between PDB ID and source: {suggestion}")
             has_error = True
             continue
 
         if kind == "wrong_source" and isinstance(suggestion, list):
-            print(f"\n  ✗  '{raw_tag}' was not loaded.")
+            print(f"\n  '{raw_tag}' was not loaded.")
             pdb_part = upper.split('_S')[0] if '_S' in upper else upper
             print(f"     PDB {pdb_part} was loaded with these sources:")
             for s in sorted(suggestion):
@@ -780,7 +780,7 @@ def _validate_pdb_src_tags(tags):
             continue
 
         if kind == "wrong_pdb" and isinstance(suggestion, list):
-            print(f"\n  ✗  '{raw_tag}' was not loaded.")
+            print(f"\n  '{raw_tag}' was not loaded.")
             src_part = '_S' + upper.split('_S')[-1] if '_S' in upper else ''
             print(f"     Source {src_part} was loaded for these PDBs:")
             for s in sorted(suggestion):
@@ -789,7 +789,7 @@ def _validate_pdb_src_tags(tags):
             continue
 
         # No suggestion at all
-        print(f"\n  ✗  '{raw_tag}' was not loaded and does not match any known data.")
+        print(f"\n  '{raw_tag}' was not loaded and does not match any known data.")
         has_error = True
 
     if has_error:
@@ -878,6 +878,9 @@ def _looks_like_pdb_src_tag(token):
     - ``1S72_S7``   (PDB + underscore + S + digit(s))
     - ``1S72S7``    (missing underscore — still recognised for typo help)
     - ``1S72``      (bare PDB ID — only if 4-char alnum starting with digit)
+    - ``17A0S_S3``  (malformed PDB part but clear ``_S<digit>`` suffix — routed
+                     to tag validation so the user gets a helpful suggestion
+                     instead of a confusing "motif type not found" error)
     """
     import re
     # Canonical: 4-char PDB + _S + digits
@@ -885,6 +888,11 @@ def _looks_like_pdb_src_tag(token):
         return True
     # Missing underscore variant: 4-char PDB + S + digits
     if re.match(r'^[0-9][A-Z0-9]{3}S\d+$', token):
+        return True
+    # Malformed tag: any short single-word token ending in _S<digits>.
+    # Motif type names never contain a "_S<digit>" suffix, so this is safe and
+    # ensures typo'd tags (e.g. 17A0S_S3) reach the tag validator.
+    if re.match(r'^[A-Z0-9]{2,8}_S\d+$', token):
         return True
     # Bare PDB ID (only recognised if it has 4 alphanumeric chars starting with digit
     # AND there's no motif name that looks that way)
@@ -903,15 +911,21 @@ def register_alignment_commands():
     def _print_usage(method_label):
         """Print usage help for rmv_super / rmv_align."""
         print(f"\n  [{method_label}] Medoid-based structural superimposition")
+        print(f"\n  Prerequisite: fetch the PDB structure(s) and load their motif")
+        print(f"  data before running this command. For each structure run:")
+        print(f"    rmv_fetch <PDB_ID>       then   rmv_load_motif")
+        print(f"  Repeat for every PDB you want to include, then call {method_label}.")
         print(f"  Usage:")
-        print(f"    {method_label} <MOTIF_TYPE>                              All loaded instances")
+        print(f"    {method_label} <MOTIF_TYPE>                              Current PDB+source only")
         print(f"    {method_label} <MOTIF_TYPE>, <PDB_SRC1>, <PDB_SRC2>      Cross-PDB / multi-source")
         print(f"    {method_label} <MOTIF_TYPE> 1,3,5                        Specific instance numbers")
         print(f"\n  Examples:")
-        print(f"    {method_label} K-TURN                           All K-TURN from all loaded data")
+        print(f"    {method_label} K-TURN                           K-TURN from the current PDB+source")
         print(f"    {method_label} KINK-TURN, 1S72_S7, 4V9F_S3      Only 1S72 source 7 + 4V9F source 3")
         print(f"    {method_label} K-TURN, 1S72_S7, 1S72_S3         Same PDB, compare 2 sources")
         print(f"    {method_label} K-TURN 2,5,8                     Instance numbers 2, 5, 8 only")
+        print(f"\n  Note: without PDB_SRC tags only the most-recently loaded")
+        print(f"        PDB+source is used. List tags to compare across PDBs.")
         # Show currently loaded tags if any
         tags = sorted(_get_loaded_tags())
         if tags:
@@ -925,7 +939,7 @@ def register_alignment_commands():
         Medoid-based superimposition (sequence-independent, uses cmd.super).
 
         Usage:
-            rmv_super <MOTIF_TYPE>                              All instances
+            rmv_super <MOTIF_TYPE>                              Current PDB+source only
             rmv_super <MOTIF_TYPE>, <PDB_SRC1>, <PDB_SRC2>      Cross-PDB / multi-source
             rmv_super <MOTIF_TYPE> 1,3,5                        Specific instances
         """
@@ -958,7 +972,7 @@ def register_alignment_commands():
         Medoid-based superimposition (sequence-dependent, uses cmd.align).
 
         Usage:
-            rmv_align <MOTIF_TYPE>                              All instances
+            rmv_align <MOTIF_TYPE>                              Current PDB+source only
             rmv_align <MOTIF_TYPE>, <PDB_SRC1>, <PDB_SRC2>      Cross-PDB / multi-source
             rmv_align <MOTIF_TYPE> 1,3,5                        Specific instances
         """

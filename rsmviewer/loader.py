@@ -463,9 +463,11 @@ class VisualizationManager:
             # Show cartoon representation
             self.cmd.show('cartoon', rna_selection)
             
-            # Set consistent cartoon nucleic acid settings for uniform appearance
-            self.cmd.set('cartoon_nucleic_acid_mode', 4)  # Simple tube mode
-            self.cmd.set('cartoon_tube_radius', 0.37)
+            # Set consistent cartoon nucleic acid settings for uniform appearance.
+            # Scope to the structure object (these are object-state-level settings;
+            # setting them globally triggers a PyMOL Setting-Warning).
+            self.cmd.set('cartoon_nucleic_acid_mode', 4, f"model {structure_name}", quiet=1)  # Simple tube mode
+            self.cmd.set('cartoon_tube_radius', 0.37, f"model {structure_name}", quiet=1)
             
             # Color uniformly
             self.cmd.color(background_color, rna_selection)
@@ -766,14 +768,38 @@ class VisualizationManager:
         motif_list = info.get('motifs', [])  # For PyMOL object creation
         # Use filter_suffix for naming when provided — correct for combine mode
         source_suffix = filter_suffix if filter_suffix else info.get('source_suffix', '')
-        
+
+        # The top-level info fields (pdb_id, structure_name, motifs) reflect the
+        # FIRST-loaded PDB when instances from several PDBs are accumulated under
+        # one motif type.  Derive the ACTIVE pdb / structure / motif list from the
+        # filtered current-source details so the object name and geometry track
+        # the currently displayed PDB (fixes stale "_ALL_<firstPDB>" objects that
+        # were built from the wrong structure's coordinates).
+        pdb_id = filter_pdb or info.get('pdb_id') or (self.structure_loader.get_current_pdb_id() or '')
+        if filter_pdb and motif_details:
+            structure_name = motif_details[0].get('_structure_name') or structure_name
+            rebuilt_list = []
+            for _d in motif_details:
+                _mid = _d.get('motif_id') or _d.get('instance_id') or motif_type
+                _chain_map = {}
+                for _res in _d.get('residues', []):
+                    if isinstance(_res, tuple) and len(_res) >= 3:
+                        _chain_map.setdefault(_res[2], []).append(_res[1])
+                for _ch, _rl in _chain_map.items():
+                    rebuilt_list.append({'chain': _ch, 'residues': sorted(_rl), 'motif_id': _mid})
+            if rebuilt_list:
+                motif_list = rebuilt_list
+
         if not structure_name:
             self.logger.error("No structure name found")
             return False
         
         # Step 0: Create PyMOL object if it doesn't exist (needed for object panel visibility)
         obj_name = info.get('object_name')
-        pdb_id = info.get('pdb_id', self.structure_loader.get_current_pdb_id() or '')
+        # Invalidate a cached object name that belongs to a different PDB/source
+        expected_obj = sanitize_pymol_name(f"{motif_type}_ALL_{pdb_id.upper()}{source_suffix}") if pdb_id else None
+        if obj_name and expected_obj and obj_name != expected_obj:
+            obj_name = None
         if not obj_name and motif_list:
             # Create the PyMOL object (like HL_ALL_1S72_S3)
             obj_name = self.motif_loader.selector.create_motif_class_object(
@@ -1287,7 +1313,11 @@ class VisualizationManager:
         # Color the instance residues WITHIN the main structure
         detail = motif_details[instance_no - 1]
         residues = detail.get('residues', [])
-        inst_pdb_id = info.get('pdb_id', self.structure_loader.get_current_pdb_id() or '')
+        # Use the active/filtered PDB + that instance's own structure, not the
+        # stale first-loaded top-level info fields (fixes wrong object name /
+        # geometry when several PDBs are accumulated under one motif type).
+        inst_pdb_id = filter_pdb or info.get('pdb_id') or (self.structure_loader.get_current_pdb_id() or '')
+        structure_name = detail.get('_structure_name') or structure_name
         inst_pdb_tag = f"_{inst_pdb_id}" if inst_pdb_id else ""
         # Compute both object name variants (with and without _P)
         base_obj = sanitize_pymol_name(f"{motif_type}_{instance_no}{inst_pdb_tag}{source_suffix}")
@@ -1453,12 +1483,15 @@ class VisualizationManager:
             self.logger.error("No motifs loaded. Use 'rmv_load_motif' first.")
             return
         
-        # Get structure name
-        structure_name = None
-        for info in loaded_motifs.values():
-            if info.get('structure_name'):
-                structure_name = info.get('structure_name')
-                break
+        # Get structure name.  Prefer the most-recently loaded structure so
+        # object creation tracks the current PDB rather than the first-loaded
+        # one when data from several PDBs is accumulated.
+        structure_name = self.structure_loader.get_current_structure()
+        if not structure_name:
+            for info in loaded_motifs.values():
+                if info.get('structure_name'):
+                    structure_name = info.get('structure_name')
+                    break
         
         if not structure_name:
             self.logger.error("No structure loaded")
@@ -1466,18 +1499,52 @@ class VisualizationManager:
         
         # Step 1: Create PyMOL objects for each motif type (like show_motif_type does)
         for motif_type, info in loaded_motifs.items():
-            obj_name = info.get('object_name')
+            source_suffix = filter_suffix if filter_suffix else info.get('source_suffix', '')
+
+            # Derive the ACTIVE pdb / structure / motif list from the filtered
+            # current-source details so object names and geometry track the
+            # currently displayed PDB (mirrors show_motif_type; fixes stale
+            # "_ALL_<firstPDB>" objects built from the wrong structure).
+            type_details = info.get('motif_details', [])
+            if filter_pdb:
+                type_details = [
+                    d for d in type_details
+                    if d.get('_pdb_id', info.get('pdb_id', '')) == filter_pdb
+                    and d.get('_source_suffix', info.get('source_suffix', '')) == filter_suffix
+                ]
+            if filter_pdb and not type_details:
+                continue
+
+            type_structure = structure_name
             motif_list = info.get('motifs', [])
-            source_suffix = info.get('source_suffix', '')
-            pdb_id = info.get('pdb_id', self.structure_loader.get_current_pdb_id() or '')
-            
+            type_pdb_id = filter_pdb or info.get('pdb_id') or (self.structure_loader.get_current_pdb_id() or '')
+            if filter_pdb and type_details:
+                type_structure = type_details[0].get('_structure_name') or structure_name
+                rebuilt_list = []
+                for _d in type_details:
+                    _mid = _d.get('motif_id') or _d.get('instance_id') or motif_type
+                    _chain_map = {}
+                    for _res in _d.get('residues', []):
+                        if isinstance(_res, tuple) and len(_res) >= 3:
+                            _chain_map.setdefault(_res[2], []).append(_res[1])
+                    for _ch, _rl in _chain_map.items():
+                        rebuilt_list.append({'chain': _ch, 'residues': sorted(_rl), 'motif_id': _mid})
+                if rebuilt_list:
+                    motif_list = rebuilt_list
+
+            obj_name = info.get('object_name')
+            # Invalidate a cached object name that belongs to a different PDB/source
+            expected_obj = sanitize_pymol_name(f"{motif_type}_ALL_{type_pdb_id.upper()}{source_suffix}") if type_pdb_id else None
+            if obj_name and expected_obj and obj_name != expected_obj:
+                obj_name = None
+
             if not obj_name and motif_list:
                 obj_name = self.motif_loader.selector.create_motif_class_object(
-                    structure_name,
+                    type_structure,
                     motif_type,
                     motif_list,
                     source_suffix=source_suffix,
-                    pdb_id=pdb_id,
+                    pdb_id=type_pdb_id,
                 )
                 if obj_name:
                     colors.set_motif_color_in_pymol(self.cmd, obj_name, motif_type)
@@ -1485,52 +1552,56 @@ class VisualizationManager:
                     loaded_motifs[motif_type] = info
                     self.logger.debug(f"Created PyMOL object: {obj_name}")
         
-        # Step 2: Collect motif-type object names to keep active
-        active_objects = []
+        # Build the per-type filtered instance counts for the current PDB+source
+        # so activation, enabling and the printed summary all reflect only the
+        # most-recently displayed structure.
+        active_counts = {}
         for motif_type, info in loaded_motifs.items():
-            obj_name = info.get('object_name')
-            if obj_name:
-                active_objects.append(obj_name)
-
-        # Deactivate all objects except motif-type objects
-        self._deactivate_other_objects(active_objects)
-        
-        # Step 3: Enable all motif-type objects
-        total_instances = 0
-        from .utils.parser import SelectionParser
-        for motif_type, info in loaded_motifs.items():
-            obj_name = info.get('object_name')
-            if obj_name:
-                self.cmd.show('cartoon', obj_name)
-                self.cmd.set('cartoon_nucleic_acid_mode', 4, obj_name, quiet=1)
-                self.cmd.set('cartoon_tube_radius', 0.4, obj_name, quiet=1)
-                self.cmd.enable(obj_name)
-            
             motif_details = info.get('motif_details', [])
-            # Apply source filter when requested
             if filter_pdb:
                 motif_details = [
                     d for d in motif_details
                     if d.get('_pdb_id', info.get('pdb_id', '')) == filter_pdb
                     and d.get('_source_suffix', info.get('source_suffix', '')) == filter_suffix
                 ]
-            if not motif_details:
+            if filter_pdb and not motif_details:
                 continue
-            total_instances += len(motif_details)
+            active_counts[motif_type] = len(motif_details)
+
+        # Step 2: Collect motif-type object names to keep active (current PDB only)
+        active_objects = []
+        for motif_type in active_counts:
+            obj_name = loaded_motifs[motif_type].get('object_name')
+            if obj_name:
+                active_objects.append(obj_name)
+
+        # Deactivate all objects except current-PDB motif-type objects
+        self._deactivate_other_objects(active_objects)
         
-        self.logger.success(f"Showing all {len(loaded_motifs)} motif types ({total_instances} total instances)")
+        # Step 3: Enable current-PDB motif-type objects
+        total_instances = 0
+        for motif_type, count in active_counts.items():
+            obj_name = loaded_motifs[motif_type].get('object_name')
+            if obj_name:
+                self.cmd.show('cartoon', obj_name)
+                self.cmd.set('cartoon_nucleic_acid_mode', 4, obj_name, quiet=1)
+                self.cmd.set('cartoon_tube_radius', 0.4, obj_name, quiet=1)
+                self.cmd.enable(obj_name)
+            total_instances += count
         
-        # Print summary of created objects
-        print(f"\n  PyMOL objects created for {len(loaded_motifs)} motif types:")
-        for motif_type, info in sorted(loaded_motifs.items()):
-            obj_name = info.get('object_name', 'N/A')
-            count = len(info.get('motif_details', []))
+        self.logger.success(f"Showing all {len(active_counts)} motif types ({total_instances} total instances)")
+        
+        # Print summary of created objects (current PDB + source only)
+        print(f"\n  PyMOL objects created for {len(active_counts)} motif types:")
+        for motif_type in sorted(active_counts):
+            obj_name = loaded_motifs[motif_type].get('object_name', 'N/A')
+            count = active_counts[motif_type]
             print(f"    {obj_name:<25} {motif_type} ({count} instances)")
         
         # Print follow-up suggestions
         print("\n  Next steps:")
         if loaded_motifs:
-            first_motif = next(iter(sorted(loaded_motifs.keys())), None)
+            first_motif = next(iter(sorted(active_counts)), None)
             if first_motif:
                 print(f"    rmv_show {first_motif:<20}  Focus on specific motif type")
         print(f"    rmv_summary              View motif summary table")

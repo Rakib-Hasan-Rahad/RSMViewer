@@ -1,9 +1,13 @@
 """
 Structure Exporter Module for RSMViewer.
 
-Extracts motif instances as mmCIF files with ORIGINAL coordinates
-directly from the on-disk CIF file (not PyMOL's internal coordinates,
-which may be slightly modified during loading).
+Extracts motif instances as minimal, coordinates-only mmCIF files with
+ORIGINAL coordinates directly from the on-disk CIF file (not PyMOL's
+internal coordinates, which may be slightly modified during loading).
+
+Each exported file contains only:
+- data_ block header
+- filtered _atom_site loop (motif residues only)
 
 Folder structure mirrors the image saver:
     motif_structures/pdb_id/MOTIF_TYPE/TYPE-NO-CHAIN-RESIDUES.cif
@@ -156,7 +160,7 @@ class MotifStructureExporter:
 
         Reads the original CIF, filters ``_atom_site`` rows to those
         matching the instance's (chain, residue) pairs, and writes
-        a standalone mmCIF.
+        a coordinates-only mmCIF.
 
         Returns True on success.
         """
@@ -166,7 +170,7 @@ class MotifStructureExporter:
             return False
 
         try:
-            with open(cif_path, 'r') as fh:
+            with open(cif_path, 'r', encoding='utf-8') as fh:
                 all_lines = fh.readlines()
         except Exception as exc:
             self.logger.error(f"Cannot read CIF file: {exc}")
@@ -232,14 +236,10 @@ class MotifStructureExporter:
 
         # ---- Write output mmCIF ----
         try:
-            with open(output_path, 'w') as out:
+            with open(output_path, 'w', encoding='utf-8') as out:
                 # Data block header
                 out.write(f"data_{pdb_id.upper()}_motif\n")
                 out.write("#\n")
-
-                # Write key metadata blocks from original
-                # (copy _cell, _symmetry, _entity etc. if present)
-                self._write_metadata_blocks(all_lines, atom_site_loop_start, out)
 
                 # Write filtered _atom_site block
                 out.write("loop_\n")
@@ -254,26 +254,6 @@ class MotifStructureExporter:
         except Exception as exc:
             self.logger.error(f"Failed to write CIF: {exc}")
             return False
-
-    def _write_metadata_blocks(self, lines: List[str],
-                               atom_site_start: int,
-                               out) -> None:
-        """Copy useful metadata blocks that precede _atom_site.
-
-        Includes _cell, _symmetry, _entity, _struct, _pdbx_struct_assembly,
-        _audit_author and similar blocks — everything before the _atom_site
-        loop (except the original data_ header which we already wrote).
-        """
-        i = 0
-        # Skip the original data_ line
-        while i < atom_site_start:
-            stripped = lines[i].strip()
-            if stripped.startswith('data_'):
-                i += 1
-                continue
-            # Copy everything else up to the _atom_site loop_ line
-            out.write(lines[i])
-            i += 1
 
     # ------------------------------------------------------------------
     # High-level export methods  (parallel to image_saver methods)

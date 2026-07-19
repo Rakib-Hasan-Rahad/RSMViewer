@@ -98,6 +98,7 @@ This selects BGSU RNA 3D Hub API — the most comprehensive source with ~3000+ s
 | 5 | FR3D | User annotations | Custom |
 | 6 | RNAMotifScan (RMS) | User annotations | Custom (P-value filtering) |
 | 7 | RNAMotifScanX (RMSX) | User annotations | Custom (P-value filtering) |
+| 8 | NoBIAS | User annotations | Custom (P-value filtering) |
 
 Run `rmv_sources` to see detailed information about each source.
 
@@ -303,7 +304,7 @@ rmv_load_motif         # Fetch from Rfam
 ### Check Source Information
 
 ```
-rmv_sources            # List all 7 sources, their types, and coverage
+rmv_sources            # List all 8 sources, their types, and coverage
 rmv_source info 3      # Detailed information about BGSU source
 rmv_source info        # Show currently active source
 ```
@@ -529,7 +530,32 @@ rmv_user rnamotifscan 1A00   # Load RMS annotations
 rmv_user list                # List available annotation files
 ```
 
-> **Preferred approach:** Use `rmv_db 5/6/7/8` + `rmv_load_motif` instead.
+> **Preferred approach:** Use `rmv_db 5/6/7/8; rmv_load_motif` instead.
+
+### FR3D Integration (Quick Workflow)
+
+Use this short workflow for the integrated Source-5 local FR3D runtime.
+
+```
+rmv_db 5
+rmv_fetch 1S72
+rmv_load_motif                         # Runs local FR3D pipeline fresh and loads motifs
+rmv_summary HL
+rmv_summary J3
+```
+
+Additional FR3D wrapper commands:
+
+```
+rmv_fr3d status
+rmv_fr3d doctor
+rmv_fr3d setup
+rmv_fr3d refresh [PDB_ID]
+rmv_fr3d run 1S72
+rmv_fr3d run_current
+```
+
+Source 5 runs local FR3D in strict mode (fresh run each time). For complete runtime architecture, installation, and troubleshooting, see [FR3D_INTEGRATION.md](FR3D_INTEGRATION.md). For RMSX runtime details, see [FR3D_RMSX_INTEGRATION.md](FR3D_RMSX_INTEGRATION.md).
 
 ---
 
@@ -647,7 +673,7 @@ motif_images/
 
 ## 9. Exporting Motif Structures as mmCIF
 
-Extract motif instances as standalone mmCIF files with **original coordinates** from the on-disk CIF file (not PyMOL's internal coordinates, which may be slightly modified during loading).
+Extract motif instances as standalone coordinates-only mmCIF files with **original coordinates** from the on-disk CIF file (not PyMOL's internal coordinates, which may be slightly modified during loading).
 
 ```
 rmv_save ALL cif              # Export ALL motif instances as mmCIF
@@ -709,14 +735,17 @@ rmv_fetch 1S72
 rmv_db 3
 rmv_load_motif
 
-rmv_fetch 4V88
+rmv_fetch 4V9F
 rmv_load_motif
 
-rmv_loaded                      # Check tags: 1S72_S3, 4V88_S3
+rmv_loaded                      # Check tags: 1S72_S3, 4V9F_S3
 rmv_super KTURN                 # All K-TURNs across both PDBs
-rmv_super KTURN, 1S72_S3, 4V88_S3   # Filter by PDB+source tags
+rmv_super KTURN, 1S72_S3, 4V9F_S3   # Filter by PDB+source tags
 rmv_super KTURN, 1S72_S3        # Only instances from 1S72
 ```
+
+> **Note:** Cross-PDB tags are preserved across multiple `rmv_fetch` calls.
+> Use `rmv_reset` if you want to clear previously loaded PDB+source datasets.
 
 ### Motif Name Aliasing
 
@@ -892,9 +921,9 @@ rmv_view hide                     # Same as rmv_view all hide
 | **Load** | `rmv_fetch <PDB>` | Download and load structure |
 | | `rmv_fetch /path/to/file.cif` | Load local PDB/mmCIF file |
 | **Sources** | `rmv_sources` | List all data sources |
-| | `rmv_db <N>` | Select data source (1–7) |
+| | `rmv_db <N>` | Select data source (1–8) |
 | | `rmv_db <N1> <N2>` | Combine multiple sources |
-| | `rmv_db <N> /path` | Set custom data path (5–7) |
+| | `rmv_db <N> /path` | Set custom data path (5–8) |
 | | `rmv_source info` | Show active source info |
 | **Motifs** | `rmv_load_motif` | Fetch motif data |
 | | `rmv_refresh` | Force API cache refresh |
@@ -932,8 +961,8 @@ rmv_view hide                     # Same as rmv_view all hide
 | **Color** | `rmv_color <TYPE> <COLOR>` | Change motif color |
 | | `rmv_colors` | View color legend |
 | | `rmv_bg_color <COLOR>` | Change backbone color |
-| **P-value** | `rmv_db <N> off` | Disable filtering (6–7) |
-| | `rmv_db <N> on` | Enable filtering (6–7) |
+| **P-value** | `rmv_db <N> off` | Disable filtering (6–8) |
+| | `rmv_db <N> on` | Enable filtering (6–8) |
 | | `rmv_db <N> <MOTIF> <PVAL>` | Custom P-value threshold |
 | **Toggle** | `rmv_toggle <TYPE> on/off` | Toggle visibility |
 | **Reset** | `rmv_reset` | Delete all objects & reset plugin |

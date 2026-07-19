@@ -33,7 +33,7 @@ PyMOL
 ├── image_saver.py         PNG export with 8 representations
 ├── structure_exporter.py  mmCIF export (original coordinates from disk)
 ├── database/
-│   ├── config.py          SOURCE_ID_MAP (7 sources), SourceMode, PluginConfig
+│   ├── config.py          SOURCE_ID_MAP (8 sources), SourceMode, PluginConfig
 │   ├── base_provider.py   ResidueSpec, MotifInstance, MotifType, BaseProvider ABC
 │   ├── registry.py        DatabaseRegistry — lazily loads providers
 │   ├── atlas_provider.py  Atlas JSON provider
@@ -70,7 +70,7 @@ rmv_load_motif   →  dispatch to:
                      ├── Single source (local/web):
                      │   └── fetch_motif_data_action()
                      │       └── source_selector → provider.get_motifs() → store
-                     ├── User source (5–7):
+                     ├── User source (5–8):
                      │   └── load_user_annotations_action()
                      │       └── user_provider.load_annotations() → parse → store
                      └── Combine mode (multiple sources):
@@ -101,7 +101,7 @@ rmv_save <TYPE> cif  →  StructureExporter.export_instance()
 
 | File | Lines | Purpose |
 |------|-------|---------|
-| `gui.py` | ~4260 | Main GUI class, 22 command registrations (20 direct + 2 from alignment), state management |
+| `gui.py` | ~4260 | Main GUI class, 25 command registrations (23 direct + 2 from alignment), state management |
 | `loader.py` | ~2060 | StructureLoader, UnifiedMotifLoader, VisualizationManager |
 | `alignment.py` | ~990 | Medoid superimposition pipeline (rmv_super / rmv_align) |
 | `image_saver.py` | ~580 | PNG export for individual motif instances + current view |
@@ -114,7 +114,7 @@ rmv_save <TYPE> cif  →  StructureExporter.export_instance()
 
 | File | Lines | Purpose |
 |------|-------|---------|
-| `config.py` | ~247 | SOURCE_ID_MAP (7 entries), SourceMode enum, PluginConfig dataclass |
+| `config.py` | ~247 | SOURCE_ID_MAP (8 entries), SourceMode enum, PluginConfig dataclass |
 | `base_provider.py` | ~362 | ABC for all providers: ResidueSpec, MotifInstance, MotifType, BaseProvider |
 | `registry.py` | ~302 | DatabaseRegistry — discovers and registers providers |
 | `atlas_provider.py` | ~278 | Parses bundled Atlas JSON files (7 motif types: HL, IL, J3–J7) |
@@ -133,7 +133,7 @@ rmv_save <TYPE> cif  →  StructureExporter.export_instance()
 
 | File | Lines | Purpose |
 |------|-------|---------|
-| `user_provider.py` | ~552 | Unified provider for FR3D, RMS, RMSX |
+| `user_provider.py` | ~552 | Unified provider for FR3D, RMS, RMSX, and NoBIAS |
 | `converters.py` | ~787 | FR3D CSV parser, RMS tab parser, RMSX log parser |
 
 ### Utils Module
@@ -154,13 +154,13 @@ When PyMOL loads the plugin (`__init_plugin__` in `plugin.py`):
 2. **Welcome banner** — prints ASCII box with version (1.0.0), available sources, and quick start guide
 3. **Chain ID lock** — `cmd.set("cif_use_auth", 1)` — ensures auth_asym_id by default
 4. **Registry init** — `initialize_registry()` — registers Atlas and Rfam providers
-5. **GUI init** — `initialize_gui()` — creates `MotifVisualizerGUI`, registers all 22 commands via `cmd.extend()`, and calls `register_alignment_commands()` for `rmv_super`/`rmv_align`
+5. **GUI init** — `initialize_gui()` — creates `MotifVisualizerGUI`, registers all 25 commands via `cmd.extend()` / alignment registration hooks
 
 ---
 
 ## 4. Command Reference
 
-All commands are registered via `cmd.extend()`. 20 are registered directly in `gui.py`, 2 are registered in `alignment.py` via `register_alignment_commands()`.
+All commands are registered via `cmd.extend()`. 23 are registered directly in `gui.py`, 2 are registered in `alignment.py` via `register_alignment_commands()`.
 
 ### Loading & Data
 
@@ -178,7 +178,7 @@ Downloads and loads a PDB/mmCIF structure. Does NOT fetch motif data.
 - Sets `cmd.set("cif_use_auth", val)` before `cmd.fetch()` / `cmd.load()`
 - If `cif_use_auth=0`: calls `_build_auth_label_chain_mapping()` to parse CIF `_atom_site` loop
 - Stores `loaded_pdb`, `loaded_pdb_id`, `auth_to_label_map` on GUI object
-- When switching to a different PDB, clears stale motif data and `loaded_sources`
+- When switching to a different PDB, preserves previously loaded motif datasets and `loaded_sources` for cross-PDB superimposition; use `rmv_reset` to clear accumulated state
 - Reports chains found (up to 20 displayed, remainder counted)
 
 ```
@@ -197,7 +197,7 @@ Fetches motif data from the currently selected source for the loaded PDB. Takes 
 
 **Implementation:** `load_motif_data()` → dispatches to:
 - `fetch_motif_data_action()` for curated sources (1–4)
-- `load_user_annotations_action()` for user sources (5–7)
+- `load_user_annotations_action()` for user sources (5–8)
 - `_load_combined_motifs()` for combine mode
 
 **Prerequisites:** A PDB must be loaded (`rmv_fetch`) and a source selected (`rmv_db`).
@@ -221,6 +221,7 @@ Sets the active data source. Supports multi-source combine, P-value filtering, a
 | 5 | FR3D | User annotations |
 | 6 | RNAMotifScan (RMS) | User annotations + filtering |
 | 7 | RNAMotifScanX (RMSX) | User annotations + filtering |
+| 8 | NoBIAS | User annotations + filtering |
 
 **Multi-source detection:** When remaining args after the first source ID contain another valid source ID, combine mode is triggered.
 
@@ -384,7 +385,7 @@ Medoid-based structural superimposition using `cmd.super()` (sequence-independen
 ```
 rmv_super KTURN                       # All K-TURN instances
 rmv_super KTURN 1,3,5                 # Specific instances
-rmv_super KTURN, 1S72_S3, 4V88_S3    # Cross-PDB
+rmv_super KTURN, 1S72_S3, 4V9F_S3    # Cross-PDB
 rmv_super KTURN, padding=3            # With flanking residues
 ```
 
@@ -417,13 +418,13 @@ Shows chain ID diagnostic information: structure name, `cif_use_auth` value, cha
 
 #### `rmv_loaded`
 
-Lists all loaded PDB+source combination tags (e.g., `1S72_S3`, `4V88_S7`). Suggests usage with `rmv_super`/`rmv_align`.
+Lists all loaded PDB+source combination tags (e.g., `1S72_S3`, `4V9F_S7`). Suggests usage with `rmv_super`/`rmv_align`.
 
 ---
 
 #### `rmv_help`
 
-Prints the full 22-command reference in box format.
+Prints the full command reference in box format.
 
 ---
 
@@ -464,7 +465,16 @@ Legacy command to load user annotations directly.
 - `rmv_user rnamotifscan 1A00` — Load RMS annotations
 - `rmv_user list` — Show available annotation files
 
-> **Preferred approach:** Use `rmv_db 5/6/7/8` + `rmv_load_motif` instead.
+> **Preferred approach:** Use `rmv_db 5/6/7/8; rmv_load_motif` instead.
+
+#### FR3D/RMSX Integration Notes
+
+- FR3D source selection is handled with `rmv_db 5`; wrapper commands are exposed via `rmv_fr3d status|doctor|setup|refresh|config|run|run_current`.
+- Source 5 uses strict local FR3D pipeline execution (`rmv_load_motif` on source 5 runs fresh pipeline; no fallback path).
+- RMSX source selection is handled with `rmv_db 7`; wrapper commands are exposed via `rmv_rmsx status|config|args|doctor|setup|test|run|run_current`.
+- User-annotation loading follows the same accumulation model as other sources: motif instances are tagged with source/PDB metadata and merged into `loaded_motifs` instead of replacing existing entries, enabling cross-source and cross-PDB workflows (`rmv_loaded`, `rmv_super` with tags).
+
+For complete FR3D runtime architecture, setup, and troubleshooting, see [FR3D_INTEGRATION.md](FR3D_INTEGRATION.md). For RMSX runtime details, see [FR3D_RMSX_INTEGRATION.md](FR3D_RMSX_INTEGRATION.md).
 
 ---
 
@@ -547,19 +557,21 @@ class MotifType:
 - **Coverage:** 34 motif families (RM00001–RM00034)
 - **Cache:** 30 days
 
-### Sources 5–7 — User Annotations
+### Sources 5–8 — User Annotations
 
 - **File:** `user_annotations/user_provider.py` + `user_annotations/converters.py`
 - **Source 5 (FR3D):** Parses FR3D CSV output
 - **Source 6 (RMS):** Parses RNAMotifScan tab-separated result files with P-value filtering
 - **Source 7 (RMSX):** Parses RNAMotifScanX `result_*.log` files with P-value filtering
+- **Source 8 (NoBIAS):** Parses NoBIAS tab-separated result files with P-value filtering
 
 **File locations (default):**
 ```
 database/user_annotations/
 ├── fr3d/                    FR3D CSV files
 ├── RNAMotifScan/            RMS (motif-type subdirectories)
-└── RNAMotifScanX/           RMSX (consensus subdirectories)
+├── RNAMotifScanX/           RMSX (consensus subdirectories)
+└── NoBIAS/                  NoBIAS result files
 ```
 
 **Custom paths stored per-source** in `gui.user_data_paths: Dict[int, str]`.
@@ -739,8 +751,8 @@ The `MotifStructureExporter` class exports motif instances as standalone mmCIF f
 1. Locates the **original CIF file** on disk via PyMOL's `fetch_path`
 2. Parses `_atom_site` column headers to find `auth_asym_id` and `auth_seq_id` indices
 3. Filters atom records to only those matching the motif's (chain, residue) pairs
-4. Copies all metadata blocks (`_cell`, `_symmetry`, `_entity`, etc.) from source
-5. Writes a self-contained `.cif` file loadable in PyMOL or any molecular viewer
+4. Writes a minimal coordinates-only `.cif` with just the filtered `_atom_site` loop
+5. Keeps output focused on motif atoms and avoids unrelated non-coordinate categories
 
 ### Output Folders
 
@@ -1078,7 +1090,7 @@ GENERIC_NAMES: Set[str] = {
 
 ### Path B — User Annotation Provider
 
-Use this path when the new source produces per-run output files that users place in the `user_annotations/` directory. The plugin loads those files when `rmv_db <N>` + `rmv_load_motif` is called.
+Use this path when the new source produces per-run output files that users place in the `user_annotations/` directory. The plugin loads those files when `rmv_db <N>; rmv_load_motif` is called.
 
 #### B-1 — Write a Format Parser
 
@@ -1221,7 +1233,7 @@ Create the expected directory for the tool's files:
 rsmviewer/database/user_annotations/
 └── MyTool/
     ├── 1S72_results.txt
-    └── 4V88_results.txt
+    └── 4V9F_results.txt
 ```
 
 The user can override this location at runtime with:
@@ -1333,9 +1345,9 @@ If `rmv_summary <MOTIF_TYPE>` is run in combine mode, the **Next Steps** section
 | Check | How |
 |-------|-----|
 | Source listed in `rmv_sources` | Output of `rmv_sources` |
-| Provider returns motifs | `rmv_db 9 && rmv_load_motif && rmv_summary` |
+| Provider returns motifs | `rmv_db 9; rmv_load_motif; rmv_summary` |
 | Color rendered correctly | `rmv_show <TYPE>` — motifs must appear in your assigned color |
-| Combines with at least one other source | `rmv_db 3 9 && rmv_load_motif` finishes with `Merge complete: …` |
+| Combines with at least one other source | `rmv_db 3 9; rmv_load_motif` finishes with `Merge complete: …` |
 | Alias filter resolves | `rmv_show <TYPE> <alias>` returns a non-zero count, **not** "Motif type 'X Y' not loaded" |
 | Generic-name enrichment (Path A only, if generic) | After load, motif keys are specific (e.g., `GNRA`) instead of generic (`HL`) |
 
@@ -1354,7 +1366,7 @@ The central state object. Key attributes:
 | `cif_use_auth` | `int` | 1 = auth_asym_id, 0 = label_asym_id |
 | `auth_to_label_map` | `dict` | {auth_chain: label_chain} mapping |
 | `current_source_mode` | `str` | 'local', 'web', 'user', 'combine' |
-| `current_source_id` | `int\|str` | Numeric source ID (1–7) or combined (e.g., '6_7') |
+| `current_source_id` | `int\|str` | Numeric source ID (1–8) or combined (e.g., '6_7') |
 | `combined_source_ids` | `list` | Source IDs when combining |
 | `user_rms_filtering_enabled` | `bool` | RMS P-value filtering on/off |
 | `user_rmsx_filtering_enabled` | `bool` | RMSX P-value filtering on/off |

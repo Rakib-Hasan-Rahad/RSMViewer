@@ -1,31 +1,65 @@
 # User Annotations Feature
 
-This directory contains support for loading motif annotations from external tools like FR3D and RNAMotifScan.
+This directory contains support for loading motif annotations from FR3D, RNAMotifScan (RMS), RNAMotifScanX (RMSX), and NoBIAS.
 
 ## Directory Structure
 
 ```
 user_annotations/
 ├── fr3d/              # FR3D output files
-├── rnamotifscan/      # RNAMotifScan output files
+├── RNAMotifScan/      # RNAMotifScan output files
+├── RNAMotifScanX/     # RNAMotifScanX output files
+├── NoBIAS/            # NoBIAS output files
 ├── converters.py      # Format converters
 └── user_provider.py   # User annotation provider
 ```
 
 ## Supported Tools
 
+### File Encoding Requirement
+
+All user annotation files must be UTF-8 encoded.
+
+- FR3D CSV files
+- RNAMotifScan result files
+- RNAMotifScanX result files
+- NoBIAS text/log files
+
+If loading fails with decode errors, re-save the file as UTF-8 and try again.
+
 ### FR3D (Fidelity of RNA 3D Structure)
-- **Format**: CSV (comma-separated)
+- **Format**: CSV (motif table) or FR3D pairwise TXT output
 - **Columns**: Motif order, Motif type, Resolution, Positions, Sequence, cWW, Description
 - **Position Format**: `PDB_ID|Chain|Model|Start-End` (e.g., `1S72|1|0|13-530`)
 - **Expected File Names**: `{pdb_id}_motifs.csv` (e.g., `1s72_motifs.csv`)
 
+FR3D pairwise TXT files should look like:
+
+```text
+1S72|1|A|G|71	cWW	1S72|1|A|C|83	0
+```
+
+and can be named like `1S72_basepair.txt`.
+
 #### Example FR3D Usage:
-1. Generate motif annotation using FR3D tool (external)
-2. Save as CSV file: `1s72_motifs.csv`
-3. Place in: `database/user_annotations/fr3d/`
-4. In PyMOL: `rmv_user fr3d 1S72`
-5. Then use: `rmv_summary`, `rmv_show`, etc.
+1. Select Source 5 in PyMOL: `rmv_db 5`
+2. Load a structure: `rmv_fetch 1S72`
+3. Load motifs: `rmv_load_motif`
+4. Explore: `rmv_summary`, `rmv_show`, etc.
+
+#### FR3D wrapper commands in RSMViewer:
+
+```pymol
+rmv_fr3d status
+rmv_fr3d doctor
+rmv_fr3d setup
+rmv_fr3d refresh [PDB_ID]
+rmv_fr3d config /absolute/path/to/fr3d-python
+rmv_fr3d run 1S72
+rmv_fr3d run_current
+```
+
+`rmv_fr3d run` executes the local Source-5 FR3D pipeline and loads source 5 motifs automatically.
 
 ### RNAMotifScan
 - **Format**: CSV or TSV
@@ -33,11 +67,22 @@ user_annotations/
 - **Expected File Names**: `{pdb_id}.csv` or `{pdb_id}.tsv`
 
 #### Example RNAMotifScan Usage:
-1. Generate motif annotation using RNAMotifScan tool (external)
-2. Save as CSV/TSV file
-3. Place in: `database/user_annotations/rnamotifscan/`
-4. In PyMOL: `rmv_user rnamotifscan 1A00`
+1. Place files in `database/user_annotations/RNAMotifScan/`
+2. In PyMOL: `rmv_db 6`
+3. Run: `rmv_fetch 1A00`
+4. Load motifs: `rmv_load_motif`
 5. Then use standard commands
+
+### RNAMotifScanX (RMSX)
+
+- **Directory**: `database/user_annotations/RNAMotifScanX/`
+- **Typical file**: `result_0_100_withbs.log` inside `*_consensus/` folders
+- **Preferred load path**: `rmv_db 7`, then `rmv_fetch`, then `rmv_load_motif`
+
+### NoBIAS
+
+- **Directory**: `database/user_annotations/NoBIAS/`
+- **Preferred load path**: `rmv_db 8`, then `rmv_fetch`, then `rmv_load_motif`
 
 ## PyMOL Commands
 
@@ -52,8 +97,19 @@ rmv_user fr3d 1S72
 # Load RNAMotifScan annotations
 rmv_user rnamotifscan 1A00
 
+# Load RNAMotifScanX annotations
+rmv_user rnamotifscanx 1A00
+
 # List all available annotation files
 rmv_user list
+```
+
+Preferred runtime workflow:
+
+```pymol
+rmv_db 5
+rmv_fetch 1S72
+rmv_load_motif
 ```
 
 ### Work with User Annotations
@@ -194,7 +250,9 @@ pymol> rmv_show Hairpin 1
 
 ## License & Attribution
 
-User annotation tools (FR3D, RNAMotifScan) are external tools.
+User annotation tools (FR3D, RNAMotifScan, RNAMotifScanX, NoBIAS) are external tools.
 Please cite appropriately:
 - FR3D: https://www.bgsu.edu/research/rna/software/fr3d.html
 - RNAMotifScan: http://bioinformatics.bc.edu/rnamotif/
+
+For full FR3D runtime architecture, setup, and troubleshooting, see [FR3D_INTEGRATION.md](../../../FR3D_INTEGRATION.md).

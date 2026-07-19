@@ -134,7 +134,7 @@ class CacheManager:
         
         try:
             # Load and check metadata
-            with open(meta_path, 'r') as f:
+            with open(meta_path, 'r', encoding='utf-8') as f:
                 meta = CacheMetadata.from_dict(json.load(f))
             
             # Check version – discard caches written by older code
@@ -149,7 +149,7 @@ class CacheManager:
                 return None
             
             # Load cached data
-            with open(cache_path, 'r') as f:
+            with open(cache_path, 'r', encoding='utf-8') as f:
                 cached_data = json.load(f)
             
             # Convert back to MotifInstance objects
@@ -195,11 +195,11 @@ class CacheManager:
             serialized = self._serialize_motifs(motifs)
             
             # Write cache file
-            with open(cache_path, 'w') as f:
+            with open(cache_path, 'w', encoding='utf-8') as f:
                 json.dump(serialized, f, indent=2)
             
             # Write metadata
-            with open(meta_path, 'w') as f:
+            with open(meta_path, 'w', encoding='utf-8') as f:
                 json.dump(meta.to_dict(), f, indent=2)
             
             return True
@@ -325,7 +325,7 @@ class CacheManager:
         
         for meta_path in self.cache_dir.glob("*.meta.json"):
             try:
-                with open(meta_path, 'r') as f:
+                with open(meta_path, 'r', encoding='utf-8') as f:
                     meta = CacheMetadata.from_dict(json.load(f))
                 
                 if meta.is_expired():
@@ -355,7 +355,7 @@ class CacheManager:
         
         for meta_path in self.cache_dir.glob("*.meta.json"):
             try:
-                with open(meta_path, 'r') as f:
+                with open(meta_path, 'r', encoding='utf-8') as f:
                     meta = CacheMetadata.from_dict(json.load(f))
                 
                 total_entries += 1
