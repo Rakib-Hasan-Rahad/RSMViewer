@@ -1,0 +1,62 @@
+RNAMotifScanX: an RNA structural motif search package
+
+IMPORTANT:
+
+We are currently finalizing the development of RNAMotifScanX, with a focus
+on more user-friendly and automated scripts development. This pre-release
+version aims at providing sanity check matrials for the reviewers of our
+manuscript. The following instructions tells how to execute the pre-release 
+version of RNAMotifScanX.
+
+Should you encounter any problems during execution, or have any comments,
+please send an Email to Cuncong Zhong at cczhong@eecs.ucf.edu.
+
+
+
+
+INSTRUCTIONS:
+
+RNAMotifAlignX:
+
+The program RNAMotifAlignX is used to align two RNA structural motifs.
+
+To compile:
+	Type 'make new' then 'make'.
+
+To execute:
+	Type './RNAMotifAlignX -i [query] -j [target]'.
+	Type './RNAMotifAlignX -h' for more options.
+
+	Note:	RNAMotifAlignX can only be invoked from the current directory,
+		because it reads several scoring matrix files from the directory.
+        	To invoke the program from any directory, please change the 
+		default path of these scoring matrix files at line 38-40 of the
+       		'main.cpp' file. Make sure you use the absolute path instead of
+		relative path. Or you can use the -s, -t, and -n options to provide
+		their paths during run time.
+
+
+RNAMotifScanX.py:
+
+The program RNAMotifScanX.py is a wrapping function to run RNAMotifAlignX.
+It accepts a query and aligns it against candidates in a directory, which is also
+specified by the user. It stores the results into a file indicated by the user.
+
+To execute:
+	Type 'python RNAMotifScanX.py [query] [candidate directory] [results]'.
+	For example, by typing:
+		'python RNAMotifScanX.py ./Query/k-turn_consensus.struct ./1s72_candidate_motifs_3strands ./Kturn_results.txt'
+	it will align the kink-turn consensus against all candidates in directory
+	'1s72_candidate_motifs_3strands', and output the results to 'Kturn_results.txt'.
+
+Reconsolidate_Results.py
+
+The program Reconsolidate_Results.py removes the overlap motifs from the results.
+It also sorts the results and computes more accurate p-values for all hits.
+
+To execute:
+	Type 'python Reconsolidate_Results.py [results] [candidate directory]'.
+	For example, by typing:
+		'python Reconsolidate_Results.py ./Kturn_results.txt ./1s72_candidate_motifs_3strands'
+	it will remove all overlapping motif segments in 'Kturn_results.txt',
+	and sorts the hits based on their alignment scores.

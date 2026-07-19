@@ -1,0 +1,182 @@
+# FR3D Python
+
+[FR3D](https://www.bgsu.edu/research/rna/software/fr3d.html) stands for "Find RNA 3D" and is commonly pronounced "Fred". FR3D enables searching and annotating RNA 3D structures and supports the [mmCIF](https://mmcif.wwpdb.org) format.
+
+The most up to date version is on the "latest" branch.  The "master" branch is no longer being updated.
+
+Originally [written in Matlab](https://github.com/BGSU-RNA/FR3D), this repository is a re-implementation of FR3D in Python. FR3D and FR3D Python are developed by the [BGSU RNA Bioinformatics group](http://rna.bgsu.edu).
+
+## Quick start using Docker
+
+Get started with FR3D using containers with [Docker](https://www.docker.com), [Podman](https://podman.io), or [Singularity](https://sylabs.io/guides/latest/user-guide/introduction.html).
+
+1. Get a Docker image
+
+    ```
+    docker pull ghcr.io/bgsu-rna/fr3d-python
+    # tag the image with a shorter name for convenience
+    docker tag ghcr.io/bgsu-rna/fr3d-python fr3d-python
+    ```
+
+    Alternatively, clone the repo and build locally:
+
+    ```
+    git clone https://github.com/BGSU-RNA/fr3d-python
+    docker build -t fr3d-python .
+    ```
+
+    <details>
+      <summary>Notes for M1 Mac users</summary>      
+
+      To build a Docker image on M1 Macs use [docker buildx](https://docs.docker.com/buildx/working-with-buildx/) to specify the target platform in order to be able to install all the dependencies:
+
+      ```bash
+      docker buildx install
+      docker buildx build -t fr3d-python --platform linux/amd64 .
+      ```
+    </details>
+
+2. Annotate RNA 3D structures with basepair interactions
+
+    ```
+    docker run -v <path_to_input>:/rna/input -v <path_to_output>:/rna/output fr3d-python python fr3d/classifiers/NA_pairwise_interactions.py -i /rna/input -o /rna/output <pdb_id>
+    ```
+
+    where
+
+    - `path_to_input` is the folder where cif files are stored (if a file does not exist already it will downloaded)
+    - `path_to_output` is the folder where the results will be generated
+    - `pdb_id` is the PDB identifier of the structure to be annotated (for example, `1S72`). Multiple PDB identifiers can be specified
+    - Optional flag determines which output files are generated
+      - `-c basepair` outputs a file listing basepairs in the 12 Leontis-Westhof families
+      - `-c basepair_detail` outputs Leontis-Westhof pairs with more detail about asymmetric pairs and with bifurcated and alternative pairs
+      - `-c sO` outputs a file with base-oxygen stacking annotations
+      - `-c basepair,cO` outputs both basepair and sO annotation files; don't put spaces between the category types
+
+<details>
+  <summary>Notes on updating Docker image in Container registry</summary>
+
+  The Docker images are hosted on the GitHub Container registry. Currently the images need to be updated manually as follows:
+
+  1. [Authenticate](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) using Personal Access Token (required only once)
+
+  2. Create and push a new image
+
+      ```
+      docker build -t ghcr.io/bgsu-rna/fr3d-python .
+      docker push ghcr.io/bgsu-rna/fr3d-python
+      ```
+
+  In the future this should be done automatically with GitHub Actions.
+</details>
+
+### Understanding the output
+
+Basepair classification limits have been revised and are available on the "latest" branch. Noted in February 2026.
+
+The program `NA_pairwise_interactions.py` generates tab-separated files called `<pdb_id>_basepairs.txt` that list basepair interactions between pairs of nucleotides (an RNA 3D structure can contain 0 or more basepairs). The files contain the following fields:
+
+- Unit ID of the first nucleotide in the [Unit ID format](https://www.bgsu.edu/research/rna/help/rna-3d-hub-help/unit-ids.html)
+- basepair interaction between the first and second nucleotides, defined according to the [Leontis-Westhof nomenclature](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1370104/)
+- Unit ID of the second nucleotide
+- number of interactions crossed by the basepair (0 for nested basepairs or an integer for non-nested basepairs)
+
+For example:
+
+```
+1S72|1|0|A|1193	tSH	1S72|1|0|U|1205	0
+1S72|1|0|A|631	tSH	1S72|1|0|U|2607	25
+```
+
+## Installation without Docker
+
+### Clone FR3D Python
+
+```
+git clone https://github.com/BGSU-RNA/fr3d-python
+cd fr3d-python
+python -m pip install .
+```
+
+:warning: Any time files such as `fr3d/cif/reader.py` get edited, you need to rerun the `python -m pip install .` command.
+
+### Set up on Python 2.7
+
+**fr3d-python requires PDBx**. Follow [instructions at wwPDB](https://mmcif.wwpdb.org/docs/sw-examples/python/html/) to install PDBx on your local machine and place in your Python path.
+
+### Set up on Python 3.x
+
+In order to use FR3D in Python 3, you will need to install the [mmcif-pdbx](https://pypi.org/project/mmcif-pdbx/) package:
+
+```
+pip install mmcif-pdbx
+```
+
+This will put the PDBx package in your Python path.
+
+<details>
+  <summary>Solving TypeError when reading .cif files</summary>
+
+On Windows, mmcif-pdbx can experience a TypeError when loading .cif files.  This is apparently because your machine expects the iterator loop to deal with bytes.  Try this: find where mmcif-pdbx is installed using ```pip show mmcif-pdbx```.  Edit C:\[python-path]\Lib\site-packages\pdbx\reader.py  At lines 387 and 397, after ```for line in file_iterator:``` add a line ``` line = line.decode() ```.
+</details>
+
+<details>
+  <summary>Note for Windows users about case-sensitive filenames</summary>
+
+FR3D Python uses case-sensitive file names because chain identifiers in PDB are case sensitive. Windows looks like it uses case sensitive filenames, but if you create a file called `Data.txt` and then save another file in the same place called `data.txt`, it will overwrite `Data.txt` and it will be listed as `Data.txt` because that was there first. Recent versions of Windows allow for case sensitivity.
+
+For FR3D Python, you need to enable case sensitivity in filenames in the ```units``` folder. See https://docs.microsoft.com/en-us/windows/wsl/case-sensitivity to read about how to enable case sensitivity for a specific directory.
+
+The key steps seem to be to open PowerShell as administrator, then enter the following two commands:
+```
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+fsutil.exe file setCaseSensitiveInfo <path to folder> enable
+```
+
+Note that the first step is not mentioned in the Microsoft documentation.
+</details>
+
+## Running FR3D Python
+
+Navigate to the [classifiers](https://github.com/BGSU-RNA/fr3d-python/tree/master/fr3d/classifiers) folder and run the following command to ensure that the installation was successful:
+
+```
+python NA_pairwise_interactions.py --help
+```
+
+You can update [localpath.py](https://github.com/BGSU-RNA/fr3d-python/blob/master/fr3d/localpath.py) to represent your file structure. Alternatively, use the `--input` (`-i`) and `--output` (`-o`) flags to specify the location of your input cif files and the output text files.
+
+For example, if you already have the .cif file downloaded, use the `--input` flag to specify the directory your cif file is in:
+
+```
+python NA_pairwise_interactions.py --input <path_to_input> <pdb_id>
+```
+
+Additionally, if you don't have the cif file in your localpath, you can run
+
+```
+python NA_pairwise_interactions.py <pdb_id>.cif
+```
+
+and this will download the file for processing and run the program.
+
+Output can be specified using the `-o` or `--output` tags, for example:
+
+```
+python NA_pairwise_interactions.py --output <path_to_output> <pdb_id>
+```
+
+This will write where you wish to output your annotations. If the specified directory doesn't exist, one will be made.
+
+<details>
+  <summary>Using fr3d-python with .pdb formatted files</summary>
+
+Support for reading .pdb files is currently available. 
+
+FR3D Python is now able to read 3D structure files that are in .pdb format. Support for this functionality is in new and does not handle .pdb files that have complex symmetries. If analyzing 3D structures from the PDB, it is recommended to use .cif formatted files if one is available. The .pdb reader is useful though for .pdb files generated by other programs. 
+
+</details>
+
+## Get in touch
+
+If you have any questions or feature requests, feel free to [submit an issue](https://github.com/BGSU-RNA/fr3d-python/issues) or get in touch via a [contact form](https://www.bgsu.edu/research/rna/contact-us.html) on the website of the BGSU RNA Bioinformatics group.

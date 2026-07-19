@@ -119,13 +119,13 @@ rmv_summary
 
 Expected behavior:
 
-- Source 5 starts a fresh local FR3D run
+- Source 5 starts a fresh local FR3D run from bundled runtime assets
 - output is written to `rsmviewer/database/user_annotations/fr3d/`
 - motifs become available to `rmv_summary`, `rmv_show`, `rmv_view`, `rmv_super`, `rmv_save`
 
 ### 3.4 Optional advanced configuration
 
-Advanced users can configure Source 5 runtime paths:
+Advanced users can override Source 5 runtime paths when using a custom FR3D tree:
 
 ```pymol
 rmv_fr3d config /absolute/path/to/fr3d-python /absolute/path/to/output on
@@ -301,7 +301,7 @@ rmv_fr3d refresh 1S72
 
 Purpose:
 
-- advanced path/config control for Source 5 settings
+- advanced path/config override for Source 5 settings
 
 Example:
 
@@ -337,16 +337,16 @@ Fix:
 - ensure host Python can create venv and install packages
 - verify environment has network access for package install
 
-### FR3D root not found
+### FR3D root not found (advanced override mode)
 
 Symptom:
 
-- missing `fr3d_python_dir`
+- advanced config points to an invalid FR3D root
 
 Fix:
 
-- run `rmv_fr3d setup`
-- or set manually with `rmv_fr3d config <FR3D_ROOT> ...`
+- run `rmv_fr3d setup` to return to bundled runtime defaults
+- if using custom override, set a valid path with `rmv_fr3d config <FR3D_ROOT> ...`
 
 ### Permission errors
 

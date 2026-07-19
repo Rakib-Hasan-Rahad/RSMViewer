@@ -245,7 +245,7 @@ rmv_show K-TURN shared
 - `rmv_fr3d doctor`
 - `rmv_fr3d setup`
 - `rmv_fr3d refresh [PDB_ID]`
-- `rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [AUTO_ON_FETCH]`
+- `rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [AUTO_ON_FETCH]` (advanced override)
 - `rmv_fr3d run <PDB_ID>`
 - `rmv_fr3d run_current`
 

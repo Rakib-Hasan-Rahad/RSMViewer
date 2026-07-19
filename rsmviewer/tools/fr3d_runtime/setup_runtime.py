@@ -111,7 +111,13 @@ def _run_cmd(cmd: list[str], cwd: Path | None = None, timeout: int = 900) -> tup
 
 
 def _bootstrap_runtime(runtime_dir: Path) -> list[str]:
-    """Attempt to provision local FR3D runtime assets for strict Source-5 mode."""
+    """Prepare bundled FR3D runtime assets for strict Source-5 mode.
+
+    Release policy:
+    - Never clone FR3D from the network.
+    - Never fetch external source code during setup.
+    - Only prepare Python/dependency state around the vendored runtime.
+    """
     logs: list[str] = []
     python_dir = runtime_dir / 'python'
     venv_dir = python_dir / 'venv'
@@ -144,22 +150,13 @@ def _bootstrap_runtime(runtime_dir: Path) -> list[str]:
     ok, msg = _run_cmd([venv_python_str, '-m', 'pip', 'install', 'numpy', 'scipy', 'mmcif-pdbx'])
     logs.append('Install deps (numpy/scipy/mmcif-pdbx): ok' if ok else f'Install deps failed: {msg}')
 
-    # Ensure FR3D source checkout exists under runtime/python/fr3d-python.
+    # Release builds require the vendored FR3D source tree to already exist.
     if not _looks_like_fr3d_root(fr3d_repo):
-        git_exe = shutil.which('git')
-        if not git_exe:
-            logs.append('Git not found; cannot auto-clone FR3D source.')
-            return logs
-        if fr3d_repo.exists() and not _looks_like_fr3d_root(fr3d_repo):
-            try:
-                shutil.rmtree(fr3d_repo)
-            except Exception as exc:
-                logs.append(f'Could not clean invalid FR3D checkout: {exc}')
-                return logs
-        ok, msg = _run_cmd([git_exe, 'clone', '--depth', '1', 'https://github.com/BGSU-RNA/fr3d-python.git', str(fr3d_repo)])
-        logs.append('Clone FR3D source: ok' if ok else f'Clone FR3D source failed: {msg}')
-        if not ok:
-            return logs
+        logs.append(
+            'Bundled FR3D source tree is missing at runtime/python/fr3d-python. '
+            'Release mode does not clone FR3D automatically.'
+        )
+        return logs
 
     # Install FR3D package into venv to maximize import compatibility.
     ok, msg = _run_cmd([venv_python_str, '-m', 'pip', 'install', '-e', str(fr3d_repo)])
@@ -196,8 +193,8 @@ def _build_report(runtime_dir: Path, do_setup: bool = False) -> dict:
     setup_message = ''
     if not fr3d_root:
         setup_message += (
-            'FR3D local runtime not found. Source 5 requires local FR3D runtime. '
-            'Set FR3D_ROOT to enable local FR3D extraction. '
+            'Bundled FR3D runtime not found. Source 5 requires the vendored FR3D source tree '
+            'under rsmviewer/tools/fr3d_runtime/python/fr3d-python. '
         )
     if not python_exe:
         setup_message += (

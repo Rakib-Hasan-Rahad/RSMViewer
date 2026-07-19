@@ -298,7 +298,7 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 | `rmv_fr3d doctor` | Diagnose Source-5 runtime readiness |
 | `rmv_fr3d setup` | Attempt Source-5 runtime setup/bootstrap |
 | `rmv_fr3d refresh [PDB_ID]` | Force fresh rerun for current/specified PDB |
-| `rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [AUTO_ON_FETCH]` | Configure FR3D wrapper paths (absolute paths recommended) |
+| `rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [AUTO_ON_FETCH]` | Advanced override for custom FR3D wrapper paths |
 | `rmv_fr3d run <PDB_ID>` | Run local FR3D pipeline for a specific PDB |
 | `rmv_fr3d run_current` | Run wrapper for the currently loaded PDB |
 | `rmv_rmsx status` | Show integrated RNAMotifScanX runtime status |
