@@ -14,7 +14,7 @@ RSMViewer is a PyMOL plugin designed for structural biologists and computational
 
 **Key capabilities:**
 
-- **Unified annotation retrieval** from 8 heterogeneous sources (2 locally integrated, 2 web API, 4 annotation tool formats)
+- **Unified annotation retrieval** from 7 heterogeneous sources (2 locally integrated, 2 web API, 3 supporting annotation tool formats)
 - **Automatic standardization** chain ID harmonization (auth_asym_id ↔ label_asym_id), canonical motif naming, homolog-based enrichment, and P-value filtering
 - **Multi-source cascade merge** with category-aware Jaccard deduplication and source attribution
 - **Medoid-based structural superimposition** across single or multiple PDB structures
@@ -63,45 +63,6 @@ After restarting PyMOL, you should see the welcome banner:
 
 Run `rmv_help` at any time to see all available commands.
 
-### Step 4: UTF-8 File Encoding Requirement
-
-RSMViewer reads text-based motif files using UTF-8 encoding for consistent behavior across macOS, Linux, and Windows.
-
-- Custom annotation files (FR3D, RNAMotifScan, RNAMotifScanX, NoBIAS) should be saved as UTF-8.
-- If you edit `.csv`, `.tsv`, `.txt`, `.log`, `.json`, or `.cif` files manually, keep UTF-8 encoding.
-- If you see decode errors, re-save the file as UTF-8 and reload.
-
-### Step 5: RNAMotifScanX Runtime (Source 7) on Windows/macOS/Linux
-
-Source 7 now uses an integrated runtime inside the plugin. You do not need to pass an external RMSX JSON config for normal use.
-
-Runtime folders:
-
-- `rsmviewer/tools/rmsx_runtime/queries` (bundled)
-- `rsmviewer/tools/rmsx_runtime/mat` (bundled)
-- `rsmviewer/tools/rmsx_runtime/bin/<platform>`
-
-Platform-specific binary folders:
-
-- Windows: `rsmviewer/tools/rmsx_runtime/bin/windows-x86_64`
-- macOS Apple Silicon: `rsmviewer/tools/rmsx_runtime/bin/macos-arm64`
-- macOS Intel: `rsmviewer/tools/rmsx_runtime/bin/macos-x86_64`
-- Linux x86_64: `rsmviewer/tools/rmsx_runtime/bin/linux-x86_64`
-
-Use diagnostics and setup commands:
-
-```
-rmv_rmsx_doctor      # Check runtime health and missing files
-rmv_rmsx setup       # Attempt automatic first-run setup/build
-```
-
-Minimum expected binaries in each platform folder:
-
-- RMSX executable: `scan` or `RNAMotifScanX` (`.exe` on Windows)
-- MC-Annotate executable: `MC-Annotate` or `mc-annotate` (`.exe` on Windows)
-
-If files are missing, `rmv_rmsx_doctor` reports exact missing items and setup guidance.
-
 
 ![Step 1](images/1.png)
 ![Step 2](images/2.png)
@@ -116,8 +77,6 @@ If files are missing, `rmv_rmsx_doctor` reports exact missing items and setup gu
 | [README.md](README.md) | Overview, installation, quick start, and complete command reference |
 | [TUTORIAL.md](TUTORIAL.md) | Step-by-step tutorial with examples for every feature |
 | [DEVELOPER.md](DEVELOPER.md) | Technical reference — architecture, data flow, and implementation details |
-| [FR3D_INTEGRATION.md](FR3D_INTEGRATION.md) | Dedicated FR3D runtime architecture, setup, commands, troubleshooting, and developer notes |
-| [FR3D_RMSX_INTEGRATION.md](FR3D_RMSX_INTEGRATION.md) | Combined FR3D/RMSX integration reference with RMSX runtime details |
 
 ---
 
@@ -186,10 +145,10 @@ rmv_super KTURN, padding=3            # With ±3 flanking residues
 **Cross-PDB superimposition:**
 
 ```
-rmv_fetch 1S72; rmv_db 3; rmv_load_motif
-rmv_fetch 4V9F; rmv_load_motif
-rmv_loaded                            # See tags: 1S72_S3, 4V9F_S3
-rmv_super KTURN, 1S72_S3, 4V9F_S3    # Superimpose across both PDBs
+rmv_fetch 1S72 && rmv_db 3 && rmv_load_motif
+rmv_fetch 4V88 && rmv_load_motif
+rmv_loaded                            # See tags: 1S72_S3, 4V88_S3
+rmv_super KTURN, 1S72_S3, 4V88_S3    # Superimpose across both PDBs
 ```
 
 ### 7. Export Images & Structures
@@ -209,7 +168,7 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 
 ---
 
-## Complete Command Reference
+## Complete Command Reference (22 Commands)
 
 ### Loading & Data Management
 
@@ -220,14 +179,14 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 | `rmv_fetch <PDB_ID>, cif_use_auth=0` | Load with mmCIF label chain IDs |
 | `rmv_fetch <PDB_ID>, bg_color=white` | Load with custom background color |
 | `rmv_load_motif` | Fetch motif data from the currently selected source |
-| `rmv_db <N>` | Select data source by ID (1–8) |
+| `rmv_db <N>` | Select data source by ID (1–7) |
 | `rmv_db <N1> <N2>` | Combine multiple sources (left = highest priority) |
 | `rmv_db <N1> <N2>, jaccard_threshold=0.80` | Combine with custom merge threshold |
-| `rmv_db <N> /path/to/data` | Set custom data path (sources 5–8, per-source) |
-| `rmv_db <N> off` | Disable P-value filtering (sources 6–8) |
-| `rmv_db <N> on` | Enable P-value filtering (sources 6–8) |
-| `rmv_db <N> <MOTIF> <P-VALUE>` | Set custom P-value threshold (sources 6–8) |
-| `rmv_sources` | List all 8 available sources with descriptions |
+| `rmv_db <N> /path/to/data` | Set custom data path (sources 5–7, per-source) |
+| `rmv_db <N> off` | Disable P-value filtering (sources 6–7) |
+| `rmv_db <N> on` | Enable P-value filtering (sources 6–7) |
+| `rmv_db <N> <MOTIF> <P-VALUE>` | Set custom P-value threshold (sources 6–7) |
+| `rmv_sources` | List all 7 available sources with descriptions |
 | `rmv_refresh` | Force re-fetch from API (bypass 30-day cache) |
 
 ### Visualization & Navigation
@@ -292,20 +251,8 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 
 | Command | Description |
 |---------|-------------|
-| `rmv_user <TOOL> <PDB_ID>` | Load FR3D/RMS/RMSX/NoBIAS annotations directly |
+| `rmv_user <TOOL> <PDB_ID>` | Load FR3D or RMS annotations directly |
 | `rmv_user list` | List available annotation files |
-| `rmv_fr3d status` | Show FR3D runtime status |
-| `rmv_fr3d doctor` | Diagnose Source-5 runtime readiness |
-| `rmv_fr3d setup` | Attempt Source-5 runtime setup/bootstrap |
-| `rmv_fr3d refresh [PDB_ID]` | Force fresh rerun for current/specified PDB |
-| `rmv_fr3d config <FR3D_ROOT> [OUTPUT_DIR] [AUTO_ON_FETCH]` | Advanced override for custom FR3D wrapper paths |
-| `rmv_fr3d run <PDB_ID>` | Run local FR3D pipeline for a specific PDB |
-| `rmv_fr3d run_current` | Run wrapper for the currently loaded PDB |
-| `rmv_rmsx status` | Show integrated RNAMotifScanX runtime status |
-| `rmv_rmsx_doctor` | Diagnose integrated Source-7 runtime files/dependencies |
-| `rmv_rmsx setup` | Attempt automatic Source-7 runtime setup/build |
-| `rmv_rmsx test` | Check whether integrated RMSX executable is runnable |
-| `rmv_rmsx run <PDB_ID>` | Run integrated RNAMotifScanX pipeline for a PDB |
 
 ### Utility
 
@@ -318,7 +265,7 @@ rmv_save HL 3 cif        # Export HL instance #3 as mmCIF
 
 ## Data Sources
 
-RSMViewer provides 8 data sources organized in three categories:
+RSMViewer provides 7 data sources organized in three categories:
 
 ### Online (Real-time API Access)
 
@@ -341,7 +288,6 @@ RSMViewer provides 8 data sources organized in three categories:
 | 5 | **FR3D** | `rmv_db 5` | No |
 | 6 | **RNAMotifScan (RMS)** | `rmv_db 6` | Yes |
 | 7 | **RNAMotifScanX (RMSX)** | `rmv_db 7` | Yes |
-| 8 | **NoBIAS** | `rmv_db 8` | Yes |
 
 ### Custom Data Paths (Per-Source, Independent)
 
@@ -355,9 +301,9 @@ rmv_db 7 /path/to/rmsx/data       # RMSX with custom directory
 
 > Setting a path for one source does **not** overwrite the path for another.
 
-### P-Value Filtering (Sources 6–8)
+### P-Value Filtering (Sources 6–7)
 
-RMS, RMSX, and NoBIAS include P-values in their output. The plugin filters results using default thresholds:
+RMS and RMSX include P-values in their output. The plugin filters results using default thresholds:
 
 | Motif | RMS | RMSX |
 |-------|-----|------|
@@ -380,25 +326,6 @@ rmv_db 6 SARCIN-RICIN 0.01  # Custom threshold for a specific motif
 ### FR3D (Source 5)
 
 CSV files placed in `rsmviewer/database/user_annotations/fr3d/`.
-
-FR3D pairwise `.txt` output from `fr3d.classifiers.NA_pairwise_interactions` is also supported.
-
-#### Run FR3D directly from RSMViewer (Source 5 runtime workflow)
-
-```
-rmv_db 5
-rmv_fetch 1S72
-rmv_load_motif
-rmv_summary
-rmv_show HAIRPIN LOOP
-```
-
-Notes:
-- Source 5 runs the local FR3D pipeline fresh for each run.
-- Use `rmv_fr3d doctor` and `rmv_fr3d setup` for runtime diagnostics/setup.
-- `rmv_fr3d config` is available for advanced runtime path control.
-
-For full FR3D runtime architecture, installation, command reference, and troubleshooting, see [FR3D_INTEGRATION.md](FR3D_INTEGRATION.md).
 
 ### RNAMotifScan (Source 6)
 
@@ -542,15 +469,12 @@ rmv_fetch 1S72
 rmv_db 3
 rmv_load_motif
 
-rmv_fetch 4V9F
+rmv_fetch 4V88
 rmv_load_motif
 
 rmv_super KTURN                       # All K-TURNs across both PDBs
-rmv_super KTURN, 1S72_S3, 4V9F_S3    # Filter by PDB+source tags
+rmv_super KTURN, 1S72_S3, 4V88_S3    # Filter by PDB+source tags
 ```
-
-> **Note:** `rmv_fetch` now preserves previously loaded PDB+source motif tags for cross-PDB workflows.
-> Use `rmv_reset` when you want to clear accumulated tags/data.
 
 ### Motif Name Aliasing
 
@@ -590,7 +514,7 @@ rmv_save current my_figure    # Custom filename
 
 ### mmCIF Export
 
-Extracts original coordinates from the on-disk CIF file (not PyMOL's internal coordinates) and writes a minimal coordinates-only `_atom_site` mmCIF:
+Extracts original coordinates from the on-disk CIF file (not PyMOL's internal coordinates):
 
 ```
 rmv_save ALL cif              # All motif instances
@@ -711,9 +635,6 @@ rmv_loaded                   # Check tags: 1S72_S7, 4V9F_S7
 rmv_super K-TURN             # Superimpose all K-TURNs across both PDBs
 ```
 
-> **Note:** PDB+source tags remain available across successive `rmv_fetch` calls.
-> Run `rmv_reset` to start a fresh session.
-
 ### Workflow 4: Generate Publication Figures
 
 ```
@@ -754,7 +675,7 @@ rna-motif-visualizer/
 │   ├── image_saver.py               # PNG export with 8 representations
 │   ├── structure_exporter.py        # mmCIF export (original coordinates from disk)
 │   ├── database/
-│   │   ├── config.py                # SOURCE_ID_MAP (8 sources), PluginConfig
+│   │   ├── config.py                # SOURCE_ID_MAP (7 sources), PluginConfig
 │   │   ├── base_provider.py         # ResidueSpec, MotifInstance, MotifType, BaseProvider ABC
 │   │   ├── registry.py              # DatabaseRegistry — lazy provider loading
 │   │   ├── atlas_provider.py        # RNA 3D Motif Atlas JSON provider
@@ -801,8 +722,6 @@ rna-motif-visualizer/
 | Slow first load | Normal — API call + caching; second load is instant |
 | Chain ID mismatch | Use `rmv_fetch <ID>, cif_use_auth=0` for label chain ID mode |
 | Wrong chain IDs in annotations | Verify auth vs. label chain convention with `rmv_chains` |
-
-For FR3D runtime installation, Source-5 command usage, and troubleshooting, see [FR3D_INTEGRATION.md](FR3D_INTEGRATION.md). For RMSX runtime details, see [FR3D_RMSX_INTEGRATION.md](FR3D_RMSX_INTEGRATION.md).
 | Motif type not found | Check spelling with `rmv_summary`; aliases are supported (e.g., `KTURN` → `K-TURN`) |
 | Source path not working | Use absolute paths; verify directory structure matches expected format |
 | Stale cached data | Run `rmv_refresh` to bypass the 30-day cache |
