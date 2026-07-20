@@ -64,7 +64,7 @@ After restarting PyMOL, you should see the welcome banner:
 Run `rmv_help` at any time to see all available commands.
 
 
-![Step 1](images/1.png)
+
 ![Step 2](images/2.png)
 ![Step 3](images/3.png)
 ![Step 4](images/4.png)
