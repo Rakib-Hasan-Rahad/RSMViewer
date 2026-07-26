@@ -272,9 +272,31 @@ class MotifVisualizerGUI:
             if rmsx_exe and mc_exe:
                 break
 
+        # RNAVIEW: reference preprocessing merges MC-Annotate with RNAVIEW.
+        # Discover a compiled rnaview binary (if the runtime has been built) and
+        # the bundled RNAVIEW base directory that holds the BASEPARS resources.
+        rnaview_exe = ''
+        for bdir in candidate_bin_dirs:
+            rnaview_exe = self._find_first_existing_path([
+                bdir / 'rnaview',
+                bdir / 'rnaview.exe',
+            ])
+            if rnaview_exe:
+                break
+        rnaview_base = runtime_dir / 'src' / 'RNAMotifScanX_src' / 'ThirdParty' / 'RNAVIEW'
+        rnaview_dir = str(rnaview_base.resolve()) if (rnaview_base / 'BASEPARS').exists() else ''
+        if not rnaview_exe:
+            bundled_rnaview = rnaview_base / 'bin' / 'rnaview'
+            if bundled_rnaview.exists():
+                rnaview_exe = str(bundled_rnaview.resolve())
+
         return {
             'rmsx_executable': rmsx_exe,
             'mc_annotate_executable': mc_exe,
+            'rnaview_executable': rnaview_exe,
+            'rnaview_dir': rnaview_dir,
+            'incorporate_rnaview': True,
+            'rnaview_required': False,
             'query_motifs_dir': str(queries_dir.resolve()) if queries_dir.exists() else '',
             'cif_input_dir': '',
             'output_dir': self.rmsx_output_path,
@@ -302,6 +324,9 @@ class MotifVisualizerGUI:
             self.rmsx_runtime_dir,
             '--json',
         ]
+        query_file = str(getattr(self, 'rmsx_query_file', '') or '').strip()
+        if query_file:
+            cmdline.extend(['--query-file', query_file])
         if build:
             cmdline.append('--build')
 
@@ -1094,6 +1119,7 @@ class MotifVisualizerGUI:
             self.rmsx_working_dir = str(data.get('rmsx_working_dir', '') or '').strip()
             self.rmsx_args_template = str(data.get('rmsx_args_template', '') or '').strip()
             self.rmsx_auto_run_on_fetch = bool(data.get('rmsx_auto_run_on_fetch', False))
+            self.rmsx_query_file = str(data.get('rmsx_query_file', '') or '').strip()
             output_path = str(data.get('rmsx_output_path', '') or '').strip()
             if output_path:
                 self.rmsx_output_path = output_path
@@ -1110,6 +1136,7 @@ class MotifVisualizerGUI:
                 'rmsx_output_path': self.rmsx_output_path,
                 'rmsx_args_template': self.rmsx_args_template,
                 'rmsx_auto_run_on_fetch': self.rmsx_auto_run_on_fetch,
+                'rmsx_query_file': getattr(self, 'rmsx_query_file', ''),
             }
             with open(self.rmsx_config_file, 'w', encoding='utf-8') as f:
                 json.dump(payload, f, indent=2)
@@ -1153,9 +1180,10 @@ class MotifVisualizerGUI:
         print(f"Output path     : {self.rmsx_output_path}")
         print(f"Args template   : {self.rmsx_args_template or '(none)'}")
         print(f"Auto on fetch   : {'on' if self.rmsx_auto_run_on_fetch else 'off'}")
+        print(f"Query file      : {getattr(self, 'rmsx_query_file', '') or '(built-in consensus set)'}")
         print(f"Runtime dir     : {self.rmsx_runtime_dir}")
         print("\nCommands:")
-        print("  rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+        print("  rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH] [QUERY_FILE]")
         print("  rmv_rmsx args <ARG_TEMPLATE>")
         print("  rmv_rmsx doctor")
         print("  rmv_rmsx setup")
@@ -1168,11 +1196,11 @@ class MotifVisualizerGUI:
         print("  rmv_rmsx args --pdb {pdb_id} --out {output_dir}")
         print("=" * 70 + "\n")
 
-    def configure_rmsx_wrapper(self, executable: str, output_dir: str = '', work_dir: str = '', auto_on_fetch: str = ''):
+    def configure_rmsx_wrapper(self, executable: str, output_dir: str = '', work_dir: str = '', auto_on_fetch: str = '', query_file: str = ''):
         """Set RNAMotifScanX wrapper settings and persist them."""
         if not executable:
             self.logger.error("RNAMotifScanX executable path is required")
-            self.logger.info("Usage: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+            self.logger.info("Usage: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH] [QUERY_FILE]")
             return False
 
         expanded_exe = os.path.abspath(os.path.expanduser(executable))
@@ -1205,6 +1233,13 @@ class MotifVisualizerGUI:
                 self.logger.error("AUTO_ON_FETCH must be one of: on/off, true/false, 1/0")
                 return False
 
+        if query_file:
+            expanded_query = os.path.abspath(os.path.expanduser(query_file))
+            if not os.path.isfile(expanded_query):
+                self.logger.error(f"RNAMotifScanX query file not found: {expanded_query}")
+                return False
+            self.rmsx_query_file = expanded_query
+
         try:
             os.makedirs(self.rmsx_output_path, exist_ok=True)
         except Exception as e:
@@ -1221,6 +1256,7 @@ class MotifVisualizerGUI:
         self.logger.info(f"Working dir: {self.rmsx_working_dir or os.path.dirname(self.rmsx_executable_path)}")
         self.logger.info(f"Output path: {self.rmsx_output_path}")
         self.logger.info(f"Auto run on rmv_fetch: {'on' if self.rmsx_auto_run_on_fetch else 'off'}")
+        self.logger.info(f"Query file: {getattr(self, 'rmsx_query_file', '') or '(built-in consensus set)'}")
         return True
 
     def set_rmsx_args_template(self, arg_template: str):
@@ -1235,7 +1271,7 @@ class MotifVisualizerGUI:
         """Run executable sanity checks for RNAMotifScanX wrapper."""
         if not self.rmsx_executable_path:
             self.logger.error("RNAMotifScanX executable is not configured")
-            self.logger.info("Use: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+            self.logger.info("Use: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH] [QUERY_FILE]")
             return False
 
         if not self._is_executable_runnable(self.rmsx_executable_path):
@@ -1253,7 +1289,26 @@ class MotifVisualizerGUI:
             self.logger.info("Usage: rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
             return False
 
+        query_override = ''
+        if extra_args:
+            try:
+                import shlex
+                tokens = shlex.split(extra_args)
+            except Exception:
+                tokens = [token for token in extra_args.split() if token]
+            for token in tokens:
+                lowered = token.lower()
+                if lowered.endswith('.struct') or lowered.endswith('.txt') or lowered.startswith('query='):
+                    query_override = token.split('=', 1)[1].strip() if '=' in token else token
+                    break
+
+        previous_query_file = getattr(self, 'rmsx_query_file', '')
+        if query_override:
+            self.rmsx_query_file = os.path.abspath(os.path.expanduser(query_override))
+
         if not self.ensure_rmsx_runtime_ready(auto_setup=True):
+            if query_override:
+                self.rmsx_query_file = previous_query_file
             return False
 
         # Preferred path: run integrated source-7 RMSX runtime config
@@ -1272,13 +1327,26 @@ class MotifVisualizerGUI:
                     rmsx_cfg = dict(rmsx_cfg)
                     rmsx_cfg['output_dir'] = self.rmsx_output_path
 
+                current_query_file = str(getattr(self, 'rmsx_query_file', '') or '').strip()
+                if current_query_file:
+                    rmsx_cfg = dict(rmsx_cfg)
+                    rmsx_cfg['query_file'] = current_query_file
+
+                if not query_override:
+                    query_override = str(rmsx_cfg.get('query_file', '') or '').strip()
+
+                if query_override:
+                    rmsx_cfg = dict(rmsx_cfg)
+                    rmsx_cfg['query_file'] = query_override
+                    self.logger.info(f"Using RNAMotifScanX query file: {query_override}")
+
                 # Source 7 strict mode: always run fresh and never auto-download CIF.
                 rmsx_cfg = dict(rmsx_cfg)
                 rmsx_cfg['auto_download_cif'] = False
 
                 self.logger.info(f"Running RNAMotifScanX pipeline for {pdb_upper}...")
-                if extra_args:
-                    self.logger.info("Note: extra args are ignored when using pipeline config mode.")
+                if extra_args and not query_override:
+                    self.logger.info("Note: unrecognized extra args are ignored when using pipeline config mode.")
 
                 results = rmsx_run(rmsx_cfg, pdb_upper, force_fresh=True)
                 if not results:
@@ -1318,6 +1386,9 @@ class MotifVisualizerGUI:
             except Exception as e:
                 self.logger.error(f"RNAMotifScanX pipeline execution failed: {type(e).__name__}: {e}")
                 return False
+            finally:
+                if query_override:
+                    self.rmsx_query_file = previous_query_file
 
         if not self.rmsx_executable_path:
             self.logger.error("RNAMotifScanX executable is not configured")
@@ -5516,13 +5587,22 @@ def initialize_gui():
 
         if sub == 'config':
             if not arg1_str:
-                gui.logger.error("Usage: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
+                gui.logger.error("Usage: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH] [QUERY_FILE]")
                 return
             extras = [str(x).strip() for x in extra_args if str(x).strip()]
+            query_file = ''
+            for idx, value in enumerate(list(extras)):
+                lowered = value.lower()
+                if lowered.endswith('.struct') or lowered.endswith('.txt') or lowered.startswith('query='):
+                    query_file = value.split('=', 1)[1].strip() if '=' in value else value
+                    extras.pop(idx)
+                    break
             output_dir = extras[0] if len(extras) >= 1 else ''
             work_dir = extras[1] if len(extras) >= 2 else ''
             auto_on_fetch = extras[2] if len(extras) >= 3 else ''
-            gui.configure_rmsx_wrapper(arg1_str, output_dir, work_dir, auto_on_fetch)
+            if not query_file and len(extras) >= 4:
+                query_file = extras[3]
+            gui.configure_rmsx_wrapper(arg1_str, output_dir, work_dir, auto_on_fetch, query_file)
             return
 
         if sub == 'args':

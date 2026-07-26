@@ -255,4 +255,4 @@ Please cite appropriately:
 - FR3D: https://www.bgsu.edu/research/rna/software/fr3d.html
 - RNAMotifScan: http://bioinformatics.bc.edu/rnamotif/
 
-For full FR3D runtime architecture, setup, and troubleshooting, see [FR3D_INTEGRATION.md](../../../FR3D_INTEGRATION.md).
+For full FR3D runtime architecture, setup, and troubleshooting, see [fr3d_runtime/README.md](../../tools/fr3d_runtime/README.md). For RMSX runtime details, see [rmsx_runtime/README.md](../../tools/rmsx_runtime/README.md).

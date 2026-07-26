@@ -296,7 +296,7 @@ The user selects Source 7 with:
 rmv_db 7
 ```
 
-If a user passes an old external JSON config to Source 7, RSMViewer warns that Source 7 now uses the integrated runtime config and ignores the external JSON for normal Source-7 execution.
+If a user passes an external JSON config to Source 7, RSMViewer warns that Source 7 uses the integrated runtime config and ignores the external JSON for normal Source-7 execution.
 
 ### Runtime readiness
 
@@ -320,7 +320,9 @@ rmv_load_motif
 	-> build internal RMSX config
 	-> rmsx_runner.run_pipeline(..., force_fresh=True)
 	-> run MC-Annotate on the structure
-	-> convert MC-Annotate output into .rmsx.in target files
+	-> run RNAVIEW on the structure
+	-> merge MC-Annotate and RNAVIEW interactions (union, MC-Annotate precedence)
+	-> convert the merged annotation into .rmsx.in target files
 	-> run RMSX once per motif family
 	-> write result_0_100_withbs.log files
 	-> load RMSX motifs into RSMViewer
@@ -344,9 +346,13 @@ rsmviewer/database/user_annotations/RNAMotifScanX/<PDB_ID>_mc_annotate.out
 
 The runner parses residues, base pairs, and stacking interactions from this file.
 
+### Step 3b: RNAVIEW annotation
+
+RNAVIEW is run on the same structure to produce a second base-pair annotation. Its output is merged with the MC-Annotate result as a union (MC-Annotate takes precedence on shared residue keys), reproducing the reference `PrepareInput.py` behavior. If RNAVIEW is unavailable, the runner falls back to MC-Annotate-only annotation with a diagnostic message (unless `rnaview_required` is set).
+
 ### Step 4: RMSX input generation
 
-The parsed MC-Annotate output is converted into one or more `.rmsx.in` target files. These files encode:
+The merged MC-Annotate and RNAVIEW output is converted into one or more `.rmsx.in` target files. RNAVIEW base pairs are unioned with the MC-Annotate base pairs (MC-Annotate takes precedence on shared residue keys), matching the reference `PrepareInput.py` behavior. These files encode:
 
 - sequence header
 - reference sequence
@@ -509,6 +515,24 @@ The setup helper detects common Boost locations, including:
 - `/usr`
 - common Windows/vcpkg paths
 
+### RNAVIEW build
+
+Setup also builds RNAVIEW from the bundled C source at
+`src/RNAMotifScanX_src/ThirdParty/RNAVIEW/` and installs the resulting binary into
+`bin/<platform>/rnaview`. This build is independent of Boost and CMake:
+
+- Linux and macOS are fully supported (compiled with `cc`/`clang`/`gcc`).
+- Windows is attempted only when a MinGW/GCC toolchain is available; MSVC is not supported.
+- The build applies audit-validated flags
+  (`-D_FORTIFY_SOURCE=0 -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type`)
+  so the source compiles cleanly on modern toolchains without being modified.
+- An existing platform-compatible `rnaview` binary is reused; rebuilding is skipped unless forced.
+- If the RNAVIEW build fails, setup continues and the pipeline falls back gracefully.
+
+RNAVIEW composes its BASEPARS resource path into a fixed-size internal buffer, so at
+runtime `rmsx_runner.py` transparently stages a short path to the RNAVIEW directory
+when the install path would be too long. RNAVIEW source is never modified.
+
 ---
 
 ## Modifications Added for RSMViewer
@@ -524,9 +548,10 @@ The RMSX integration is not just a copied binary folder. Several packaging and i
 7. CMake build support for RNAMotifScanX source.
 8. Optional MC-Annotate/MCCORE source build support for release engineering.
 9. macOS MCCORE runtime library colocation/rpath support.
-10. Conversion from MC-Annotate output into `.rmsx.in` target files.
-11. Modern RMSX CLI invocation with legacy short-option fallback.
-12. Git packaging cleanup so MC-Annotate and MCCORE source trees are tracked as normal files, not embedded gitlinks.
+10. Conversion from the merged MC-Annotate and RNAVIEW output into `.rmsx.in` target files.
+11. RMSX CLI invocation with a short-option fallback for compatibility across RMSX builds.
+12. Automatic RNAVIEW build from bundled C source during setup, with a runtime short-path workaround for RNAVIEW's fixed BASEPARS buffer.
+13. Git packaging cleanup so MC-Annotate and MCCORE source trees are tracked as normal files, not embedded gitlinks.
 
 ---
 
@@ -654,7 +679,7 @@ python rsmviewer/tools/rmsx_runner.py --config <config.json> --pdb 1S72 --fresh
 
 ### External JSON config ignored
 
-This is expected for normal Source 7. RSMViewer now builds Source-7 runtime config internally from bundled assets. External JSON config files are legacy/developer paths, not the default user workflow.
+This is expected for normal Source 7. RSMViewer builds the Source-7 runtime config internally from bundled assets. External JSON config files are optional developer paths, not the default user workflow.
 
 ---
 

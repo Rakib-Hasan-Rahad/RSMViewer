@@ -335,12 +335,116 @@ def _patch_macos_mccore_runtime(mc_bin: Path, runtime_dir: Path, platform_dir: s
     return True, 'Bundled libmccore and patched MC-Annotate rpath.'
 
 
-def validate_runtime(runtime_dir: Path) -> dict:
+# RNAVIEW source files, in the order defined by its bundled Makefile.
+RNAVIEW_SOURCE_FILES = [
+    'rnaview.c', 'fpair.c', 'fpair_sub.c', 'pair_type.c', 'nrutil.c',
+    'ps-xy.c', 'ps-xy-sub.c', 'vrml.c', 'rnaxml-new.c', 'analyze.c',
+    'pattern.c', 'xml2ps.c', 'multiple.c', 'statistics.c',
+]
+
+# Compiler flags validated by the build-feasibility audit. RNAVIEW is late-1990s
+# ANSI/K&R C: modern clang/gcc reject implicit declarations by default, and
+# macOS' fortified libc aborts on a benign overlapping strcpy in rna(). These
+# flags make it build and run on Linux and macOS without touching the source.
+RNAVIEW_BUILD_FLAGS = [
+    '-D_FORTIFY_SOURCE=0',
+    '-Wno-implicit-function-declaration',
+    '-Wno-implicit-int',
+    '-Wno-return-type',
+]
+
+
+def find_rnaview_binary(runtime_dir: Path) -> Path | None:
+    """Return a platform-compatible compiled rnaview binary in the runtime bin dir."""
+    bin_root = runtime_dir / 'bin'
+    if not bin_root.exists():
+        return None
+    names = ['rnaview.exe', 'rnaview'] if platform.system().lower() == 'windows' else ['rnaview', 'rnaview.exe']
+    search_dirs = [bin_root / detect_platform_dir()]
+    for p in sorted(bin_root.iterdir()):
+        if p.is_dir() and p not in search_dirs:
+            search_dirs.append(p)
+    for bdir in search_dirs:
+        for name in names:
+            cand = bdir / name
+            if cand.exists() and cand.is_file() and is_binary_compatible(cand):
+                return cand
+    return None
+
+
+def build_rnaview_from_source(runtime_dir: Path, force: bool = False) -> tuple[bool, str]:
+    """Compile the bundled ThirdParty/RNAVIEW source into the runtime bin dir.
+
+    Supported by the build-feasibility audit on Linux and macOS, and attempted
+    best-effort on Windows via MinGW/GCC. MSVC is intentionally not supported.
+    Failure is non-fatal: callers fall back to MC-Annotate-only preprocessing.
+    """
+    sys_name = platform.system().lower()
+    src_root = runtime_dir / 'src' / 'RNAMotifScanX_src' / 'ThirdParty' / 'RNAVIEW'
+    src_dir = src_root / 'src'
+    include_dir = src_root / 'include'
+    if not src_dir.exists() or not include_dir.exists():
+        return False, f'RNAVIEW source not found under {src_root}.'
+
+    platform_dir = detect_platform_dir()
+    bin_dir = runtime_dir / 'bin' / platform_dir
+    out_name = 'rnaview.exe' if sys_name == 'windows' else 'rnaview'
+    out_path = bin_dir / out_name
+
+    # Detect an existing, platform-compatible build and skip unless forced.
+    if not force:
+        existing = find_rnaview_binary(runtime_dir)
+        if existing is not None:
+            return True, f'RNAVIEW already present ({existing}); skipping rebuild.'
+
+    # Select a compiler. On Windows, only MinGW/GCC-style compilers are used;
+    # MSVC (cl) is not supported and is deliberately not searched for.
+    if sys_name == 'windows':
+        cc = find_tool(['gcc', 'cc', 'x86_64-w64-mingw32-gcc', 'clang'])
+        if not cc:
+            return False, (
+                'RNAVIEW build skipped: no MinGW/GCC compiler found on Windows. '
+                'MSVC is not supported for RNAVIEW. RNAMotifScanX preprocessing will '
+                'use the MC-Annotate-only fallback.'
+            )
+    else:
+        cc = find_tool(['cc', 'clang', 'gcc'])
+        if not cc:
+            return False, 'RNAVIEW build skipped: no C compiler (cc/clang/gcc) found.'
+
+    sources = [str(src_dir / name) for name in RNAVIEW_SOURCE_FILES]
+    missing_sources = [s for s in sources if not Path(s).exists()]
+    if missing_sources:
+        return False, f'RNAVIEW build aborted: missing source files: {missing_sources}.'
+
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    cmd = (
+        [cc]
+        + RNAVIEW_BUILD_FLAGS
+        + ['-I', str(include_dir)]
+        + sources
+        + ['-o', str(out_path), '-lm']
+    )
+    ok, msg = run_cmd(cmd, cwd=src_root)
+    if not ok:
+        return False, f'RNAVIEW compilation failed ({Path(cc).name}): {msg[-1200:]}'
+
+    if not out_path.exists():
+        return False, 'RNAVIEW compilation reported success but the binary was not produced.'
+    ensure_executable(out_path)
+    if not is_binary_compatible(out_path):
+        return False, f'RNAVIEW built but the binary is not compatible with this platform ({platform_dir}).'
+
+    return True, f'RNAVIEW built from source into {out_path}.'
+
+
+def validate_runtime(runtime_dir: Path, query_file: str = '') -> dict:
     platform_dir = detect_platform_dir()
     bin_root = runtime_dir / 'bin'
     bin_dir = bin_root / platform_dir
     queries_dir = runtime_dir / 'queries'
     mat_dir = runtime_dir / 'mat'
+    query_path = Path(query_file).expanduser() if query_file else None
 
     candidate_bin_dirs = []
     if bin_dir.exists():
@@ -371,14 +475,17 @@ def validate_runtime(runtime_dir: Path) -> dict:
         if rmsx and mc:
             break
 
-    expected_queries = [
-        'k-turn_consensus.struct',
-        'c-loop_consensus.struct',
-        'sarcin-ricin_consensus.struct',
-        'reverse-kturn_consensus.struct',
-        'e-loop_consensus.struct',
-    ]
-    missing_queries = [q for q in expected_queries if not (queries_dir / q).exists()]
+    if query_path:
+        missing_queries = [] if query_path.is_file() else [str(query_path)]
+    else:
+        expected_queries = [
+            'k-turn_consensus.struct',
+            'c-loop_consensus.struct',
+            'sarcin-ricin_consensus.struct',
+            'reverse-kturn_consensus.struct',
+            'e-loop_consensus.struct',
+        ]
+        missing_queries = [q for q in expected_queries if not (queries_dir / q).exists()]
 
     missing = []
     if not rmsx:
@@ -390,12 +497,17 @@ def validate_runtime(runtime_dir: Path) -> dict:
     if not mat_dir.exists() or not any(mat_dir.iterdir()):
         missing.append('matrix files')
 
+    # RNAVIEW is optional: when absent, preprocessing falls back to MC-Annotate
+    # only, so it never contributes to the 'missing'/'ok' gating.
+    rnaview = find_rnaview_binary(runtime_dir)
+
     return {
         'ok': not missing,
         'platform_dir': platform_dir,
         'bin_dir': str(resolved_bin_dir),
         'rmsx_executable': str(rmsx) if rmsx else '',
         'mc_annotate_executable': str(mc) if mc else '',
+        'rnaview_executable': str(rnaview) if rnaview else '',
         'missing': missing,
         'missing_queries': missing_queries,
     }
@@ -512,11 +624,14 @@ def main() -> int:
     parser.add_argument('--build', action='store_true', help='Attempt build/install if runtime is incomplete')
     parser.add_argument('--fetch-mc-annotate', action='store_true', help='Allow cloning/building MC-Annotate from official repository')
     parser.add_argument('--fetch-mccore', action='store_true', help='Allow cloning/building MCCORE from official repository')
+    parser.add_argument('--query-file', default='', help='Optional custom RNAMotifScanX query file to validate')
+    parser.add_argument('--skip-rnaview', action='store_true', help='Do not attempt to build the bundled RNAVIEW during setup')
+    parser.add_argument('--rebuild-rnaview', action='store_true', help='Force rebuilding RNAVIEW even if a compatible binary already exists')
     parser.add_argument('--json', action='store_true', help='Print JSON result')
     args = parser.parse_args()
 
     runtime_dir = Path(args.runtime_dir).resolve()
-    result = validate_runtime(runtime_dir)
+    result = validate_runtime(runtime_dir, query_file=args.query_file)
     setup_message = ''
 
     if args.build and not result['ok']:
@@ -525,12 +640,28 @@ def main() -> int:
             fetch_mc_annotate=bool(args.fetch_mc_annotate),
             fetch_mccore=bool(args.fetch_mccore),
         )
-        result = validate_runtime(runtime_dir)
+        result = validate_runtime(runtime_dir, query_file=args.query_file)
         result['setup_attempted'] = True
         result['setup_ok'] = ok
         result['setup_message'] = setup_message
     else:
         result['setup_attempted'] = False
+
+    # RNAVIEW is an optional preprocessing component. Build it during setup on
+    # supported platforms (Linux/macOS, and Windows via MinGW). A failure here is
+    # never fatal: preprocessing falls back to MC-Annotate only.
+    if (args.build or args.rebuild_rnaview) and not args.skip_rnaview:
+        rnaview_ok, rnaview_message = build_rnaview_from_source(
+            runtime_dir, force=bool(args.rebuild_rnaview)
+        )
+        result['rnaview_build_attempted'] = True
+        result['rnaview_build_ok'] = rnaview_ok
+        result['rnaview_message'] = rnaview_message
+        result['rnaview_executable'] = validate_runtime(
+            runtime_dir, query_file=args.query_file
+        ).get('rnaview_executable', '')
+    else:
+        result['rnaview_build_attempted'] = False
 
     if args.json:
         print(json.dumps(result, indent=2))
@@ -545,6 +676,12 @@ def main() -> int:
                 print(f'  - missing: {item}')
             if setup_message:
                 print(f'Setup: {setup_message}')
+        if result.get('rnaview_executable'):
+            print(f"RNAVIEW: {result['rnaview_executable']}")
+        elif result.get('rnaview_build_attempted'):
+            print('RNAVIEW: not available (MC-Annotate-only preprocessing will be used)')
+        if result.get('rnaview_message'):
+            print(f"RNAVIEW setup: {result['rnaview_message']}")
 
     return 0 if result['ok'] else 2
 

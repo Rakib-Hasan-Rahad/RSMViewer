@@ -266,7 +266,7 @@ Force-refreshes motif data from API sources (bypasses 30-day cache).
 
 #### `rmv_load <PDB_ID>`
 
-**Legacy command.** Does NOT load anything — only prints a "RECOMMENDED WORKFLOW" guide directing users to `rmv_fetch` → `rmv_db` → `rmv_load_motif`.
+**Workflow guide command.** Does NOT load anything — prints a "RECOMMENDED WORKFLOW" guide directing users to `rmv_fetch` → `rmv_db` → `rmv_load_motif`.
 
 ---
 
@@ -459,7 +459,7 @@ Saves motif instance images **or** exports motif structures as mmCIF.
 
 #### `rmv_user <TOOL> <PDB_ID> | list`
 
-Legacy command to load user annotations directly.
+Loads user annotations directly by tool and PDB ID.
 
 - `rmv_user fr3d 1S72` — Load FR3D annotations
 - `rmv_user rnamotifscan 1A00` — Load RMS annotations
@@ -474,7 +474,7 @@ Legacy command to load user annotations directly.
 - RMSX source selection is handled with `rmv_db 7`; wrapper commands are exposed via `rmv_rmsx status|config|args|doctor|setup|test|run|run_current`.
 - User-annotation loading follows the same accumulation model as other sources: motif instances are tagged with source/PDB metadata and merged into `loaded_motifs` instead of replacing existing entries, enabling cross-source and cross-PDB workflows (`rmv_loaded`, `rmv_super` with tags).
 
-For complete FR3D runtime architecture, setup, and troubleshooting, see [FR3D_INTEGRATION.md](FR3D_INTEGRATION.md). For RMSX runtime details, see [FR3D_RMSX_INTEGRATION.md](FR3D_RMSX_INTEGRATION.md).
+For complete FR3D runtime architecture, setup, and troubleshooting, see [fr3d_runtime/README.md](rsmviewer/tools/fr3d_runtime/README.md). For RMSX runtime details, see [rmsx_runtime/README.md](rsmviewer/tools/rmsx_runtime/README.md).
 
 ---
 

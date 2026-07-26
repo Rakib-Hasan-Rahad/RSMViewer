@@ -520,7 +520,7 @@ rmv_db 7 C-LOOP 0.05
 
 When filtering is on, only motif instances with P-value ≤ threshold are shown.
 
-### Legacy Loading
+### Direct Loading
 
 The `rmv_user` command provides an alternative loading path:
 
@@ -555,7 +555,7 @@ rmv_fr3d run 1S72
 rmv_fr3d run_current
 ```
 
-Source 5 runs local FR3D in strict mode (fresh run each time). For complete runtime architecture, installation, and troubleshooting, see [FR3D_INTEGRATION.md](FR3D_INTEGRATION.md). For RMSX runtime details, see [FR3D_RMSX_INTEGRATION.md](FR3D_RMSX_INTEGRATION.md).
+Source 5 runs local FR3D in strict mode (fresh run each time). For complete runtime architecture, installation, and troubleshooting, see [fr3d_runtime/README.md](rsmviewer/tools/fr3d_runtime/README.md). For RMSX runtime details, see [rmsx_runtime/README.md](rsmviewer/tools/rmsx_runtime/README.md).
 
 ---
 

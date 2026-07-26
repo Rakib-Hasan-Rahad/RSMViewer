@@ -6,7 +6,9 @@ rmsx_runner.py
 Drives the RNAMotifScanX pipeline for one PDB ID.
 
 Pipeline (Zhong & Zhang, RNA 21:333-346, 2015):
-  1. Annotate the target CIF/PDB with MC-Annotate to produce an interaction file
+  1. Annotate the target PDB with MC-Annotate and RNAVIEW, merge the two
+     interaction sets (union; MC-Annotate wins on conflict), and write the
+     per-chain .rmsx.in target file
   2. For each configured motif family, run RNAMotifScanX with the family's
      consensus query against the annotated target
   3. Save output as  {output_dir}/{motif_family}_consensus/result_0_100_withbs.log
@@ -31,8 +33,10 @@ import json
 import os
 import platform
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -133,6 +137,329 @@ def run_mc_annotate(mc_annotate_exe: str, structure_file: str, output_dir: str,
     except Exception as exc:
         print(f"[rmsx_runner] MC-Annotate error: {exc}")
         return ''
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RNAVIEW annotation (union with MC-Annotate, per Zhong & Zhang 2015 preprocessing)
+#
+# The reference preprocessing (RNAMotifScanX_src/StructureAnnotation/PrepareInput.py)
+# annotates the target with BOTH MC-Annotate AND RNAVIEW, then merges the two sets
+# (union; MC-Annotate wins on conflict) before writing the .rmsx.in target file.
+# The functions below reproduce that behaviour without altering the RNAMotifScanX
+# executable or its algorithms.
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _locate_rnaview(config: dict):
+    """Locate the RNAVIEW executable and its base directory (BASEPARS resources).
+
+    Executable resolution order:
+      1. config['rnaview_executable']
+      2. 'rnaview' found on PATH
+    Base-directory resolution order (needed for the RNAVIEW environment variable
+    that points RNAVIEW at its BASEPARS resource files):
+      1. config['rnaview_dir']
+      2. RNAVIEW environment variable
+      3. two levels up from the executable (…/RNAVIEW/bin/rnaview → …/RNAVIEW)
+    Returns (exe_path, base_dir); either element may be '' when not found.
+    """
+    exe = os.path.expanduser(str(config.get('rnaview_executable', '') or '').strip())
+    if exe and not os.path.isfile(exe):
+        exe = ''
+    if not exe:
+        exe = shutil.which('rnaview') or ''
+
+    base_dir = os.path.expanduser(str(config.get('rnaview_dir', '') or '').strip())
+    if not base_dir:
+        base_dir = os.environ.get('RNAVIEW', '') or ''
+    if not base_dir and exe:
+        # …/RNAVIEW/bin/rnaview → …/RNAVIEW
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(exe)))
+    return exe, base_dir
+
+
+def _stage_short_rnaview_dir(rnaview_dir: str):
+    """Ensure RNAVIEW's BASEPARS path fits its fixed 80-char internal buffer.
+
+    RNAVIEW composes ``<RNAVIEW>//BASEPARS/Atomic_?.pdb`` into ``char spdb[80]``.
+    When the resolved directory is deep enough that this path would overflow the
+    buffer, expose the directory through a short path (a symlink where supported,
+    otherwise a copy of BASEPARS) so the unmodified binary runs safely.
+
+    Returns ``(effective_dir, cleanup_dir_or_None)``. The caller must remove
+    ``cleanup_dir`` after RNAVIEW finishes.
+    """
+    if not rnaview_dir:
+        return rnaview_dir, None
+    # Longest path RNAVIEW appends after the directory: "//BASEPARS/Atomic_I.pdb".
+    projected = len(rnaview_dir) + len('//BASEPARS/Atomic_I.pdb')
+    if projected < 78:
+        return rnaview_dir, None
+
+    tmp_root = '/tmp' if (os.name != 'nt' and os.path.isdir('/tmp')) else tempfile.gettempdir()
+    try:
+        staging = tempfile.mkdtemp(prefix='rv', dir=tmp_root)
+    except Exception as exc:
+        print(f"[rmsx_runner] WARNING: could not create short RNAVIEW staging dir ({exc}); "
+              f"using original path (RNAVIEW may abort if it is too long).")
+        return rnaview_dir, None
+
+    link = os.path.join(staging, 'r')
+    try:
+        os.symlink(rnaview_dir, link, target_is_directory=True)
+        return link, staging
+    except (OSError, NotImplementedError, AttributeError):
+        # Symlinks unavailable (e.g. unprivileged Windows): copy BASEPARS instead.
+        real_basepars = os.path.join(rnaview_dir, 'BASEPARS')
+        try:
+            os.makedirs(link, exist_ok=True)
+            shutil.copytree(real_basepars, os.path.join(link, 'BASEPARS'))
+            return link, staging
+        except Exception as exc:
+            print(f"[rmsx_runner] WARNING: could not stage a short BASEPARS path ({exc}); "
+                  f"using original path (RNAVIEW may abort if it is too long).")
+            shutil.rmtree(staging, ignore_errors=True)
+            return rnaview_dir, None
+
+
+def run_rnaview(rnaview_exe: str, rnaview_dir: str, structure_file: str,
+                force_fresh: bool = False) -> str:
+    """Run RNAVIEW on a PDB file. Returns path to the .out annotation, '' on failure.
+
+    RNAVIEW writes ``<input>.out`` next to the input structure and requires the
+    RNAVIEW environment variable to point at the directory containing BASEPARS.
+    """
+    struct_dir = os.path.dirname(os.path.abspath(structure_file)) or '.'
+    base = os.path.basename(structure_file)
+    # Candidate output names produced by RNAVIEW (regular and NMR variants).
+    candidates = [
+        structure_file + '.out',
+        os.path.join(struct_dir, base + '.out'),
+        os.path.splitext(structure_file)[0] + '_nmr.pdb.out',
+    ]
+
+    if force_fresh:
+        for c in candidates:
+            if os.path.isfile(c):
+                try:
+                    os.remove(c)
+                except Exception as exc:
+                    print(f"[rmsx_runner] WARNING: could not remove old RNAVIEW file: {c} ({exc})")
+    else:
+        for c in candidates:
+            if os.path.isfile(c):
+                print(f"[rmsx_runner] Using existing RNAVIEW annotation: {c}")
+                return c
+
+    # RNAVIEW builds BASEPARS file paths into a fixed 80-char stack buffer
+    # (get_reference_pdb: char spdb[80]; sprintf(spdb, "%sAtomic_%c.pdb", BDIR, ..)).
+    # A deep install path overflows that buffer and aborts the process. Expose the
+    # resource directory through a short path so the unmodified binary is safe.
+    effective_dir, staging_cleanup = _stage_short_rnaview_dir(rnaview_dir)
+
+    # RNAVIEW can also abort on very long absolute input filenames. When the
+    # structure path is long, run against a short staged path and move output
+    # back to the canonical location afterward.
+    effective_structure = structure_file
+    input_staging_cleanup = None
+    staged_candidates = []
+    abs_structure = os.path.abspath(structure_file)
+    if len(abs_structure) >= 96:
+        stage_root = staging_cleanup
+        if not stage_root:
+            tmp_root = '/tmp' if (os.name != 'nt' and os.path.isdir('/tmp')) else tempfile.gettempdir()
+            try:
+                stage_root = tempfile.mkdtemp(prefix='rv', dir=tmp_root)
+                input_staging_cleanup = stage_root
+            except Exception as exc:
+                stage_root = ''
+                print(f"[rmsx_runner] WARNING: could not create RNAVIEW input staging dir ({exc}); "
+                      f"using original input path (RNAVIEW may abort if it is too long).")
+
+        if stage_root:
+            staged_input = os.path.join(stage_root, 'in.pdb')
+            try:
+                if os.path.lexists(staged_input):
+                    os.remove(staged_input)
+                os.symlink(abs_structure, staged_input)
+            except Exception:
+                try:
+                    shutil.copy2(abs_structure, staged_input)
+                except Exception as exc:
+                    print(f"[rmsx_runner] WARNING: could not stage RNAVIEW input ({exc}); "
+                          f"using original input path (RNAVIEW may abort if it is too long).")
+                    staged_input = ''
+            if staged_input:
+                effective_structure = staged_input
+                staged_candidates = [
+                    effective_structure + '.out',
+                    os.path.splitext(effective_structure)[0] + '_nmr.pdb.out',
+                ]
+
+    env = dict(os.environ)
+    if effective_dir:
+        env['RNAVIEW'] = effective_dir
+
+    cmd = [rnaview_exe, effective_structure]
+    print(f"[rmsx_runner] Running RNAVIEW: {' '.join(cmd)}  (RNAVIEW={effective_dir or '<unset>'})")
+    try:
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True,
+                                    timeout=300, cwd=os.path.dirname(os.path.abspath(effective_structure)) or '.', env=env)
+        except Exception as exc:
+            print(f"[rmsx_runner] RNAVIEW error: {exc}")
+            return ''
+        if result.returncode != 0:
+            print(f"[rmsx_runner] RNAVIEW failed (exit {result.returncode}).")
+            stderr_lines = (result.stderr or '').strip().splitlines()
+            stdout_lines = (result.stdout or '').strip().splitlines()
+            if stderr_lines:
+                print(f"[rmsx_runner]   stderr tail: {stderr_lines[-1]}")
+            if stdout_lines:
+                print(f"[rmsx_runner]   stdout tail: {stdout_lines[-1]}")
+            return ''
+
+        # If the run used a staged short input path, move output back so callers
+        # always observe the canonical <original_input>.out location.
+        if effective_structure != structure_file:
+            staged_primary = effective_structure + '.out'
+            if os.path.isfile(staged_primary):
+                try:
+                    shutil.move(staged_primary, structure_file + '.out')
+                except Exception as exc:
+                    print(f"[rmsx_runner] WARNING: could not move staged RNAVIEW output "
+                          f"to canonical path ({exc}).")
+            staged_nmr = os.path.splitext(effective_structure)[0] + '_nmr.pdb.out'
+            if os.path.isfile(staged_nmr):
+                try:
+                    shutil.move(staged_nmr, os.path.splitext(structure_file)[0] + '_nmr.pdb.out')
+                except Exception as exc:
+                    print(f"[rmsx_runner] WARNING: could not move staged RNAVIEW NMR output "
+                          f"to canonical path ({exc}).")
+    finally:
+        if input_staging_cleanup:
+            shutil.rmtree(input_staging_cleanup, ignore_errors=True)
+        if staging_cleanup:
+            shutil.rmtree(staging_cleanup, ignore_errors=True)
+
+    for c in candidates:
+        if os.path.isfile(c):
+            print(f"[rmsx_runner] RNAVIEW annotation saved: {c}")
+            return c
+    print("[rmsx_runner] RNAVIEW produced no recognizable .out annotation file.")
+    return ''
+
+
+def run_rnaview_if_enabled(config: dict, structure_file: str,
+                           force_fresh: bool = False) -> str:
+    """Resolve RNAVIEW policy and, when enabled and available, produce its annotation.
+
+    Returns the path to the RNAVIEW .out file, or '' when RNAVIEW is disabled or
+    unavailable. Never silently degrades: if RNAVIEW is enabled but unavailable,
+    this either aborts (when config['rnaview_required'] is true) or emits a
+    prominent fallback diagnostic before returning ''.
+    """
+    incorporate = bool(config.get('incorporate_rnaview', True))
+    required = bool(config.get('rnaview_required', False))
+    if not incorporate:
+        print("[rmsx_runner] RNAVIEW incorporation disabled (incorporate_rnaview=false); "
+              "using MC-Annotate-only annotation by explicit configuration.")
+        return ''
+
+    exe, base_dir = _locate_rnaview(config)
+    if not exe:
+        print("[rmsx_runner] ============================================================")
+        print("[rmsx_runner] RNAVIEW executable not found.")
+        print("[rmsx_runner] Reference RNAMotifScanX preprocessing (Zhong & Zhang, 2015)")
+        print("[rmsx_runner] annotates the target with BOTH MC-Annotate AND RNAVIEW and")
+        print("[rmsx_runner] merges them (union; MC-Annotate wins on conflict).")
+        print("[rmsx_runner] Set 'rnaview_executable' (and 'rnaview_dir' for BASEPARS) in")
+        print("[rmsx_runner] the config, or place 'rnaview' on PATH.")
+        print("[rmsx_runner] ============================================================")
+        if required:
+            raise RuntimeError(
+                "RNAVIEW required (rnaview_required=true) but not found; aborting preprocessing."
+            )
+        print("[rmsx_runner] FALLBACK: proceeding with MC-Annotate-only annotation. "
+              "Results may differ from the published pipeline.")
+        return ''
+
+    if not base_dir or not os.path.isdir(base_dir):
+        print(f"[rmsx_runner] WARNING: RNAVIEW base dir (BASEPARS) not resolved: '{base_dir}'. "
+              "RNAVIEW may fail without the RNAVIEW environment variable set.")
+
+    out = run_rnaview(exe, base_dir, structure_file, force_fresh=force_fresh)
+    if not out:
+        if required:
+            raise RuntimeError(
+                "RNAVIEW required (rnaview_required=true) but execution failed; aborting preprocessing."
+            )
+        print("[rmsx_runner] FALLBACK: RNAVIEW unavailable/failed; proceeding with "
+              "MC-Annotate-only annotation. Results may differ from the published pipeline.")
+    return out
+
+
+def _parse_rnaview_output(rnaview_file: str):
+    """Parse RNAVIEW .out base pairs.
+
+    Faithful port of the reference ParseStructureAnnotation.GetRNAVIEWInteractions.
+    Returns a list of [nt1_id, nt2_id, edge, orientation] entries whose residue-id
+    format (``<chain><resnum>``, digit chains quoted) matches the MC-Annotate token
+    format so the union-merge keys align.
+    """
+    interactions = []
+    start_parsing = False
+    with open(rnaview_file, 'r', encoding='utf-8', errors='ignore') as rvw_fh:
+        for raw in rvw_fh:
+            line = ' ' + raw
+            if re.search(r'BEGIN_base-pair', line):
+                start_parsing = True
+                continue
+            if re.search(r'END_base-pair', line):
+                break
+            if not start_parsing:
+                continue
+            decom = re.split(r'\s+', line)
+            if (len(decom) >= 9
+                    and re.search(r'[HWShws+-]/[HWShws+-]', decom[7])
+                    and (decom[8] == 'cis' or decom[8] == 'tran')):
+                decom[2] = decom[2].rstrip(':')
+                decom[6] = decom[6].rstrip(':')
+                if not decom[2] == decom[6]:
+                    continue
+                if re.search(r'\d', decom[2]):
+                    decom[2] = "'" + decom[2] + "'"
+                if re.search(r'\d', decom[6]):
+                    decom[6] = "'" + decom[6] + "'"
+                decom[2] = decom[2] + decom[3]
+                decom[6] = decom[6] + decom[5]
+                if decom[7] == '+/+' or decom[7] == '-/-':
+                    decom[7] = 'W/W'
+                decom[7] = decom[7].upper()
+                if decom[8] == 'tran':
+                    decom[8] = 'trans'
+                interactions.append([decom[2], decom[6], decom[7], decom[8]])
+    return interactions
+
+
+def _merge_interactions(mca_interactions, rvw_interactions):
+    """Union of MC-Annotate and RNAVIEW interactions.
+
+    Faithful port of the reference ParseStructureAnnotation.MergeInteractions:
+    all MC-Annotate entries are kept and hashed on the (nt1, nt2) residue pair;
+    an RNAVIEW pair is appended only when that pair is absent from the MC-Annotate
+    set (MC-Annotate takes precedence on conflict).
+    """
+    merged_interactions = []
+    interaction_hash = {}
+    for single_interaction in mca_interactions:
+        merged_interactions.append(single_interaction)
+        key = single_interaction[0] + '_' + single_interaction[1]
+        interaction_hash[key] = 1
+    for single_interaction in rvw_interactions:
+        key = single_interaction[0] + '_' + single_interaction[1]
+        if key not in interaction_hash:
+            merged_interactions.append(single_interaction)
+    return merged_interactions
 
 
 def _load_reference_sequence(reference_fasta: str, seq_tag: str) -> str:
@@ -290,11 +617,29 @@ def _global_align_map(ref_seq: str, rec_seq: str):
 
 def prepare_rmsx_inputs_from_annotation(annotation_file: str, pdb_id: str,
                                         output_dir: str, chains: list[str],
-                                        reference_fasta: str) -> dict[str, str]:
-    """Generate per-chain .rmsx.in files from MC-Annotate output using original logic."""
+                                        reference_fasta: str,
+                                        rnaview_file: str = '') -> dict[str, str]:
+    """Generate per-chain .rmsx.in files from the annotation.
+
+    Reproduces the upstream PrepareInput.py behaviour: when an RNAVIEW annotation
+    is supplied, the MC-Annotate and RNAVIEW interaction sets are merged (union,
+    MC-Annotate precedence) before the .rmsx.in target file is written.
+    """
     residues, interactions = _parse_mc_annotate_output(annotation_file)
     if not residues:
         return {}
+
+    if rnaview_file and os.path.isfile(rnaview_file):
+        rvw_interactions = _parse_rnaview_output(rnaview_file)
+        before = len(interactions)
+        interactions = _merge_interactions(interactions, rvw_interactions)
+        added = len(interactions) - before
+        print(f"[rmsx_runner] Merged annotations: MC-Annotate={before}, "
+              f"RNAVIEW={len(rvw_interactions)}, +{added} unique from RNAVIEW "
+              f"(union, MC-Annotate precedence)")
+    else:
+        print("[rmsx_runner] Annotation source: MC-Annotate only "
+              "(no RNAVIEW annotation merged)")
 
     residues_by_chain = {}
     for rid, chain, idx, nuc in residues:
@@ -468,10 +813,14 @@ def _result_file_has_pdb_hits(log_file: str, pdb_id: str) -> bool:
 def check_results_exist(config: dict, pdb_id: str) -> dict:
     """Return {family: path} where the family log has at least one hit for pdb_id."""
     output_dir = os.path.expanduser(str(config.get('output_dir', '') or ''))
-    families = config.get('motif_families', list(DEFAULT_FAMILY_FOLDER_MAP.keys()))
+    query_file = str(config.get('query_file', '') or '').strip()
+    if query_file:
+        families = [Path(query_file).stem]
+    else:
+        families = config.get('motif_families', list(DEFAULT_FAMILY_FOLDER_MAP.keys()))
     found = {}
     for family in families:
-        folder = DEFAULT_FAMILY_FOLDER_MAP.get(family, f'{family}_consensus')
+        folder = DEFAULT_FAMILY_FOLDER_MAP.get(family, family if family.endswith('_consensus') else f'{family}_consensus')
         log_file = os.path.join(output_dir, folder, 'result_0_100_withbs.log')
         if os.path.isfile(log_file) and _result_file_has_pdb_hits(log_file, pdb_id):
             found[family] = log_file
@@ -488,6 +837,7 @@ def run_pipeline(config: dict, pdb_id: str, cif_file: str = '', force_fresh: boo
     rmsx_exe = os.path.expanduser(str(config.get('rmsx_executable', '') or ''))
     mc_exe   = os.path.expanduser(str(config.get('mc_annotate_executable', '') or ''))
     query_dir = os.path.expanduser(str(config.get('query_motifs_dir', '') or ''))
+    query_file = os.path.expanduser(str(config.get('query_file', '') or ''))
     output_dir = os.path.expanduser(str(config.get('output_dir', '.') or '.'))
     cif_in_dir = os.path.expanduser(str(config.get('cif_input_dir', '') or ''))
     auto_dl    = bool(config.get('auto_download_cif', True))
@@ -567,40 +917,52 @@ def run_pipeline(config: dict, pdb_id: str, cif_file: str = '', force_fresh: boo
         return existing if existing else {}
     print(f"[rmsx_runner] PDB for annotation: {pdb_file}")
 
-    # ── Annotate ──────────────────────────────────────────────────────────
+    # ── Annotate (MC-Annotate + RNAVIEW → union merge → .rmsx.in) ─────────
     annot_file = run_mc_annotate(mc_exe, pdb_file, output_dir, pdb_id, force_fresh=force_fresh)
     if not annot_file:
         print("[rmsx_runner] WARNING: annotation step failed; RMSX search may not work.")
 
     prepared_targets = {}
     if annot_file:
+        try:
+            rnaview_file = run_rnaview_if_enabled(config, pdb_file, force_fresh=force_fresh)
+        except RuntimeError as exc:
+            print(f"[rmsx_runner] ERROR: {exc}")
+            return existing if existing else {}
         prepared_targets = prepare_rmsx_inputs_from_annotation(
-            annot_file, pdb_id, output_dir, chains, seq_ref
+            annot_file, pdb_id, output_dir, chains, seq_ref, rnaview_file
         )
     if not prepared_targets:
         print("[rmsx_runner] WARNING: preparation step produced no .rmsx.in target files")
+
+    # ── Resolve query mode ────────────────────────────────────────────────
+    if query_file:
+        if not os.path.isfile(query_file):
+            print(f"[rmsx_runner] ERROR: query file not found: {query_file}")
+            return existing if existing else {}
+        families = [Path(query_file).stem]
 
     # ── Run RMSX per family ───────────────────────────────────────────────
     results = dict(existing)
     for family in families:
         if family in results:
             continue  # already exists
-        folder = DEFAULT_FAMILY_FOLDER_MAP.get(family, f'{family}_consensus')
+        folder = DEFAULT_FAMILY_FOLDER_MAP.get(family, family if family.endswith('_consensus') else f'{family}_consensus')
         family_out_dir = os.path.join(output_dir, folder)
 
         # Find query consensus file
-        query_file = ''
-        if query_dir and os.path.isdir(query_dir):
+        family_query_file = query_file
+        if not family_query_file and query_dir and os.path.isdir(query_dir):
             for name in [
                 f'{family}_consensus.struct', f'{family}.struct', f'{folder}.struct', f'{family}_query.struct',
                 f'{family}_consensus.txt', f'{family}.txt', f'{folder}.txt', f'{family}_query.txt'
             ]:
                 candidate = os.path.join(query_dir, name)
                 if os.path.isfile(candidate):
-                    query_file = candidate
+                    family_query_file = candidate
                     break
 
-        if not query_file:
+        if not family_query_file:
             print(f"[rmsx_runner] WARNING: No query file found for '{family}' in {query_dir}")
             print(f"[rmsx_runner]   Expected: {family}_consensus.struct or {family}_consensus.txt (in query_motifs_dir)")
             continue
@@ -615,7 +977,7 @@ def run_pipeline(config: dict, pdb_id: str, cif_file: str = '', force_fresh: boo
                 target_for_scan = annot_file or pdb_file or cif_file
 
         ok = run_rmsx_for_family(
-            rmsx_exe, query_file, target_for_scan,
+            rmsx_exe, family_query_file, target_for_scan,
             family_out_dir, pdb_id, chains, max_str, threads,
             force_fresh=force_fresh
         )
