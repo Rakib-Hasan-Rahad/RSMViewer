@@ -66,16 +66,20 @@ Run `rmv_help` at any time to see all available commands.
 
 ### Platform Quick Setup (macOS, Linux, Windows)
 
-Use this short checklist after plugin installation to run the full workflow smoothly on your platform.
+Follow this checklist after installing **RSMViewer** to verify that the plugin and runtime-backed sources are working.
 
-1. Basic check in PyMOL:
+#### 1. Verify plugin installation
+
+Start PyMOL and run:
 
 ```text
 rmv_help
 rmv_sources
 ```
 
-2. Quick end-to-end test:
+If these commands run successfully, the plugin is installed correctly.
+
+#### 2. Run a quick end-to-end test
 
 ```text
 rmv_fetch 1S72
@@ -84,24 +88,64 @@ rmv_load_motif
 rmv_summary
 ```
 
-3. Runtime-backed sources (FR3D and RMSX):
+If motifs load and summary output appears, the core workflow is functioning.
+
+#### 3. Test runtime-backed sources
+
+FR3D (Source 5):
 
 ```text
 rmv_db 5
 rmv_load_motif
+```
+
+RNAMotifScanX (Source 7):
+
+```text
 rmv_db 7
 rmv_rmsx_doctor
+```
+
+If Source 7 is not ready, initialize once:
+
+```text
 rmv_rmsx setup
+rmv_rmsx_doctor
 rmv_load_motif
 ```
 
-Platform notes:
+#### Platform notes
 
-- **macOS:** Source 5 and Source 7 work with bundled/runtime setup; if Source 7 is not ready, run `rmv_rmsx setup` once.
-- **Linux:** Prefer the prebuilt Linux runtime release artifact when available. If building locally, install build dependencies (`cmake`, C/C++ toolchain, Boost, zlib), then run `rmv_rmsx setup`.
-- **Windows:** Core plugin commands work. Source 7 depends on available native runtime binaries/toolchain; run `rmv_rmsx_doctor` first to confirm readiness.
+- **macOS:** Fully supported. If Source 7 is not initialized yet, run `rmv_rmsx setup` once, then verify with `rmv_rmsx_doctor`.
+- **Linux:** Supported. Prefer prebuilt Linux runtime artifacts from GitHub releases when available. If building locally, install build tools (for example `build-essential`, `cmake`, `libboost-all-dev`, `zlib1g-dev`), then run `rmv_rmsx setup`.
+- **Windows:** Core plugin features are available. Source 7 depends on compatible native runtime binaries/toolchain; run `rmv_rmsx_doctor` before using it.
 
-If a runtime source fails, run `rmv_rmsx_doctor` (Source 7) and follow the printed missing-item hints.
+#### Troubleshooting
+
+If a runtime-backed source fails:
+
+```text
+rmv_rmsx_doctor
+```
+
+`rmv_rmsx_doctor` reports missing Source 7 runtime components such as the scanner executable, MC-Annotate, query files, matrix files, and optional RNAVIEW status.
+
+#### Expected result
+
+```text
+rmv_fetch 1S72
+rmv_db 3
+rmv_load_motif
+
+rmv_db 5
+rmv_load_motif
+
+rmv_db 7
+rmv_rmsx_doctor
+rmv_load_motif
+```
+
+At this point, all available sources on your platform should be ready for normal use.
 
 
 
