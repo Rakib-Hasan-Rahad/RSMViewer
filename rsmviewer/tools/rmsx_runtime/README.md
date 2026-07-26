@@ -430,6 +430,30 @@ python rsmviewer/tools/rmsx_runtime/setup_runtime.py \
 	--json
 ```
 
+### Linux CI build and packaging
+
+For release packaging on a real Linux environment, use the repository workflow:
+
+- `.github/workflows/build-linux-rmsx-runtime.yml`
+
+This workflow runs on Ubuntu and:
+
+1. installs build dependencies
+2. runs `scripts/ci/build_linux_rmsx_runtime.sh`
+3. builds and validates `scan`, `cut`, `align`, `rnaview`, and `MC-Annotate`
+4. verifies runtime link dependencies with `ldd` and fails on unresolved libraries
+5. uploads `dist/rmsx_runtime_linux_x86_64.tar.gz` as a downloadable artifact
+
+The CI script also emits `dist/reports/ldd_summary.txt` so release validation records
+exactly which shared libraries each binary expects on Ubuntu.
+
+You can also run the same script manually on Linux:
+
+```bash
+chmod +x scripts/ci/build_linux_rmsx_runtime.sh
+./scripts/ci/build_linux_rmsx_runtime.sh
+```
+
 Optional source build with MC-Annotate/MCCORE fetch/build allowed:
 
 ```bash

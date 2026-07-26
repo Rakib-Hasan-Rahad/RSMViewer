@@ -1,0 +1,63 @@
+name: Build Linux RMSX Runtime
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "rsmviewer/tools/rmsx_runtime/**"
+      - "scripts/ci/build_linux_rmsx_runtime.sh"
+      - ".github/workflows/build-linux-rmsx-runtime.yml"
+  pull_request:
+    paths:
+      - "rsmviewer/tools/rmsx_runtime/**"
+      - "scripts/ci/build_linux_rmsx_runtime.sh"
+      - ".github/workflows/build-linux-rmsx-runtime.yml"
+
+jobs:
+  build-linux-runtime:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            file \
+            git \
+            patchelf \
+            pkg-config \
+            python3 \
+            python3-pip \
+            zlib1g-dev \
+            libboost-all-dev
+
+      - name: Build and validate Linux runtime
+        run: |
+          chmod +x scripts/ci/build_linux_rmsx_runtime.sh
+          ./scripts/ci/build_linux_rmsx_runtime.sh
+
+      - name: Upload runtime bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmsx-runtime-linux-x86_64
+          path: dist/rmsx_runtime_linux_x86_64.tar.gz
+          if-no-files-found: error
+
+      - name: Upload runtime report
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmsx-runtime-linux-report
+          path: dist/reports/final_runtime_report.json
+          if-no-files-found: error
+
+      - name: Upload ldd dependency report
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmsx-runtime-linux-ldd
+          path: dist/reports/ldd_summary.txt
+          if-no-files-found: error
