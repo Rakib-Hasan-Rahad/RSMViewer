@@ -64,6 +64,46 @@ After restarting PyMOL, you should see the welcome banner:
 Run `rmv_help` at any time to see all available commands.
 
 
+### Platform Quick Setup (macOS, Linux, Windows)
+
+Use this short checklist after plugin installation to run the full workflow smoothly on your platform.
+
+1. Basic check in PyMOL:
+
+```text
+rmv_help
+rmv_sources
+```
+
+2. Quick end-to-end test:
+
+```text
+rmv_fetch 1S72
+rmv_db 3
+rmv_load_motif
+rmv_summary
+```
+
+3. Runtime-backed sources (FR3D and RMSX):
+
+```text
+rmv_db 5
+rmv_load_motif
+rmv_db 7
+rmv_rmsx_doctor
+rmv_rmsx setup
+rmv_load_motif
+```
+
+Platform notes:
+
+- **macOS:** Source 5 and Source 7 work with bundled/runtime setup; if Source 7 is not ready, run `rmv_rmsx setup` once.
+- **Linux:** Prefer the prebuilt Linux runtime release artifact when available. If building locally, install build dependencies (`cmake`, C/C++ toolchain, Boost, zlib), then run `rmv_rmsx setup`.
+- **Windows:** Core plugin commands work. Source 7 depends on available native runtime binaries/toolchain; run `rmv_rmsx_doctor` first to confirm readiness.
+
+If a runtime source fails, run `rmv_rmsx_doctor` (Source 7) and follow the printed missing-item hints.
+
+
 
 ![Step 2](images/2.png)
 ![Step 3](images/3.png)
