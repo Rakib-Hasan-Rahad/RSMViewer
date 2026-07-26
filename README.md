@@ -363,9 +363,19 @@ rmv_db 6 SARCIN-RICIN 0.01  # Custom threshold for a specific motif
 
 ## User Annotation File Formats
 
+Sources 5 and 7 now support integrated runtime execution. In normal use:
+
+- `rmv_db 5` + `rmv_load_motif` runs FR3D locally and writes fresh outputs.
+- `rmv_db 7` + `rmv_load_motif` runs RMSX locally and writes fresh outputs.
+- You can still override paths with `rmv_db <source> /path/to/data`.
+
 ### FR3D (Source 5)
 
-CSV files placed in `rsmviewer/database/user_annotations/fr3d/`.
+FR3D CSV outputs are read from (and typically generated into):
+
+```
+rsmviewer/database/user_annotations/fr3d/
+```
 
 ### RNAMotifScan (Source 6)
 
@@ -385,7 +395,7 @@ rsmviewer/database/user_annotations/RNAMotifScan/
 
 ### RNAMotifScanX (Source 7)
 
-Result files organized by consensus motif type:
+RMSX result logs are organized by consensus motif type under:
 
 ```
 rsmviewer/database/user_annotations/RNAMotifScanX/
@@ -396,6 +406,9 @@ rsmviewer/database/user_annotations/RNAMotifScanX/
 └── sarcin-ricin_consensus/
     └── result_0_100_withbs.log
 ```
+
+During Source 7 runs, supporting files can also be generated in the same folder,
+for example `<PDB_ID>_mc_annotate.out` and `<PDB_ID>_<chain>.rmsx.in`.
 
 RMSX uses a tab-separated format:
 
