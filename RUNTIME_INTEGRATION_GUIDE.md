@@ -332,8 +332,11 @@ rmv_rmsx run_current
   runs reuse the built binaries.
 - **Platform support.** Linux and macOS are fully supported. Windows is best-effort and
   needs a MinGW/GCC toolchain (MSVC is not supported for RNAVIEW).
-- **It runs fresh each time.** Source 7 re-runs the pipeline and clears old family logs, so
-  results always reflect the current structure — no stale cache surprises.
+- **Default mode is incremental/prebuilt-aware.** Source 7 first reuses valid result logs
+  for the current PDB and can consume prebuilt targets from `RNAMotifScanX/PDB_prebuild.tgz`
+  when available.
+- **Full rerun command is explicit.** Use `rmv_rmsx run <PDB_ID>` to
+  regenerate RMSX family logs from scratch.
 - **RNAVIEW is optional but recommended.** With it, base-pair coverage matches the
   reference pipeline. Without it, you still get MC-Annotate-only results plus a clear note.
 - **No config files needed.** The plugin builds the configuration for you from bundled
@@ -575,7 +578,7 @@ rmv_fr3d refresh 1S72     # force a completely fresh rerun
 | Run + load | `rmv_load_motif` | `rmv_load_motif` |
 | Explicit run (PDB) | `rmv_rmsx run 1S72` | `rmv_fr3d run 1S72` |
 | Explicit run (current) | `rmv_rmsx run_current` | `rmv_fr3d run_current` |
-| Force fresh | (Source 7 always runs fresh) | `rmv_fr3d refresh 1S72` |
+| Force fresh | `rmv_rmsx run 1S72` | `rmv_fr3d refresh 1S72` |
 
 Common visualization commands (both sources): `rmv_summary`, `rmv_show <TYPE>`,
 `rmv_view <TYPE>`, `rmv_super <TYPE>`, `rmv_save <TYPE> cif`.

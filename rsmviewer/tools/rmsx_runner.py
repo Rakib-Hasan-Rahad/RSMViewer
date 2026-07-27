@@ -36,6 +36,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 from pathlib import Path
 
@@ -94,6 +95,77 @@ def _download_pdb(pdb_id: str, dest_dir: str) -> str:
             last_exc = exc
     print(f"[rmsx_runner] PDB download failed: {last_exc}")
     return ''
+
+
+def _extract_prebuilt_targets_from_archive(prebuild_archive: str, pdb_id: str,
+                                           output_dir: str, chains: list) -> dict:
+    """Extract prebuilt .rmsx.in/.rmsx.nch files for pdb_id from a tgz archive.
+
+    Returns {chain_id: path}. Empty dict when no matching prebuilt target exists.
+    """
+    archive = os.path.expanduser(str(prebuild_archive or '').strip())
+    if not archive or not os.path.isfile(archive):
+        return {}
+
+    pdb_upper = str(pdb_id).strip().upper()
+    prefix = f"{pdb_upper}_"
+    wanted = {str(c).strip() for c in (chains or []) if str(c).strip()}
+    accept_any_chain = (not wanted) or ('0' in wanted)
+
+    def _ext_priority(name: str) -> int:
+        upper = name.upper()
+        if upper.endswith('.RMSX.IN'):
+            return 0
+        if upper.endswith('.RMSX.NCH'):
+            return 1
+        return 2
+
+    produced = {}
+    stage_dir = os.path.join(output_dir, '_prebuilt_targets')
+    os.makedirs(stage_dir, exist_ok=True)
+
+    try:
+        with tarfile.open(archive, 'r:*') as tf:
+            candidates = []
+            for member in tf.getmembers():
+                if not member.isfile():
+                    continue
+                base = os.path.basename(member.name)
+                upper = base.upper()
+                if not upper.startswith(prefix):
+                    continue
+                if not (upper.endswith('.RMSX.IN') or upper.endswith('.RMSX.NCH')):
+                    continue
+
+                # Example: 4V9F_B.rmsx.in -> chain token "B"
+                tail = base[len(prefix):]
+                chain_token = tail.split('.', 1)[0]
+                if (not accept_any_chain) and (chain_token not in wanted):
+                    continue
+                candidates.append((member, chain_token))
+
+            candidates.sort(key=lambda item: (_ext_priority(item[0].name), item[0].name))
+            for member, chain_token in candidates:
+                if chain_token in produced:
+                    continue
+                dst = os.path.join(stage_dir, os.path.basename(member.name))
+                if not os.path.isfile(dst):
+                    src = tf.extractfile(member)
+                    if src is None:
+                        continue
+                    with src, open(dst, 'wb') as out_fh:
+                        out_fh.write(src.read())
+                produced[chain_token] = dst
+
+    except Exception as exc:
+        print(f"[rmsx_runner] WARNING: could not read prebuilt target archive '{archive}': {exc}")
+        return {}
+
+    if produced:
+        print(f"[rmsx_runner] Using prebuilt RMSX target files from archive: {archive}")
+        for chain_token, path in produced.items():
+            print(f"[rmsx_runner]   prebuilt chain {chain_token}: {path}")
+    return produced
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -712,8 +784,14 @@ def run_rmsx_for_family(rmsx_exe: str, query_file: str, annotation_file: str,
             print(f"[rmsx_runner]   WARNING: could not remove old log: {out_log} ({exc})")
 
     if os.path.isfile(out_log):
-        print(f"[rmsx_runner]   Already exists: {out_log}")
-        return True
+        if _result_file_has_pdb_hits(out_log, pdb_id):
+            print(f"[rmsx_runner]   Already exists for {pdb_id}: {out_log}")
+            return True
+        print(f"[rmsx_runner]   Existing log does not match {pdb_id}; regenerating: {out_log}")
+        try:
+            os.remove(out_log)
+        except Exception as exc:
+            print(f"[rmsx_runner]   WARNING: could not remove stale log: {out_log} ({exc})")
 
     if not os.path.isfile(rmsx_exe):
         print(f"[rmsx_runner]   ERROR: RMSX executable not found: {rmsx_exe}")
@@ -879,59 +957,75 @@ def run_pipeline(config: dict, pdb_id: str, cif_file: str = '', force_fresh: boo
         print(f"[rmsx_runner] ERROR: RMSX executable not found: {rmsx_exe}")
         return existing if existing else {}
 
-    # ── Find CIF ──────────────────────────────────────────────────────────
-    if not cif_file or not os.path.isfile(cif_file):
-        pdb_lower = pdb_id.lower()
+    prebuild_archive = os.path.expanduser(str(config.get('pdb_prebuild_archive', '') or ''))
+    prepared_targets = {}
+    annot_file = ''
+    pdb_file = ''
+
+    # Prefer prebuilt targets when available (unless fresh rerun is requested).
+    if not force_fresh:
+        prepared_targets = _extract_prebuilt_targets_from_archive(
+            prebuild_archive, pdb_id, output_dir, chains
+        )
+
+    if not prepared_targets:
+        # ── Find CIF ──────────────────────────────────────────────────────
+        if not cif_file or not os.path.isfile(cif_file):
+            pdb_lower = pdb_id.lower()
+            for sd in [d for d in [cif_in_dir, output_dir, '.'] if d]:
+                for name in [f'{pdb_lower}.cif', f'{pdb_id}.cif',
+                             f'{pdb_lower}.cif.gz', f'{pdb_id}.cif.gz']:
+                    candidate = os.path.join(sd, name)
+                    if os.path.isfile(candidate):
+                        cif_file = candidate
+                        break
+                if cif_file:
+                    break
+        if not cif_file or not os.path.isfile(cif_file):
+            if auto_dl:
+                cif_file = _download_cif(pdb_id, output_dir)
+        if not cif_file or not os.path.isfile(cif_file):
+            print(f"[rmsx_runner] ERROR: CIF file not found for {pdb_id}")
+            return existing if existing else {}
+
+        print(f"[rmsx_runner] CIF: {cif_file}")
+
+        # ── Prepare PDB for MC-Annotate (original workflow expects PDB-like input) ──
         for sd in [d for d in [cif_in_dir, output_dir, '.'] if d]:
-            for name in [f'{pdb_lower}.cif', f'{pdb_id}.cif',
-                         f'{pdb_lower}.cif.gz', f'{pdb_id}.cif.gz']:
+            for name in [f'{pdb_id}.pdb', f'{pdb_id.lower()}.pdb']:
                 candidate = os.path.join(sd, name)
                 if os.path.isfile(candidate):
-                    cif_file = candidate
+                    pdb_file = candidate
                     break
-            if cif_file:
+            if pdb_file:
                 break
-    if not cif_file or not os.path.isfile(cif_file):
-        if auto_dl:
-            cif_file = _download_cif(pdb_id, output_dir)
-    if not cif_file or not os.path.isfile(cif_file):
-        print(f"[rmsx_runner] ERROR: CIF file not found for {pdb_id}")
-        return existing if existing else {}
-
-    print(f"[rmsx_runner] CIF: {cif_file}")
-
-    # ── Prepare PDB for MC-Annotate (original workflow expects PDB-like input) ──
-    pdb_file = ''
-    for sd in [d for d in [cif_in_dir, output_dir, '.'] if d]:
-        for name in [f'{pdb_id}.pdb', f'{pdb_id.lower()}.pdb']:
-            candidate = os.path.join(sd, name)
-            if os.path.isfile(candidate):
-                pdb_file = candidate
-                break
-        if pdb_file:
-            break
-    if not pdb_file and auto_dl_pdb:
-        pdb_file = _download_pdb(pdb_id, output_dir)
-    if not pdb_file:
-        print(f"[rmsx_runner] ERROR: PDB file not found for {pdb_id}; cannot run MC-Annotate preparation step")
-        return existing if existing else {}
-    print(f"[rmsx_runner] PDB for annotation: {pdb_file}")
-
-    # ── Annotate (MC-Annotate + RNAVIEW → union merge → .rmsx.in) ─────────
-    annot_file = run_mc_annotate(mc_exe, pdb_file, output_dir, pdb_id, force_fresh=force_fresh)
-    if not annot_file:
-        print("[rmsx_runner] WARNING: annotation step failed; RMSX search may not work.")
-
-    prepared_targets = {}
-    if annot_file:
-        try:
-            rnaview_file = run_rnaview_if_enabled(config, pdb_file, force_fresh=force_fresh)
-        except RuntimeError as exc:
-            print(f"[rmsx_runner] ERROR: {exc}")
+        if not pdb_file and auto_dl_pdb:
+            pdb_file = _download_pdb(pdb_id, output_dir)
+        if not pdb_file:
+            print(f"[rmsx_runner] ERROR: PDB file not found for {pdb_id}; cannot run MC-Annotate preparation step")
             return existing if existing else {}
-        prepared_targets = prepare_rmsx_inputs_from_annotation(
-            annot_file, pdb_id, output_dir, chains, seq_ref, rnaview_file
+        print(f"[rmsx_runner] PDB for annotation: {pdb_file}")
+
+        # ── Annotate (MC-Annotate + RNAVIEW → union merge → .rmsx.in) ─────
+        annot_file = run_mc_annotate(mc_exe, pdb_file, output_dir, pdb_id, force_fresh=force_fresh)
+        if not annot_file:
+            print("[rmsx_runner] WARNING: annotation step failed; RMSX search may not work.")
+
+        if annot_file:
+            try:
+                rnaview_file = run_rnaview_if_enabled(config, pdb_file, force_fresh=force_fresh)
+            except RuntimeError as exc:
+                print(f"[rmsx_runner] ERROR: {exc}")
+                return existing if existing else {}
+            prepared_targets = prepare_rmsx_inputs_from_annotation(
+                annot_file, pdb_id, output_dir, chains, seq_ref, rnaview_file
+            )
+
+    if not prepared_targets and prebuild_archive:
+        prepared_targets = _extract_prebuilt_targets_from_archive(
+            prebuild_archive, pdb_id, output_dir, chains
         )
+
     if not prepared_targets:
         print("[rmsx_runner] WARNING: preparation step produced no .rmsx.in target files")
 
@@ -983,8 +1077,10 @@ def run_pipeline(config: dict, pdb_id: str, cif_file: str = '', force_fresh: boo
         )
         if ok:
             log = os.path.join(family_out_dir, 'result_0_100_withbs.log')
-            if os.path.isfile(log):
+            if os.path.isfile(log) and _result_file_has_pdb_hits(log, pdb_id):
                 results[family] = log
+            elif os.path.isfile(log):
+                print(f"[rmsx_runner]   WARNING: {family} log produced but has no hits for {pdb_id}; skipping")
 
     if results:
         print(f"[rmsx_runner] Done: {len(results)}/{len(families)} families available")

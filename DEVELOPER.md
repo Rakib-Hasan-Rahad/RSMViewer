@@ -472,6 +472,8 @@ Loads user annotations directly by tool and PDB ID.
 - FR3D source selection is handled with `rmv_db 5`; wrapper commands are exposed via `rmv_fr3d status|doctor|setup|refresh|config|run|run_current`.
 - Source 5 uses strict local FR3D pipeline execution (`rmv_load_motif` on source 5 runs fresh pipeline; no fallback path).
 - RMSX source selection is handled with `rmv_db 7`; wrapper commands are exposed via `rmv_rmsx status|config|args|doctor|setup|test|run|run_current`.
+- Source 7 default execution via `rmv_load_motif` is incremental/prebuilt-aware; explicit full reruns use `rmv_rmsx run <PDB_ID>`.
+- When annotation-derived `.rmsx.in` targets are unavailable, `rmsx_runner.py` attempts fallback extraction from `RNAMotifScanX/PDB_prebuild.tgz` (if present) before aborting.
 - User-annotation loading follows the same accumulation model as other sources: motif instances are tagged with source/PDB metadata and merged into `loaded_motifs` instead of replacing existing entries, enabling cross-source and cross-PDB workflows (`rmv_loaded`, `rmv_super` with tags).
 
 For complete FR3D runtime architecture, setup, and troubleshooting, see [fr3d_runtime/README.md](rsmviewer/tools/fr3d_runtime/README.md). For RMSX runtime details, see [rmsx_runtime/README.md](rsmviewer/tools/rmsx_runtime/README.md).

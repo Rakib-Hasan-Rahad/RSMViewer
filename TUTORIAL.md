@@ -476,6 +476,23 @@ rmv_db 7               # RNAMotifScanX (RMSX)
 rmv_load_motif
 ```
 
+Source 7 behavior notes:
+
+- Default `rmv_load_motif` on source 7 is incremental/prebuilt-aware (reuses existing outputs when valid).
+- To force a clean rerun of the RMSX pipeline, use:
+
+```
+rmv_rmsx run 1S72
+```
+
+- For the currently loaded structure:
+
+```
+```
+
+If `RNAMotifScanX/PDB_prebuild.tgz` contains a prebuilt target for your PDB,
+RSMViewer can use it as a fallback when annotation-derived targets are unavailable.
+
 ### Custom Data Paths (Per-Source)
 
 You can specify a custom directory for each annotation source independently. Each source remembers its own path:
@@ -553,6 +570,17 @@ rmv_fr3d setup
 rmv_fr3d refresh [PDB_ID]
 rmv_fr3d run 1S72
 rmv_fr3d run_current
+```
+
+Additional RMSX wrapper commands:
+
+```
+rmv_rmsx status
+rmv_rmsx_doctor
+rmv_rmsx setup
+rmv_rmsx run 1S72
+rmv_rmsx run 1S72
+rmv_rmsx run_current
 ```
 
 Source 5 runs local FR3D in strict mode (fresh run each time). For complete runtime architecture, installation, and troubleshooting, see [fr3d_runtime/README.md](rsmviewer/tools/fr3d_runtime/README.md). For RMSX runtime details, see [rmsx_runtime/README.md](rsmviewer/tools/rmsx_runtime/README.md).

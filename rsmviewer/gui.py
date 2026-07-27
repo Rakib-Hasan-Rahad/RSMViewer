@@ -228,6 +228,34 @@ class MotifVisualizerGUI:
                 return str(candidate.resolve())
         return ''
 
+    def _prepare_local_pdb_for_rmsx(self, pdb_id: str, output_dir: str, force_refresh: bool = False) -> str:
+        """Export a local PDB from the loaded PyMOL object for RMSX preprocessing."""
+        try:
+            pdb_upper = str(pdb_id or '').strip().upper()
+            if not pdb_upper:
+                return ''
+            os.makedirs(output_dir, exist_ok=True)
+            pdb_out = os.path.join(output_dir, f"{pdb_upper}.pdb")
+            if os.path.isfile(pdb_out) and not force_refresh:
+                return pdb_out
+
+            object_names = set(cmd.get_names('objects'))
+            obj_candidates = [
+                str(getattr(self, 'loaded_pdb', '') or '').strip(),
+                pdb_upper.lower(),
+                pdb_upper,
+            ]
+            for obj_name in obj_candidates:
+                if obj_name and obj_name in object_names:
+                    cmd.save(pdb_out, obj_name)
+                    if os.path.isfile(pdb_out):
+                        self.logger.debug(f"Exported local PDB for RMSX preprocessing: {pdb_out}")
+                        return pdb_out
+            return ''
+        except Exception as exc:
+            self.logger.debug(f"RMSX local PDB export step skipped: {exc}")
+            return ''
+
     def _build_internal_rmsx_config(self) -> Dict:
         """Build Source-7 RMSX runtime config from bundled plugin assets."""
         runtime_dir = Path(self.rmsx_runtime_dir)
@@ -290,11 +318,22 @@ class MotifVisualizerGUI:
             if bundled_rnaview.exists():
                 rnaview_exe = str(bundled_rnaview.resolve())
 
+        prebuild_archive = ''
+        archive_candidates = [
+            runtime_dir.parent.parent / 'RNAMotifScanX' / 'PDB_prebuild.tgz',
+            runtime_dir.parent / 'RNAMotifScanX' / 'PDB_prebuild.tgz',
+        ]
+        for candidate in archive_candidates:
+            if candidate.exists() and candidate.is_file():
+                prebuild_archive = str(candidate.resolve())
+                break
+
         return {
             'rmsx_executable': rmsx_exe,
             'mc_annotate_executable': mc_exe,
             'rnaview_executable': rnaview_exe,
             'rnaview_dir': rnaview_dir,
+            'pdb_prebuild_archive': prebuild_archive,
             'incorporate_rnaview': True,
             'rnaview_required': False,
             'query_motifs_dir': str(queries_dir.resolve()) if queries_dir.exists() else '',
@@ -1188,7 +1227,7 @@ class MotifVisualizerGUI:
         print("  rmv_rmsx doctor")
         print("  rmv_rmsx setup")
         print("  rmv_rmsx test")
-        print("  rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
+        print("  rmv_rmsx run <PDB_ID> [EXTRA_ARGS]   # Full fresh rerun")
         print("  rmv_rmsx run_current [EXTRA_ARGS]")
         print("\nTemplate placeholders:")
         print("  {pdb_id} {pdb_lower} {output_dir} {work_dir}")
@@ -1281,7 +1320,7 @@ class MotifVisualizerGUI:
         self.logger.success("RNAMotifScanX executable is available and runnable")
         return True
 
-    def run_rmsx_wrapper(self, pdb_id: str, extra_args: str = ''):
+    def run_rmsx_wrapper(self, pdb_id: str, extra_args: str = '', force_fresh: bool = False):
         """Run configured RNAMotifScanX executable and load results from source 7."""
         pdb_upper = str(pdb_id).strip().upper()
         if not pdb_upper:
@@ -1340,15 +1379,22 @@ class MotifVisualizerGUI:
                     rmsx_cfg['query_file'] = query_override
                     self.logger.info(f"Using RNAMotifScanX query file: {query_override}")
 
-                # Source 7 strict mode: always run fresh and never auto-download CIF.
+                # Source 7 strict mode: never auto-download CIF.
                 rmsx_cfg = dict(rmsx_cfg)
                 rmsx_cfg['auto_download_cif'] = False
 
-                self.logger.info(f"Running RNAMotifScanX pipeline for {pdb_upper}...")
+                out_dir = os.path.abspath(os.path.expanduser(str(rmsx_cfg.get('output_dir', self.rmsx_output_path))))
+                rmsx_cfg['cif_input_dir'] = out_dir
+                local_pdb = self._prepare_local_pdb_for_rmsx(pdb_upper, out_dir, force_refresh=force_fresh)
+                if local_pdb:
+                    rmsx_cfg['auto_download_pdb'] = False
+
+                mode_text = 'fresh' if force_fresh else 'incremental/prebuilt-aware'
+                self.logger.info(f"Running RNAMotifScanX pipeline for {pdb_upper} ({mode_text})...")
                 if extra_args and not query_override:
                     self.logger.info("Note: unrecognized extra args are ignored when using pipeline config mode.")
 
-                results = rmsx_run(rmsx_cfg, pdb_upper, force_fresh=True)
+                results = rmsx_run(rmsx_cfg, pdb_upper, force_fresh=force_fresh)
                 if not results:
                     out_dir = os.path.abspath(os.path.expanduser(str(rmsx_cfg.get('output_dir', self.rmsx_output_path))))
                     if sys.platform == 'darwin':
@@ -1369,7 +1415,7 @@ class MotifVisualizerGUI:
                 self.user_data_paths[7] = out_dir
 
                 self._handle_source_by_id(7, out_dir)
-                self.load_user_annotations_action('rnamotifscanx', pdb_upper)
+                self.load_user_annotations_action('rnamotifscanx', pdb_upper, auto_pipeline=False)
 
                 loaded_motifs = self.viz_manager.motif_loader.get_loaded_motifs()
                 if loaded_motifs:
@@ -1462,7 +1508,7 @@ class MotifVisualizerGUI:
 
         self.user_data_paths[7] = self.rmsx_output_path
         self._handle_source_by_id(7, self.rmsx_output_path)
-        self.load_user_annotations_action('rnamotifscanx', pdb_upper)
+        self.load_user_annotations_action('rnamotifscanx', pdb_upper, auto_pipeline=False)
 
         loaded_motifs = self.viz_manager.motif_loader.get_loaded_motifs()
         if loaded_motifs:
@@ -2130,7 +2176,7 @@ class MotifVisualizerGUI:
         
         return {}
     
-    def load_user_annotations_action(self, tool, pdb_id, auto_pipeline: bool = True):
+    def load_user_annotations_action(self, tool, pdb_id, auto_pipeline: bool = True, force_pipeline_refresh: bool = False):
         """
         Load motifs from user-uploaded annotation files.
         
@@ -2168,10 +2214,9 @@ class MotifVisualizerGUI:
                 # so we can return here to avoid double-loading.
                 return
 
-            # -- RMSX pipeline run (fresh, no cache/no download) --------------
-            # If source 7 (RMSX) is active with a pipeline config, always run
-            # the pipeline fresh for the currently loaded PDB before loading.
-            # This intentionally avoids cached results and external CIF download.
+            # -- RMSX pipeline run (prebuilt/cache-aware by default) -----------
+            # Source 7 reuses available/prebuilt results unless explicitly
+            # forced to run fresh.
             elif tool_lower in ['rmsx', 'rnamotifscanx']:
                 if not self.ensure_rmsx_runtime_ready(auto_setup=True):
                     return
@@ -2184,20 +2229,29 @@ class MotifVisualizerGUI:
                             sys.path.insert(0, tools_dir)
                         from rmsx_runner import run_pipeline as rmsx_run  # type: ignore
                         pdb_upper = pdb_id.strip().upper()
+                        force_fresh = bool(force_pipeline_refresh)
 
                         run_cfg = dict(rmsx_cfg)
                         run_cfg['auto_download_cif'] = False
+                        out_dir = os.path.abspath(os.path.expanduser(str(run_cfg.get('output_dir', self.rmsx_output_path))))
+                        run_cfg['cif_input_dir'] = out_dir
+
+                        local_pdb = self._prepare_local_pdb_for_rmsx(
+                            pdb_upper, out_dir, force_refresh=force_fresh
+                        )
+                        if local_pdb:
+                            run_cfg['auto_download_pdb'] = False
 
                         families = rmsx_cfg.get('motif_families', [])
-                        out_dir = os.path.abspath(os.path.expanduser(str(run_cfg.get('output_dir', self.rmsx_output_path))))
+                        mode_text = 'fresh' if force_fresh else 'incremental/prebuilt-aware'
                         self.logger.info(
-                            f"Running RMSX pipeline fresh for {pdb_upper} (no cache, no external download) in {out_dir}..."
+                            f"Running RMSX pipeline for {pdb_upper} ({mode_text}, no external download) in {out_dir}..."
                         )
-                        existing = rmsx_run(run_cfg, pdb_upper, force_fresh=True)
+                        existing = rmsx_run(run_cfg, pdb_upper, force_fresh=force_fresh)
 
                         if existing:
                             self.logger.info(
-                                f"RMSX fresh run complete: {len(existing)}/{len(families) or len(existing)} families"
+                                f"RMSX run complete: {len(existing)}/{len(families) or len(existing)} families"
                             )
                         else:
                             self.logger.warning(
@@ -2275,7 +2329,6 @@ class MotifVisualizerGUI:
             # and annotations still use auth chains, so we MAP auth -> label via actual chains
             chain_mapping = {}
             try:
-                from pymol import cmd
                 actual_chains = cmd.get_chains(structure_name)
                 if actual_chains:
                     if tool.lower() == 'fr3d':
@@ -2969,7 +3022,7 @@ class MotifVisualizerGUI:
         """Print all available commands in box format."""
         print("\n" + "+" + "-"*78 + "+")
         print("|" + "  RSMViewer v1.0.0 - COMMAND REFERENCE".center(78) + "|")
-        print("|" + "  Last Updated: 02 April 2026".center(78) + "|")
+        print("|" + "  Last Updated: 26 July 2026".center(78) + "|")
         print("+" + "-"*78 + "+\n")
         
         print("+" + "-"*78 + "+")
@@ -3045,7 +3098,7 @@ class MotifVisualizerGUI:
         print("|  rmv_rmsx status           Show integrated RNAMotifScanX runtime status |")
         print("|  rmv_rmsx_doctor           Diagnose RMSX runtime & dependencies          |")
         print("|  rmv_rmsx setup            Attempt automatic RMSX runtime setup          |")
-        print("|  rmv_rmsx run <PDB_ID>     Run integrated RNAMotifScanX pipeline        |")
+        print("|  rmv_rmsx run <PDB_ID>     Run integrated RNAMotifScanX pipeline (fresh)|")
         print("|  rmv_db <N> /path/to/data  Use custom data directory (any source 1-8)   |")
         print("|  rmv_db 7 off              Disable P-value filtering                    |")
         print("|  rmv_db 7 on               Enable P-value filtering                     |")
@@ -4194,6 +4247,7 @@ class MotifVisualizerGUI:
                 print("  1. rmv_db 7")
                 print("  2. rmv_fetch <PDB_ID>")
                 print("  3. rmv_rmsx run_current     (or: rmv_rmsx run <PDB_ID>)")
+                print("     rmv_rmsx run <PDB_ID>        # Full fresh rerun")
                 print("  4. rmv_summary / rmv_show")
             else:
                 print(f"\nAvailable motif types will be shown after loading a structure")
@@ -5464,6 +5518,7 @@ def initialize_gui():
             print("  rmv_rmsx setup              Attempt first-run runtime setup")
             print("  rmv_rmsx test")
             print("  rmv_rmsx run 1S72")
+            print("  rmv_rmsx run 1S72")
             print("="*60 + "\n")
             return
         
@@ -5629,7 +5684,7 @@ def initialize_gui():
                 gui.logger.error("Usage: rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
                 return
             extras = ' '.join(str(x).strip() for x in extra_args if str(x).strip())
-            gui.run_rmsx_wrapper(arg1_str, extras)
+            gui.run_rmsx_wrapper(arg1_str, extras, force_fresh=True)
             return
 
         if sub in ['run_current', 'current']:
@@ -5638,11 +5693,11 @@ def initialize_gui():
                 return
             extras = [arg1_str] if arg1_str else []
             extras.extend(str(x).strip() for x in extra_args if str(x).strip())
-            gui.run_rmsx_wrapper(gui.loaded_pdb_id, ' '.join(extras).strip())
+            gui.run_rmsx_wrapper(gui.loaded_pdb_id, ' '.join(extras).strip(), force_fresh=False)
             return
 
         gui.logger.error(f"Unknown rmv_rmsx subcommand: {sub}")
-        gui.logger.info("Use: rmv_rmsx status | config | args | doctor | setup | test | run <PDB_ID> | run_current")
+        gui.logger.info("Use: rmv_rmsx status | config | args | doctor | setup | test | run | run_current")
 
     def rmsx_doctor_cmd(*_args, **_kwargs):
         """PyMOL command: Show integrated RMSX runtime diagnostics."""
