@@ -320,6 +320,7 @@ class MotifVisualizerGUI:
 
         prebuild_archive = ''
         archive_candidates = [
+            runtime_dir.parent.parent / 'database' / 'user_annotations' / 'RNAMotifScanX' / 'PDB_prebuild.tgz',
             runtime_dir.parent.parent / 'RNAMotifScanX' / 'PDB_prebuild.tgz',
             runtime_dir.parent / 'RNAMotifScanX' / 'PDB_prebuild.tgz',
         ]

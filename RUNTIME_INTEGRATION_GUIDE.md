@@ -333,7 +333,7 @@ rmv_rmsx run_current
 - **Platform support.** Linux and macOS are fully supported. Windows is best-effort and
   needs a MinGW/GCC toolchain (MSVC is not supported for RNAVIEW).
 - **Default mode is incremental/prebuilt-aware.** Source 7 first reuses valid result logs
-  for the current PDB and can consume prebuilt targets from `rsmviewer/RNAMotifScanX/PDB_prebuild.tgz`
+  for the current PDB and can consume prebuilt targets from `rsmviewer/database/user_annotations/RNAMotifScanX/PDB_prebuild.tgz`
   when available.
 - **Full rerun command is explicit.** Use `rmv_rmsx run <PDB_ID>` to
   regenerate RMSX family logs from scratch.

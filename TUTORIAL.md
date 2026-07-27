@@ -490,7 +490,7 @@ rmv_rmsx run 1S72
 ```
 ```
 
-If `rsmviewer/RNAMotifScanX/PDB_prebuild.tgz` contains a prebuilt target for your PDB,
+If `rsmviewer/database/user_annotations/RNAMotifScanX/PDB_prebuild.tgz` contains a prebuilt target for your PDB,
 RSMViewer can use it as a fallback when annotation-derived targets are unavailable.
 
 ### Custom Data Paths (Per-Source)
