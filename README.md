@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![PyMOL](https://img.shields.io/badge/PyMOL-3.0+-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.8+-green.svg)
+[![DOI](https://zenodo.org/badge/1114140865.svg)](https://doi.org/10.5281/zenodo.22097089)
 
 ---
 
