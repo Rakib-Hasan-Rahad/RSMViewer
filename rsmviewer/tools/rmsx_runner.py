@@ -218,47 +218,88 @@ def copy_preannotated_results(prebuild_path: str, pdb_id: str, output_dir: str) 
     source = Path(os.path.expanduser(str(prebuild_path or ""))).resolve()
     pdb_lower = str(pdb_id).lower()
 
-    def _write_families(family_chunks: dict) -> int:
+    # Enumerating members of a large gzip tar requires decompressing the whole
+    # stream, so each PDB's small consensus logs are extracted once and reused
+    # on later loads and across PyMOL restarts. The cache is stamped with the
+    # source identity so a changed archive/dir invalidates it automatically.
+    cache_root = Path(output_dir) / ".preannotated_cache" / pdb_lower
+    marker = cache_root / ".source"
+
+    def _source_stamp() -> str:
+        try:
+            stat = source.stat()
+            return f"{source}|{int(stat.st_mtime)}|{stat.st_size}"
+        except OSError:
+            return str(source)
+
+    def _write_output(family_bytes: dict) -> int:
         written = 0
-        for family, chunks in family_chunks.items():
+        for family, blob in family_bytes.items():
             destination = Path(output_dir) / family
             destination.mkdir(parents=True, exist_ok=True)
-            target = destination / "result_0_100_withbs.log"
-            target.write_bytes(b"\n".join(chunks))
-            written += len(chunks)
+            (destination / "result_0_100_withbs.log").write_bytes(blob)
+            written += 1
         return written
 
+    stamp = _source_stamp()
+
+    if marker.is_file():
+        try:
+            cache_valid = marker.read_text(encoding="utf-8").strip() == stamp
+        except OSError:
+            cache_valid = False
+        if cache_valid:
+            family_bytes = {
+                cached.stem: cached.read_bytes()
+                for cached in sorted(cache_root.glob("*.log"))
+            }
+            if family_bytes:
+                copied = _write_output(family_bytes)
+                return {"copied": copied, "output_dir": str(output_dir), "cached": True}
+
+    family_chunks: dict = {}
     if source.is_file() and tarfile.is_tarfile(source):
+        # Single forward pass: reading each matching member while iterating
+        # avoids the second full decompression that getmembers() would add.
         with tarfile.open(source, "r:*") as archive:
-            members = [
-                member for member in archive.getmembers()
-                if member.isfile()
-                and f"/{pdb_lower}/" in f"/{member.name.lower()}"
-                and member.name.lower().endswith("_consensus.log")
-            ]
-            family_chunks: dict = {}
-            for member in members:
-                family = Path(member.name).stem
+            for member in archive:
+                if not member.isfile():
+                    continue
+                name_lower = member.name.lower()
+                if f"/{pdb_lower}/" not in f"/{name_lower}":
+                    continue
+                if not name_lower.endswith("_consensus.log"):
+                    continue
                 extracted = archive.extractfile(member)
                 if extracted is not None:
+                    family = Path(member.name).stem
                     family_chunks.setdefault(family, []).append(extracted.read())
-            copied = _write_families(family_chunks)
-            return {"copied": copied, "output_dir": str(output_dir)}
+    else:
+        candidates = []
+        if source.is_dir():
+            entry = source / pdb_lower
+            if not entry.is_dir():
+                entry = source / str(pdb_id).upper()
+            if entry.is_dir():
+                candidates = list(entry.glob("*/*_consensus.log"))
+        for candidate in candidates:
+            family_chunks.setdefault(candidate.stem, []).append(candidate.read_bytes())
 
-    candidates = []
-    if source.is_dir():
-        entry = source / pdb_lower
-        if not entry.is_dir():
-            entry = source / str(pdb_id).upper()
-        if entry.is_dir():
-            candidates = list(entry.glob("*/*_consensus.log"))
+    family_bytes = {family: b"\n".join(chunks) for family, chunks in family_chunks.items()}
 
-    family_chunks = {}
-    for candidate in candidates:
-        family = candidate.stem
-        family_chunks.setdefault(family, []).append(candidate.read_bytes())
-    copied = _write_families(family_chunks)
-    return {"copied": copied, "output_dir": str(output_dir)}
+    if family_bytes:
+        try:
+            cache_root.mkdir(parents=True, exist_ok=True)
+            for stale in cache_root.glob("*.log"):
+                stale.unlink()
+            for family, blob in family_bytes.items():
+                (cache_root / f"{family}.log").write_bytes(blob)
+            marker.write_text(stamp, encoding="utf-8")
+        except OSError:
+            pass
+
+    copied = _write_output(family_bytes)
+    return {"copied": copied, "output_dir": str(output_dir), "cached": False}
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -1937,17 +1937,7 @@ class MotifVisualizerGUI:
             try:
                 data_mode = str(rmsx_cfg.get('data_mode', 'preannotated')).strip().lower()
                 if data_mode in ('preannotated', 'cache', 'cached') and not force_fresh:
-                    from .tools.rmsx_runner import copy_preannotated_results
-                    configured_dir = str(rmsx_cfg.get('pdb_prebuild_dir', '') or '')
-                    configured_archive = str(rmsx_cfg.get('pdb_prebuild_archive', '') or '')
-                    prebuilt_source = (
-                        configured_dir
-                        if configured_dir and os.path.isdir(configured_dir)
-                        else configured_archive
-                    )
-                    copied = copy_preannotated_results(
-                        str(prebuilt_source), pdb_upper, self.rmsx_output_path
-                    )
+                    copied = self._copy_preannotated_rmsx(rmsx_cfg, pdb_upper)
                     if copied.get('copied', 0):
                         self.logger.info(
                             f"Loaded {copied['copied']} preannotated RNAMotifScanX result(s) for {pdb_upper}."
@@ -2688,6 +2678,29 @@ class MotifVisualizerGUI:
         except Exception as exc:
             self.logger.debug(f"Hierarchy cache update skipped: {exc}")
     
+    def _copy_preannotated_rmsx(self, rmsx_cfg: Dict, pdb_id: str) -> Dict:
+        """Copy preannotated RMSX results, preferring the extracted folder.
+
+        Tries the extracted ``rmsx_work_default`` directory first (fast) and
+        falls back to the compressed archive when the folder is missing or has
+        no data for this PDB.
+        """
+        from .tools.rmsx_runner import copy_preannotated_results
+        configured_dir = str(rmsx_cfg.get('pdb_prebuild_dir', '') or '')
+        configured_archive = str(rmsx_cfg.get('pdb_prebuild_archive', '') or '')
+        pdb_upper = pdb_id.strip().upper()
+        ordered_sources = []
+        if configured_dir and os.path.isdir(configured_dir):
+            ordered_sources.append(configured_dir)
+        if configured_archive:
+            ordered_sources.append(configured_archive)
+        copied = {'copied': 0, 'output_dir': self.rmsx_output_path}
+        for source in ordered_sources:
+            copied = copy_preannotated_results(str(source), pdb_upper, self.rmsx_output_path)
+            if copied.get('copied', 0):
+                break
+        return copied
+
     def _ensure_rmsx_preannotated(self, pdb_id: str) -> bool:
         """Copy preannotated RNAMotifScanX results for ``pdb_id`` into the
         working output directory and point ``user_data_paths[7]`` at it.
@@ -2706,17 +2719,7 @@ class MotifVisualizerGUI:
             if data_mode not in ('preannotated', 'cache', 'cached'):
                 # Non-preannotated modes are handled by the single-source path.
                 return bool(self.user_data_paths.get(7))
-            from .tools.rmsx_runner import copy_preannotated_results
-            configured_dir = str(rmsx_cfg.get('pdb_prebuild_dir', '') or '')
-            configured_archive = str(rmsx_cfg.get('pdb_prebuild_archive', '') or '')
-            prebuilt_source = (
-                configured_dir
-                if configured_dir and os.path.isdir(configured_dir)
-                else configured_archive
-            )
-            copied = copy_preannotated_results(
-                str(prebuilt_source), pdb_id.strip().upper(), self.rmsx_output_path
-            )
+            copied = self._copy_preannotated_rmsx(rmsx_cfg, pdb_id)
             if copied.get('copied', 0):
                 self.user_data_paths[7] = self.rmsx_output_path
                 self.logger.info(
@@ -3018,17 +3021,7 @@ class MotifVisualizerGUI:
                 data_mode = str(rmsx_cfg.get('data_mode', 'preannotated')).strip().lower()
                 if data_mode in ('preannotated', 'cache', 'cached') and not force_pipeline_refresh:
                     try:
-                        from .tools.rmsx_runner import copy_preannotated_results
-                        configured_dir = str(rmsx_cfg.get('pdb_prebuild_dir', '') or '')
-                        configured_archive = str(rmsx_cfg.get('pdb_prebuild_archive', '') or '')
-                        prebuilt_source = (
-                            configured_dir
-                            if configured_dir and os.path.isdir(configured_dir)
-                            else configured_archive
-                        )
-                        copied = copy_preannotated_results(
-                            str(prebuilt_source), pdb_id.strip().upper(), self.rmsx_output_path
-                        )
+                        copied = self._copy_preannotated_rmsx(rmsx_cfg, pdb_id)
                         if copied.get('copied', 0):
                             self.user_data_paths[7] = self.rmsx_output_path
                             self.logger.info(
@@ -5454,9 +5447,9 @@ class MotifVisualizerGUI:
                 path_note = " - custom path"
             self.logger.info(f"  {public_name} (source order: {source_order}){pval_note}{path_note}")
         
-        self.logger.debug(
-            f"Residue-based merging, Jaccard threshold {self.jaccard_threshold:.0%} "
-            f"(consolidated_table.py DEFAULT_JACCARD_THRESHOLD).")
+        self.logger.info(
+            f"Residue-based merging | Jaccard threshold: {self.jaccard_threshold:.0%} "
+            f"(defined in rsmviewer/database/consolidated_table.py: DEFAULT_JACCARD_THRESHOLD)")
         # The RMSX P-value tip is only relevant when RNAMotifScanX is selected.
         if 7 in source_ids:
             self.logger.info("Tip: RMSX P-value thresholds are configured in config/rmsx_config.json.")

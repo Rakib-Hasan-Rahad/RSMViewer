@@ -984,6 +984,7 @@ def register_alignment_commands():
 
         try:
             pairwise = {}
+            skipped_pairs = []
             for index, first in enumerate(objects):
                 for second in objects[index + 1:]:
                     first_copy = f"_rmv_medoid_first_{index}"
@@ -998,6 +999,7 @@ def register_alignment_commands():
                         pairwise[(first, second)] = float(result[0]) if result else float('inf')
                     except Exception:
                         pairwise[(first, second)] = float('inf')
+                        skipped_pairs.append((first, second))
                     finally:
                         cmd.delete(first_copy)
                         cmd.delete(second_copy)
@@ -1008,30 +1010,35 @@ def register_alignment_commands():
                     value for (first, second), value in pairwise.items()
                     if object_name in (first, second)
                 ]
-                averages[object_name] = sum(values) / len(values) if values else float('inf')
+                finite_values = [value for value in values if value != float('inf')]
+                averages[object_name] = (
+                    sum(finite_values) / len(finite_values)
+                    if finite_values else float('inf')
+                )
             medoid = min(objects, key=lambda name: (averages[name], name))
 
-            failures = []
-            for object_name in objects:
-                if object_name == medoid:
-                    continue
-                try:
-                    if method_label == 'rmv_align':
-                        cmd.align(object_name, medoid)
-                    else:
-                        cmd.super(object_name, medoid)
-                except Exception:
-                    failures.append(object_name)
+            medoid_idx = objects.index(medoid)
+            super_results = superimpose_onto_medoid(
+                objects,
+                medoid_idx,
+                method='align' if method_label == 'rmv_align' else 'super',
+            )
+            color_superimposed(objects, medoid_idx)
         finally:
             try:
                 cmd.feedback("enable", "executive", "actions")
             except Exception:
                 pass
 
-        print(f"\nMedoid: {medoid}")
-        print(f"Aligned: {len(objects) - len(failures)}/{len(objects)}")
-        if failures:
-            print(f"Failures: {', '.join(failures)}")
+        print_medoid_report(
+            method_label,
+            target,
+            objects,
+            medoid_idx,
+            [averages[object_name] for object_name in objects],
+            super_results,
+            skipped_pairs,
+        )
         print("\n  Next steps:")
         print(f"    rmv_save {target} cif               Export the aligned motifs as mmCIF")
         print(f"    rmv_hide {target}                   Remove the highlight")
