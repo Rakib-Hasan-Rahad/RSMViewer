@@ -3481,6 +3481,7 @@ class MotifVisualizerGUI:
             success = self.viz_manager.save_all_motif_images(representation=representation)
             if success:
                 self.logger.success("All motif images saved successfully")
+                self._print_save_location("image", self.loaded_pdb_id)
             else:
                 self.logger.error("Failed to save motif images")
         except Exception as e:
@@ -3513,6 +3514,7 @@ class MotifVisualizerGUI:
             success = self.viz_manager.save_motif_type_images(motif_type, representation=representation)
             if success:
                 self.logger.success(f"Saved {motif_type} images successfully")
+                self._print_save_location("image", self.loaded_pdb_id)
             else:
                 self.logger.error(f"Failed to save {motif_type} images")
         except Exception as e:
@@ -3551,6 +3553,7 @@ class MotifVisualizerGUI:
                                                                representation=representation)
             if success:
                 self.logger.success(f"Saved {motif_type} instance #{instance_id} successfully")
+                self._print_save_location("image", self.loaded_pdb_id)
             else:
                 self.logger.error(f"Failed to save {motif_type} instance #{instance_id}")
         except Exception as e:
@@ -3587,6 +3590,7 @@ class MotifVisualizerGUI:
             success = self.viz_manager.export_all_motif_structures()
             if success:
                 self.logger.success("All motif structures exported as mmCIF")
+                self._print_save_location("structure", self.loaded_pdb_id)
             else:
                 self.logger.error("Failed to export motif structures")
         except Exception as e:
@@ -3610,6 +3614,7 @@ class MotifVisualizerGUI:
             success = self.viz_manager.export_motif_type_structures(motif_type)
             if success:
                 self.logger.success(f"Exported {motif_type} structures as mmCIF")
+                self._print_save_location("structure", self.loaded_pdb_id)
             else:
                 self.logger.error(f"Failed to export {motif_type} structures")
         except Exception as e:
@@ -3638,6 +3643,7 @@ class MotifVisualizerGUI:
             success = self.viz_manager.export_motif_instance_structure(motif_type, instance_id)
             if success:
                 self.logger.success(f"Exported {motif_type} instance #{instance_id} as mmCIF")
+                self._print_save_location("structure", self.loaded_pdb_id)
             else:
                 self.logger.error(f"Failed to export {motif_type} instance #{instance_id}")
         except Exception as e:
@@ -3799,109 +3805,86 @@ class MotifVisualizerGUI:
         """Print all available commands in box format."""
         print("\n" + "=" * 80)
         print("RSMViewer v2.0.0 - COMMAND REFERENCE")
-        print("Updated: 10 September 2026")
+        print("Updated: 13 September 2026")
         print("=" * 80)
-        print("\nPUBLIC SOURCES")
+        print("\nPUBLIC ANNOTATION SOURCES")
         print("  RNA3DMotifAtlas, Rfam, FR3D, RNAMotifScanX")
         print("  Source names are case-insensitive; numeric source IDs are not supported.")
 
-        print("\nSTRUCTURE AND ANNOTATION")
-        print("  rmv_fetch <PDB_ID>")
-        print("      Fetch one structure from the PDB.")
-        print("  rmv_fetch <ID1>, <ID2>, ...")
-        print("      Fetch multiple structures in one command.")
-        print("  rmv_fetch /path/to/file.cif")
-        print("      Load a local PDB or mmCIF file.")
-        print("  rmv_fetch <ID>, cif_use_auth=0")
-        print("      Use label_asym_id chains instead of auth_asym_id chains.")
-        print("  rmv_db <source>[,<source>...]")
-        print("      Select named sources and immediately load them for every fetched structure.")
-        print("      Examples: rmv_db RNA3DMotifAtlas | rmv_db RNA3DMotifAtlas,Rfam")
-        print("  rmv_refresh")
-        print("      Bypass online response caches and retrieve current annotations.")
+        print("\nSTRUCTURES AND SOURCES")
+        print("  rmv_fetch <PDB_ID>[, <ID2> ...]      Fetch one or more structures from the PDB")
+        print("  rmv_fetch /path/to/file.cif          Load a local .pdb or .cif file")
+        print("  rmv_fetch <ID>, cif_use_auth=0       Use label_asym_id chains (default: auth)")
+        print("  rmv_db <source>[,<source>...]        Select named sources and load them now")
+        print("                                       e.g. rmv_db RNA3DMotifAtlas,RNAMotifScanX")
+        print("  rmv_db                               List the four public sources")
+        print("  rmv_source info [<N>]                Show the active source configuration")
+        print("  rmv_refresh                          Bypass online caches and re-fetch")
 
         print("\nQUERY AND RESULTS")
         print("  rmv_select <motif>, <structures>, <sources>, as <group>")
-        print("      Save a Boolean query snapshot containing stable motif IDs.")
-        print("      Operators: not, and, or. Precedence: not > and > or.")
-        print("      Example: rmv_select SR, all, RNA3DMotifAtlas and Rfam, as group_SR")
-        print("  rmv_list")
-        print("      List all consolidated motif rows.")
-        print("  rmv_list <Motif_ID|group>")
-        print("      List one stable motif ID or a saved query group.")
+        print("      Save a Boolean query as a group of stable motif IDs.")
+        print("      Operators: not, and, or  (precedence: not > and > or).")
+        print("      A source is true for a row only when THAT source labels the row")
+        print("      as the queried motif (exact per-source benchmarking).")
+        print("  rmv_list                             List every consolidated motif row")
+        print("  rmv_list <group>                     List a saved group")
+        print("  rmv_list <MOTIF_ID>                  List one stable motif ID (e.g. 1S72_00016)")
+        print("  rmv_list <FAMILY>                    List every row in a family (e.g. SARCIN-RICIN)")
+        print("  rmv_combine <group>[, <group> ...], as <group>   Union of saved groups")
 
         print("\nVISUALIZATION AND OBJECTS")
-        print("  rmv_view <Motif_ID|group>")
-        print("      Highlight residues on their parent structure without creating objects.")
-        print("  rmv_view <target>, color=<color>")
-        print("      Highlight with an explicit PyMOL color.")
-        print("  rmv_view <target>, padding=<N>")
-        print("      Expand the highlighted residue context by N residues.")
-        print("  rmv_colors")
-        print("      List supported PyMOL color names for color= options.")
-        print("  rmv_hide <Motif_ID|group>")
-        print("      Dehighlight one stable motif ID or saved group.")
-        print("  rmv_hide all")
-        print("      Dehighlight all motif residues on the active structure.")
-        print("  rmv_create_object <Motif_ID|group>")
-        print("      Create selectable PyMOL objects without changing the camera.")
-        print("  rmv_combine <group1>, <group2>, as <group>")
-        print("      Combine saved groups by stable motif ID.")
-        print("  rmv_set_color <group>, <color>")
-        print("      Set and apply a group color (Application 6 syntax).")
-        print("  rmv_color <motif>, <color>")
-        print("      Set a motif-family color preference.")
-        print("  rmv_colors")
-        print("      Show the color legend.")
-        print("  rmv_bg_color <color>")
-        print("      Change the background color.")
-        print("  rmv_toggle <motif> on|off")
-        print("      Toggle legacy loaded-motif visibility.")
+        print("  rmv_view <MOTIF_ID|group>[, <target> ...]   Highlight residues (no objects)")
+        print("  rmv_view <target>, color=<name>             Highlight in a chosen color")
+        print("  rmv_view <target>, padding=<N>              Include N neighboring residues")
+        print("  rmv_view all                                Highlight every motif on the structure")
+        print("  rmv_hide <MOTIF_ID|group|all>               Remove a highlight (neutral gray)")
+        print("  rmv_create_object <MOTIF_ID|group>          Create selectable motif objects")
+        print("  rmv_bg_color <color>                        Change the background color")
+        print("  rmv_toggle <motif> on|off                   Toggle legacy loaded-motif visibility")
 
-        print("\nSTRUCTURAL ANALYSIS AND EXPORT")
-        print("  rmv_super <Motif_ID|group>")
-        print("      Select the medoid by pairwise RMSD and superimpose the objects.")
-        print("  rmv_align <Motif_ID|group>")
-        print("      Sequence-dependent alignment of selected objects.")
-        print("  rmv_save <Motif_ID|group> cif")
-        print("      Export original-coordinate, coordinates-only motif mmCIF files.")
-        print("  rmv_save current [filename]")
-        print("      Save the current PyMOL view as PNG.")
-        print("  rmv_pair <selection>")
-        print("      Inspect base-pair interactions for a selection.")
-        print("  rmv_pair_batch <selection>")
-        print("      Inspect base-pair interactions in batch mode.")
+        print("\nCOLOR")
+        print("  rmv_set_color <group>, <color>       Set a group color (kept per source through rmv_combine)")
+        print("  rmv_color <motif>, <color>           Set a motif-family color preference")
+        print("  rmv_colors                           List supported color names")
+
+        print("\nANALYSIS AND EXPORT")
+        print("  rmv_super <MOTIF_ID|group>           Medoid superimposition (sequence-independent)")
+        print("  rmv_align <MOTIF_ID|group>           Medoid superimposition (sequence-dependent)")
+        print("  rmv_save <group> cif                 Export a saved group as minimal mmCIF")
+        print("  rmv_save <MOTIF_ID> cif              Export one stable motif ID as mmCIF")
+        print("  rmv_save ALL cif                     Export every consolidated motif as mmCIF")
+        print("  rmv_save current [file.png]          Save the current PyMOL view as a PNG image")
+        print("  rmv_save ALL [representation]        Save an image of every motif (cartoon default)")
+        print("      Every save prints its output directory.")
+        print("  rmv_pair <selection>                 Inspect base-pair interactions for a selection")
+        print("  rmv_pair_batch <selection>           Inspect base-pair interactions in batch mode")
 
         print("\nEXTERNAL PIPELINES")
-        print("  rmv_db FR3D")
-        print("      Run the fixed FR3D adapter and ingest its results.")
-        print("  rmv_fr3d status|setup|run|doctor")
-        print("      Inspect or run the configured FR3D integration.")
-        print("  rmv_db RNAMotifScanX")
-        print("      Load preannotated RMSX results by default.")
-        print("  rmv_rmsx status|config|doctor|setup|run|run_current")
+        print("  rmv_db FR3D                          Run the FR3D adapter and ingest its results")
+        print("  rmv_fr3d status|setup|register|run   Inspect / install / register / run FR3D")
+        print("  rmv_db RNAMotifScanX                 Load preannotated RMSX results (default mode)")
+        print("  rmv_rmsx status|config|args|doctor|setup|test|run|run_current")
         print("      Inspect or execute the configured RMSX integration.")
-        print("      RMSX mode and P-value thresholds are configured only in config/rmsx_config.json.")
-        print("  rmv_rmsx_doctor")
-        print("      Diagnose the RMSX runtime and external dependencies.")
+        print("  rmv_rmsx_doctor                      Diagnose the RMSX runtime and dependencies")
+        print("      RMSX data_mode and P-value thresholds live in config/rmsx_config.json.")
 
-        print("\nSTATUS AND RESET")
-        print("  rmv_db       List the four supported sources.")
-        print("  rmv_debug ON|OFF  Enable or disable diagnostic debug messages.")
-        print("  rmv_source info   Show the current named source configuration.")
-        print("  rmv_chains        Show chain/auth-label diagnostics.")
-        print("  rmv_loaded        Show loaded structure/source tags.")
-        print("  rmv_reset         Clear visual state, groups, and local cache state.")
-        print("  rmv_help          Show this reference.")
+        print("\nDIAGNOSTICS AND SESSION")
+        print("  rmv_chains                           Show chain / auth-label diagnostics")
+        print("  rmv_loaded                           Show loaded structure + source tags")
+        print("  rmv_debug ON|OFF                     Enable or disable diagnostic messages")
+        print("  rmv_reset                            Delete objects and clear all caches/state")
+        print("  rmv_help                             Show this reference")
 
         print("\nQUICK START")
-        print("  rmv_fetch 1S72, 1FFK")
-        print("  rmv_db RNA3DMotifAtlas,Rfam")
-        print("  rmv_select SR, all, RNA3DMotifAtlas and Rfam, as group_SR")
-        print("  rmv_list group_SR")
-        print("  rmv_view group_SR, color=red")
-        print("  rmv_create_object group_SR")
-        print("  rmv_super group_SR")
+        print("  rmv_fetch 1S72")
+        print("  rmv_db RNA3DMotifAtlas,RNAMotifScanX")
+        print("  rmv_select SARCIN-RICIN, 1S72, RNA3DMotifAtlas and RNAMotifScanX, as group_TP")
+        print("  rmv_list group_TP")
+        print("  rmv_view group_TP, color=red")
+        print("  rmv_create_object group_TP")
+        print("  rmv_super group_TP")
+        print("  rmv_save group_TP cif")
         print("=" * 80 + "\n")
         return
 
@@ -4282,23 +4265,28 @@ class MotifVisualizerGUI:
         motif_filter_norm = _normalize_motif_alias_text(motif_filter) if motif_filter.strip() else ''
         rows = []
         for cluster in clusters:
-            present_ids = set(cluster['labels_by_source'].keys())
-            if not _evaluate_db_expression(ops, present_ids):
-                continue
             labels_by_source = cluster['labels_by_source']
             if motif_filter_norm:
-                # Forward-only: the typed filter must be contained in the
-                # stored label (e.g. 'SR' in 'SARCIN-RICIN'). Matching the
-                # other direction too would let a short generic label like
-                # 'HL' match ANY filter that happens to end in "hl", e.g.
-                # 'HAIRPIN LOOP (HL)' wrongly pulling in every GNRA/UNCG/
-                # PSEUDOKNOT/etc. instance whose level-1 label is just 'HL'.
-                matched = any(
-                    motif_filter_norm in _normalize_motif_alias_text(lbl)
-                    for labels in labels_by_source.values() for lbl in labels
-                )
-                if not matched:
+                # Forward-only, per-source: a source counts for the predicate
+                # only when THAT source labels the cluster as the queried motif
+                # (e.g. 'SR' in 'SARCIN-RICIN'). Matching the other direction
+                # too would let a short generic label like 'HL' match ANY filter
+                # that happens to end in "hl", e.g. 'HAIRPIN LOOP (HL)' wrongly
+                # pulling in every GNRA/UNCG/PSEUDOKNOT/etc. instance whose
+                # level-1 label is just 'HL'.
+                present_ids = {
+                    sid for sid, labels in labels_by_source.items()
+                    if any(
+                        motif_filter_norm in _normalize_motif_alias_text(lbl)
+                        for lbl in labels
+                    )
+                }
+                if not present_ids:
                     continue
+            else:
+                present_ids = set(labels_by_source.keys())
+            if not _evaluate_db_expression(ops, present_ids):
+                continue
             r_key = residue_key(list(cluster['residues']))
             rows.append((cluster['custom_id'], r_key, labels_by_source))
         rows.sort(key=lambda r: r[0])
@@ -4543,16 +4531,31 @@ class MotifVisualizerGUI:
                 row.source_annotations.get("FR3D", ())
             )
 
+        def _sources_matching_motif(row) -> Tuple[str, ...]:
+            # A source is "true" for the predicate only when THAT source labels
+            # this row as the queried motif, so benchmarking TP/FP/FN stay exact.
+            matching = []
+            for source in row.source_annotations:
+                source_labels = list(row.source_annotations.get(source, ())) + list(
+                    row.source_hierarchy.get(source, ())
+                )
+                if source == "FR3D":
+                    if labels_match_motif(query.motif, (), source_labels):
+                        matching.append(source)
+                elif labels_match_motif(query.motif, source_labels, ()):
+                    matching.append(source)
+            return tuple(matching)
+
         matched_ids: List[str] = []
         for structure_id in sorted(self.annotation_tables):
             if not query.matches_structure(structure_id):
                 continue
             for row in self.annotation_tables[structure_id].rows:
-                if not query.sources.matches(tuple(row.source_annotations)):
-                    continue
-                if query.motif and not labels_match_motif(
-                    query.motif, _row_labels(row), _fr3d_labels(row)
-                ):
+                if query.motif:
+                    motif_sources = _sources_matching_motif(row)
+                    if not motif_sources or not query.sources.matches(motif_sources):
+                        continue
+                elif not query.sources.matches(tuple(row.source_annotations)):
                     continue
                 matched_ids.append(row.motif_id)
 
@@ -4599,17 +4602,49 @@ class MotifVisualizerGUI:
         print(f"    rmv_create_object {group}           Create selectable objects")
         print(f"    rmv_super {group}                   Superimpose the group members")
         print(f"    rmv_save {group} cif                Export as minimal mmCIF")
+        print(f"    rmv_save current {group}.png        Save the current view as a PNG image")
 
     def list_annotation_results(self, target: str = "") -> None:
         """List consolidated motif rows, a stable motif ID, or a saved group."""
         target = target.strip()
         motif_ids = None
         group = None
+        family_label = None
         if target in self.query_groups:
             group = self.query_groups[target]
             motif_ids = set(group["motif_ids"])
         elif target:
-            motif_ids = {target}
+            known_id = any(
+                self.annotation_tables[structure_id].get(target) is not None
+                for structure_id in self.annotation_tables
+            )
+            if known_id:
+                motif_ids = {target}
+            else:
+                # Accept a motif-family name (e.g. SARCIN-RICIN, SR): list every
+                # row any source labels as that family - the same union the
+                # family count after rmv_db reports.
+                from .database.motif_aliases import labels_match_motif, canonical_motif
+                family_label = canonical_motif(target) or None
+                family_ids = set()
+                if family_label:
+                    for structure_id in self.annotation_tables:
+                        for row in self.annotation_tables[structure_id].rows:
+                            row_labels = [
+                                lbl for values in row.source_hierarchy.values() for lbl in values
+                            ] + [
+                                lbl for values in row.source_annotations.values() for lbl in values
+                            ]
+                            fr3d_labels = list(row.source_hierarchy.get("FR3D", ())) + list(
+                                row.source_annotations.get("FR3D", ())
+                            )
+                            if labels_match_motif(family_label, row_labels, fr3d_labels):
+                                family_ids.add(row.motif_id)
+                if family_ids:
+                    motif_ids = family_ids
+                else:
+                    motif_ids = {target}
+                    family_label = None
 
         rows = [
             row
@@ -4618,7 +4653,14 @@ class MotifVisualizerGUI:
             if motif_ids is None or row.motif_id in motif_ids
         ]
         if not rows:
-            print("No consolidated motif rows found.")
+            if target:
+                print(
+                    f"No motif rows found for '{target}'. Use a saved group name, a "
+                    f"stable motif ID (e.g. 1S72_00016), or a motif family name "
+                    f"(e.g. SARCIN-RICIN). Run rmv_list with no argument to list all rows."
+                )
+            else:
+                print("No consolidated motif rows found.")
             return
 
         source_names = [
@@ -4633,13 +4675,15 @@ class MotifVisualizerGUI:
 
         if group:
             print("\nRSMViewer selected motif group")
-        if group:
             print(f"Group:      {target}")
             print(f"Query:      {group['query']}")
             print(f"Motif:      {group['query'].split(',', 1)[0].strip()}")
+        elif family_label:
+            print("\nRSMViewer motif family listing")
+            print(f"Motif:      {family_label}")
         print(f"Structures: {', '.join(structures)}")
         print(f"Sources:    {', '.join(source_names) if source_names else '(none)'}")
-        if group:
+        if group or family_label:
             print(f"Members:    {len(rows)}")
         print(f"SQLite:     {cache_path}")
         print()
@@ -4677,6 +4721,37 @@ class MotifVisualizerGUI:
             print("  rmv_colors                    Show supported color names")
             print(f"  rmv_create_object {target}      Create selectable objects")
             print(f"  rmv_super {target}              Superimpose group members")
+            print(f"  rmv_save {target} cif           Export as minimal mmCIF")
+            print(f"  rmv_save current {target}.png    Save the current view as a PNG image")
+        elif family_label:
+            from .database.motif_aliases import family_short_code
+            code = family_short_code(family_label) or family_label
+            print("\nNext steps:")
+            print(f"  rmv_select {family_label}, {', '.join(structures)}, RNA3DMotifAtlas or RNAMotifScanX, as group_{code}")
+            print("                                 Save this family as a group, then rmv_view/rmv_super it")
+            print(f"  rmv_view <MOTIF_ID>            Highlight a single row (IDs listed above)")
+
+    def _group_member_color_key(self, group_name: str, motif_id: str) -> str:
+        """Resolve the color key for one member of a (possibly combined) group.
+
+        An explicit color on the group itself paints every member uniformly;
+        otherwise a combined group colors each member by the source group it
+        came from, so distinct per-source colors survive rmv_combine.
+        """
+        if not group_name:
+            return motif_id
+        if colors.has_custom_color(group_name):
+            return group_name
+        origin = self.query_groups.get(group_name, {}).get("member_colors", {}).get(motif_id)
+        return origin or group_name
+
+    def _print_save_location(self, kind: str, pdb_id: str = "") -> None:
+        """Print the absolute output directory for a save/export command."""
+        plugin_dir = Path(__file__).parent.parent
+        base = plugin_dir / ("motif_images" if kind == "image" else "motif_structures")
+        if pdb_id:
+            base = base / str(pdb_id).lower()
+        self.logger.info(f"  Saved to: {base.resolve()}")
 
     def create_annotation_objects(self, target: str) -> None:
         """Create selectable PyMOL objects for a motif ID or saved group."""
@@ -4755,7 +4830,8 @@ class MotifVisualizerGUI:
             cmd.show("cartoon", object_name)
             cmd.set("cartoon_nucleic_acid_mode", 4, object_name, quiet=1)
             cmd.set("cartoon_tube_radius", 0.4, object_name, quiet=1)
-            colors.set_motif_color_in_pymol(cmd, object_name, group_name or row.motif_id)
+            colors.set_motif_color_in_pymol(
+                cmd, object_name, self._group_member_color_key(group_name, row.motif_id))
             object_names.append(object_name)
             print(f"Created {object_name} from {row.structure_id} ({cmd.count_atoms(object_name)} atoms)")
 
@@ -4776,6 +4852,7 @@ class MotifVisualizerGUI:
         print(f"    rmv_super {follow}                  Superimpose the objects (medoid-based)")
         print(f"    rmv_align {follow}                  Sequence-dependent alignment")
         print(f"    rmv_save {follow} cif               Export as minimal mmCIF")
+        print(f"    rmv_save current {follow}.png       Save the current view as a PNG image")
         print(f"    rmv_hide {follow}                   Remove the highlight")
 
     def view_annotation_results(
@@ -4821,6 +4898,9 @@ class MotifVisualizerGUI:
                 cmd.color("gray80", selection)
             elif color_override:
                 cmd.color(color_override, selection)
+            elif target in self.query_groups:
+                colors.set_motif_color_in_pymol(
+                    cmd, selection, self._group_member_color_key(target, row.motif_id))
             else:
                 colors.set_motif_color_in_pymol(cmd, selection, target)
         self.logger.info(f"{'Reset' if hide else 'Highlighted'} motif target '{target}'.")
@@ -4838,6 +4918,7 @@ class MotifVisualizerGUI:
             print(f"    rmv_super {target}                  Superimpose the group members")
         print(f"    rmv_hide {target}                   Remove the highlight")
         print(f"    rmv_save {target} cif               Export as minimal mmCIF")
+        print(f"    rmv_save current {target}.png       Save the current view as a PNG image")
         print("    rmv_colors                          List supported color names")
 
     def export_annotation_rows(self, target: str) -> int:
@@ -4858,6 +4939,7 @@ class MotifVisualizerGUI:
 
         exporter = MotifStructureExporter(cmd)
         saved = 0
+        output_dirs = set()
         for row in sorted(rows, key=lambda item: item.motif_id):
             cif_path = None
             if row.structure_id == self.loaded_pdb_id and getattr(self, "loaded_structure_path", ""):
@@ -4869,6 +4951,7 @@ class MotifVisualizerGUI:
                 self.logger.warning(f"Original CIF not found for {row.structure_id}; skipped {row.motif_id}.")
                 continue
             folder = exporter.create_folder_hierarchy(row.structure_id)
+            output_dirs.add(str(Path(folder).resolve()))
             folder = exporter.create_motif_type_folder(folder, row.motif_id)
             details = {
                 "residues": [("", number, chain) for chain, number, _insertion, _model in row.residue_set]
@@ -4876,6 +4959,8 @@ class MotifVisualizerGUI:
             if exporter.export_instance(folder, 1, row.motif_id, details, cif_path, row.structure_id):
                 saved += 1
         self.logger.info(f"Exported {saved} stable motif mmCIF file(s) for '{target}'.")
+        for directory in sorted(output_dirs):
+            self.logger.info(f"  Saved to: {directory}")
         return saved
     
     def _print_source_attribution_report(self, motif_type: str, motif_details: list):
@@ -7353,11 +7438,16 @@ def initialize_gui():
             if not combined_ids:
                 gui.logger.error("Nothing to combine - the selected groups are empty.")
                 return
+            member_colors = {}
+            for part in all_parts:
+                for mid in gui.query_groups[part].get("motif_ids", []):
+                    member_colors.setdefault(mid, part)
             gui.query_groups[new_alias] = {
                 "motif_ids": combined_ids,
                 "query": f"combine({', '.join(all_parts)})",
                 "structures": "combined",
                 "sources": "combined",
+                "member_colors": member_colors,
             }
             colors.get_color(new_alias)  # reserve a stable color for the group
             gui.logger.success(
@@ -7829,28 +7919,27 @@ def initialize_gui():
     cmd.extend('rmv_set_color', set_color_alias)
 
     def save_motif_images(argument=''):
-        """PyMOL command: Save motif instance images or extract mmCIF structures.
-        
-        Usage (images):
-            rmv_save ALL                      Save all motif types and instances (default: cartoon)
-            rmv_save ALL sticks               Save all motifs as sticks representation
-            rmv_save HL                       Save all hairpin loop instances (default: cartoon)
-            rmv_save HL sticks                Save all HL instances as sticks
-            rmv_save HL 3                     Save 3rd HL instance (default: cartoon)
-            rmv_save HL 3 spheres             Save 3rd HL instance as spheres
-            rmv_save current                  Save current PyMOL view
-            rmv_save current my_view.png      Save current view to file
-        
-        Usage (mmCIF structure export):
-            rmv_save ALL cif                  Export all motif instances as mmCIF
-            rmv_save HL cif                   Export all HL instances as mmCIF
-            rmv_save HL 3 cif                 Export 3rd HL instance as mmCIF
-        
+        """PyMOL command: Save a group/motif-ID as mmCIF, or save an image.
+
+        Create a group first (rmv_select ... as <group>) or use a stable motif
+        ID (e.g. 1S72_00016). Every save prints its output location.
+
+        Usage (mmCIF structure export, original coordinates):
+            rmv_save <group> cif              Export a saved group as mmCIF
+            rmv_save <MOTIF_ID> cif           Export one stable motif ID as mmCIF
+            rmv_save ALL cif                  Export every consolidated motif as mmCIF
+
+        Usage (image / view save, PNG):
+            rmv_save current                  Save the current PyMOL view
+            rmv_save current my_view.png      Save the current view to a named file
+            rmv_save ALL                      Save an image of every motif (cartoon)
+            rmv_save ALL sticks               Save all motif images in a representation
+
         mmCIF export extracts ORIGINAL coordinates from the on-disk CIF file,
         NOT PyMOL's internal coordinates (which may be slightly modified).
         Output is a minimal coordinates-only mmCIF containing filtered
         _atom_site rows for motif residues.
-        
+
         Available representations (for image save):
             - cartoon       (default) - Shows RNA backbone ribbon
             - sticks        - Shows all atoms as sticks
@@ -7860,35 +7949,37 @@ def initialize_gui():
             - licorice      - Thick bonds representation
             - surface       - Molecular surface
             - cartoon+sticks - Combination of cartoon and sticks
-        
+
         Output folder structure:
-            Images:     plugin_dir/motif_images/pdb_id/MOTIF_TYPE/<type>-<no>-<chain>-<residues>.png
-            Structures: plugin_dir/motif_structures/pdb_id/MOTIF_TYPE/<type>-<no>-<chain>-<residues>.cif
+            Images:     plugin_dir/motif_images/pdb_id/
+            Structures: plugin_dir/motif_structures/pdb_id/
         """
         arguments = str(argument).strip().split()
         
         if not arguments:
-            print("\nUsage: rmv_save <ALL | MOTIF_TYPE | MOTIF_TYPE INSTANCE_ID | current> [representation | cif]")
-            print("\n  IMAGE SAVE EXAMPLES:")
-            print("  rmv_save ALL             Save all motif images (cartoon)")
-            print("  rmv_save ALL sticks      Save all motif images (sticks)")
-            print("  rmv_save HL              Save all hairpin loop images (cartoon)")
-            print("  rmv_save HL sticks       Save all HL images (sticks)")
-            print("  rmv_save HL 1            Save specific HL instance #1 (cartoon)")
-            print("  rmv_save HL 1 spheres    Save specific HL instance #1 (spheres)")
-            print("  rmv_save current         Save current PyMOL view")
-            print("  rmv_save current out.png Save current view to file")
-            print("\n  mmCIF STRUCTURE EXPORT:")
-            print("  rmv_save ALL cif         Export ALL motif structures as mmCIF")
-            print("  rmv_save HL cif          Export all HL instances as mmCIF")
-            print("  rmv_save HL 3 cif        Export HL instance #3 as mmCIF")
+            print("\nUsage: rmv_save <group | MOTIF_ID | ALL | current> [cif | representation]")
+            print("\n  First create a group (rmv_select ... as <group>) or use a stable")
+            print("  motif ID (e.g. 1S72_00016). Every save prints its output location.")
+            print("\n  STRUCTURE EXPORT (mmCIF, original coordinates):")
+            print("    rmv_save <group> cif         Export a saved group as mmCIF")
+            print("    rmv_save <MOTIF_ID> cif      Export one stable motif ID (e.g. 1S72_00016)")
+            print("    rmv_save ALL cif             Export every consolidated motif as mmCIF")
+            print("\n  IMAGE / VIEW SAVE (PNG):")
+            print("    rmv_save current             Save the current PyMOL view")
+            print("    rmv_save current out.png     Save the current view to a named file")
+            print("    rmv_save ALL                 Save an image of every motif (cartoon)")
+            print("    rmv_save ALL sticks          Save all motif images in a representation")
+            print("\n  Representations: cartoon (default), sticks, spheres, ribbon, lines, licorice, surface, cartoon+sticks")
             print("\n  Note: mmCIF export uses ORIGINAL coordinates from the on-disk CIF,")
-            print("        not PyMOL's internal coordinates.")
-            print("        Output is coordinates-only (_atom_site loop for motif residues).")
-            print("\nRepresentations: cartoon, sticks, spheres, ribbon, lines, licorice, surface, cartoon+sticks")
-            print("\nOutput goes to:")
-            print("  Images:     plugin_dir/motif_images/pdb_id/MOTIF_TYPE/")
-            print("  Structures: plugin_dir/motif_structures/pdb_id/MOTIF_TYPE/")
+            print("        not PyMOL's internal coordinates (coordinates-only _atom_site rows).")
+            print("\n  Output locations (printed after each save):")
+            print("    Structures: plugin_dir/motif_structures/<pdb_id>/")
+            print("    Images:     plugin_dir/motif_images/<pdb_id>/")
+            print("    View PNG:   the filename you provide (or the working directory)")
+            print("\n  Example:")
+            print("    rmv_select SARCIN-RICIN, 1S72, RNA3DMotifAtlas or RNAMotifScanX, as group_SR")
+            print("    rmv_save group_SR cif")
+            print("    rmv_save current group_SR.png")
             return
         
         pdb_id = gui.viz_manager.structure_loader.get_current_pdb_id()
@@ -7963,6 +8054,19 @@ def initialize_gui():
             motif_type = arguments[0].upper()
             
             if motif_type not in loaded_motifs:
+                # A saved group / stable motif ID needs 'cif' to export, or use
+                # 'rmv_save current <file>.png' to save an image of the view.
+                raw = arguments[0]
+                if raw in gui.query_groups or any(
+                    raw in table._rows for table in gui.annotation_tables.values()
+                ):
+                    gui.logger.error(
+                        f"'{raw}' is a saved group or motif ID; add 'cif' to export it, "
+                        f"or save an image of the current view."
+                    )
+                    gui.logger.info(f"  rmv_save {raw} cif            Export as mmCIF")
+                    gui.logger.info(f"  rmv_save current {raw}.png    Save the current view as PNG")
+                    return
                 # Check for possible typos against known keywords and motif types
                 all_candidates = ['ALL', 'CURRENT'] + sorted(loaded_motifs.keys())
                 suggestion = _suggest(arguments[0], all_candidates)
@@ -8172,6 +8276,19 @@ def initialize_gui():
                             cache_obj.clear()
         except Exception:
             pass
+
+        # Step 2d: Clear the on-disk RMSX preannotated extraction cache so the
+        # next load re-extracts fresh consensus logs from the archive/folder.
+        try:
+            import shutil
+            rmsx_out = Path(getattr(gui, 'rmsx_output_path', '') or '')
+            if rmsx_out:
+                preannotated_cache = rmsx_out / '.preannotated_cache'
+                if preannotated_cache.exists():
+                    shutil.rmtree(preannotated_cache, ignore_errors=True)
+                    gui.logger.debug(f"Cleared preannotated RMSX cache: {preannotated_cache}")
+        except Exception:
+            pass
         
         # Step 3: Reset chain ID convention to default
         try:
@@ -8196,16 +8313,16 @@ def initialize_gui():
             pass
         
         gui.logger.success("Plugin reset to defaults")
-        print("\n  All objects deleted and plugin state cleared.")
+        print("\n  All objects deleted and plugin state and caches cleared.")
         print("  Ready for a fresh session.")
         print("\n  Quick Start:")
-        print("     rmv_fetch <PDB_ID>       # Load a PDB structure")
-        print("     rmv_db               # Check available data sources")
-        print("     rmv_db <N>                # Select data source (1-8)")
-        print("     rmv_load_motif            # Fetch motif data")
-        print("     rmv_summary               # Show motif types & counts")
-        print("     rmv_view all              # Highlight all motifs on structure")
-        print("     rmv_show HL               # Render hairpin loops")
+        print("     rmv_fetch 1S72                          # Load a PDB structure")
+        print("     rmv_db RNA3DMotifAtlas,RNAMotifScanX    # Select and load sources")
+        print("     rmv_select SARCIN-RICIN, 1S72, RNA3DMotifAtlas, as group_SR")
+        print("     rmv_list group_SR                       # Inspect the motif IDs")
+        print("     rmv_view group_SR                       # Highlight the family")
+        print("     rmv_create_object group_SR              # Create selectable objects")
+        print("     rmv_super group_SR                      # Medoid superimposition")
         print()
     
     cmd.extend('rmv_reset', reset_plugin)

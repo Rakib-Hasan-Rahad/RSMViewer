@@ -225,6 +225,12 @@ def set_motif_color_in_pymol(cmd, object_name, motif_type):
 CUSTOM_COLORS = {}
 
 
+def has_custom_color(motif_type):
+    """True when a user set an explicit color for *motif_type* (rmv_set_color)."""
+    normalized = str(motif_type).upper().replace('-', '_')
+    return normalized in CUSTOM_COLORS
+
+
 def set_custom_motif_color(motif_type, color):
     """
     Set a custom color for a motif type.

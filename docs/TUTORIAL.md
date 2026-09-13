@@ -113,12 +113,13 @@ plus the original query text.
 
 ## 5. List and view
 
-List every consolidated row, one motif ID, or a group:
+List every consolidated row, one motif ID, a group, or a whole family:
 
 ```text
 rmv_list
 rmv_list group_SR
 rmv_list 1S72_00001
+rmv_list SARCIN-RICIN        # every row any source labels as this family
 ```
 
 Highlight residues on the parent structure without creating objects:
@@ -174,19 +175,37 @@ rmv_set_color group_known, blue
 The `rmv_set_color` group name follows the command with **no comma** after the
 command word.
 
+When you set a color on each source group and then combine them, the per-source
+colors are preserved for each member. After `rmv_create_object group_combined`,
+the `group_FP` objects remain red and the `group_known` objects remain blue. An
+explicit color set on the combined group itself instead colors every member
+uniformly.
+
 ---
 
 ## 8. Export motifs
 
-Export minimal, coordinates-only mmCIF files for a motif ID or group:
+Export minimal, coordinates-only mmCIF files for a motif ID, a group, or all
+motifs:
 
 ```text
 rmv_save group_SR cif
 rmv_save 1S72_00001 cif
+rmv_save ALL cif
 ```
 
-Original on-disk coordinates are used where available; unrelated
-parent-structure metadata is not copied into the fragments.
+Save a high-resolution PNG image of the current view:
+
+```text
+rmv_save current
+rmv_save current group_SR.png
+```
+
+Every save prints its output directory. mmCIF files are written under
+`motif_structures/<pdb_id>/`, motif images under `motif_images/<pdb_id>/`, and a
+current-view PNG to the filename you provide. Original on-disk coordinates are
+used for mmCIF export where available; unrelated parent-structure metadata is
+not copied into the fragments.
 
 ---
 

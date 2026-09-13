@@ -42,7 +42,7 @@ def __init_plugin__(app):
     logger = initialize_logger(use_pymol_console=True)
     
     # Print welcome banner first
-    last_updated = "10 September 2026"
+    last_updated = "13 September 2026"
 
     print("\n" + "=" * 80)
     print("RSMViewer")

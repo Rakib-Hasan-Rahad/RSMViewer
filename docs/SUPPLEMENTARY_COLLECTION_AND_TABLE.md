@@ -419,14 +419,19 @@ MOTIF_ID       Atlas                 Rfam
 1S72_00051     Sarcin-Ricin          sarcin-ricin-2
 ```
 
-A shared-source query requires both source keys on the same row:
+A shared-source query requires that **both sources label the same row as the
+queried motif**:
 
 ```text
 rmv_select SR, 1S72, RNA3DMotifAtlas and Rfam, as group_shared_SR
 ```
 
-This is a row-level source predicate. It does not merely mean that both sources
-exist somewhere in the structure.
+The source predicate is evaluated per source: a source name is true for a row
+only when that source labels the row as the queried motif. A row where Atlas
+calls it Sarcin-Ricin but Rfam calls it something else does not satisfy
+`RNA3DMotifAtlas and Rfam`. This is what makes benchmarking (Application 5)
+exact: `not RNA3DMotifAtlas and RNAMotifScanX` selects rows RMSX calls SR that
+Atlas does not, even when Atlas labels that row a different family.
 
 ## 11. Multiple structures, multiple sources
 
@@ -443,8 +448,7 @@ The query is evaluated as:
 ```text
 for each table in {1S72, 4V88}:
     keep rows whose structure is 1S72 or 4V88
-    keep rows whose motif labels match SR
-    keep rows containing both RNA3DMotifAtlas and Rfam
+    keep rows where both RNA3DMotifAtlas and Rfam label the row as SR
 ```
 
 The resulting group stores stable IDs only. Viewing, object creation, and
@@ -498,8 +502,8 @@ rmv_select SR, all, RNA3DMotifAtlas and not Rfam, as group_atlas_only
 rmv_select SR, all, not RNA3DMotifAtlas and RNAMotifScanX, as group_FP
 ```
 
-The source predicate checks the keys available on each row. It does not query
-raw API responses after the table has been built.
+The source predicate checks which sources label the row as the queried motif.
+It does not query raw API responses after the table has been built.
 
 ## 13. FR3D query-name matching
 

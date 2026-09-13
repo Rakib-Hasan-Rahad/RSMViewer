@@ -1,12 +1,16 @@
-# External runtimes and datasets are installed locally, not versioned here.
-external/**
-!external/*/
-!external/*/README.md
-!external/rmsx_preannotated/rmsx_work_default/
-!external/rmsx_preannotated/rmsx_work_default/1s72/
-!external/rmsx_preannotated/rmsx_work_default/1s72/*/
-!external/rmsx_preannotated/rmsx_work_default/1s72/*/*_consensus.log
+# ── External runtimes and datasets ───────────────────────────────────────────
+# The repository ships the external/ folder structure, its README files, and a
+# small RMSX preannotated sample so users can paste the large / user-provided
+# content locally. These three user-provided paths are intentionally NOT
+# versioned (see external/*/README.md for what to place where):
+external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz
+external/rmsx/RNAMotifScanX_src/*
+!external/rmsx/RNAMotifScanX_src/.gitkeep
+external/fr3d/fr3d-python-latest/*
+!external/fr3d/fr3d-python-latest/.gitkeep
 
-# Python build artifacts.
+# ── Python build artifacts ───────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
+# macOS metadata
+.DS_Store

@@ -171,16 +171,21 @@ dedup, populates the `ConsolidatedAnnotationTable`, and merges with
 
 ### `rmv_list` / `rmv_view` / `rmv_hide`
 
-Read `ConsolidatedAnnotationTable` rows. `rmv_view` highlights parent-structure
-residues (optionally with `color=` and `padding=`) without copying objects;
-`rmv_hide` recolors to neutral gray.
+Read `ConsolidatedAnnotationTable` rows. `rmv_list` resolves its argument as a
+saved group, a stable motif ID, or a motif-family name (e.g. `SARCIN-RICIN`);
+for a family it lists every row any source labels as that family. `rmv_view`
+highlights parent-structure residues (optionally with `color=` and `padding=`)
+without copying objects; `rmv_hide` recolors to neutral gray.
 
 ### `rmv_create_object` / `rmv_super` / `rmv_combine`
 
-`create_annotation_objects` builds `motif_<id>` objects and colors them by group.
-`rmv_super` copies objects temporarily, computes pairwise RMSD, chooses the
-minimum-average-RMSD medoid, and transforms the selected objects.
-`rmv_combine` unions the motif IDs of query groups into a new group.
+`create_annotation_objects` builds `motif_<id>` objects and colors each one by
+its group. `rmv_combine` unions the motif IDs of query groups into a new group
+and records each member's origin group in `member_colors`, so per-source colors
+set with `rmv_set_color` survive the combine: `_group_member_color_key` colors
+each object by its origin group unless an explicit color is set on the combined
+group itself. `rmv_super` copies objects temporarily, computes pairwise RMSD,
+chooses the minimum-average-RMSD medoid, and transforms the selected objects.
 
 ### `rmv_set_color`
 
@@ -235,6 +240,22 @@ thresholds.
   cache using canonical `source_key` values. It auto-migrates a legacy
   integer-keyed schema, and exposes `close()` / `close_hierarchy_cache()` so
   `rmv_reset` can drop and reopen a fresh connection.
+- `rsmviewer/tools/rmsx_runner.py` maintains a per-PDB **preannotated extraction
+  cache** at `output/rmsx_results/.preannotated_cache/<pdb_id>/`. Enumerating
+  members of the large gzip archive requires decompressing the whole stream, so
+  each PDB's small `*_consensus.log` files are extracted once and reused on
+  later loads and across PyMOL sessions. The cache is stamped with the source
+  archive/directory identity (path, mtime, size); a changed source invalidates
+  it automatically.
+- A snapshot of the SQLite hierarchy cache and the preannotated extraction cache
+  is shipped in the repository so a fresh clone works immediately; both are
+  regenerated on demand.
+
+`rmv_reset` clears **all** caches and session state in one call: it deletes every
+PyMOL object, resets session variables, clears the SQLite hierarchy cache (data
+and file, including `-wal`/`-shm`), the on-disk API response cache, each
+provider's in-process memory cache, the preannotated RMSX extraction cache, the
+motif loader, and custom color assignments.
 
 ---
 

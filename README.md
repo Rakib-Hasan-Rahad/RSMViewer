@@ -133,22 +133,31 @@ superimposition, combination, coloring, and export.
 | `rmv_fetch <ID\|path> [, <ID> ...]` | Fetch one or more structures, or load a local `.pdb`/`.cif`. |
 | `rmv_db <source>[,<source>...]` | Select named sources and load annotations immediately. |
 | `rmv_select <motif>, <structures>, <sources>, as <group>` | Save a Boolean query as stable motif IDs. |
-| `rmv_list [ID\|group]` | List all consolidated rows, one motif ID, or a group. |
+| `rmv_list [ID\|group\|family]` | List all rows, one motif ID, a saved group, or every row in a family (e.g. `SARCIN-RICIN`). |
 | `rmv_view <ID\|group> [, color=<name>] [, padding=<n>]` | Highlight motif residues on parent structures. |
 | `rmv_hide <ID\|group\|all>` | Remove highlight (recolor to neutral gray). |
 | `rmv_create_object <ID\|group>` | Create selectable PyMOL objects (camera unchanged). |
-| `rmv_super <ID\|group>` | Medoid-based superimposition. |
-| `rmv_align <ID\|group>` | Sequence-dependent alignment. |
+| `rmv_super <ID\|group>` | Medoid-based superimposition (sequence-independent). |
+| `rmv_align <ID\|group>` | Medoid-based superimposition (sequence-dependent). |
 | `rmv_combine <group>, <group>[, ...], as <group>` | Combine saved groups into a new group. |
-| `rmv_set_color <group>, <color>` | Set a group / motif-type color. |
-| `rmv_save <ID\|group> cif` | Export minimal coordinates-only mmCIF files. |
+| `rmv_set_color <group>, <color>` | Set a group color; preserved per source through `rmv_combine`. |
+| `rmv_color <motif>, <color>` | Set a motif-family color preference. |
+| `rmv_bg_color <color>` | Change the background (non-motif) color. |
+| `rmv_save <group\|ID\|ALL> cif` | Export minimal coordinates-only mmCIF files (prints the output directory). |
+| `rmv_save current [file.png]` | Save the current PyMOL view as a high-resolution PNG (prints the path). |
+| `rmv_save ALL [representation]` | Save an image of every motif (cartoon by default). |
 | `rmv_colors` | List supported color names. |
 | `rmv_db` (no args) | Show the four public sources and usage. |
-| `rmv_fr3d status\|setup\|run [PDB]` | Inspect / install / run the FR3D pipeline. |
+| `rmv_source info [<N>]` | Show the active source configuration. |
+| `rmv_fr3d status\|setup\|register\|run [PDB]` | Inspect / install / register / run the FR3D pipeline. |
+| `rmv_rmsx status\|config\|doctor\|setup\|test\|run\|run_current` | Inspect or run the RNAMotifScanX integration. |
+| `rmv_rmsx_doctor` | Diagnose the RMSX runtime and dependencies. |
+| `rmv_pair <selection>` / `rmv_pair_batch <selection>` | Inspect base-pair interactions. |
+| `rmv_chains` / `rmv_loaded` | Show chain diagnostics / loaded structure and source tags. |
 | `rmv_refresh` | Bypass caches and re-fetch. |
 | `rmv_debug ON\|OFF` | Toggle verbose diagnostics (off by default). |
 | `rmv_help` | Show the in-PyMOL command reference. |
-| `rmv_reset` | Clear visual, session, and cache state. |
+| `rmv_reset` | Delete all objects and clear all caches and session state. |
 
 The selection grammar has four comma-separated clauses:
 
@@ -241,6 +250,11 @@ rmv_super group_combined
 
 > Note the `rmv_set_color` syntax: the group name follows the command with **no
 > comma** after the command word — `rmv_set_color group_FP, red`.
+
+Colors set on each source group are preserved per member when the groups are
+combined: after `rmv_create_object group_combined`, the `group_FP` objects stay
+red and the `group_known` objects stay blue. (An explicit color set on the
+combined group itself overrides this and colors every member uniformly.)
 
 ---
 
@@ -424,4 +438,8 @@ end and prints a PASS/FAIL report.
 - [docs/TUTORIAL.md](docs/TUTORIAL.md) — a guided, step-by-step workflow.
 - [DEVELOPED.md](DEVELOPED.md) — architecture and maintenance reference.
 - [config/README.md](config/README.md) — configuration field reference.
+- [docs/MANUSCRIPT.md](docs/MANUSCRIPT.md) — the main manuscript text.
+- [docs/SUPPLEMENT.md](docs/SUPPLEMENT.md) — supplementary information: merging
+  criteria, per-source query semantics, pipeline internals, caching, and a
+  worked benchmark.
 - [docs/SUPPLEMENTARY_COLLECTION_AND_TABLE.md](docs/SUPPLEMENTARY_COLLECTION_AND_TABLE.md) — collection, consolidation, hierarchy, and SQL-like query rules.

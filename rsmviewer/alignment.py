@@ -1041,6 +1041,7 @@ def register_alignment_commands():
         )
         print("\n  Next steps:")
         print(f"    rmv_save {target} cif               Export the aligned motifs as mmCIF")
+        print(f"    rmv_save current {target}.png       Save the current view as a PNG image")
         print(f"    rmv_hide {target}                   Remove the highlight")
         print(f"    orient {target}                     Center the view on the group")
         return True
