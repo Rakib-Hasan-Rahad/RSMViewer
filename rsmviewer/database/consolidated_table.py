@@ -165,6 +165,30 @@ class ConsolidatedAnnotationTable:
         structure = structure_id.strip().upper()
         return tuple(row for row in self.rows if row.structure_id == structure)
 
+    def remove_source(self, structure_id: str, source_name: str) -> None:
+        """Drop a source's contribution for a structure before it is reloaded.
+
+        Prevents duplicate rows when the same source is loaded again by a later
+        rmv_db call. Rows shared with other sources keep those other labels; a
+        row left with no sources is deleted.
+        """
+        structure = structure_id.strip().upper()
+        source = source_name.strip()
+        for motif_id in [
+            row.motif_id
+            for row in self._rows.values()
+            if row.structure_id == structure and source in row.source_annotations
+        ]:
+            row = self._rows.get(motif_id)
+            if row is None:
+                continue
+            row.source_annotations.pop(source, None)
+            row.source_hierarchy.pop(source, None)
+            row.provenance.pop(source, None)
+            if not row.source_annotations:
+                self._rows.pop(motif_id, None)
+        self._reindex_structure(structure)
+
     def _create_row(
         self, structure_id: str, residue_set: Tuple[ResidueKey, ...]
     ) -> AnnotationRow:

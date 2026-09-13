@@ -2288,6 +2288,7 @@ class MotifVisualizerGUI:
                 )
                 table.jaccard_threshold = self.jaccard_threshold
                 table.merge_enabled = False
+                table.remove_source(pdb_id_upper, self.current_source_names[0])
                 table.add_annotations(
                     pdb_id_upper,
                     self.current_source_names[0],
@@ -2860,6 +2861,7 @@ class MotifVisualizerGUI:
                 )
                 if source_name and raw_sources.get(sid):
                     table.jaccard_threshold = self.jaccard_threshold
+                    table.remove_source(pdb_id, source_name)
                     table.add_annotations(
                         pdb_id,
                         source_name,
@@ -3218,6 +3220,7 @@ class MotifVisualizerGUI:
                 )
                 table.jaccard_threshold = self.jaccard_threshold
                 table.merge_enabled = False
+                table.remove_source(pdb_id_upper, self.current_source_names[0])
                 table.add_annotations(
                     pdb_id_upper,
                     self.current_source_names[0],
