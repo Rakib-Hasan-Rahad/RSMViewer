@@ -16,7 +16,7 @@ Version: 1.0.0
 
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from .utils import (
     PDBParser,
@@ -1974,7 +1974,7 @@ class VisualizationManager:
         return True
 
     def _apply_view_color(self, selection: str,
-                          color_spec: str | tuple | list | None) -> None:
+                          color_spec: Optional[Union[str, tuple, list]]) -> None:
         """Apply a temporary color to a selection without changing motif defaults."""
         if not color_spec:
             return
@@ -2003,7 +2003,7 @@ class VisualizationManager:
 
     def view_motif_type(self, motif_type: str,
                         filter_pdb: str = '', filter_suffix: str = '',
-                        color_spec: str | tuple | list | None = None) -> bool:
+                        color_spec: Optional[Union[str, tuple, list]] = None) -> bool:
         """Zoom to all instances of a motif type on the base structure.
 
         No new PyMOL objects are created. The structure is colored gray80
@@ -2081,7 +2081,7 @@ class VisualizationManager:
 
     def view_motif_instance(self, motif_type: str, instance_no: int,
                             filter_pdb: str = '', filter_suffix: str = '',
-                            color_spec: str | tuple | list | None = None) -> bool:
+                            color_spec: Optional[Union[str, tuple, list]] = None) -> bool:
         """Zoom to a specific motif instance and create a named SELECTION (not object).
 
         The base structure stays as the only object; a PyMOL *selection*
