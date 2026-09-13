@@ -485,7 +485,7 @@ class MotifVisualizerGUI:
         self.cif_use_auth = 1
         self.auth_to_label_map = {}   # auth_asym_id -> label_asym_id chain mapping
 
-        # Track custom user annotation data paths per source (for rmv_db 5/6/7/8 with path)
+        # Track custom user annotation data paths per source (user-source data paths)
         self.user_data_paths = {}  # Dict: {source_id_int: path_str}
 
         # Jaccard similarity threshold for annotation merging (0.0–1.0)
@@ -501,7 +501,7 @@ class MotifVisualizerGUI:
 
         # FR3D (Source 5): minimal wrapper around an EXTERNAL, user-installed
         # official BGSU fr3d-python checkout. Registered per-session via
-        # `rmv_db 5 /abs/path/to/fr3d_config.json`. Nothing is installed,
+        # `rmv_db FR3D` (bundled default config) or `rmv_fr3d register <config>`.
         # vendored, patched, or checked out on the user's behalf.
         fr3d_dir = plugin_dir / 'database' / 'user_annotations' / 'fr3d'
         self.default_fr3d_config = distribution_dir / 'config' / 'fr3d_config.json'
@@ -860,7 +860,7 @@ class MotifVisualizerGUI:
     # Source 5 — FR3D: minimal wrapper around an EXTERNAL official
     # BGSU fr3d-python checkout. Nothing here installs, vendors, patches, or
     # checks out FR3D on the user's behalf. Registration is per-session via
-    #     rmv_db 5 /absolute/path/to/fr3d_config.json
+    #     rmv_db FR3D   (auto-registers the bundled config)
     # and the search is argument-free via `rmv_load_motif`.
     # ======================================================================
 
@@ -993,7 +993,7 @@ class MotifVisualizerGUI:
         """
         raw = str(config_path or '').strip()
         if not raw:
-            self.logger.error("Usage: rmv_db 5 /absolute/path/to/fr3d_config.json")
+            self.logger.error("Usage: rmv_fr3d register /absolute/path/to/fr3d_config.json")
             return False
         cfg_abs = os.path.abspath(os.path.expanduser(raw))
         if not os.path.isfile(cfg_abs):
@@ -1135,27 +1135,23 @@ class MotifVisualizerGUI:
         except Exception:
             pass
 
-        self.logger.success("FR3D Source 5 registered (external official fr3d-python)")
-        self.logger.info(f"  Repo      : {repo_root}")
-        if self.fr3d_commit:
-            state = self.fr3d_branch or 'detached'
-            state += ', dirty' if self.fr3d_dirty else ', clean'
-            self.logger.info(f"  Commit    : {self.fr3d_commit[:12]} ({state})")
-        else:
-            self.logger.info("  Commit    : (git metadata unavailable)")
-        self.logger.info(f"  Python    : {chosen_python}")
-        self.logger.info(f"  Data mode : {data_mode}")
+        self.logger.success("FR3D registered (external official fr3d-python)")
+        commit = self.fr3d_commit[:12] if self.fr3d_commit else "n/a"
         if os.path.isdir(query_path):
             extra = f", default={default_query}" if query_selection == 'default' else ''
-            self.logger.info(f"  Queries   : {query_path} (selection={query_selection}{extra})")
+            qdesc = f"{query_path} (selection={query_selection}{extra})"
         else:
-            self.logger.info(f"  Query     : {query_path}")
-        self.logger.info(f"  Network   : {'allowed' if allow_network else 'disabled'}")
-        self.logger.info(f"  Timeout   : {self.fr3d_query_timeout_seconds}s per query")
+            qdesc = query_path
+        self.logger.info(f"  Repo    : {repo_root}  (commit {commit})")
+        self.logger.info(f"  Python  : {chosen_python}")
+        self.logger.info(
+            f"  Mode    : {data_mode}  |  network {'on' if allow_network else 'off'}  |  "
+            f"timeout {self.fr3d_query_timeout_seconds}s"
+        )
+        self.logger.info(f"  Queries : {qdesc}")
         if interactions_path:
-            self.logger.info(f"  Interact. : {interactions_path}")
-        self.logger.info(f"  Output    : {self.fr3d_run_output_path}")
-        self.logger.info("Next: rmv_fetch <PDB_ID>  then  rmv_load_motif")
+            self.logger.info(f"  Interact: {interactions_path}")
+        self.logger.info(f"  Output  : {self.fr3d_run_output_path}")
         return True
 
     def _fr3d_discover_queries(self) -> Tuple[List[str], str]:
@@ -1249,7 +1245,7 @@ class MotifVisualizerGUI:
         if not self.fr3d_registered:
             self.logger.error("FR3D Source 5 is not registered.")
             self.logger.info("Register the external official fr3d-python first:")
-            self.logger.info("  rmv_db 5 /absolute/path/to/fr3d_config.json")
+            self.logger.info("  rmv_db FR3D")
             return False
 
         target = str(pdb_id or self.loaded_pdb_id or '').strip()
@@ -1278,19 +1274,25 @@ class MotifVisualizerGUI:
             self.logger.error(f"FR3D query resolution failed: {qerr}")
             return False
 
-        # Validate every query parses before running any of them.
+        # Validate queries; skip malformed JSON files with a concise warning
+        # instead of aborting the whole run so valid queries still execute.
+        valid_queries = []
         invalid = []
         for q in queries:
             try:
                 with open(q, 'r', encoding='utf-8') as f:
                     json.load(f)
+                valid_queries.append(q)
             except Exception as e:
                 invalid.append((q, str(e)))
         if invalid:
-            self.logger.error("FR3D aborted: invalid query JSON detected:")
+            self.logger.warning(f"Skipping {len(invalid)} query file(s) with invalid JSON:")
             for q, e in invalid:
                 self.logger.info(f"  - {os.path.basename(q)}: {e}")
+        if not valid_queries:
+            self.logger.error("FR3D aborted: no valid query JSON files remain.")
             return False
+        queries = valid_queries
 
         run_id = time.strftime('%Y%m%d_%H%M%S')
         run_root = os.path.join(self.fr3d_run_output_path, target_upper, run_id)
@@ -1455,7 +1457,7 @@ class MotifVisualizerGUI:
         print("=" * 70)
         if not self.fr3d_registered:
             print("Status     : NOT registered")
-            print("Register   : rmv_db 5 /absolute/path/to/fr3d_config.json")
+            print("Register   : rmv_db FR3D   (or rmv_fr3d register <config>)")
             print("=" * 70 + "\n")
             return
         print("Status     : registered")
@@ -1584,8 +1586,8 @@ class MotifVisualizerGUI:
             self.logger.info("FR3D is ready. Next: rmv_fetch <PDB_ID> ; rmv_load_motif")
         else:
             self.logger.info(
-                "FR3D interpreter is ready. Next: rmv_db 5 /abs/path/to/config.json ; "
-                "rmv_fetch <PDB_ID> ; rmv_load_motif"
+                "FR3D interpreter is ready. Next: rmv_fetch <PDB_ID> ; rmv_db FR3D ; "
+                "rmv_load_motif"
             )
         return True
 
@@ -2282,9 +2284,10 @@ class MotifVisualizerGUI:
             # will move here once its provider labels are textual as well.
             if len(self.current_source_names) == 1:
                 table = self.annotation_tables.setdefault(
-                    pdb_id_upper, ConsolidatedAnnotationTable(self.jaccard_threshold)
+                    pdb_id_upper, ConsolidatedAnnotationTable(self.jaccard_threshold, merge_enabled=False)
                 )
                 table.jaccard_threshold = self.jaccard_threshold
+                table.merge_enabled = False
                 table.add_annotations(
                     pdb_id_upper,
                     self.current_source_names[0],
@@ -2512,20 +2515,7 @@ class MotifVisualizerGUI:
                 self.logger.success(
                     f"Loaded {row_count} consolidated motif row(s) in {len(family_rows)} "
                     f"families from {pdb_id} via {source_list} (tag: {tag})")
-                name_width = max(
-                    [len(name) for name, _ in family_rows]
-                    + [len("MOTIF FAMILY"), len("Total")]
-                )
-                print("")
-                print(f"  {'MOTIF FAMILY'.ljust(name_width)}   COUNT")
-                print(f"  {'-' * name_width}   -----")
-                for name, count in family_rows:
-                    print(f"  {name.ljust(name_width)}   {count}")
-                family_membership_total = sum(count for _, count in family_rows)
-                print(f"  {'Total'.ljust(name_width)}   {family_membership_total}")
-                print("")
-                print("  Use a MOTIF FAMILY name exactly as shown above in rmv_select.")
-                print("  A motif may belong to more than one family, so family counts can exceed the row total.")
+                self._print_family_table(family_rows)
 
                 # Consistent next steps built from a real loaded family name and
                 # the actual sources that were loaded.
@@ -2534,11 +2524,12 @@ class MotifVisualizerGUI:
                     family_rows[0][0],
                 )
                 source_expr = " or ".join(self.current_source_names) if self.current_source_names else "RNA3DMotifAtlas"
-                from .database.motif_aliases import family_short_code
+                from .database.motif_aliases import family_short_code, converted_family_name
                 safe_group = family_short_code(preferred)
+                converted_preferred = converted_family_name(preferred)
                 print("")
                 print("  Next steps:")
-                print(f"    rmv_select {preferred}, {pdb_id_upper}, {source_expr}, as group_{safe_group}")
+                print(f"    rmv_select {converted_preferred}, {pdb_id_upper}, {source_expr}, as group_{safe_group}")
                 print(f"    rmv_view group_{safe_group}             Highlight the saved group")
                 print(f"    rmv_create_object group_{safe_group}    Create selectable objects")
                 print(f"    rmv_super group_{safe_group}            Superimpose the group")
@@ -2548,6 +2539,34 @@ class MotifVisualizerGUI:
                 
         except Exception as e:
             self.logger.error(f"Failed to load motif data: {str(e)}")
+
+    def _print_family_table(self, family_rows: List[Tuple[str, int]]) -> None:
+        """Print the three-column rmv_db family table.
+
+        Columns: [converted name, no spaces] | [annotation name] | [# loaded].
+        The converted name is the copy-paste-friendly form users pass to
+        rmv_select; the annotation name is the source's own spelling.
+        """
+        from .database.motif_aliases import converted_family_name
+
+        rows = [
+            (converted_family_name(name), name, count) for name, count in family_rows
+        ]
+        conv_header, name_header, count_header = (
+            "CONVERTED NAME", "ANNOTATION NAME", "# LOADED MOTIFS",
+        )
+        conv_width = max([len(conv) for conv, _, _ in rows] + [len(conv_header), len("Total")])
+        name_width = max([len(name) for _, name, _ in rows] + [len(name_header)])
+        print("")
+        print(f"  {conv_header.ljust(conv_width)}   {name_header.ljust(name_width)}   {count_header}")
+        print(f"  {'-' * conv_width}   {'-' * name_width}   {'-' * len(count_header)}")
+        for conv, name, count in rows:
+            print(f"  {conv.ljust(conv_width)}   {name.ljust(name_width)}   {count}")
+        total = sum(count for _, _, count in rows)
+        print(f"  {'Total'.ljust(conv_width)}   {' ' * name_width}   {total}")
+        print("")
+        print("  Copy a CONVERTED NAME (first column) straight into rmv_select.")
+        print("  A motif may belong to more than one family, so family counts can exceed the row total.")
 
     def _family_counts_from_table(self, structure_id: str, source_filter: Optional[List[str]] = None):
         """Return [(display_name, row_count), ...] for one structure's table.
@@ -2754,8 +2773,8 @@ class MotifVisualizerGUI:
 
     def _load_combined_motifs(self, pdb_id: str, source_ids: List[int]):
         """
-        Load and residue-merge motifs from multiple sources.
-        
+        Load motifs from multiple sources WITHOUT merging.
+
         Pipeline:
         1. Fetch raw motifs from each source (labels used exactly as reported)
         2. annotation merging (right-to-left, priority = source order)
@@ -2769,7 +2788,6 @@ class MotifVisualizerGUI:
         """
         try:
             from .database.config import SOURCE_ID_MAP
-            from .database.residue_merger import ResidueMerger
 
             # RNAMotifScanX (source 7) needs its preannotated results ingested
             # before _fetch_from_single_source can read them in combine mode.
@@ -2856,8 +2874,9 @@ class MotifVisualizerGUI:
                 7: "RNAMotifScanX",
             }
             table = self.annotation_tables.setdefault(
-                pdb_id, ConsolidatedAnnotationTable(self.jaccard_threshold)
+                pdb_id, ConsolidatedAnnotationTable(self.jaccard_threshold, merge_enabled=False)
             )
+            table.merge_enabled = False
             selected_names = self.current_source_names
             for index, sid in enumerate(source_ids):
                 source_name = (
@@ -2874,34 +2893,23 @@ class MotifVisualizerGUI:
                         provenance={"legacy_provider": str(sid)},
                     )
             
-            # --- Step 2: annotation merging (residue-set based, name-agnostic) ---
-            self.logger.debug(f"Residue-based merging of {len(source_ids)} sources...")
-            
-            # Build ordered list matching source_ids order
-            ordered_sources = [raw_sources.get(sid, {}) for sid in source_ids]
-            ordered_labels = [SOURCE_ID_MAP.get(sid, {}).get('name', f'Source {sid}') for sid in source_ids]
-            
-            merger = ResidueMerger(jaccard_threshold=self.jaccard_threshold)
-            merged = merger.merge_sources(
-                ordered_sources,
-                ordered_labels,
-                pdb_id=pdb_id,
-                source_keys=[
-                    self.current_source_names[index]
-                    if index < len(self.current_source_names)
-                    else ordered_labels[index]
-                    for index in range(len(source_ids))
-                ],
-            )
-            
-            if merged:
-                total = sum(len(v) for v in merged.values())
-                from .database.motif_hierarchy_cache import get_hierarchy_cache
-                self.logger.debug(
-                    f"Merge complete: {total} motifs in {len(merged)} categories "
-                    f"(cache: {get_hierarchy_cache().db_path})")
-            
-            return merged
+            # --- Step 2: NO merging at rmv_db ---
+            # Professor's design: rmv_db keeps every source's annotations
+            # separate. Containment/Jaccard merging is deferred to rmv_select
+            # (same family) and rmv_combine (across families). Here we simply
+            # concatenate the raw per-type instances so nothing is dropped and
+            # a contained annotation (e.g. an isolated pair inside a sarcin-
+            # ricin loop) survives until the user selects/combines.
+            combined: Dict[str, List] = {}
+            for sid in source_ids:
+                for mtype, instances in raw_sources.get(sid, {}).items():
+                    combined.setdefault(mtype.upper(), []).extend(instances)
+
+            total = sum(len(v) for v in combined.values())
+            self.logger.debug(
+                f"Loaded {total} raw annotation(s) in {len(combined)} categories "
+                f"from {len(source_ids)} sources (no merge at rmv_db)")
+            return combined
             
         except Exception as e:
             self.logger.error(f"Failed to combine motifs: {e}")
@@ -3232,9 +3240,10 @@ class MotifVisualizerGUI:
             # cross-source family counts and rmv_select alongside Atlas/Rfam.
             if len(self.current_source_names) == 1:
                 table = self.annotation_tables.setdefault(
-                    pdb_id_upper, ConsolidatedAnnotationTable(self.jaccard_threshold)
+                    pdb_id_upper, ConsolidatedAnnotationTable(self.jaccard_threshold, merge_enabled=False)
                 )
                 table.jaccard_threshold = self.jaccard_threshold
+                table.merge_enabled = False
                 table.add_annotations(
                     pdb_id_upper,
                     self.current_source_names[0],
@@ -3424,31 +3433,19 @@ class MotifVisualizerGUI:
                 self.logger.success(
                     f"Loaded {row_count} consolidated motif row(s) in {len(family_rows)} "
                     f"families from {pdb_id} via {source_list} (tag: {tag})")
-                name_width = max(
-                    [len(name) for name, _ in family_rows]
-                    + [len("MOTIF FAMILY"), len("Total")]
-                )
-                print("")
-                print(f"  {'MOTIF FAMILY'.ljust(name_width)}   COUNT")
-                print(f"  {'-' * name_width}   -----")
-                for name, count in family_rows:
-                    print(f"  {name.ljust(name_width)}   {count}")
-                family_membership_total = sum(count for _, count in family_rows)
-                print(f"  {'Total'.ljust(name_width)}   {family_membership_total}")
-                print("")
-                print("  Use a MOTIF FAMILY name exactly as shown above in rmv_select.")
-                print("  A motif may belong to more than one family, so family counts can exceed the row total.")
+                self._print_family_table(family_rows)
 
                 preferred = next(
                     (name for name, _ in family_rows if 'SARCIN' in name.upper()),
                     family_rows[0][0],
                 )
                 source_expr = " or ".join(self.current_source_names) if self.current_source_names else tool.upper()
-                from .database.motif_aliases import family_short_code
+                from .database.motif_aliases import family_short_code, converted_family_name
                 safe_group = family_short_code(preferred)
+                converted_preferred = converted_family_name(preferred)
                 print("")
                 print("  Next steps:")
-                print(f"    rmv_select {preferred}, {pdb_id_upper}, {source_expr}, as group_{safe_group}")
+                print(f"    rmv_select {converted_preferred}, {pdb_id_upper}, {source_expr}, as group_{safe_group}")
                 print(f"    rmv_view group_{safe_group}             Highlight the saved group")
                 print(f"    rmv_create_object group_{safe_group}    Create selectable objects")
                 print(f"    rmv_super group_{safe_group}            Superimpose the group")
@@ -4101,7 +4098,7 @@ class MotifVisualizerGUI:
         print("     rmv_save current           Save current view (high-res)")
         print()
         print("  8. Run external FR3D (Source 5), then visualize immediately:")
-        print("     rmv_db 5 /abs/path/to/config.json   # Register external FR3D")
+        print("     rmv_db FR3D                         # Load FR3D annotations")
         print("     rmv_load_motif             # Run FR3D search on loaded PDB")
         print("     rmv_summary                # Shows FR3D interaction families")
         print()
@@ -4590,6 +4587,117 @@ class MotifVisualizerGUI:
         print(f"  rmv_show {motif_arg}              Render & create objects for {motif_arg}")
         print(f"  rmv_super {motif_arg}             Superimpose all {motif_arg} instances\n")
 
+    @staticmethod
+    def _instance_from_residue_set(residue_set, family, source_label, instance_id):
+        """Build a lightweight MotifInstance from a consolidated row residue set."""
+        from .database.base_provider import MotifInstance, ResidueSpec
+        residues = [
+            ResidueSpec(
+                chain=str(chain),
+                residue_number=int(number),
+                insertion_code=str(insertion or ''),
+                model=int(model),
+            )
+            for chain, number, insertion, model in residue_set
+        ]
+        return MotifInstance(
+            instance_id=str(instance_id),
+            motif_id=str(family),
+            pdb_id='',
+            residues=residues,
+            annotation='',
+            metadata={'_source_label': source_label},
+        )
+
+    def _merge_source_instances(self, structure_id, ordered_sources, ordered_labels, group_name):
+        """Residue-merge per-source instance dicts into consolidated AnnotationRows.
+
+        Uses :class:`ResidueMerger` so the merge is residue-set based and keeps
+        the larger set: strict subset/superset removal (100% containment) plus
+        Jaccard >= threshold. This is the professor's rule applied at
+        rmv_select (same family) and rmv_combine (across families) time.
+        """
+        from .database.residue_merger import ResidueMerger
+        from .database.consolidated_table import normalize_residue_set, AnnotationRow
+
+        merger = ResidueMerger(jaccard_threshold=self.jaccard_threshold)
+        # pdb_id=None so the transient select/combine merge does not write to
+        # the shared hierarchy cache; per-source labels still propagate via
+        # each instance's _also_found_in metadata.
+        merged = merger.merge_sources(ordered_sources, ordered_labels, pdb_id=None)
+
+        rows = []
+        index = 0
+        for motif_type, instances in merged.items():
+            for instance in instances:
+                residue_set = normalize_residue_set(instance.residues)
+                if not residue_set:
+                    continue
+                index += 1
+                meta = instance.metadata or {}
+                labels = [meta.get('_source_label', '')] + list(meta.get('_also_found_in', []))
+                source_annotations = {}
+                for label in labels:
+                    if label:
+                        source_annotations.setdefault(label, (str(motif_type),))
+                rows.append(
+                    AnnotationRow(
+                        motif_id=f"{group_name}_{index:03d}",
+                        structure_id=structure_id,
+                        residue_set=residue_set,
+                        source_annotations=source_annotations,
+                    )
+                )
+        return rows
+
+    def _merge_selection_rows(self, structure_id, entries, family, group_name):
+        """Merge matched raw rows of ONE family into consolidated group rows.
+
+        ``entries`` is a list of ``(AnnotationRow, matching_sources)`` for a
+        single structure; each contributing source becomes a merge input so the
+        surviving instances carry every source that labelled them.
+        """
+        from collections import defaultdict
+
+        per_source: Dict[str, Dict[str, list]] = defaultdict(dict)
+        discovered: List[str] = []
+        for row, sources in entries:
+            for source in sources:
+                if source not in discovered:
+                    discovered.append(source)
+                instance = self._instance_from_residue_set(
+                    row.residue_set, family, source, f"{source}:{row.motif_id}"
+                )
+                per_source[source].setdefault(family, []).append(instance)
+
+        ordered_labels = [name for name in self.current_source_names if name in per_source]
+        for source in discovered:
+            if source not in ordered_labels:
+                ordered_labels.append(source)
+        ordered_sources = [per_source[name] for name in ordered_labels]
+        return self._merge_source_instances(structure_id, ordered_sources, ordered_labels, group_name)
+
+    def _rows_for_target(self, target: str):
+        """Return AnnotationRows for a stable motif ID or a saved group.
+
+        Groups produced by rmv_select/rmv_combine store their merged rows
+        directly; legacy groups and bare motif IDs resolve against the raw
+        load-time tables.
+        """
+        group = self.query_groups.get(target)
+        if group and group.get("rows"):
+            return list(group["rows"])
+        if group:
+            motif_ids = set(group.get("motif_ids", []))
+        else:
+            motif_ids = {target}
+        return [
+            row
+            for table in self.annotation_tables.values()
+            for row in table.rows
+            if row.motif_id in motif_ids
+        ]
+
     def select_annotation_query(self, query_text: str) -> None:
         """Save a consolidated-table query as a motif-ID result snapshot."""
         try:
@@ -4633,7 +4741,8 @@ class MotifVisualizerGUI:
                     matching.append(source)
             return tuple(matching)
 
-        matched_ids: List[str] = []
+        family = query.motif or "MOTIF"
+        matched_by_structure: Dict[str, List] = {}
         for structure_id in sorted(self.annotation_tables):
             if not query.matches_structure(structure_id):
                 continue
@@ -4642,12 +4751,14 @@ class MotifVisualizerGUI:
                     motif_sources = _sources_matching_motif(row)
                     if not motif_sources or not query.sources.matches(motif_sources):
                         continue
-                elif not query.sources.matches(tuple(row.source_annotations)):
-                    continue
-                matched_ids.append(row.motif_id)
+                    sources_for_row = motif_sources
+                else:
+                    if not query.sources.matches(tuple(row.source_annotations)):
+                        continue
+                    sources_for_row = tuple(row.source_annotations)
+                matched_by_structure.setdefault(structure_id, []).append((row, sources_for_row))
 
-        matched_ids = sorted(set(matched_ids))
-        if not matched_ids:
+        if not matched_by_structure:
             available = sorted({
                 label
                 for table in self.annotation_tables.values()
@@ -4673,13 +4784,28 @@ class MotifVisualizerGUI:
                 "Use rmv_list to inspect stable motif IDs."
             )
             return
+
+        # Containment + Jaccard merging happens HERE (rmv_select), over one
+        # family only, so a contained annotation from another family is never
+        # touched at this stage.
+        merged_rows = []
+        for structure_id, entries in matched_by_structure.items():
+            merged_rows.extend(
+                self._merge_selection_rows(structure_id, entries, family, query.group)
+            )
+
+        if not merged_rows:
+            self.logger.error(f"No motifs matched '{query.motif}' after merging.")
+            return
+
         self.query_groups[query.group] = {
-            "motif_ids": matched_ids,
+            "rows": merged_rows,
+            "motif_ids": [row.motif_id for row in merged_rows],
             "query": query.text,
             "structures": query.structures,
         }
         self.logger.success(
-            f"Saved group '{query.group}' with {len(matched_ids)} motif(s)."
+            f"Saved group '{query.group}' with {len(merged_rows)} merged motif instance(s)."
         )
         group = query.group
         print("\n  Next steps:")
@@ -4733,12 +4859,15 @@ class MotifVisualizerGUI:
                     motif_ids = {target}
                     family_label = None
 
-        rows = [
-            row
-            for structure_id in sorted(self.annotation_tables)
-            for row in self.annotation_tables[structure_id].rows
-            if motif_ids is None or row.motif_id in motif_ids
-        ]
+        if group is not None and group.get("rows"):
+            rows = list(group["rows"])
+        else:
+            rows = [
+                row
+                for structure_id in sorted(self.annotation_tables)
+                for row in self.annotation_tables[structure_id].rows
+                if motif_ids is None or row.motif_id in motif_ids
+            ]
         if not rows:
             if target:
                 print(
@@ -4844,18 +4973,11 @@ class MotifVisualizerGUI:
         """Create selectable PyMOL objects for a motif ID or saved group."""
         target = target.strip()
         if target in self.query_groups:
-            motif_ids = self.query_groups[target]["motif_ids"]
             group_name = target
         else:
-            motif_ids = [target]
             group_name = ""
 
-        rows = [
-            row
-            for table in self.annotation_tables.values()
-            for row in table.rows
-            if row.motif_id in motif_ids
-        ]
+        rows = self._rows_for_target(target)
         if not rows:
             self.logger.error(f"No consolidated motif found for '{target}'.")
             return
@@ -4948,18 +5070,11 @@ class MotifVisualizerGUI:
     ) -> None:
         """Highlight a stable motif ID or saved group on its parent structure."""
         if target in self.query_groups:
-            motif_ids = set(self.query_groups[target]["motif_ids"])
             color_name = color_override or colors.get_color(target)
         else:
-            motif_ids = {target}
             color_name = color_override or colors.get_color("MOTIF")
 
-        rows = [
-            row
-            for table in self.annotation_tables.values()
-            for row in table.rows
-            if row.motif_id in motif_ids
-        ]
+        rows = self._rows_for_target(target)
         if not rows:
             self.logger.error(f"No consolidated motif found for '{target}'.")
             return
@@ -5011,13 +5126,7 @@ class MotifVisualizerGUI:
     def export_annotation_rows(self, target: str) -> int:
         """Export a stable motif ID or saved group as minimal mmCIF files."""
         target = target.strip()
-        motif_ids = set(self.query_groups.get(target, {}).get("motif_ids", [target]))
-        rows = [
-            row
-            for table in self.annotation_tables.values()
-            for row in table.rows
-            if row.motif_id in motif_ids
-        ]
+        rows = self._rows_for_target(target)
         if not rows:
             self.logger.error(f"No consolidated motif found for '{target}'.")
             return 0
@@ -5701,7 +5810,6 @@ class MotifVisualizerGUI:
         - rmv_db 6 off          (RMS with filtering OFF)
         - rmv_db 6 on           (RMS with filtering ON - explicit)
         - rmv_db 6 C-LOOP 0.05 KINK-TURN 0.02  (RMS with custom P-values)
-        - rmv_db 5 /path/to/data   (FR3D with custom data directory)
         - rmv_db 6 /path/to/data   (RMS with custom data directory)
         - rmv_db 7 /path/to/data   (RMSX with custom data directory)
         """
@@ -5965,7 +6073,7 @@ class MotifVisualizerGUI:
         # Display sample commands
         print(f"\n--- Sample commands ---")
         if source_id == 5:
-            print(f"  rmv_db 5 /abs/path/to/config.json      Register external FR3D")
+            print(f"  rmv_db FR3D                            Load FR3D annotations")
             print(f"  rmv_fetch 1S72                          Load PDB structure")
             print(f"  rmv_db FR3D                             Run FR3D search, then load")
             print(f"  rmv_list                                List loaded motif rows")
@@ -6535,7 +6643,7 @@ def initialize_gui():
                 gui.loaded_pdb_id = display_id
                 gui.loaded_structures[display_id] = structure_name
                 gui.annotation_tables.setdefault(
-                    display_id, ConsolidatedAnnotationTable(gui.jaccard_threshold)
+                    display_id, ConsolidatedAnnotationTable(gui.jaccard_threshold, merge_enabled=False)
                 )
                 gui.loaded_structure_path = os.path.abspath(expanded) if expanded else ''
                 
@@ -6635,7 +6743,7 @@ def initialize_gui():
 
         Optional path semantics:
             - Source 5 (FR3D): argument-free. Configure with
-              `rmv_db 5 /path/to/config.json`, then run `rmv_load_motif`.
+              `rmv_db FR3D`, then run `rmv_load_motif`.
             - Source 7 (RNAMotifScanX): path is treated as RMSX motif query model directory.
             - Sources 1-6 except 5: optional path is ignored.
         
@@ -6703,13 +6811,13 @@ def initialize_gui():
                 active_source_id = None
 
             # Source 5 (FR3D) is fully config-driven and argument-free.
-            # It is registered via `rmv_db 5 /path/to/config.json` and run with
+            # It is registered via `rmv_db FR3D` and run with
             # a bare `rmv_load_motif`.
             if active_source_id == 5:
                 if user_path_arg:
                     gui.logger.warning(
                         "Source 5 (FR3D) does not accept rmv_load_motif path arguments; "
-                        "register it with 'rmv_db 5 /path/to/config.json' instead."
+                        "register it with 'rmv_db FR3D' instead."
                     )
                 gui.run_fr3d_search(pdb_id)
                 return
@@ -7504,42 +7612,68 @@ def initialize_gui():
         for a in extra_args:
             rest_parts.extend(str(a).split())
         all_parts = first_parts + rest_parts
-        all_parts = [p.strip() for p in all_parts if p.strip()]
+        all_parts = [p.strip().strip(',') for p in all_parts if p.strip().strip(',')]
 
         all_parts, new_alias, alias_err = _extract_trailing_alias(all_parts)
         if alias_err or not new_alias or not all_parts:
-            gui.logger.error("Usage: rmv_combine <name1> <name2> [...], as <NEW_ALIAS>")
+            gui.logger.error("Usage: rmv_combine <group>, <group>[, ...], as <NEW_GROUP>")
             return
 
-        # New stable-ID query groups (from rmv_select): combine their motif
-        # IDs into a fresh query group that rmv_view/rmv_create_object/rmv_super
-        # can consume directly.
+        # rmv_combine over rmv_select groups: this is where cross-family
+        # containment + Jaccard merging happens (professor's design). Fully
+        # contained annotations from a different family are removed here, but
+        # the original groups and the raw loaded annotations stay intact.
         if all(part in gui.query_groups for part in all_parts):
             if new_alias in gui.query_groups:
                 gui.logger.error(f"Group '{new_alias}' already exists. Choose a different name.")
                 return
-            combined_ids: List[str] = []
+
+            from collections import defaultdict
+
+            # struct -> group_name -> [rows]
+            per_struct_group: Dict[str, Dict[str, list]] = defaultdict(lambda: defaultdict(list))
             for part in all_parts:
-                combined_ids.extend(gui.query_groups[part].get("motif_ids", []))
-            combined_ids = sorted(dict.fromkeys(combined_ids))
-            if not combined_ids:
+                for row in gui._rows_for_target(part):
+                    per_struct_group[row.structure_id][part].append(row)
+
+            if not per_struct_group:
                 gui.logger.error("Nothing to combine - the selected groups are empty.")
                 return
-            member_colors = {}
-            for part in all_parts:
-                for mid in gui.query_groups[part].get("motif_ids", []):
-                    member_colors.setdefault(mid, part)
+
+            merged_rows = []
+            for structure_id, group_rows in per_struct_group.items():
+                ordered_labels = [part for part in all_parts if part in group_rows]
+                ordered_sources = []
+                for part in ordered_labels:
+                    family_dict: Dict[str, list] = {}
+                    for row in group_rows[part]:
+                        instance = gui._instance_from_residue_set(
+                            row.residue_set, part, part, f"{part}:{row.motif_id}"
+                        )
+                        family_dict.setdefault(part, []).append(instance)
+                    ordered_sources.append(family_dict)
+                merged_rows.extend(
+                    gui._merge_source_instances(structure_id, ordered_sources, ordered_labels, new_alias)
+                )
+
+            if not merged_rows:
+                gui.logger.error("Nothing to combine - no residues resolved from the given groups.")
+                return
+
             gui.query_groups[new_alias] = {
-                "motif_ids": combined_ids,
+                "rows": merged_rows,
+                "motif_ids": [row.motif_id for row in merged_rows],
                 "query": f"combine({', '.join(all_parts)})",
                 "structures": "combined",
                 "sources": "combined",
-                "member_colors": member_colors,
             }
             colors.get_color(new_alias)  # reserve a stable color for the group
             gui.logger.success(
                 f"Combined {len(all_parts)} group(s) into '{new_alias}' "
-                f"({len(combined_ids)} motif(s)).")
+                f"({len(merged_rows)} instance(s) after containment/Jaccard merge).")
+            gui.logger.info(
+                "  Contained/overlapping annotations were merged; the original "
+                "groups and loaded annotations are unchanged.")
             gui.logger.info(
                 f"Next steps: rmv_view {new_alias} | rmv_create_object {new_alias} | rmv_super {new_alias}")
             return
@@ -7650,7 +7784,7 @@ def initialize_gui():
             print("  RNAMotifScanX:     database/user_annotations/RNAMotifScanX/")
             print("\nFR3D (Source 5) commands (wraps external official BGSU fr3d-python):")
             print("  rmv_fr3d setup                  Install FR3D requirements (numpy/scipy/mmcif-pdbx)")
-            print("  rmv_db 5 /path/to/config.json   Register external FR3D from config")
+            print("  rmv_fr3d register <config>     Register external FR3D from a custom config")
             print("  rmv_fr3d status                 Show FR3D registration status")
             print("  rmv_load_motif                  Run FR3D search on loaded PDB")
             print("\nRNAMotifScanX wrapper commands:")
@@ -7687,7 +7821,8 @@ def initialize_gui():
             rmv_fr3d register <config>    Register FR3D from a JSON config file
             rmv_fr3d run [PDB_ID]         Run FR3D search on the loaded (or given) PDB
 
-        Registration is normally done via `rmv_db 5 /path/to/config.json`.
+        Registration is normally done via `rmv_db FR3D` (bundled config) or
+        `rmv_fr3d register <config>`.
         Running is normally done via a bare `rmv_load_motif`.
         """
         action_arg = str(action).strip() if action else ''

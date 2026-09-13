@@ -91,6 +91,7 @@ class ConsolidatedAnnotationTable:
         self,
         jaccard_threshold: float = DEFAULT_JACCARD_THRESHOLD,
         containment_threshold: float = DEFAULT_CONTAINMENT_THRESHOLD,
+        merge_enabled: bool = True,
     ) -> None:
         if not 0.0 < jaccard_threshold <= 1.0:
             raise ValueError("jaccard_threshold must be between 0 and 1")
@@ -98,6 +99,10 @@ class ConsolidatedAnnotationTable:
             raise ValueError("containment_threshold must be between 0 and 1")
         self.jaccard_threshold = jaccard_threshold
         self.containment_threshold = containment_threshold
+        # When False the table keeps every annotation as its own row and only
+        # co-locates byte-for-byte identical residue sets (used at rmv_db load
+        # time so overlapping/contained annotations survive until rmv_select).
+        self.merge_enabled = merge_enabled
         self._rows: Dict[str, AnnotationRow] = {}
 
     @property
@@ -187,6 +192,13 @@ class ConsolidatedAnnotationTable:
     def _find_matching_row(
         self, structure_id: str, residue_set: Tuple[ResidueKey, ...]
     ) -> Optional[AnnotationRow]:
+        # No-merge mode: only fold byte-for-byte identical residue sets together
+        # so overlapping/contained annotations remain separate rows.
+        if not self.merge_enabled:
+            for row in self.rows:
+                if row.structure_id == structure_id and row.residue_set == residue_set:
+                    return row
+            return None
         candidates = []
         for row in self.rows:
             if row.structure_id != structure_id:
