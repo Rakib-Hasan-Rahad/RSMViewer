@@ -1,12 +1,23 @@
 # RSMViewer
 
-**RNA Structural Motif Retrieval, Comparison, and Visualization in PyMOL**
+**A PyMOL plugin for retrieving, integrating, visualizing, and comparing RNA structural motif annotations.**
+
+![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-blue)
+![PyMOL 2.x+](https://img.shields.io/badge/PyMOL-2.x%2B-brightgreen)
+![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22097090-orange)](https://doi.org/10.5281/zenodo.22097090)
 
 RSMViewer is a motif-centric PyMOL plugin for retrieving, consolidating,
 querying, and comparing RNA structural motif (RSM) annotations. It integrates
 annotations from multiple independent sources without forcing them into a single
 universal classification, so agreement and disagreement between annotation
 methods stay visible.
+
+> **Who it's for:** RNA structural biologists and bioinformaticians who want to
+> explore, compare, and validate RNA 3D motif annotations from different
+> databases and model-based search tools directly in PyMOL — using short
+> commands, without writing code.
 
 A motif is represented internally as a **set of residues**, with no constraint
 on the number of strands or chains. This lets motifs defined by sequence,
@@ -37,7 +48,10 @@ Fetch structures  ->  Load named sources  ->  Query motifs  ->  View · Compare 
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
 - [Testing](#testing)
-- [Further reading](#further-reading)
+- [Documentation](#documentation)
+- [Support](#support)
+- [Citation](#citation)
+- [License](#license)
 
 ---
 
@@ -89,6 +103,8 @@ with `LANG=C`) and you see garbled characters in any output, enable UTF-8:
 
 ## Quick start
 
+Paste these seven commands into the PyMOL command line:
+
 ```text
 rmv_fetch 1S72                                   # load a structure
 rmv_db RNA3DMotifAtlas                            # load annotations from a source
@@ -98,6 +114,12 @@ rmv_view group_SR                                 # highlight the family
 rmv_create_object group_SR                        # make selectable objects
 rmv_super group_SR                                # medoid superimposition
 ```
+
+**What you'll see:** `rmv_db` prints a motif-family table for 1S72; `rmv_select`
+saves the Sarcin-Ricin family as `group_SR`; `rmv_list` shows each motif's stable
+ID and residues; `rmv_view` colors them on the structure; and `rmv_super` reports
+the medoid and per-instance RMSDs. New to the commands? Follow the
+[tutorial](docs/TUTORIAL.md).
 
 ---
 
@@ -433,13 +455,37 @@ end and prints a PASS/FAIL report.
 
 ---
 
-## Further reading
+## Documentation
 
-- [docs/TUTORIAL.md](docs/TUTORIAL.md) — a guided, step-by-step workflow.
-- [DEVELOPED.md](DEVELOPED.md) — architecture and maintenance reference.
-- [config/README.md](config/README.md) — configuration field reference.
-- [docs/MANUSCRIPT.md](docs/MANUSCRIPT.md) — the main manuscript text.
-- [docs/SUPPLEMENT.md](docs/SUPPLEMENT.md) — supplementary information: merging
-  criteria, per-source query semantics, pipeline internals, caching, and a
-  worked benchmark.
-- [docs/SUPPLEMENTARY_COLLECTION_AND_TABLE.md](docs/SUPPLEMENTARY_COLLECTION_AND_TABLE.md) — collection, consolidation, hierarchy, and SQL-like query rules.
+Pick the document that matches what you need:
+
+| I want to… | Read |
+| --- | --- |
+| Learn RSMViewer step by step | [docs/TUTORIAL.md](docs/TUTORIAL.md) |
+| Look up exact command syntax | [Command reference](#command-reference) · in-PyMOL `rmv_help` |
+| Understand the query grammar and consolidation | [docs/SUPPLEMENTARY_COLLECTION_AND_TABLE.md](docs/SUPPLEMENTARY_COLLECTION_AND_TABLE.md), [docs/SUPPLEMENT.md](docs/SUPPLEMENT.md) |
+| Configure FR3D / RNAMotifScanX | [config/README.md](config/README.md) |
+| Understand the design and internals | [DEVELOPED.md](DEVELOPED.md) |
+| Read the paper and its supplement | [docs/MANUSCRIPT.md](docs/MANUSCRIPT.md), [docs/SUPPLEMENT.md](docs/SUPPLEMENT.md) |
+
+## Support
+
+- Run `rmv_help` in PyMOL for the full command reference.
+- Enable `rmv_debug ON` to print diagnostic messages before reporting an issue.
+- When reporting a problem, include your PyMOL version, operating system, the
+  exact commands you ran, and the console output.
+
+## Citation
+
+If you use RSMViewer in your research, please cite it. Machine-readable citation
+metadata is in [CITATION.cff](CITATION.cff).
+
+> Rahad, R. H., Pranjal, S., Khan, N. S., Zhang, S., & Zhong, C. RSMViewer: A
+> PyMOL plugin for RNA structural motif visualization. *Bioinformatics*.
+> DOI: [10.5281/zenodo.22097090](https://doi.org/10.5281/zenodo.22097090)
+
+## License
+
+RSMViewer is released under the MIT License — see [LICENSE](LICENSE). External
+analysis software and datasets under `external/` are provided by the user and
+retain their own licenses.
