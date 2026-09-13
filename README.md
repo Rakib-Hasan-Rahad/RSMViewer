@@ -29,7 +29,7 @@ Fetch structures  ->  Load named sources  ->  Query motifs  ->  View · Compare 
 ```
 
 - **Version:** 2.0.0
-- **Compatible with:** PyMOL 2.x and later (tested on PyMOL 3.x, macOS/Linux/Windows)
+- **Compatible with:** PyMOL 3.x and later (tested on PyMOL 3.x, macOS/Linux/Windows)
 - **License:** see [LICENSE](LICENSE)
 
 ---
