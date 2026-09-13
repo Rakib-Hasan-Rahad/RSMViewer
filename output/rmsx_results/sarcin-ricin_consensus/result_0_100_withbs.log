@@ -1,0 +1,6334 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/sarcin-ricin_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/1ffk/0/1ffk_0.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/1ffk/0/1ffk_0.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1366-1371_2050-2054:
+#  Alignment score:  161.2
+#  P-value:  4.904e-03
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 0:'0'1368-4:'0'1372,7:'0'2053-10:'0'2056
+
+	UAGUA...GAAC
+	UAGUA...GAAC
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(0:'0'1368)-C(10:'0'2056) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(1:'0'1369)-A(9:'0'2055) trans H/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(3:'0'1371)-A(8:'0'2054) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'0'1370)-U(3:'0'1371) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'0'1372)-G(7:'0'2053) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(1:'0'1369)-U(3:'0'1371) outward>
+	<A(4:)-A(6:) outward>                          MATCHES	<A(4:'0'1372)-A(8:'0'2054) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2688-2693_2698-2702_2564-2565:
+#  Alignment score:  160.4
+#  P-value:  4.960e-03
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 0:'0'2690-4:'0'2694,7:'0'2701-10:'0'2704
+
+	UAGUA...GAAC
+	UAGUA...GAAC
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(0:'0'2690)-C(10:'0'2704) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(1:'0'2691)-A(9:'0'2703) trans H/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(3:'0'2693)-A(8:'0'2702) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'0'2692)-U(3:'0'2693) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'0'2694)-G(7:'0'2701) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(1:'0'2691)-U(3:'0'2693) outward>
+	<A(4:)-A(6:) outward>                          MATCHES	<A(4:'0'2694)-A(8:'0'2702) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:209-214_222-226:
+#  Alignment score:  160.4
+#  P-value:  4.960e-03
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 0:'0'211-4:'0'215,7:'0'225-10:'0'228
+
+	UAGUA...GAAC
+	UAGUA...GAAC
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(0:'0'211)-C(10:'0'228) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(1:'0'212)-A(9:'0'227) trans H/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(3:'0'214)-A(8:'0'226) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'0'213)-U(3:'0'214) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'0'215)-G(7:'0'225) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(1:'0'212)-U(3:'0'214) outward>
+	<A(4:)-A(6:) outward>                          MATCHES	<A(4:'0'215)-A(8:'0'226) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1068-1069_1290-1293_908-912:
+#  Alignment score:  146.8
+#  P-value:  6.097e-03
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 0:'0'1070-1:'0'1071,2:'0'1292-4:'0'1294,7:'0'911-10:'0'914
+
+	UA~GUA...GAAC
+	AG~GUA...GAAA
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(0:'0'1070)-A(10:'0'914) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<G(1:'0'1071)-A(9:'0'913) trans H/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(3:'0'1293)-A(8:'0'912) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'0'1292)-U(3:'0'1293) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'0'1294)-G(7:'0'911) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<G(1:'0'1071)-U(3:'0'1293) outward>
+	<A(4:)-A(6:) outward>                          MATCHES	<A(4:'0'1294)-A(8:'0'912) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:890-893_165-175_157-163:
+#  Alignment score:  136
+#  P-value:  7.303e-03
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 10:'0'173-14:'0'177,15:'0'159-18:'0'162
+
+	UAGUA...GAAC
+	CAGUA...GAAC
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(10:'0'173)-C(18:'0'162) cis -/->
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(11:'0'174)-A(17:'0'161) trans H/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(13:'0'176)-A(16:'0'160) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(12:'0'175)-U(13:'0'176) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(14:'0'177)-G(15:'0'159) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(11:'0'174)-U(13:'0'176) outward>
+	<A(4:)-A(6:) outward>                          MATCHES	<A(14:'0'177)-A(16:'0'160) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2300-2301_950-954_1009-1014:
+#  Alignment score:  127.6
+#  P-value:  8.507e-03
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 0:'0'2302-0:'0'2302,3:'0'953-5:'0'955,8:'0'1012-10:'0'1014
+
+	A~GUA...GAA
+	A~GUA...AAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(3:'0'953)-U(4:'0'954) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(5:'0'955)-A(8:'0'1012) trans H/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(4:'0'954)-A(9:'0'1013) trans W/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(0:'0'2302)-A(10:'0'1014) trans H/H>
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<A(5:'0'955)-A(9:'0'1013) outward>
+	<A(1:)-U(3:) outward>                          MATCHES	<A(0:'0'2302)-U(4:'0'954) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:456-465_472-476:
+#  Alignment score:  127.2
+#  P-value:  8.572e-03
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 5:'0'463-8:'0'466,11:'0'475-13:'0'477
+
+	AGUA...GAA
+	AGUA...GAA
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(8:'0'466)-G(11:'0'475) trans H/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(7:'0'465)-A(12:'0'476) trans W/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(5:'0'463)-A(13:'0'477) trans H/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(6:'0'464)-U(7:'0'465) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<A(8:'0'466)-A(12:'0'476) outward>
+	<A(1:)-U(3:) outward>                          MATCHES	<A(5:'0'463)-U(7:'0'465) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:427-429_377-382_403-410:
+#  Alignment score:  124.4
+#  P-value:  9.045e-03
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 4:'0'380-7:'0'383,10:'0'406-12:'0'408
+
+	AGUA...GAA
+	AGUA...GAA
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(7:'0'383)-G(10:'0'406) trans H/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(6:'0'382)-A(11:'0'407) trans W/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(4:'0'380)-A(12:'0'408) trans H/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(5:'0'381)-U(6:'0'382) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<A(7:'0'383)-A(11:'0'407) outward>
+	<A(1:)-U(3:) outward>                          MATCHES	<A(4:'0'380)-U(6:'0'382) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:583-588_566-570:
+#  Alignment score:  113.4
+#  P-value:  1.134e-02
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 1:'0'586-5:'0'590,6:'0'568-9:'0'571
+
+	UAGUA...GAAC
+	CAGUA...GACC
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(1:'0'586)-C(9:'0'571) cis W/W>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:'0'587)-C(8:'0'570) cis -/->
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(4:'0'589)-A(7:'0'569) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(3:'0'588)-U(4:'0'589) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(5:'0'590)-G(6:'0'568) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(2:'0'587)-U(4:'0'589) outward>
+	<A(4:)-A(6:) outward>                          MATCHES	<A(5:'0'590)-A(7:'0'569) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:353-359_289-294:
+#  Alignment score:  112.6
+#  P-value:  1.154e-02
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 1:'0'356-5:'0'360,8:'0'292-11:'0'295
+
+	UAGUA...GAAC
+	CAGUA...GACC
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(1:'0'356)-C(11:'0'295) cis W/W>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:'0'357)-C(10:'0'294) trans W/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(4:'0'359)-A(9:'0'293) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(3:'0'358)-U(4:'0'359) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(5:'0'360)-G(8:'0'292) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(2:'0'357)-U(4:'0'359) outward>
+	<A(4:)-A(6:) outward>                          MATCHES	<A(5:'0'360)-A(9:'0'293) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1943-1945_1964-1972_2006-2013:
+#  Alignment score:  86
+#  P-value:  2.306e-02
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 8:'0'1971-10:'0'1973,13:'0'2009-14:'0'2010
+
+	GUA...GA
+	GUA...GA
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(10:'0'1973)-G(13:'0'2009) trans H/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(9:'0'1972)-A(14:'0'2010) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(8:'0'1971)-U(9:'0'1972) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<A(10:'0'1973)-A(14:'0'2010) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1772-1778_1762-1767:
+#  Alignment score:  53.1
+#  P-value:  9.655e-02
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 1:'0'1775-5:'0'1779,8:'0'1765-11:'0'1768
+
+	UAGUA...GAAC
+	AAGAA...GUAC
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(5:'0'1779)-G(8:'0'1765) trans H/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(4:'0'1778)-U(9:'0'1766) cis -/->
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:'0'1776)-A(10:'0'1767) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(1:'0'1775)-C(11:'0'1768) trans S/H>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(2:'0'1776)-A(4:'0'1778) hbond>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:935-936_703-707_717-721:
+#  Alignment score:  50.6
+#  P-value:  1.139e-01
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 1:'0'938-1:'0'938,3:'0'706-5:'0'708,8:'0'720-10:'0'722
+
+	A~GUA...GAA
+	G~GCA...GAG
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(5:'0'708)-G(8:'0'720) trans H/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<C(4:'0'707)-A(9:'0'721) trans W/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<G(1:'0'938)-G(10:'0'722) cis -/->
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(3:'0'706)-C(4:'0'707) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1526-1531_1656-1661:
+#  Alignment score:  42.6
+#  P-value:  2.176e-01
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 4:'0'1532-5:'0'1533,6:'0'1658-7:'0'1659
+
+	UA...AC
+	GA...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(5:'0'1533)-A(6:'0'1658) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'1532)-A(7:'0'1659) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1256-1261_564-565_1091-1096:
+#  Alignment score:  42.5
+#  P-value:  2.197e-01
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 0:'0'1258-3:'0'1261,7:'0'567-7:'0'567,9:'0'1094-13:'0'1098
+
+	UAGU~A...GAA-C
+	GAGA~U...GUUAA
+
+#  Matched base-pairing interactions: 
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(3:'0'1261)-U(10:'0'1095) cis W/W>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'1258)-A(13:'0'1098) trans S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<U(7:'0'567)-G(9:'0'1094) cis S/S>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(1:'0'1259)-U(11:'0'1096) trans H/W>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'0'1260)-A(3:'0'1261) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(1:'0'1259)-A(3:'0'1261) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1660-1662_1521-1527:
+#  Alignment score:  41.8
+#  P-value:  2.352e-01
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 1:'0'1663-2:'0'1664,7:'0'1527-8:'0'1528
+
+	UA...AC
+	GA...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:'0'1664)-A(7:'0'1527) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(1:'0'1663)-A(8:'0'1528) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2349-2350_2367-2369_2327-2331:
+#  Alignment score:  41.5
+#  P-value:  2.424e-01
+#  Query aligned region: 0-3,6-8
+#  Target aligned region: 1:'0'2352-1:'0'2352,2:'0'2369-4:'0'2371,5:'0'2329-8:'0'2332
+
+	U~AGU...AA-C
+	G~AAG...CUCA
+
+#  Matched base-pairing interactions: 
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<G(4:'0'2371)-C(5:'0'2329) cis W/W>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(1:'0'2352)-A(8:'0'2332) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:'0'2369)-U(6:'0'2330) trans H/W>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(3:'0'2370)-G(4:'0'2371) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(2:'0'2369)-G(4:'0'2371) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2387-2389_2394-2397:
+#  Alignment score:  41.4
+#  P-value:  2.448e-01
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 1:'0'2390-2:'0'2391,4:'0'2397-5:'0'2398
+
+	UA...AC
+	UC...GA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<C(2:'0'2391)-G(4:'0'2397) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(1:'0'2390)-A(5:'0'2398) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1620-1625_1568-1572_1509-1510:
+#  Alignment score:  41
+#  P-value:  2.550e-01
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 1:'0'1623-2:'0'1624,8:'0'1572-9:'0'1573
+
+	UA...AC
+	CA...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:'0'1624)-A(8:'0'1572) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(1:'0'1623)-A(9:'0'1573) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2518-2521_1226-1228_1124-1132:
+#  Alignment score:  39.4
+#  P-value:  3.031e-01
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 5:'0'1229-6:'0'1230,13:'0'1132-14:'0'1133
+
+	UA...AC
+	CA...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(6:'0'1230)-A(13:'0'1132) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(5:'0'1229)-A(14:'0'1133) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:64-67_106-112_46-52:
+#  Alignment score:  35.5
+#  P-value:  4.978e-01
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 8:'0'112-10:'0'114,11:'0'48-12:'0'49
+
+	U-A...AC
+	GAA...AA
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(8:'0'112)-A(12:'0'49) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(10:'0'114)-A(11:'0'48) trans H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1482-1486_859-860_1455-1457:
+#  Alignment score:  35.3
+#  P-value:  5.125e-01
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 0:'0'1484-4:'0'1488,5:'0'861-6:'0'862,7:'0'1457-9:'0'1459
+
+	UAGUA...GA~A-C
+	GAAAU...AU~UAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(2:'0'1486)-A(3:'0'1487) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<U(4:'0'1488)-A(5:'0'861) trans W/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(3:'0'1487)-U(6:'0'862) trans W/S>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'1484)-A(9:'0'1459) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(1:'0'1485)-U(7:'0'1457) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2131-2134_2237-2243_2255-2258:
+#  Alignment score:  34.4
+#  P-value:  5.874e-01
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 0:'0'2133-0:'0'2133,7:'0'2242-9:'0'2244,11:'0'2257-14:'0'2260
+
+	A~U-A...GA-A
+	U~UCA...GACA
+
+#  Matched base-pairing interactions: 
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(7:'0'2242)-A(12:'0'2258) trans W/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(9:'0'2244)-G(11:'0'2257) trans H/S>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<U(0:'0'2133)-A(14:'0'2260) trans H/H>
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<A(9:'0'2244)-A(12:'0'2258) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2865-2867_2886-2890_2862-2864:
+#  Alignment score:  21.5
+#  P-value:  1.000e+00
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 1:'0'2868-1:'0'2868,4:'0'2889-6:'0'2891,9:'0'2865-10:'0'2866
+
+	G~U-A...GA
+	C~UAA...GU
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<C(1:'0'2868)-U(4:'0'2889) cis H/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(4:'0'2889)-U(10:'0'2866) trans S/S>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(6:'0'2891)-G(9:'0'2865) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<A(6:'0'2891)-U(10:'0'2866) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2619-2621_2639-2642_1836-1841:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'2641-3:'0'2641,11:'0'1842-11:'0'1842
+
+	U...C
+	C...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(3:'0'2641)-A(11:'0'1842) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2264-2265_1901-1907_1928-1932:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'1908-7:'0'1908,10:'0'1931-10:'0'1931
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:'0'1908)-A(10:'0'1931) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1600-1608_1584-1589:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'1605-3:'0'1605,13:'0'1590-13:'0'1590
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(3:'0'1605)-A(13:'0'1590) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1643-1644_1611-1616_1576-1580:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'1614-3:'0'1614,11:'0'1581-11:'0'1581
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(3:'0'1614)-A(11:'0'1581) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1289-1291_1067-1072_1083-1086:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 6:'0'1072-6:'0'1072,12:'0'1088-12:'0'1088
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(6:'0'1072)-A(12:'0'1088) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:509-510_500-507_479-488:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'503-3:'0'503,18:'0'489-18:'0'489
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(3:'0'503)-A(18:'0'489) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2572-2576_2796-2800_2770-2774:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 5:'0'2798-5:'0'2798,14:'0'2776-14:'0'2776
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(5:'0'2798)-A(14:'0'2776) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:228-229_678-684_659-664:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'680-2:'0'680,14:'0'666-14:'0'666
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(2:'0'680)-A(14:'0'666) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:255-263_244-250:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'264-7:'0'264,10:'0'247-10:'0'247
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:'0'264)-A(10:'0'247) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:76-81_89-97:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'78-0:'0'78,14:'0'99-14:'0'99
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'78)-A(14:'0'99) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:342-345_302-307_320-330:
+#  Alignment score:  21
+#  P-value:  1.000e+00
+#  Query aligned region: 1-3,6-7
+#  Target aligned region: 7:'0'307-9:'0'309,10:'0'322-11:'0'323
+
+	AGU...AA
+	GUC...GC
+
+#  Matched base-pairing interactions: 
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<C(9:'0'309)-G(10:'0'322) cis W/W>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<G(7:'0'307)-C(11:'0'323) cis W/W>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<U(8:'0'308)-C(9:'0'309) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<G(7:'0'307)-C(9:'0'309) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2367-2369_2354-2359_2423-2424:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'2360-7:'0'2360,9:'0'2425-9:'0'2425
+
+	U...C
+	C...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(7:'0'2360)-A(9:'0'2425) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2887-2893_2859-2865:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 1:'0'2890-2:'0'2891
+
+	U...C
+	A...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(1:'0'2890)-A(2:'0'2891) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2624-2628_2629-2636_2112-2114:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'2630-4:'0'2630,7:'0'2633-7:'0'2633
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'2630)-A(7:'0'2633) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1289-1291_1083-1086_1067-1072:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'1086-4:'0'1086,11:'0'1073-11:'0'1073
+
+	U...C
+	A...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(4:'0'1086)-A(11:'0'1073) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1706-1708_821-824_787-789:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'824-4:'0'824,8:'0'790-8:'0'790
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'824)-A(8:'0'790) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1091-1092_589-593_560-565:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'592-3:'0'592,11:'0'566-11:'0'566
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(3:'0'592)-A(11:'0'566) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:411-413_423-427_189-202:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 13:'0'196-16:'0'199
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(13:'0'196)-A(16:'0'199) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1145-1153_1210-1214:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'1151-4:'0'1151,12:'0'1215-12:'0'1215
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'1151)-A(12:'0'1215) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1706-1707_788-793_815-824:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'795-7:'0'795,9:'0'818-9:'0'818
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:'0'795)-A(9:'0'818) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:465-468_469-472_771-773:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'469-2:'0'469,5:'0'472-5:'0'472
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(2:'0'469)-A(5:'0'472) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:77-83_89-97_59-60:
+#  Alignment score:  20.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'79-0:'0'79,14:'0'98-14:'0'98
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'79)-A(14:'0'98) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2878-2885_2869-2874_1785-1786:
+#  Alignment score:  19.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'2882-2:'0'2882,12:'0'2875-12:'0'2875
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(2:'0'2882)-A(12:'0'2875) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2869-2873_2880-2885_1803-1804:
+#  Alignment score:  19.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'2874-3:'0'2874,6:'0'2883-6:'0'2883
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(3:'0'2874)-A(6:'0'2883) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2910-2912_2821-2826_2665-2666:
+#  Alignment score:  19.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 1:'0'2913-1:'0'2913,7:'0'2827-7:'0'2827
+
+	U...C
+	A...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(1:'0'2913)-A(7:'0'2827) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1337-1341_1310-1315_335-336:
+#  Alignment score:  19.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 1:'0'1340-1:'0'1340,10:'0'1317-10:'0'1317
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(1:'0'1340)-A(10:'0'1317) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1857-1861_1863-1868_1473-1474:
+#  Alignment score:  19.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'1863-4:'0'1863,6:'0'1866-6:'0'1866
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'1863)-A(6:'0'1866) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:659-664_678-684_228-229:
+#  Alignment score:  19.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-3,6-7
+#  Target aligned region: 4:'0'665-4:'0'665,7:'0'681-8:'0'682,13:'0'230-14:'0'231
+
+	A~GU...AA
+	A~GA...CG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(7:'0'681)-A(8:'0'682) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(4:'0'665)-G(14:'0'231) trans W/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(8:'0'682)-C(13:'0'230) cis S/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(4:'0'665)-A(8:'0'682) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:159-160_890-898_762-767:
+#  Alignment score:  19.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 1:'0'162-1:'0'162,3:'0'893-3:'0'893
+
+	U...C
+	C...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(1:'0'162)-C(3:'0'893) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2899-2901_2845-2851_2904-2905:
+#  Alignment score:  19
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'2851-7:'0'2851,10:'0'2906-10:'0'2906
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:'0'2851)-A(10:'0'2906) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1622-1627_1629-1631_1566-1569:
+#  Alignment score:  19
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 5:'0'1629-5:'0'1629,7:'0'1632-7:'0'1632
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(5:'0'1629)-A(7:'0'1632) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:91-100_74-79:
+#  Alignment score:  19
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'97-4:'0'97,14:'0'80-14:'0'80
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'97)-A(14:'0'80) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2815-2818_2668-2673_2808-2812:
+#  Alignment score:  19
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 8:'0'2674-8:'0'2674,13:'0'2813-13:'0'2813
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(8:'0'2674)-A(13:'0'2813) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:509-510_479-488_500-507:
+#  Alignment score:  18.4
+#  P-value:  1.000e+00
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 0:'0'511-0:'0'511,2:'0'481-6:'0'485
+
+	G~UA...GA
+	A~UG...AA
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<G(3:'0'482)-A(5:'0'484) cis -/->
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(2:'0'481)-A(6:'0'485) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(0:'0'511)-U(2:'0'481) cis -/->
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<G(3:'0'482)-A(6:'0'485) hbond>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2557-2558_2770-2775_2795-2800:
+#  Alignment score:  18.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 11:'0'2800-12:'0'2801
+
+	U...C
+	A...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(11:'0'2800)-A(12:'0'2801) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2501-2515:
+#  Alignment score:  18.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'2507-10:'0'2513
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'2507)-A(10:'0'2513) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:839-843_844-846_832-836:
+#  Alignment score:  18.1
+#  P-value:  1.000e+00
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 2:'0'843-4:'0'845,5:'0'846-6:'0'847,10:'0'836-12:'0'838
+
+	A-G~UA...GAA
+	AAU~AC...GUC
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<C(6:'0'847)-G(10:'0'836) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(5:'0'846)-U(11:'0'837) cis W/W>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:'0'843)-C(12:'0'838) trans W/S>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<U(4:'0'845)-A(5:'0'846) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(2:'0'843)-A(5:'0'846) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:623-629_2069-2077_2065-2068:
+#  Alignment score:  17.9
+#  P-value:  1.000e+00
+#  Query aligned region: 1-3,6-7
+#  Target aligned region: 10:'0'2074-13:'0'2077,17:'0'2068-18:'0'2069
+
+	A-GU...AA
+	AGUC...GU
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<U(12:'0'2076)-C(13:'0'2077) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(10:'0'2074)-U(18:'0'2069) trans H/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<C(13:'0'2077)-G(17:'0'2068) cis W/W>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(10:'0'2074)-C(13:'0'2077) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1029-1034_1024-1025_933-938:
+#  Alignment score:  17.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'1031-0:'0'1031,12:'0'939-12:'0'939
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'1031)-A(12:'0'939) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1024-1025_933-938_1029-1034:
+#  Alignment score:  17.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 5:'0'938-5:'0'938,9:'0'1032-9:'0'1032
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(5:'0'938)-A(9:'0'1032) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:899-900_637-641_1356-1361:
+#  Alignment score:  17.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 5:'0'642-5:'0'642,7:'0'1358-7:'0'1358
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(5:'0'642)-A(7:'0'1358) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:479-488_500-507_509-510:
+#  Alignment score:  17.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 14:'0'506-14:'0'506,18:'0'511-18:'0'511
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(14:'0'506)-A(18:'0'511) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1210-1214_1145-1153:
+#  Alignment score:  17.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'1214-2:'0'1214,10:'0'1152-10:'0'1152
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(2:'0'1214)-A(10:'0'1152) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:824-826_851-855:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'827-1:'0'827,4:'0'854-4:'0'854
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'0'827)-G(4:'0'854) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:859-860_1455-1457_1482-1486:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 4:'0'1459-4:'0'1459,5:'0'1484-5:'0'1484
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'0'1459)-G(5:'0'1484) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2304-2305_1056-1061_2299-2300:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'1063-7:'0'1063,8:'0'2301-8:'0'2301
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:'0'1063)-A(8:'0'2301) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:374-377_238-242_265-268:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 6:'0'242-6:'0'242,11:'0'269-11:'0'269
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(6:'0'242)-G(11:'0'269) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1919-1924_1911-1916:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'1922-1:'0'1922,10:'0'1917-10:'0'1917
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'0'1922)-G(10:'0'1917) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1839-1846_1881-1882_1827-1831:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 6:'0'1847-6:'0'1847,9:'0'1884-9:'0'1884
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(6:'0'1847)-G(9:'0'1884) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1727-1732_2043-2044:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 4:'0'1733-4:'0'1733,7:'0'2046-7:'0'2046
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'0'1733)-G(7:'0'2046) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1638-1644_1613-1614_1538-1542:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'0'1642-2:'0'1642,12:'0'1543-12:'0'1543
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'0'1642)-G(12:'0'1543) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:691-696_686-689_728-730:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'694-1:'0'694,9:'0'691-9:'0'691
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'0'694)-G(9:'0'691) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:342-347_321-330_300-307:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 1:'0'345-1:'0'345,14:'0'331-14:'0'331
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(1:'0'345)-A(14:'0'331) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:635-636_516-522_18-22:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 4:'0'520-4:'0'520,12:'0'23-12:'0'23
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'0'520)-G(12:'0'23) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:564-565_1091-1096_1256-1261:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 7:'0'1098-7:'0'1098,8:'0'1258-8:'0'1258
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(7:'0'1098)-G(8:'0'1258) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2304-2308_2296-2300:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 0:'0'2306-1:'0'2307,7:'0'2300-8:'0'2301
+
+	UA...AC
+	UA...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(1:'0'2307)-A(7:'0'2300) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(0:'0'2306)-A(8:'0'2301) trans W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2619-2625_2634-2641:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'2622-1:'0'2622,14:'0'2643-14:'0'2643
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'0'2622)-G(14:'0'2643) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1708-1710_1704-1707_787-789:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'0'1712-2:'0'1712,3:'0'1706-3:'0'1706
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'0'1712)-G(3:'0'1706) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1683-1684_1411-1417_1676-1680:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'0'1414-3:'0'1414,12:'0'1681-12:'0'1681
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(3:'0'1414)-G(12:'0'1681) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:794-800_810-814:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'797-1:'0'797,11:'0'816-11:'0'816
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'0'797)-G(11:'0'816) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:828-833_846-849:
+#  Alignment score:  16.4
+#  P-value:  1.000e+00
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 0:'0'830-3:'0'833,7:'0'849-9:'0'851
+
+	AGUA...GAA
+	GUUG...CUC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<U(1:'0'831)-U(2:'0'832) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<G(0:'0'830)-C(9:'0'851) cis W/W>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<G(3:'0'833)-C(7:'0'849) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(2:'0'832)-U(8:'0'850) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:910-912_1289-1292_1067-1071:
+#  Alignment score:  16.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'0'914-2:'0'914,8:'0'1070-8:'0'1070
+
+	A...G
+	A...A
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'0'914)-A(8:'0'1070) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:218-221_215-217_166-169:
+#  Alignment score:  16.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'0'222-2:'0'222,5:'0'218-5:'0'218
+
+	A...G
+	A...C
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'0'222)-C(5:'0'218) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2764-2768_2802-2803_2711-2713:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'0'2769-3:'0'2769,6:'0'2805-6:'0'2805
+
+	A...G
+	C...A
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<C(3:'0'2769)-A(6:'0'2805) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2753-2760_2719-2724_2037-2039:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'0'2757-2:'0'2757,12:'0'2725-12:'0'2725
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'0'2757)-G(12:'0'2725) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2701-2706_2685-2691:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'2704-1:'0'2704,9:'0'2690-9:'0'2690
+
+	A...G
+	C...U
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<C(1:'0'2704)-U(9:'0'2690) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2053-2056_1363-1369:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'2056-1:'0'2056,7:'0'1368-7:'0'1368
+
+	A...G
+	C...U
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<C(1:'0'2056)-U(7:'0'1368) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1055-1061_1050-1054_2527-2528:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'1058-1:'0'1058,10:'0'1055-10:'0'1055
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'0'1058)-G(10:'0'1055) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:343-349_324-327_299-303:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'0'347-2:'0'347,14:'0'304-14:'0'304
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'0'347)-G(14:'0'304) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:663-664_225-229_206-212:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'0'228-3:'0'228,10:'0'211-10:'0'211
+
+	A...G
+	C...U
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<C(3:'0'228)-U(10:'0'211) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:432-436_187-192_201-204:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 8:'0'192-8:'0'192,11:'0'203-11:'0'203
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(8:'0'192)-G(11:'0'203) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2114-2122_2267-2274:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 7:'0'2123-7:'0'2123,10:'0'2270-10:'0'2270
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(7:'0'2123)-G(10:'0'2270) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2672-2680_2804-2808:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'2675-1:'0'2675,13:'0'2810-13:'0'2810
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'0'2675)-G(13:'0'2810) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2412-2414_2409-2410_2323-2324:
+#  Alignment score:  15.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'0'2415-1:'0'2415,4:'0'2412-4:'0'2412
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'0'2415)-G(4:'0'2412) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1037-1043_911-916_924-929:
+#  Alignment score:  15.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-3,6-8
+#  Target aligned region: 1:'0'1040-3:'0'1042,9:'0'915-9:'0'915,15:'0'928-17:'0'930
+
+	UAG~U...AAC
+	AUU~C...GAC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<U(3:'0'1042)-C(9:'0'915) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<U(2:'0'1041)-A(16:'0'929) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<C(9:'0'915)-G(15:'0'928) cis W/W>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(1:'0'1040)-C(17:'0'930) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2499-2503_2512-2518:
+#  Alignment score:  15
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'0'2504-3:'0'2504,7:'0'2516-7:'0'2516
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(3:'0'2504)-G(7:'0'2516) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1629-1631_1622-1627_1566-1569:
+#  Alignment score:  15
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 5:'0'1626-5:'0'1626,12:'0'1571-12:'0'1571
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(5:'0'1626)-G(12:'0'1571) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:145-147_110-113_41-46:
+#  Alignment score:  15
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 4:'0'113-4:'0'113,11:'0'47-11:'0'47
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'0'113)-G(11:'0'47) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:479-488_507-513_500-503:
+#  Alignment score:  15
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 1:'0'482-5:'0'486
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(1:'0'482)-A(5:'0'486) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2723-2730_2748-2754_1808-1809:
+#  Alignment score:  15
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'0'2727-2:'0'2727,13:'0'2755-13:'0'2755
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'0'2727)-G(13:'0'2755) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:438-439_440-441_37-39:
+#  Alignment score:  14.8
+#  P-value:  1.000e+00
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 0:'0'440-1:'0'441,2:'0'442-3:'0'443,4:'0'39-6:'0'41
+
+	AG~UA...GAA
+	CA~AC...GCG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(1:'0'441)-A(2:'0'442) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<C(3:'0'443)-G(4:'0'39) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(2:'0'442)-C(5:'0'40) cis W/W>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<C(0:'0'440)-G(6:'0'41) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1002-1009_954-963_2295-2296:
+#  Alignment score:  14.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 2:'0'1006-5:'0'1009,9:'0'957-10:'0'958,19:'0'2298-19:'0'2298
+
+	AGUA...GA~A
+	AACU...AG~C
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(3:'0'1007)-C(4:'0'1008) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:'0'1006)-C(19:'0'2298) cis -/->
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<U(5:'0'1009)-A(9:'0'957) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<C(4:'0'1008)-G(10:'0'958) cis W/W>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(2:'0'1006)-C(4:'0'1008) hbond>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:390-394_2440-2441:
+#  Alignment score:  14.2
+#  P-value:  1.000e+00
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 2:'0'394-4:'0'396,5:'0'2442-6:'0'2443
+
+	GUA...GA
+	GAU...GC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'0'394)-A(3:'0'395) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<U(4:'0'396)-G(5:'0'2442) cis W/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(3:'0'395)-C(6:'0'2443) trans W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2088-2090_2091-2093_2647-2652:
+#  Alignment score:  14.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 0:'0'2090-2:'0'2092,3:'0'2093-3:'0'2093,6:'0'2649-11:'0'2654
+
+	UAG~U~A...GAAC
+	GGG~G~A...CUAC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'0'2092)-G(3:'0'2093) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<G(1:'0'2091)-A(10:'0'2653) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<G(3:'0'2093)-U(9:'0'2652) cis W/W>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(6:'0'2649)-C(8:'0'2651) cis S/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'2090)-C(11:'0'2654) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2414-2419_2375-2379_2319-2323:
+#  Alignment score:  14.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 5:'0'2421-5:'0'2421,9:'0'2380-9:'0'2380,11:'0'2321-12:'0'2322
+
+	U~A...AC
+	G~A...AU
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(5:'0'2421)-U(12:'0'2322) cis S/S>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(9:'0'2380)-A(11:'0'2321) trans H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:54-57_58-60_82-87:
+#  Alignment score:  14.1
+#  P-value:  1.000e+00
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 1:'0'57-3:'0'59,4:'0'60-5:'0'61,8:'0'85-12:'0'89
+
+	UAG~UA...GA-AC
+	CCA~AG...CACGG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(3:'0'59)-A(4:'0'60) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<C(2:'0'58)-G(11:'0'88) cis W/W>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<G(5:'0'61)-C(8:'0'85) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(4:'0'60)-A(9:'0'86) trans W/W>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(1:'0'57)-G(12:'0'89) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1103-1106_1252-1255:
+#  Alignment score:  13.6
+#  P-value:  1.000e+00
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 0:'0'1105-2:'0'1107,6:'0'1256-7:'0'1257
+
+	GUA...GA
+	CAA...CC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<C(0:'0'1105)-A(1:'0'1106) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'0'1107)-C(6:'0'1256) cis S/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(1:'0'1106)-C(7:'0'1257) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:232-235_431-434_188-192:
+#  Alignment score:  12.6
+#  P-value:  1.000e+00
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 2:'0'236-2:'0'236,5:'0'434-6:'0'435,8:'0'190-9:'0'191
+
+	G~UA...GA
+	A~UA...GA
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(6:'0'435)-G(8:'0'190) cis -/->
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(5:'0'434)-A(9:'0'191) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(2:'0'236)-U(5:'0'434) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:757-760_1353-1358_640-644:
+#  Alignment score:  12.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,7-7
+#  Target aligned region: 4:'0'1355-4:'0'1355,11:'0'643-11:'0'643
+
+	A...A
+	A...A
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(4:'0'1355)-A(11:'0'643) trans H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1782-1783_1810-1812_1813-1816:
+#  Alignment score:  12.2
+#  P-value:  1.000e+00
+#  Query aligned region: 1-3,6-7
+#  Target aligned region: 3:'0'1813-4:'0'1814,5:'0'1815-7:'0'1817
+
+	AG~U...AA
+	UG~A...CU
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(4:'0'1814)-A(5:'0'1815) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<U(3:'0'1813)-U(7:'0'1817) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(5:'0'1815)-C(6:'0'1816) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1672-1674_1488-1489_1446-1453:
+#  Alignment score:  11.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'1491-4:'0'1491,11:'0'1454-11:'0'1454
+
+	U...C
+	G...U
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'1491)-U(11:'0'1454) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2295-2296_1002-1009_954-963:
+#  Alignment score:  11.7
+#  P-value:  1.000e+00
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 2:'0'1004-8:'0'1010,16:'0'962-18:'0'964
+
+	UA-GUA...G~AAC
+	CAAACU...C~CCG
+
+#  Matched base-pairing interactions: 
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<C(6:'0'1008)-C(16:'0'962) cis -/->
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<U(7:'0'1009)-C(8:'0'1010) cis -/->
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(3:'0'1005)-C(17:'0'963) cis W/W>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(5:'0'1007)-C(6:'0'1008) cis S/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(2:'0'1004)-G(18:'0'964) cis W/W>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(3:'0'1005)-C(6:'0'1008) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1767-1773_2014-2017_1883-1884:
+#  Alignment score:  11.7
+#  P-value:  1.000e+00
+#  Query aligned region: 2-3,6-6
+#  Target aligned region: 2:'0'1771-2:'0'1771,8:'0'2017-8:'0'2017,11:'0'1885-11:'0'1885
+
+	G~U...A
+	U~U...A
+
+#  Matched base-pairing interactions: 
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(8:'0'2017)-A(11:'0'1885) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<U(2:'0'1771)-U(8:'0'2017) cis H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2899-2904_2845-2854_2831-2833:
+#  Alignment score:  11
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'2848-8:'0'2849
+
+	U...C
+	G...U
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:'0'2848)-U(8:'0'2849) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1427-1429_1430-1435_1392-1393:
+#  Alignment score:  9.4
+#  P-value:  1.000e+00
+#  Query aligned region: 2-3,6-6
+#  Target aligned region: 2:'0'1431-2:'0'1431,3:'0'1432-3:'0'1432,9:'0'1394-9:'0'1394
+
+	G~U...A
+	C~U...C
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<C(2:'0'1431)-U(3:'0'1432) cis S/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(3:'0'1432)-C(9:'0'1394) trans W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:668-674:
+#  Alignment score:  9.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-3,7-8
+#  Target aligned region: 0:'0'670-6:'0'676
+
+	UAGU...AC
+	GAGU...UC
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(1:'0'671)-U(5:'0'675) cis -/->
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'0'672)-U(3:'0'673) cis S/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'670)-C(6:'0'676) cis W/W>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(1:'0'671)-U(3:'0'673) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2237-2243_2130-2134_2256-2259:
+#  Alignment score:  8.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 7:'0'2132-8:'0'2133,14:'0'2260-15:'0'2261
+
+	UA...AC
+	CU...AC
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<U(8:'0'2133)-A(14:'0'2260) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(7:'0'2132)-C(15:'0'2261) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2522-2523_2525-2527_2490-2495:
+#  Alignment score:  8.2
+#  P-value:  1.000e+00
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 1:'0'2525-1:'0'2525,2:'0'2527-3:'0'2528,7:'0'2494-8:'0'2495
+
+	G~UA...GA
+	G~UU...GU
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(1:'0'2525)-U(2:'0'2527) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<U(3:'0'2528)-G(7:'0'2494) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(2:'0'2527)-U(8:'0'2495) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1750-1752_1739-1745_2029-2036:
+#  Alignment score:  7.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'1745-7:'0'1745,13:'0'2034-13:'0'2034
+
+	U...C
+	G...U
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:'0'1745)-U(13:'0'2034) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2776-2792:
+#  Alignment score:  7.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'2782-14:'0'2792
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:'0'2782)-A(14:'0'2792) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:142-145_42-43_123-133:
+#  Alignment score:  7.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-3,7-8
+#  Target aligned region: 2:'0'146-3:'0'147,4:'0'44-5:'0'45,12:'0'131-13:'0'132
+
+	UA~GU...AC
+	UG~GA...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<G(3:'0'147)-A(12:'0'131) cis H/W>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(4:'0'44)-A(5:'0'45) cis S/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(2:'0'146)-A(13:'0'132) cis W/W>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<G(3:'0'147)-A(5:'0'45) downward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1491-1493_1497-1505_1442-1449:
+#  Alignment score:  5.2
+#  P-value:  1.000e+00
+#  Query aligned region: 2-3,6-6
+#  Target aligned region: 9:'0'1505-11:'0'1507
+
+	GU...A
+	UU...C
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<U(9:'0'1505)-U(10:'0'1506) cis S/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(10:'0'1506)-C(11:'0'1507) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1490-1497_1445-1447_1502-1512:
+#  Alignment score:  4.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'1492-0:'0'1492,21:'0'1514-21:'0'1514
+
+	U...C
+	A...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(0:'0'1492)-C(21:'0'1514) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1113-1119_1241-1246:
+#  Alignment score:  4.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'1117-2:'0'1117,9:'0'1245-9:'0'1245
+
+	U...C
+	A...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(2:'0'1117)-C(9:'0'1245) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1492-1498_1500-1508_1445-1446:
+#  Alignment score:  4.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 6:'0'1500-6:'0'1500,7:'0'1502-7:'0'1502
+
+	U...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(6:'0'1500)-A(7:'0'1502) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1865-1871_1851-1860:
+#  Alignment score:  4.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,7-8
+#  Target aligned region: 3:'0'1870-4:'0'1871,12:'0'1858-13:'0'1859
+
+	UA...AC
+	CU...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<U(4:'0'1871)-A(12:'0'1858) trans H/H>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(3:'0'1870)-A(13:'0'1859) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1867-1876_1851-1858:
+#  Alignment score:  4.2
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,7-7
+#  Target aligned region: 6:'0'1875-6:'0'1875,13:'0'1856-13:'0'1856
+
+	A...A
+	A...C
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(6:'0'1875)-C(13:'0'1856) trans H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2035-2036_2029-2032_1743-1752:
+#  Alignment score:  4.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 10:'0'1749-12:'0'1751
+
+	U...C
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(10:'0'1749)-G(12:'0'1751) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:623-629_2486-2488_2067-2072:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'2488-7:'0'2488,14:'0'2073-14:'0'2073
+
+	U...C
+	A...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(7:'0'2488)-G(14:'0'2073) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:123-133_139-145_113-114:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 9:'0'134-9:'0'134,11:'0'141-11:'0'141
+
+	U...C
+	U...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(9:'0'134)-C(11:'0'141) cis H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2457-2460_2314-2315_2425-2431:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2314-2315_2457-2460_2425-2431:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2065-2068_2069-2077_623-629:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 8:'0'2075-8:'0'2075,19:'0'631-19:'0'631
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(8:'0'2075)-A(19:'0'631) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:191-193_424-428_405-413:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 2-3,6-6
+#  Target aligned region: 5:'0'428-6:'0'429,8:'0'407-8:'0'407
+
+	GU...A
+	GA...A
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(5:'0'428)-A(6:'0'429) cis S/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(6:'0'429)-A(8:'0'407) trans W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2100-2108_916-924_2476-2479:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 2-3,6-6
+#  Target aligned region: 5:'0'2107-5:'0'2107,14:'0'923-14:'0'923,20:'0'2480-20:'0'2480
+
+	G~U...A
+	U~A...G
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<U(5:'0'2107)-A(14:'0'923) cis S/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(14:'0'923)-G(20:'0'2480) cis W/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1654-1657_1483-1488:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'1659-3:'0'1659,9:'0'1490-9:'0'1490
+
+	U...C
+	A...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(3:'0'1659)-G(9:'0'1490) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:104-109_61-70_48-54:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:61-70_104-109_48-54:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:856-859_854-855_784-787:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2533-2536_2479-2484_2098-2104:
+#  Alignment score:  3.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'2484-7:'0'2484,16:'0'2106-16:'0'2106
+
+	U...C
+	U...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(7:'0'2484)-C(16:'0'2106) cis W/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1401-1407_1699-1701_1713-1716:
+#  Alignment score:  3.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2475-2478_891-899_761-766:
+#  Alignment score:  3.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 11:'0'900-11:'0'900,14:'0'764-14:'0'764
+
+	U...C
+	U...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(11:'0'900)-C(14:'0'764) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:139-145_113-114_123-133:
+#  Alignment score:  3.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:882-885_864-869_772-778:
+#  Alignment score:  3.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 13:'0'777-14:'0'778
+
+	U...C
+	U...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(13:'0'777)-C(14:'0'778) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:82-87_54-57_58-60:
+#  Alignment score:  3.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1888-1896_1966-1967_1937-1944:
+#  Alignment score:  3.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1430-1433_1383-1387_1389-1396:
+#  Alignment score:  3.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2475-2478_761-766_891-899:
+#  Alignment score:  3.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2457-2460_2425-2431_2314-2315:
+#  Alignment score:  3.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2314-2315_2425-2431_2457-2460:
+#  Alignment score:  3.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2713-2720_2758-2764:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:'0'2722-7:'0'2722,10:'0'2762-10:'0'2762
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:'0'2722)-C(10:'0'2762) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1443-1450_1414-1417_1674-1677:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1699-1701_1401-1407_1713-1716:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1117-1120_1233-1236_1239-1241:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1233-1236_1117-1120_1239-1241:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1040-1043_920-926_911-917:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:42-43_123-133_142-145:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:123-133_42-43_142-145:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:839-843_832-836_844-846:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:832-836_839-843_844-846:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:834-835_831-833_844-847:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:405-413_424-428_191-193:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 9:'0'426-9:'0'426,16:'0'195-16:'0'195
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(9:'0'426)-C(16:'0'195) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1491-1493_1442-1449_1497-1505:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 9:'0'1450-10:'0'1451
+
+	U...C
+	C...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(9:'0'1450)-C(10:'0'1451) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:61-70_48-54_104-109:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2476-2479_2100-2108_916-924:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2476-2479_916-924_2100-2108:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:854-855_856-859_784-787:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1451-1455_1487-1489_1654-1657:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1401-1407_1713-1716_1699-1701:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:42-43_142-145_123-133:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:142-145_123-133_42-43:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:139-145_123-133_113-114:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:113-114_139-145_123-133:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2353-2355_2325-2330_2363-2372:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2325-2330_2353-2355_2363-2372:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:54-57_82-87_58-60:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:82-87_58-60_54-57:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:104-109_48-54_61-70:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:916-924_2476-2479_2100-2108:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:916-924_2100-2108_2476-2479:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1851-1860_1865-1871:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2885-2888_2863-2869:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:935-936_718-724_700-705:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 5:'0'723-5:'0'723,12:'0'705-12:'0'705
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(5:'0'723)-C(12:'0'705) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:903-905_1322-1326_1327-1332:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1322-1326_903-905_1327-1332:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1966-1967_1888-1896_1937-1944:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1937-1944_1888-1896_1966-1967:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1888-1896_1937-1944_1966-1967:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1414-1417_1674-1677_1443-1450:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1414-1417_1443-1450_1674-1677:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1383-1387_1389-1396_1430-1433:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1383-1387_1430-1433_1389-1396:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1117-1120_1239-1241_1233-1236:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'1122-3:'0'1122,5:'0'1242-5:'0'1242
+
+	U...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(3:'0'1122)-A(5:'0'1242) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1239-1241_1117-1120_1233-1236:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'1241-0:'0'1241,10:'0'1238-10:'0'1238
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'1241)-C(10:'0'1238) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:911-917_1040-1043_920-926:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 6:'0'919-6:'0'919,13:'0'924-13:'0'924
+
+	U...C
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(6:'0'919)-G(13:'0'924) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:920-926_1040-1043_911-917:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:761-766_2475-2478_891-899:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:449-456_27-31_457-463:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:312-316_328-335_336-342:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:328-335_312-316_336-342:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:328-335_336-342_312-316:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'332-2:'0'332,14:'0'344-14:'0'344
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(2:'0'332)-C(14:'0'344) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:431-434_188-192_232-235:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:123-133_142-145_42-43:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:26-30_477-478_449-454:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'28-0:'0'28,6:'0'480-6:'0'480
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'28)-C(6:'0'480) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2613-2614_2539-2541_2615-2616:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'2615-0:'0'2615,4:'0'2543-4:'0'2543
+
+	U...C
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(0:'0'2615)-G(4:'0'2543) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2492-2493_2490-2491_2523-2527:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'2492-2:'0'2492,8:'0'2529-8:'0'2529
+
+	U...C
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(2:'0'2492)-G(8:'0'2529) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2060-2062_2079-2082_531-533:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'2064-2:'0'2064,3:'0'2081-3:'0'2081
+
+	U...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(2:'0'2064)-A(3:'0'2081) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2649-2651_2645-2648_2089-2095:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 6:'0'2650-6:'0'2650,11:'0'2095-11:'0'2095
+
+	U...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(6:'0'2650)-A(11:'0'2095) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2649-2651_2089-2095_2645-2648:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 9:'0'2097-9:'0'2097,10:'0'2647-10:'0'2647
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(9:'0'2097)-C(10:'0'2647) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:48-54_104-109_61-70:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'50-0:'0'50,12:'0'111-12:'0'111
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'50)-C(12:'0'111) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2091-2093_2088-2090_2647-2652:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'2090-3:'0'2090,11:'0'2654-11:'0'2654
+
+	U...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(3:'0'2090)-C(11:'0'2654) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1832-1836_2640-2642_1837-1841:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2645-2650_2090-2095_2608-2614:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1674-1677_1414-1417_1443-1450:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1443-1450_1674-1677_1414-1417:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1432-1439_1422-1428:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:920-926_911-917_1040-1043:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:832-836_844-846_839-843:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:831-833_834-835_844-847:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:405-413_191-193_424-428:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:856-859_784-787_854-855:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:854-855_784-787_856-859:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1487-1489_1451-1455_1654-1657:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1451-1455_1654-1657_1487-1489:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2578-2581_2598-2600_2593-2596:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2598-2600_2578-2581_2593-2596:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2608-2614_2645-2650_2090-2095:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:911-917_920-926_1040-1043:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:761-766_891-899_2475-2478:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:449-456_457-463_27-31:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:431-434_232-235_188-192:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'436-3:'0'436,8:'0'190-8:'0'190
+
+	U...C
+	A...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(3:'0'436)-G(8:'0'190) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1427-1429_1392-1393_1430-1435:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'0'1395-4:'0'1395,6:'0'1433-6:'0'1433
+
+	U...C
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(4:'0'1395)-G(6:'0'1433) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:924-929_911-916_1037-1043:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:911-916_924-929_1037-1043:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2091-2093_2647-2652_2088-2090:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2100-2108_2476-2479_916-924:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1832-1836_1837-1841_2640-2642:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1322-1326_1327-1332_903-905:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2574-2578_2597-2601_2550-2555:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2574-2578_2550-2555_2597-2601:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2550-2555_2574-2578_2597-2601:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2533-2536_2098-2104_2479-2484:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2098-2104_2533-2536_2479-2484:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2098-2104_2479-2484_2533-2536:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2645-2650_2608-2614_2090-2095:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1830-1833_1837-1843:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1430-1433_1389-1396_1383-1387:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:27-31_449-456_457-463:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:336-342_312-316_328-335:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:336-342_328-335_312-316:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:188-192_431-434_232-235:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2458-2460_2424-2428_2314-2315:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2458-2460_2314-2315_2424-2428:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2314-2315_2458-2460_2424-2428:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2060-2062_531-533_2079-2082:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:531-533_2060-2062_2079-2082:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2525-2527_2522-2523_2490-2495:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1118-1120_1114-1117_1240-1246:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1825-1831_1839-1845:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2578-2581_2593-2596_2598-2600:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'0'2580-0:'0'2580,8:'0'2600-8:'0'2600
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'0'2580)-A(8:'0'2600) trans S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2598-2600_2593-2596_2578-2581:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2479-2484_2098-2104_2533-2536:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2090-2095_2608-2614_2645-2650:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1674-1677_1443-1450_1414-1417:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1422-1428_1432-1439:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'1427-3:'0'1427,13:'0'1440-13:'0'1440
+
+	U...C
+	A...U
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(3:'0'1427)-U(13:'0'1440) cis W/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1699-1701_1713-1716_1401-1407:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1233-1236_1239-1241_1117-1120:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:312-316_336-342_328-335:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:310-313_314-317_334-337:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'315-3:'0'315,8:'0'336-8:'0'336
+
+	U...C
+	G...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(3:'0'315)-G(8:'0'336) trans S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:232-235_188-192_431-434:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:449-454_26-30_477-478:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2325-2330_2363-2372_2353-2355:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:834-835_844-847_831-833:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:831-833_844-847_834-835:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2079-2082_531-533_2060-2062:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:'0'2084-3:'0'2084,4:'0'533-4:'0'533
+
+	U...C
+	C...U
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(3:'0'2084)-U(4:'0'533) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1883-1884_1767-1773_2014-2017:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1767-1773_1883-1884_2014-2017:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 8:'0'1886-8:'0'1886,9:'0'2016-9:'0'2016
+
+	U...C
+	A...U
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(8:'0'1886)-U(9:'0'2016) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1487-1489_1654-1657_1451-1455:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:69-72_102-106:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1966-1967_1937-1944_1888-1896:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1937-1944_1966-1967_1888-1896:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:449-454_477-478_26-30:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:903-905_1327-1332_1322-1326:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2597-2601_2550-2555_2574-2578:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2550-2555_2597-2601_2574-2578:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1389-1396_1383-1387_1430-1433:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1389-1396_1430-1433_1383-1387:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:188-192_232-235_431-434:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:477-478_449-454_26-30:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2314-2315_2424-2428_2458-2460:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:844-846_839-843_832-836:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2525-2527_2490-2495_2522-2523:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1839-1845_1825-1831:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1654-1657_1451-1455_1487-1489:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1713-1716_1699-1701_1401-1407:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2425-2431_2457-2460_2314-2315:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2425-2431_2314-2315_2457-2460:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2287-2290_2277-2278:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:58-60_54-57_82-87:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:58-60_82-87_54-57:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2490-2495_2525-2527_2522-2523:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:784-787_854-855_856-859:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2758-2764_2713-2720:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2597-2601_2574-2578_2550-2555:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1837-1843_1830-1833:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 1:'0'1840-5:'0'1844,7:'0'1832-10:'0'1835
+
+	UAGUA...GAAC
+	ACAAC...GUCU
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<C(5:'0'1844)-G(7:'0'1832) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(4:'0'1843)-U(8:'0'1833) cis W/W>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<C(2:'0'1841)-C(9:'0'1834) trans H/W>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(3:'0'1842)-A(4:'0'1843) cis -/->
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(1:'0'1840)-U(10:'0'1835) trans H/H>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<C(2:'0'1841)-A(4:'0'1843) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1782-1783_1813-1816_1810-1812:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:844-846_832-836_839-843:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:531-533_2079-2082_2060-2062:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:526-529_9-14:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:9-14_526-529:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1327-1332_1322-1326_903-905:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1713-1716_1401-1407_1699-1701:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:314-317_334-337_310-313:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1055-1058_2528-2530:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2528-2530_1055-1058:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2473-2475_2108-2111:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:37-39_440-441_438-439:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2863-2869_2885-2888:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1327-1332_903-905_1322-1326:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:334-337_314-317_310-313:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2424-2428_2458-2460_2314-2315:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2424-2428_2314-2315_2458-2460:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:866-868_879-881_882-884:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'0'870-2:'0'870,8:'0'886-8:'0'886
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(2:'0'870)-A(8:'0'886) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2108-2111_2473-2475:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:440-441_37-39_438-439:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:440-441_438-439_37-39:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:784-787_856-859_854-855:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1654-1657_1487-1489_1451-1455:
+#  Alignment score:  2.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:314-317_310-313_334-337:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2615-2616_2613-2614_2539-2541:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1813-1816_1810-1812_1782-1783:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:866-868_882-884_879-881:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:844-847_834-835_831-833:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:102-106_69-72:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:528-530_9-11:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2277-2278_2287-2290:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1816-1818_1756-1757:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1430-1435_1427-1429_1392-1393:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1430-1435_1392-1393_1427-1429:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1392-1393_1430-1435_1427-1429:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1231-1233_2602-2603:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1156-1158_1206-1208:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:844-847_831-833_834-835:
+#  Alignment score:  1.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:9-11_528-530:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2615-2616_2539-2541_2613-2614:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2008-2011_1887-1888:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1813-1816_1782-1783_1810-1812:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1756-1757_1816-1818:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1376-1379_2745-2746:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:882-884_866-868_879-881:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:882-884_879-881_866-868:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2602-2603_1231-1233:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2539-2541_2615-2616_2613-2614:
+#  Alignment score:  1.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1206-1208_1156-1158:
+#  Alignment score:  1.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:551-552_603-605:
+#  Alignment score:  1.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:132-142:
+#  Alignment score:  1.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:1887-1888_2008-2011:
+#  Alignment score:  1.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:2745-2746_1376-1379:
+#  Alignment score:  1.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_0:603-605_551-552:
+#  Alignment score:  1.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/sarcin-ricin_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/1ffk/9/1ffk_9.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/1ffk/9/1ffk_9.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:75-80_100-104:
+#  Alignment score:  159.6
+#  P-value:  4.983e-03
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 0:'9'76-4:'9'80,7:'9'102-10:'9'105
+
+	UAGUA...GAAC
+	GAGUA...GAAA
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:'9'76)-A(10:'9'105) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(1:'9'77)-A(9:'9'104) trans H/H>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(3:'9'79)-A(8:'9'103) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(2:'9'78)-U(3:'9'79) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(4:'9'80)-G(7:'9'102) trans H/S>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(1:'9'77)-U(3:'9'79) outward>
+	<A(4:)-A(6:) outward>                          MATCHES	<A(4:'9'80)-A(8:'9'103) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:103-108_72-78:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'9'105-1:'9'105,9:'9'76-9:'9'76
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'9'105)-G(9:'9'76) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:48-53_27-31:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 2:'9'51-4:'9'53,7:'9'29-8:'9'30
+
+	GUA...GA
+	AAG...CC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(2:'9'51)-A(3:'9'52) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<G(4:'9'53)-C(7:'9'29) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(3:'9'52)-C(8:'9'30) cis W/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:111-113_63-68_7-15:
+#  Alignment score:  7.9
+#  P-value:  1.000e+00
+#  Query aligned region: 1-4,5-7
+#  Target aligned region: 1:'9'113-1:'9'113,4:'9'65-7:'9'68,14:'9'13-16:'9'15
+
+	A~G-UA...GAA
+	C~AGCG...AGC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(4:'9'65)-C(6:'9'67) cis S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<C(1:'9'113)-C(16:'9'15) cis W/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<G(7:'9'68)-A(14:'9'13) cis -/->
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<C(6:'9'67)-G(15:'9'14) cis W/W>
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<G(7:'9'68)-G(15:'9'14) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:55-57_26-29_50-54:
+#  Alignment score:  3.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:26-29_55-57_50-54:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:27-31_48-53:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'9'28-0:'9'28,10:'9'54-10:'9'54
+
+	U...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(0:'9'28)-A(10:'9'54) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:111-113_7-15_63-68:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:7-15_111-113_63-68:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:7-15_63-68_111-113:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 1ffk_9:26-29_50-54_55-57:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

@@ -1,0 +1,8 @@
+# External runtimes and datasets are installed locally, not versioned here.
+external/**
+!external/*/
+!external/*/README.md
+
+# Python build artifacts.
+__pycache__/
+*.py[cod]

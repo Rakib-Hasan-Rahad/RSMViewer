@@ -1,0 +1,18 @@
+{
+  "data_mode": "preannotated",
+  "rmsx_executable": "../external/rmsx/bin/scan",
+  "mc_annotate_executable": "../external/rmsx/bin/MC-Annotate",
+  "rnaview_executable": "../external/rmsx/bin/rnaview",
+  "rnaview_dir": "../external/rmsx/RNAVIEW",
+  "pdb_prebuild_archive": "../external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz",
+  "pdb_prebuild_dir": "../external/rmsx_preannotated/rmsx_work_default",
+  "output_dir": "../output/rmsx_results",
+  "motif_families": ["k-turn", "c-loop", "sarcin-ricin", "reverse-kturn", "e-loop"],
+  "pvalue_thresholds": {
+    "KINK-TURN": 0.066,
+    "C-LOOP": 0.044,
+    "SARCIN-RICIN": 0.040,
+    "REVERSE-KINK-TURN": 0.018,
+    "E-LOOP": 0.018
+  }
+}

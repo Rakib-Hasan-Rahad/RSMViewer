@@ -1,0 +1,172 @@
+# RSMViewer configuration (`config/`)
+
+This folder holds the two JSON configuration files that control the external
+motif-search pipelines:
+
+| File | Controls | Used by |
+| --- | --- | --- |
+| `rmsx_config.json` | RNAMotifScanX (RMSX) source | `rmv_db RNAMotifScanX` / source 7 |
+| `fr3d_config.json` | FR3D source | `rmv_db FR3D` / source 5 |
+
+The RNA 3D Motif Atlas and Rfam sources need no configuration; they are fetched
+directly from their public APIs and cached locally.
+
+### How paths are resolved
+
+All relative paths in these files are resolved **relative to this `config/`
+folder**. For example, `../external/rmsx/bin/scan` points to
+`<project>/external/rmsx/bin/scan`. You may also use absolute paths.
+
+### How to load a config
+
+The default files are picked up automatically. To load a custom copy at runtime:
+
+```text
+rmv_db 7 /absolute/path/to/rmsx_config.json     # RMSX
+rmv_db 5 /absolute/path/to/fr3d_config.json     # FR3D
+```
+
+Edit a value, save the file, then re-run the `rmv_db` command (or `rmv_refresh`)
+to apply it.
+
+---
+
+## `rmsx_config.json` — RNAMotifScanX
+
+RMSX has two ways to provide annotations, selected by `data_mode`.
+
+### Fields
+
+| Field | Type | Meaning / possible values |
+| --- | --- | --- |
+| `data_mode` | string | `"preannotated"` (default) reads prebuilt results; `"run_from_scratch"` executes the RMSX binaries. |
+| `rmsx_executable` | path | RNAMotifScanX `scan` binary. Only needed for `run_from_scratch`. |
+| `mc_annotate_executable` | path | `MC-Annotate` binary (base-pair annotation). `run_from_scratch` only. |
+| `rnaview_executable` | path | Optional `rnaview` binary; leave as-is to skip the RNAVIEW merge. |
+| `rnaview_dir` | path | Directory with RNAVIEW `BASEPARS` resources (only if `rnaview_executable` is set). |
+| `pdb_prebuild_archive` | path | `.tar.gz` of preannotated results (default input for `preannotated`). |
+| `pdb_prebuild_dir` | path | An already-extracted preannotated directory; used in preference to the archive when it exists. |
+| `output_dir` | path | Where per-family result logs are written/read (`../output/rmsx_results`). |
+| `motif_families` | list | Families to load: `k-turn`, `c-loop`, `sarcin-ricin`, `reverse-kturn`, `e-loop`. |
+| `pvalue_thresholds` | object | Per-family P-value cutoff. Lower = stricter (fewer, higher-confidence hits). Omit a family to keep its paper default. |
+
+Note: the residue-set redundancy threshold (Jaccard 0.60) is **not** a config
+value; it is defined in code (`rsmviewer/database/consolidated_table.py`,
+`DEFAULT_JACCARD_THRESHOLD`).
+
+### Preannotated mode (default, no binaries needed)
+
+1. Obtain the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`).
+2. Place it at the path in `pdb_prebuild_archive`, i.e.
+   `external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz`.
+   Alternatively, extract it and point `pdb_prebuild_dir` at the resulting
+   `rmsx_work_default/` folder.
+3. Run:
+
+   ```text
+   rmv_fetch 1S72
+   rmv_db RNA3DMotifAtlas,RNAMotifScanX
+   rmv_select SR, 1S72, RNA3DMotifAtlas and RNAMotifScanX, as group_TP
+   ```
+
+RSMViewer copies the matching family logs for the requested PDB into
+`output_dir` and loads them. The Jaccard/containment consolidation then aligns
+them with the other sources.
+
+### Preannotated data layout
+
+Inside the archive (or `pdb_prebuild_dir`), data is keyed by PDB id and chain:
+
+```text
+rmsx_work_default/
+└── <pdb_id_lowercase>/                 e.g. 1s72/
+    ├── _prep_main/                      inputs used to build the targets
+    │   ├── <PDB>.pdb                    coordinate file
+    │   ├── <PDB>.pdb.mca                MC-Annotate output
+    │   └── <PDB>_<chain>.rmsx.in/.nch   RMSX target input files
+    └── <chain>/                         one folder per scanned chain, e.g. 0/
+        ├── <pdb>_<chain>.rmsx.in/.nch   RMSX inputs for this chain
+        ├── sarcin-ricin_consensus.log   alignment OUTPUT (one per family)
+        ├── k-turn_consensus.log
+        ├── c-loop_consensus.log
+        ├── e-loop_consensus.log
+        └── reverse-kturn_consensus.log
+```
+
+Each `*_consensus.log` holds one alignment block per hit; RSMViewer reads every
+block (across all chains of the PDB), applies the family P-value threshold, then
+consolidates. To add a new PDB, drop a `rmsx_work_default/<pdb_id>/` folder in
+the same structure and it becomes available to `rmv_db RNAMotifScanX`.
+
+### Run-from-scratch mode (optional, needs binaries)
+
+Set `data_mode` to `"run_from_scratch"` and provide working `rmsx_executable`
+and `mc_annotate_executable` paths (place the compiled binaries under
+`external/rmsx/bin/`). RSMViewer then runs MC-Annotate + RNAMotifScanX for the
+loaded PDB. The RNAMotifScanX software and its binaries are **not** distributed
+with RSMViewer.
+
+---
+
+## `fr3d_config.json` — FR3D
+
+### Fields
+
+| Field | Type | Meaning / possible values |
+| --- | --- | --- |
+| `fr3d_python_path` | path | Root of the fr3d-python checkout (must contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`). |
+| `query_path` | path | A queries directory (runs every top-level `.json`) or a single query `.json` file. Defaults to the checkout's own `fr3d/search/queries`. |
+| `python_path` | path | Optional. Interpreter used to run FR3D; must have `numpy`, `scipy`, `mmcif-pdbx`. Omit to auto-detect. |
+| `interactions_path` | path | Optional local interaction data directory. |
+| `run_output_path` | path | Where FR3D run outputs (CSV/provenance) are written. |
+| `allow_network` | bool | `false` keeps FR3D fully offline. Set `true` to let FR3D download reference structures required by geometric queries. |
+| `query_selection` | string | `"all"` (default) runs every query file; `"default"` runs only `default_query`. |
+| `query_timeout_seconds` | int | Per-query timeout (≥ 10). |
+
+### Setup and dependencies
+
+1. Paste the official fr3d-python software into
+   `external/fr3d/fr3d-python-latest/` (the path in `fr3d_python_path`). It must
+   contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`.
+2. Install FR3D's Python dependencies once:
+
+   ```text
+   rmv_fr3d setup
+   ```
+
+   This installs `numpy`, `scipy`, and `mmcif-pdbx`. Alternatively set
+   `python_path` to an interpreter that already has them.
+3. Check status:
+
+   ```text
+   rmv_fr3d status
+   ```
+
+### Running FR3D
+
+```text
+rmv_fetch 1S72
+rmv_db FR3D
+```
+
+RSMViewer runs the FR3D queries under `query_path` against the loaded structure
+and loads the resulting motif candidates.
+
+Note on queries: FR3D's bundled **geometric** queries define their template from
+a reference PDB and therefore need `allow_network: true` to download it. Set
+`allow_network` to `true` if you use those queries offline-unavailable
+references; otherwise a query that cannot reach its reference is skipped with a
+message and the remaining queries continue.
+
+---
+
+## Quick reference
+
+```text
+rmv_db                      List sources and usage (no argument)
+rmv_db RNA3DMotifAtlas      Load Atlas (API, cached)
+rmv_db Rfam                 Load Rfam (API, cached)
+rmv_db RNAMotifScanX        Load RMSX (preannotated or from-scratch)
+rmv_db FR3D                 Run FR3D on the loaded structure
+rmv_refresh                 Bypass caches and re-fetch
+```
