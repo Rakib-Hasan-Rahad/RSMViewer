@@ -4682,21 +4682,35 @@ class MotifVisualizerGUI:
 
         Groups produced by rmv_select/rmv_combine store their merged rows
         directly; legacy groups and bare motif IDs resolve against the raw
-        load-time tables.
+        load-time tables. A bare id may also be a single merged row inside a
+        saved group (e.g. ``group_SR_001``).
         """
         group = self.query_groups.get(target)
-        if group and group.get("rows"):
-            return list(group["rows"])
-        if group:
+        if group is not None:
+            if group.get("rows"):
+                return list(group["rows"])
             motif_ids = set(group.get("motif_ids", []))
-        else:
-            motif_ids = {target}
-        return [
+            return [
+                row
+                for table in self.annotation_tables.values()
+                for row in table.rows
+                if row.motif_id in motif_ids
+            ]
+        # Bare id: raw load-time tables first...
+        matches = [
             row
             for table in self.annotation_tables.values()
             for row in table.rows
-            if row.motif_id in motif_ids
+            if row.motif_id == target
         ]
+        if matches:
+            return matches
+        # ...then an individual merged row inside a saved group.
+        for saved in self.query_groups.values():
+            for row in saved.get("rows", []):
+                if row.motif_id == target:
+                    return [row]
+        return []
 
     def select_annotation_query(self, query_text: str) -> None:
         """Save a consolidated-table query as a motif-ID result snapshot."""
@@ -4868,6 +4882,14 @@ class MotifVisualizerGUI:
                 for row in self.annotation_tables[structure_id].rows
                 if motif_ids is None or row.motif_id in motif_ids
             ]
+            if not rows and motif_ids:
+                # Individual merged row inside a saved group (e.g. group_SR_001).
+                rows = [
+                    row
+                    for saved in self.query_groups.values()
+                    for row in saved.get("rows", [])
+                    if row.motif_id in motif_ids
+                ]
         if not rows:
             if target:
                 print(
@@ -5543,16 +5565,7 @@ class MotifVisualizerGUI:
             # Internal adapter mode; the public source name is reported by the
             # caller (e.g. 'Source: RNA3DMotifAtlas'), so keep this off-console.
             self.logger.debug(f"Motif source mode set to: {mode_display}")
-            
-            # Print follow-up suggestions
-            print("\n  Next steps:")
-            if self.loaded_pdb_id:
-                print(f"    rmv_select SR, {self.loaded_pdb_id}, RNA3DMotifAtlas, as group_SR")
-            else:
-                print(f"    rmv_fetch <PDB_ID>         Load PDB structure")
-                print(f"    rmv_db <source>            Select a named annotation source")
-            print()
-            
+
         except Exception as e:
             self.logger.error(f"Failed to set source mode: {e}")
     
@@ -6077,7 +6090,7 @@ class MotifVisualizerGUI:
             print(f"  rmv_fetch 1S72                          Load PDB structure")
             print(f"  rmv_db FR3D                             Run FR3D search, then load")
             print(f"  rmv_list                                List loaded motif rows")
-            print(f"  rmv_select SR, 1S72, FR3D, as group_SR  Select a family")
+            print(f"  rmv_select Sarcin-Ricin, 1S72, FR3D, as group_SR  Select a family")
             print(f"  rmv_view group_SR                       Highlight the group")
             print(f"  rmv_fr3d status                         Show FR3D registration status")
             print(f"\n--- Combine FR3D with other sources ---")
@@ -7451,8 +7464,16 @@ def initialize_gui():
             return
 
         def _is_view_target(name):
-            return name in gui.query_groups or any(
-                name in table._rows for table in gui.annotation_tables.values())
+            if name in gui.query_groups:
+                return True
+            if any(name in table._rows for table in gui.annotation_tables.values()):
+                return True
+            # Individual merged row inside a saved group (e.g. group_SR_001).
+            return any(
+                row.motif_id == name
+                for saved in gui.query_groups.values()
+                for row in saved.get("rows", [])
+            )
 
         # 'rmv_view <target> <color>' positional color, but only when the 2nd
         # token is not itself a motif ID / group and not 'hide'.
