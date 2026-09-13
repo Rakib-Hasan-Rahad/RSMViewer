@@ -6,7 +6,7 @@ This module provides:
 - MotifVisualizerGUI: Main GUI class for the plugin
 - PyMOL command registration (24 commands)
 - Database selection and switching functionality
-- Multi-source combine mode with annotation merging
+- Multi-source loading (kept separate; merging deferred to rmv_select/rmv_combine)
 
 Author: CBB LAB @Rakib Hasan Rahad
 Version: 2.0.0
@@ -2155,7 +2155,7 @@ class MotifVisualizerGUI:
         """
         Load motif data for a structure WITHOUT creating PyMOL objects (for rmv_load_motif).
         
-        Handles combine mode by loading from multiple sources and merging.
+        Handles multi-source loading (sources kept separate; no merging at rmv_db).
         Uses self.loaded_pdb as the structure name (set by rmv_fetch).
         
         Args:
@@ -2414,9 +2414,8 @@ class MotifVisualizerGUI:
                 mtype_info['motif_details'].sort(key=_get_min_residue)
             
             # --- Persist to the residue-based hierarchy cache (single-source loads) ---
-            # Combine-mode loads persist via ResidueMerger; this covers the
-            # plain rmv_db <N> path so rmv_summary/rmv_show <TYPE> (no db N
-            # filter) can also be driven by residue/chain matching.
+            # Covers the plain rmv_db <source> path so rmv_summary/rmv_show <TYPE>
+            # can also be driven by residue/chain matching.
             self._persist_single_source_hierarchy(pdb_id_upper, motif_summary)
             
             # Accumulate into existing loaded_motifs (supports cross-PDB and
@@ -2513,7 +2512,7 @@ class MotifVisualizerGUI:
                     if table_obj else sum(c for _, c in family_rows)
                 )
                 self.logger.success(
-                    f"Loaded {row_count} consolidated motif row(s) in {len(family_rows)} "
+                    f"Loaded {row_count} motif row(s) in {len(family_rows)} "
                     f"families from {pdb_id} via {source_list} (tag: {tag})")
                 self._print_family_table(family_rows)
 
@@ -3406,7 +3405,7 @@ class MotifVisualizerGUI:
                     if table_obj else sum(c for _, c in family_rows)
                 )
                 self.logger.success(
-                    f"Loaded {row_count} consolidated motif row(s) in {len(family_rows)} "
+                    f"Loaded {row_count} motif row(s) in {len(family_rows)} "
                     f"families from {pdb_id} via {source_list} (tag: {tag})")
                 self._print_family_table(family_rows)
 
@@ -3886,7 +3885,7 @@ class MotifVisualizerGUI:
         print("      Operators: not, and, or  (precedence: not > and > or).")
         print("      A source is true for a row only when THAT source labels the row")
         print("      as the queried motif (exact per-source benchmarking).")
-        print("  rmv_list                             List every consolidated motif row")
+        print("  rmv_list                             List every loaded motif row")
         print("  rmv_list <group>                     List a saved group")
         print("  rmv_list <MOTIF_ID>                  List one stable motif ID (e.g. 1S72_00016)")
         print("  rmv_list <FAMILY>                    List every row in a family (e.g. SARCIN-RICIN)")
@@ -3998,7 +3997,7 @@ class MotifVisualizerGUI:
         print("|  [IF] INFORMATION COMMANDS                                                |")
         print("+" + "-"*78 + "+")
         print("|  rmv_select M,S,S as G     Save a motif/structure/source query group     |")
-        print("|  rmv_list                  List consolidated motif rows                  |")
+        print("|  rmv_list                  List loaded motif rows                        |")
         print("|  rmv_list <Motif_ID|group> List a stable ID or saved group              |")
         print("|  rmv_source info           Show currently selected source                 |")
         print("|  rmv_source info <N>       Show detailed info about source N              |")
@@ -4814,7 +4813,7 @@ class MotifVisualizerGUI:
         print(f"    rmv_save current {group}.png        Save the current view as a PNG image")
 
     def list_annotation_results(self, target: str = "") -> None:
-        """List consolidated motif rows, a stable motif ID, or a saved group."""
+        """List loaded motif rows, a stable motif ID, or a saved group."""
         target = target.strip()
         motif_ids = None
         group = None
@@ -4880,7 +4879,7 @@ class MotifVisualizerGUI:
                     f"(e.g. SARCIN-RICIN). Run rmv_list with no argument to list all rows."
                 )
             else:
-                print("No consolidated motif rows found.")
+                print("No motif rows found.")
             return
 
         source_names = [
@@ -5683,8 +5682,10 @@ class MotifVisualizerGUI:
         config = get_config()
         config.specific_source = None
         
-        # Display what we're combining
-        self.logger.success(f"Multi-source combine mode: {len(source_ids)} sources")
+        # Sources are loaded and kept separate; any residue merging is deferred
+        # to rmv_select / rmv_combine (professor's design). rmv_db does not merge.
+        self.logger.success(
+            f"Loaded {len(source_ids)} sources - kept separate (merging happens in rmv_select/rmv_combine)")
         for i, sid in enumerate(source_ids, 1):
             info = SOURCE_ID_MAP[sid]
             public_name = (
@@ -5692,7 +5693,6 @@ class MotifVisualizerGUI:
                 if i - 1 < len(self.current_source_names)
                 else info['name']
             )
-            source_order = i
             # Show p-value status for RMS/RMSX/NoBIAS
             pval_note = ""
             tool = info.get('tool', '')
@@ -5721,11 +5721,8 @@ class MotifVisualizerGUI:
             path_note = ""
             if self.user_data_paths.get(sid):
                 path_note = " - custom path"
-            self.logger.info(f"  {public_name} (source order: {source_order}){pval_note}{path_note}")
-        
-        self.logger.info(
-            f"Residue-based merging | Jaccard threshold: {self.jaccard_threshold:.0%} "
-            f"(defined in rsmviewer/database/consolidated_table.py: DEFAULT_JACCARD_THRESHOLD)")
+            self.logger.info(f"  {public_name}{pval_note}{path_note}")
+
         # The RMSX P-value tip is only relevant when RNAMotifScanX is selected.
         if 7 in source_ids:
             self.logger.info("Tip: RMSX P-value thresholds are configured in config/rmsx_config.json.")
