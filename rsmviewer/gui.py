@@ -2832,38 +2832,13 @@ class MotifVisualizerGUI:
                             inst.metadata = {}
                         inst.metadata['_source_id'] = sid
                         inst.metadata['_source_label'] = label
-            
-            # --- Step 2.7: Within-source deduplication ---
-            # Some tools (e.g., RMSX) can produce duplicate entries with
-            # identical residue sets. Remove exact duplicates within each
-            # source before annotation merging (which only deduplicates ACROSS
-            # sources).
+
+            # No within-source filtering at rmv_db: every source's annotations
+            # are kept exactly as fetched (professor's "keep all records
+            # separately"). The raw consolidated table indexes by residue-set
+            # identity, so byte-for-byte identical annotations still map to one
+            # row without dropping any distinct/contained annotation.
             self.dedup_stats = {}
-            for sid in source_ids:
-                src_data = raw_sources.get(sid, {})
-                if not src_data:
-                    continue
-                total_before = sum(len(v) for v in src_data.values())
-                deduped = {}
-                for mtype, instances in src_data.items():
-                    seen = set()
-                    unique = []
-                    for inst in instances:
-                        # Build a hashable key from (chain, residue_number) set
-                        rset = frozenset(
-                            (r.chain, r.residue_number) for r in inst.residues
-                        )
-                        if rset not in seen:
-                            seen.add(rset)
-                            unique.append(inst)
-                    deduped[mtype] = unique
-                total_after = sum(len(v) for v in deduped.values())
-                self.dedup_stats[sid] = (total_before, total_after)
-                if total_before != total_after:
-                    self.logger.info(
-                        f"  [{sid}] Within-source dedup: {total_before} -> {total_after} "
-                        f"(removed {total_before - total_after} duplicates)")
-                raw_sources[sid] = deduped
 
             # Populate the new canonical table from each raw source before
             # the legacy annotation mergingr collapses source-specific records.
