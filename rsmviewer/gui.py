@@ -2486,11 +2486,15 @@ class MotifVisualizerGUI:
                 tag = f"{pdb_id_upper}{source_suffix}" if source_suffix else pdb_id_upper
                 source_list = ", ".join(self.current_source_names) if self.current_source_names else "RNA3DMotifAtlas"
 
-                # Family counts come from the consolidated table so they match
-                # rmv_select exactly: a row is counted under every family any of
-                # its source labels denotes (canonical). Counting the merged
-                # dict's primary key alone under-reports families a row shares.
-                family_rows = self._family_counts_from_table(pdb_id_upper)
+                # Family counts come from the consolidated table, scoped to the
+                # source(s) just loaded. A row created earlier by a different
+                # source (e.g. RNA3DMotifAtlas) but not touched by this load
+                # must NOT be counted here, otherwise loading Rfam right after
+                # Atlas for the same PDB would misleadingly reprint Atlas's
+                # cumulative family table as if it came from Rfam.
+                family_rows = self._family_counts_from_table(
+                    pdb_id_upper, source_filter=self.current_source_names
+                )
                 if not family_rows:
                     # Fallback to the merged-dict view if the table is empty.
                     for info in motif_summary.values():
@@ -2500,7 +2504,11 @@ class MotifVisualizerGUI:
                     family_rows.sort(key=lambda item: (-item[1], item[0].upper()))
 
                 table_obj = self.annotation_tables.get(pdb_id_upper)
-                row_count = len(table_obj.rows) if table_obj else sum(c for _, c in family_rows)
+                source_filter_set = set(self.current_source_names)
+                row_count = (
+                    sum(1 for row in table_obj.rows if set(row.source_annotations) & source_filter_set)
+                    if table_obj else sum(c for _, c in family_rows)
+                )
                 self.logger.success(
                     f"Loaded {row_count} consolidated motif row(s) in {len(family_rows)} "
                     f"families from {pdb_id} via {source_list} (tag: {tag})")
@@ -2541,13 +2549,19 @@ class MotifVisualizerGUI:
         except Exception as e:
             self.logger.error(f"Failed to load motif data: {str(e)}")
 
-    def _family_counts_from_table(self, structure_id: str):
+    def _family_counts_from_table(self, structure_id: str, source_filter: Optional[List[str]] = None):
         """Return [(display_name, row_count), ...] for one structure's table.
 
         Each consolidated row is counted under every canonical family that any
         of its source labels denotes, so the totals match what rmv_select would
         select. The representative display name is the most common original
         spelling collected for that family.
+
+        When ``source_filter`` is given, only rows touched by one of those
+        sources are considered, and only the labels contributed by those
+        sources are used to determine family membership. This is what makes a
+        single-source load (e.g. just Rfam) report its own family breakdown
+        instead of the whole cross-source table accumulated so far.
         """
         from collections import Counter
         from .database.motif_aliases import canonical_motif
@@ -2555,14 +2569,19 @@ class MotifVisualizerGUI:
         table = self.annotation_tables.get(structure_id)
         if not table:
             return []
+        filter_set = set(source_filter) if source_filter else None
         counts: Counter = Counter()
         label_pool: Dict[str, Counter] = {}
         for row in table.rows:
             if getattr(row, 'structure_id', structure_id) != structure_id:
                 continue
+            if filter_set is not None and not (set(row.source_annotations) & filter_set):
+                continue
             families_in_row = set()
             for source_map in (row.source_hierarchy, row.source_annotations):
-                for labels in source_map.values():
+                for source_name, labels in source_map.items():
+                    if filter_set is not None and source_name not in filter_set:
+                        continue
                     for label in labels:
                         if not label:
                             continue
@@ -3191,12 +3210,37 @@ class MotifVisualizerGUI:
             except Exception as e:
                 self.logger.debug(f"Could not get chains from structure: {e}")
             
+            # Apply the chain remap directly onto residue objects so the
+            # consolidated table (and Jaccard matching against Atlas/Rfam rows)
+            # sees real PyMOL chain IDs instead of tool-internal placeholders.
+            if chain_mapping:
+                for instances in available_motifs.values():
+                    for instance in instances:
+                        for r in getattr(instance, 'residues', None) or []:
+                            if r.chain in chain_mapping:
+                                r.chain = chain_mapping[r.chain]
+
             # Process motifs (same as fetch_motif_data_action)
             motif_summary = {}
             from .utils.parser import SelectionParser
             
             total_count = sum(len(instances) for instances in available_motifs.values())
             self.logger.success(f"Found {total_count} motifs in {pdb_id} (source: {tool.upper()})")
+
+            # Feed the same structure-local consolidated table used by
+            # fetch_motif_data_action, so RMSX/FR3D/RMS rows participate in
+            # cross-source family counts and rmv_select alongside Atlas/Rfam.
+            if len(self.current_source_names) == 1:
+                table = self.annotation_tables.setdefault(
+                    pdb_id_upper, ConsolidatedAnnotationTable(self.jaccard_threshold)
+                )
+                table.jaccard_threshold = self.jaccard_threshold
+                table.add_annotations(
+                    pdb_id_upper,
+                    self.current_source_names[0],
+                    available_motifs,
+                    provenance={"provider": tool},
+                )
             
             for motif_type, instances in available_motifs.items():
                 display_type_upper = motif_type.upper()
@@ -3356,16 +3400,59 @@ class MotifVisualizerGUI:
             self.viz_manager.structure_loader.current_pdb_id = pdb_id_upper
             
             if motif_summary:
-                self.logger.success(f"Loaded {len(motif_summary)} motif types from {tool.upper()}")
-                self.logger.info("")
-                self.logger.info("Motif data ready (not rendered)")
-                self.logger.info("Next steps:")
-                self.logger.info(f"  rmv_summary              Show all motifs")
-                self.logger.info(f"  rmv_summary <TYPE>       Show specific motif type")
-                self.logger.info(f"  rmv_view all             Highlight all motifs on structure")
-                self.logger.info(f"  rmv_show <TYPE>          Render motif on structure")
-                self.logger.info(f"  rmv_show <TYPE> <NO>     Zoom to specific instance")
-                self.logger.info("")
+                tag = f"{pdb_id_upper}{source_suffix}" if source_suffix else pdb_id_upper
+                source_list = ", ".join(self.current_source_names) if self.current_source_names else tool.upper()
+
+                # Family counts come from the consolidated table, scoped to the
+                # source(s) just loaded (see fetch_motif_data_action for why
+                # this must not be the whole cumulative cross-source table).
+                family_rows = self._family_counts_from_table(
+                    pdb_id_upper, source_filter=self.current_source_names
+                )
+                if not family_rows:
+                    # Fallback to the raw per-type counts if the table is empty.
+                    for key, info in motif_summary.items():
+                        family_rows.append((key, info.get('count', 0)))
+                    family_rows.sort(key=lambda item: (-item[1], item[0].upper()))
+
+                table_obj = self.annotation_tables.get(pdb_id_upper)
+                source_filter_set = set(self.current_source_names)
+                row_count = (
+                    sum(1 for row in table_obj.rows if set(row.source_annotations) & source_filter_set)
+                    if table_obj else sum(c for _, c in family_rows)
+                )
+                self.logger.success(
+                    f"Loaded {row_count} consolidated motif row(s) in {len(family_rows)} "
+                    f"families from {pdb_id} via {source_list} (tag: {tag})")
+                name_width = max(
+                    [len(name) for name, _ in family_rows]
+                    + [len("MOTIF FAMILY"), len("Total")]
+                )
+                print("")
+                print(f"  {'MOTIF FAMILY'.ljust(name_width)}   COUNT")
+                print(f"  {'-' * name_width}   -----")
+                for name, count in family_rows:
+                    print(f"  {name.ljust(name_width)}   {count}")
+                family_membership_total = sum(count for _, count in family_rows)
+                print(f"  {'Total'.ljust(name_width)}   {family_membership_total}")
+                print("")
+                print("  Use a MOTIF FAMILY name exactly as shown above in rmv_select.")
+                print("  A motif may belong to more than one family, so family counts can exceed the row total.")
+
+                preferred = next(
+                    (name for name, _ in family_rows if 'SARCIN' in name.upper()),
+                    family_rows[0][0],
+                )
+                source_expr = " or ".join(self.current_source_names) if self.current_source_names else tool.upper()
+                from .database.motif_aliases import family_short_code
+                safe_group = family_short_code(preferred)
+                print("")
+                print("  Next steps:")
+                print(f"    rmv_select {preferred}, {pdb_id_upper}, {source_expr}, as group_{safe_group}")
+                print(f"    rmv_view group_{safe_group}             Highlight the saved group")
+                print(f"    rmv_create_object group_{safe_group}    Create selectable objects")
+                print(f"    rmv_super group_{safe_group}            Superimpose the group")
+                print("")
             
         except Exception as e:
             self.logger.error(f"Failed to load user annotations for tool={tool}, pdb_id={pdb_id}: {type(e).__name__}: {e}")
