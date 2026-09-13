@@ -77,7 +77,7 @@ with this project; they are provided by the user under `external/`.
 
 1. Open PyMOL.
 2. Open **Plugin → Plugin Manager → Settings → Add new directory**.
-3. Select the directory containing this project.
+3. Select the "rsmviewer" directory containing in this project file.
 4. Restart PyMOL.
 5. Verify:
 
@@ -298,6 +298,8 @@ so repeated queries are offline. Use `rmv_refresh` to bypass the cache.
 
 1. **Paste** the official fr3d-python software into:
 
+  Download the Fr3d software package from this link : https://github.com/BGSU-RNA/fr3d-python/tree/latest 
+  
    ```text
    external/fr3d/fr3d-python-latest/
    ```
