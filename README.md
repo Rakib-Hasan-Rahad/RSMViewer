@@ -3,7 +3,7 @@
 **A PyMOL plugin for retrieving, integrating, visualizing, and comparing RNA structural motif annotations.**
 
 ![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-blue)
-![PyMOL 2.x+](https://img.shields.io/badge/PyMOL-2.x%2B-brightgreen)
+![PyMOL 3.x+](https://img.shields.io/badge/PyMOL-2.x%2B-brightgreen)
 ![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22097090-orange)](https://doi.org/10.5281/zenodo.22097090)
