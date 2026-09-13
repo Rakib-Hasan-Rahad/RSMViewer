@@ -108,8 +108,15 @@ def __init_plugin__(app):
         import traceback
         traceback.print_exc()
     
-    # Initialize GUI and register commands
-    initialize_gui()
+    # Initialize GUI and register commands. Never let a late registration
+    # failure abort the whole plugin: the core commands register first, so the
+    # pipeline stays usable even if an optional module fails to import.
+    try:
+        initialize_gui()
+    except Exception as e:
+        logger.error(f"GUI initialization incomplete (core commands may still work): {e}")
+        import traceback
+        traceback.print_exc()
 
 
 # Module metadata

@@ -8559,13 +8559,21 @@ def initialize_gui():
         print()
     
     cmd.extend('rmv_reset', reset_plugin)
-    
-    # Register base-pair visualization commands (rmv_pair, rmv_pair_batch)
-    from .pair_visualizer import register_pair_commands
-    register_pair_commands()
-    
-    # Register medoid superimposition commands (rmv_super, rmv_align)
-    from .alignment import register_alignment_commands
-    register_alignment_commands()
+
+    # Optional command modules. A failure to register any of these must NOT
+    # abort plugin initialization or hamper the core pipeline (rmv_fetch/
+    # rmv_db/rmv_select/rmv_view/rmv_create_object are already registered
+    # above). Each is isolated so one bad import can't take down the rest.
+    try:
+        from .pair_visualizer import register_pair_commands
+        register_pair_commands()
+    except Exception as exc:
+        gui.logger.warning(f"rmv_pair/rmv_pair_batch unavailable: {type(exc).__name__}: {exc}")
+
+    try:
+        from .alignment import register_alignment_commands
+        register_alignment_commands()
+    except Exception as exc:
+        gui.logger.warning(f"rmv_super/rmv_align unavailable: {type(exc).__name__}: {exc}")
 
     gui.logger.success("RSMViewer GUI initialized")
