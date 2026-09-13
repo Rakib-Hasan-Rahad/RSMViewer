@@ -4756,23 +4756,26 @@ class MotifVisualizerGUI:
             return tuple(matching)
 
         family = query.motif or "MOTIF"
-        matched_by_structure: Dict[str, List] = {}
+
+        # Step 1: gather every raw row of this family, per structure, with the
+        # sources that label it. NO predicate filtering yet - the cross-source
+        # support needed by 'A and B' (TP), 'not A and B' (FP) and
+        # 'A and not B' (FN) only exists after the residue merge unions the
+        # per-source labels onto one instance.
+        family_by_structure: Dict[str, List] = {}
         for structure_id in sorted(self.annotation_tables):
             if not query.matches_structure(structure_id):
                 continue
             for row in self.annotation_tables[structure_id].rows:
                 if query.motif:
-                    motif_sources = _sources_matching_motif(row)
-                    if not motif_sources or not query.sources.matches(motif_sources):
-                        continue
-                    sources_for_row = motif_sources
+                    row_sources = _sources_matching_motif(row)
                 else:
-                    if not query.sources.matches(tuple(row.source_annotations)):
-                        continue
-                    sources_for_row = tuple(row.source_annotations)
-                matched_by_structure.setdefault(structure_id, []).append((row, sources_for_row))
+                    row_sources = tuple(row.source_annotations)
+                if not row_sources:
+                    continue
+                family_by_structure.setdefault(structure_id, []).append((row, row_sources))
 
-        if not matched_by_structure:
+        if not family_by_structure:
             available = sorted({
                 label
                 for table in self.annotation_tables.values()
@@ -4781,45 +4784,49 @@ class MotifVisualizerGUI:
                 for label in values
             })
             hint = ", ".join(available[:12]) if available else "no motif labels are loaded"
-            motif_rows = [
-                row
-                for table in self.annotation_tables.values()
-                for row in table.rows
-                if labels_match_motif(query.motif, _row_labels(row), _fr3d_labels(row))
-            ]
-            if motif_rows:
-                self.logger.error(
-                    f"Motif '{query.motif}' exists, but no row contains every requested source. "
-                    f"Selected sources: {', '.join(sorted({source for row in motif_rows for source in row.source_annotations}))}."
-                )
-                return
             self.logger.error(
                 f"No motifs matched '{query.motif}'. Available motif hints: {hint}. "
                 "Use rmv_list to inspect stable motif IDs."
             )
             return
 
-        # Containment + Jaccard merging happens HERE (rmv_select), over one
-        # family only, so a contained annotation from another family is never
-        # touched at this stage.
-        merged_rows = []
-        for structure_id, entries in matched_by_structure.items():
-            merged_rows.extend(
+        # Step 2: containment + Jaccard merge over this family only (across all
+        # loaded sources), so overlapping instances collapse into one row that
+        # carries every source which annotated it.
+        merged_all = []
+        for structure_id, entries in family_by_structure.items():
+            merged_all.extend(
                 self._merge_selection_rows(structure_id, entries, family, query.group)
             )
 
-        if not merged_rows:
-            self.logger.error(f"No motifs matched '{query.motif}' after merging.")
+        # Step 3: apply the source predicate to each merged instance using the
+        # set of sources that actually contributed to it. This is where the
+        # benchmark groups split: TP (A and B), FP (not A and B), FN (A and not B).
+        final_rows = [
+            row
+            for row in merged_all
+            if query.sources.matches(tuple(row.source_annotations.keys()))
+        ]
+
+        # Step 4: assign unique sequential IDs across all structures.
+        for index, row in enumerate(final_rows, 1):
+            row.motif_id = f"{query.group}_{index:03d}"
+
+        if not final_rows:
+            self.logger.error(
+                f"'{query.motif}' motifs exist, but none satisfy the requested source "
+                f"condition. Run 'rmv_list {query.motif}' to inspect per-source support."
+            )
             return
 
         self.query_groups[query.group] = {
-            "rows": merged_rows,
-            "motif_ids": [row.motif_id for row in merged_rows],
+            "rows": final_rows,
+            "motif_ids": [row.motif_id for row in final_rows],
             "query": query.text,
             "structures": query.structures,
         }
         self.logger.success(
-            f"Saved group '{query.group}' with {len(merged_rows)} merged motif instance(s)."
+            f"Saved group '{query.group}' with {len(final_rows)} merged motif instance(s)."
         )
         group = query.group
         print("\n  Next steps:")
@@ -7681,12 +7688,23 @@ def initialize_gui():
                 gui.logger.error("Nothing to combine - no residues resolved from the given groups.")
                 return
 
+            # Unique sequential IDs across structures, and remember which source
+            # group each surviving instance came from so distinct per-group
+            # colors (e.g. FP=red, known=blue) survive into the combined object.
+            member_colors = {}
+            for index, row in enumerate(merged_rows, 1):
+                row.motif_id = f"{new_alias}_{index:03d}"
+                contributing = list(row.source_annotations.keys())
+                if contributing:
+                    member_colors[row.motif_id] = contributing[0]
+
             gui.query_groups[new_alias] = {
                 "rows": merged_rows,
                 "motif_ids": [row.motif_id for row in merged_rows],
                 "query": f"combine({', '.join(all_parts)})",
                 "structures": "combined",
                 "sources": "combined",
+                "member_colors": member_colors,
             }
             colors.get_color(new_alias)  # reserve a stable color for the group
             gui.logger.success(
