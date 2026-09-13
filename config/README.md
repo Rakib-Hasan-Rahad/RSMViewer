@@ -19,11 +19,11 @@ folder**. For example, `../external/rmsx/bin/scan` points to
 
 ### How to load a config
 
-The default files are picked up automatically. To load a custom copy at runtime:
+The default files are picked up automatically. FR3D can be registered from a
+custom config at runtime:
 
 ```text
-rmv_db 7 /absolute/path/to/rmsx_config.json     # RMSX
-rmv_db 5 /absolute/path/to/fr3d_config.json     # FR3D
+rmv_fr3d register /absolute/path/to/fr3d_config.json     # FR3D
 ```
 
 Edit a value, save the file, then re-run the `rmv_db` command (or `rmv_refresh`)

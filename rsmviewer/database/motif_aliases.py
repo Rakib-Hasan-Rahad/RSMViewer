@@ -137,6 +137,73 @@ for _canonical, _aliases in _FAMILY_DEFINITIONS.items():
         _register_alias(_alias, _canonical)
 
 
+# ── Converted display names ──────────────────────────────────────────────────
+# User-facing, copy-paste-friendly family names: no spaces, hyphen-separated,
+# no parenthetical source codes. Shown as the first column of the rmv_db table
+# so users can paste them straight into rmv_select. Every converted name is
+# registered as an alias below so canonical_motif() round-trips it back to the
+# same family (i.e. rmv_select accepts the converted name it printed).
+_CONVERTED_OVERRIDES = {
+    "SARCIN-RICIN": "Sarcin-Ricin",
+    "K-TURN": "Kink-Turn",
+    "REVERSE-K-TURN": "Reverse-Kink-Turn",
+    "PSEUDO-KINK-TURN": "Pseudo-Kink-Turn",
+    "C-LOOP": "C-Loop",
+    "E-LOOP": "E-Loop",
+    "T-LOOP": "T-Loop",
+    "U-TURN": "U-Turn",
+    "GNRA": "GNRA",
+    "UNCG": "UNCG",
+    "CUYG": "CUYG",
+    "HL": "Hairpin-Loop",
+    "IL": "Internal-Loop",
+    "J3": "3-Way-Junction",
+    "J4": "4-Way-Junction",
+    "J5": "5-Way-Junction",
+    "J6": "6-Way-Junction",
+    "J7": "7-Way-Junction",
+    "PSEUDOKNOT": "Pseudoknot",
+    "BULGED": "Bulged-Loop",
+    "TANDEM-GA": "Tandem-GA",
+    "RIGHT-ANGLE": "Right-Angle",
+    "DOCKING-ELBOW": "Docking-Elbow",
+    "TWIST-UP": "Twist-Up",
+    "UAA-GAN": "UAA-GAN",
+    "DOMAIN-V": "Domain-V",
+    "SRP-S-DOMAIN": "SRP-S-Domain",
+    "ANYA": "ANYA",
+    "UMAC": "UMAC",
+    "TRIT": "TRIT",
+}
+
+
+def _derive_converted(canonical: str) -> str:
+    """Derive a no-space, hyphenated converted name from a canonical family."""
+    text = re.sub(r"\(.*?\)", "", str(canonical))            # drop "(HL)"-style codes
+    words = [w for w in re.split(r"[^A-Za-z0-9]+", text) if w]
+    if not words:
+        return str(canonical).strip() or canonical
+    return "-".join(word[:1].upper() + word[1:].lower() for word in words)
+
+
+_CONVERTED_NAMES = {}
+for _canonical in _FAMILY_DEFINITIONS:
+    _converted = _CONVERTED_OVERRIDES.get(_canonical) or _derive_converted(_canonical)
+    _CONVERTED_NAMES[_canonical] = _converted
+    _register_alias(_converted, _canonical)
+
+
+def converted_family_name(value: str) -> str:
+    """Return the copy-paste-friendly converted display name for a family.
+
+    Accepts any spelling/abbreviation, resolves it to its canonical family, and
+    returns the no-space hyphenated form (e.g. ``HL`` -> ``Hairpin-Loop``).
+    Unknown families are derived deterministically from their upper-cased form.
+    """
+    canonical = canonical_motif(value)
+    return _CONVERTED_NAMES.get(canonical) or _derive_converted(canonical)
+
+
 # ── Free-text keyword scan (used for FR3D query names) ───────────────────────
 # FR3D query names embed the family loosely, e.g. "geometric_5_sarcin_ricin" or
 # "geometric_3_sarcin3geometric". These distinctive keywords are scanned as
