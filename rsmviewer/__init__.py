@@ -1,5 +1,13 @@
 """RSMViewer: a four-source, motif-ID PyMOL plugin."""
 
+from pathlib import Path as _Path
+
+
+# PyMOL's startup loader may execute this directory's __init__.py as a module
+# without assigning package search paths; provide one for relative imports.
+if "__path__" not in globals():
+    __path__ = [str(_Path(__file__).resolve().parent)]
+
 # NOTE:
 # Keep this package importable outside PyMOL.
 # PyMOL injects/provides the `pymol` module at runtime; importing it in a
