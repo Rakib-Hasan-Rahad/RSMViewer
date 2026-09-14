@@ -167,7 +167,7 @@ selected objects. Parent structures are not replaced by motif fragments.
 Combine saved groups by motif ID, then color them:
 
 ```text
-rmv_combine group_FP, group_known, as group_combined
+rmv_combine_groups group_FP, group_known, as group_combined
 rmv_set_color group_FP, red
 rmv_set_color group_known, blue
 ```
@@ -274,7 +274,7 @@ rmv_select SR, 1S72, not RNA3DMotifAtlas and RNAMotifScanX, as group_FP
 rmv_select SR, 1S72, RNA3DMotifAtlas, as group_known
 rmv_set_color group_FP, red
 rmv_set_color group_known, blue
-rmv_combine group_FP, group_known, as group_combined
+rmv_combine_groups group_FP, group_known, as group_combined
 rmv_create_object group_combined
 rmv_super group_combined
 ```
@@ -288,10 +288,10 @@ rmv_super group_combined
 1. Paste the official fr3d-python software into
    `external/fr3d/fr3d-python-latest/` (must contain `fr3d/__init__.py` and
    `fr3d/search/FR3D.py`).
-2. Install FR3D's Python dependencies once:
+2. Run the one-shot setup (finds a Python, installs deps, registers FR3D):
 
    ```text
-   rmv_fr3d setup
+   rmv_setup FR3D
    ```
 
    This installs `numpy`, `scipy`, and `mmcif-pdbx`. Alternatively set
@@ -414,4 +414,4 @@ Inspect the rows with `rmv_list`.
 failure.
 
 **FR3D is not found.** Verify the checkout path in `config/fr3d_config.json`,
-run `rmv_fr3d setup`, and check `rmv_fr3d status`.
+run `rmv_setup FR3D`, and check `rmv_fr3d status`.

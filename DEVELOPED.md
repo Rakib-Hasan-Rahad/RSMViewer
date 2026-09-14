@@ -177,10 +177,10 @@ for a family it lists every row any source labels as that family. `rmv_view`
 highlights parent-structure residues (optionally with `color=` and `padding=`)
 without copying objects; `rmv_hide` recolors to neutral gray.
 
-### `rmv_create_object` / `rmv_super` / `rmv_combine`
+### `rmv_create_object` / `rmv_super` / `rmv_combine_groups`
 
 `create_annotation_objects` builds `motif_<id>` objects and colors each one by
-its group. `rmv_combine` unions the motif IDs of query groups into a new group
+its group. `rmv_combine_groups` unions the motif IDs of query groups into a new group
 and records each member's origin group in `member_colors`, so per-source colors
 set with `rmv_set_color` survive the combine: `_group_member_color_key` colors
 each object by its origin group unless an explicit color is set on the combined

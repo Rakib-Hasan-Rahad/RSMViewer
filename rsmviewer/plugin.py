@@ -75,7 +75,7 @@ def __init_plugin__(app):
     except Exception as e:
         logger.warning(f"Could not set cif_use_auth: {e}")
 
-    # Query groups ('as GROUP' in rmv_select/rmv_view/rmv_combine)
+    # Query groups ('as GROUP' in rmv_select/rmv_view/rmv_combine_groups)
     # are session-scoped only - clear any left over from a previous PyMOL
     # session so alias names never collide across restarts.
     try:

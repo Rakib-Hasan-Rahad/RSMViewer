@@ -228,7 +228,7 @@ therefore **not** counted as agreeing on the queried family.
 `rmv_select ... as <group>` stores a snapshot: the matching stable motif IDs
 plus the original query text. Groups are immutable snapshots that drive
 `rmv_list`, `rmv_view`, `rmv_create_object`, `rmv_super`/`rmv_align`,
-`rmv_combine`, `rmv_set_color`, and `rmv_save`. `rmv_combine` unions the motif
+`rmv_combine_groups`, `rmv_set_color`, and `rmv_save`. `rmv_combine_groups` unions the motif
 IDs of several groups and records each member's origin group so that per-source
 colors set with `rmv_set_color` are preserved after the combine (S10).
 
@@ -288,7 +288,7 @@ unreachable is skipped with a message while the remaining queries proceed.
 Typical usage:
 
 ```text
-rmv_fr3d setup            # one-time: install FR3D's Python dependencies
+rmv_setup FR3D            # one-time: install FR3D's Python deps + register
 rmv_fr3d status           # verify the checkout and interpreter
 rmv_fetch 1S72
 rmv_db FR3D               # run FR3D's default queries and ingest results
@@ -443,7 +443,7 @@ labels, and `rmv_list group_TP` / `group_FP` / `group_FN` list each partition.
   overlapping rows take the color applied last.
 - **Objects.** `rmv_create_object <ID|group>` builds one selectable
   `motif_<id>` object per row, restricted to polymeric nucleic-acid atoms and
-  rendered as a cartoon backbone. When a group was produced by `rmv_combine`,
+  rendered as a cartoon backbone. When a group was produced by `rmv_combine_groups`,
   each object is colored by the source group it came from, so per-source colors
   set with `rmv_set_color` (e.g. red for false positives, blue for known
   instances in Application 6) are preserved; an explicit color set on the
@@ -520,7 +520,7 @@ normalization including the `K-TURN`/`REVERSE-K-TURN` separation
 | Category | Commands |
 | --- | --- |
 | Structures & sources | `rmv_fetch`, `rmv_db`, `rmv_source`, `rmv_refresh` |
-| Query & results | `rmv_select`, `rmv_list`, `rmv_combine` |
+| Query & results | `rmv_select`, `rmv_list`, `rmv_combine_groups` |
 | Visualization & objects | `rmv_view`, `rmv_hide`, `rmv_create_object`, `rmv_bg_color`, `rmv_toggle` |
 | Color | `rmv_set_color`, `rmv_color`, `rmv_colors` |
 | Analysis & export | `rmv_super`, `rmv_align`, `rmv_save`, `rmv_pair`, `rmv_pair_batch` |

@@ -272,7 +272,7 @@ rmv_select SARCIN-RICIN, 1S72, RNA3DMotifAtlas, as group_known
 rmv_set_color group_FP, red
 rmv_set_color group_known, blue
 # combines the two groups
-rmv_combine group_FP, group_known, as group_combined
+rmv_combine_groups group_FP, group_known, as group_combined
 rmv_create_object group_combined
 rmv_super group_combined
 ```

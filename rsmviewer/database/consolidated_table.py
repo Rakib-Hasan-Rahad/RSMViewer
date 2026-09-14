@@ -100,7 +100,7 @@ class ConsolidatedAnnotationTable:
         self.jaccard_threshold = jaccard_threshold
         self.containment_threshold = containment_threshold
         # When False the table keeps every source annotation as its own row;
-        # overlap handling is deferred until rmv_select/rmv_combine.
+        # overlap handling is deferred until rmv_select/rmv_combine_groups.
         self.merge_enabled = merge_enabled
         self._rows: Dict[str, AnnotationRow] = {}
 

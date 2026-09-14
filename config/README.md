@@ -119,7 +119,7 @@ with RSMViewer.
 | `python_path` | path | Optional. Interpreter used to run FR3D; must have `numpy`, `scipy`, `mmcif-pdbx`. Omit to auto-detect. |
 | `interactions_path` | path | Optional local interaction data directory. |
 | `run_output_path` | path | Where FR3D run outputs (CSV/provenance) are written. |
-| `allow_network` | bool | `false` keeps FR3D fully offline. Set `true` to let FR3D download reference structures required by geometric queries. |
+| `allow_network` | bool | `false` keeps FR3D fully offline. Set `true` only to let FR3D download reference **coordinate** structures (`.cif`) that some geometric queries use as their search template. 
 | `query_selection` | string | `"all"` (default) runs every query file; `"default"` runs only `default_query`. |
 | `query_timeout_seconds` | int | Per-query timeout (≥ 10). |
 
@@ -128,14 +128,16 @@ with RSMViewer.
 1. Paste the official fr3d-python software into
    `external/fr3d/fr3d-python-latest/` (the path in `fr3d_python_path`). It must
    contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`.
-2. Install FR3D's Python dependencies once:
+2. Run the one-shot setup:
 
    ```text
-   rmv_fr3d setup
+   rmv_setup FR3D
    ```
 
-   This installs `numpy`, `scipy`, and `mmcif-pdbx`. Alternatively set
-   `python_path` to an interpreter that already has them.
+   This finds a suitable Python (cross-platform), installs `numpy`, `scipy`,
+   and `mmcif-pdbx`, and registers FR3D. To use a specific interpreter, pass
+   its path: `rmv_setup FR3D /absolute/path/to/python`. Alternatively set
+   `python_path` to an interpreter that already has the dependencies.
 3. Check status:
 
    ```text
@@ -150,13 +152,14 @@ rmv_db FR3D
 ```
 
 RSMViewer runs the FR3D queries under `query_path` against the loaded structure
-and loads the resulting motif candidates.
+and loads the resulting motif candidates. If `rmv_db FR3D` reports that FR3D is
+not ready, it prints the precise reason and tells you to run `rmv_setup FR3D`.
 
 Note on queries: FR3D's bundled **geometric** queries define their template from
-a reference PDB and therefore need `allow_network: true` to download it. Set
-`allow_network` to `true` if you use those queries offline-unavailable
-references; otherwise a query that cannot reach its reference is skipped with a
-message and the remaining queries continue.
+a reference PDB and therefore need `allow_network: true` to download that
+coordinate file. Otherwise a query that cannot reach its reference is skipped
+with a message and the remaining queries continue. This only affects reference
+structures, not annotations.
 
 ---
 

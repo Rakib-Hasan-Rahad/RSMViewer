@@ -693,19 +693,6 @@ class VisualizationManager:
         
         print("-" * 50)
         print(f"  {'TOTAL':<20} {total_motifs:>12}")
-        print("=" * 50)
-        print("\n  Next steps:")
-        if total_motifs > 0:
-            # Find the motif type with highest count to suggest
-            first_motif = None
-            sorted_by_count = sorted(motifs.items(), key=lambda x: x[1].get('count', 0), reverse=True)
-            if sorted_by_count:
-                first_motif = sorted_by_count[0][0]
-            if first_motif:
-                print(f"    rmv_summary {first_motif:<18}  Show {first_motif} instances")
-                print(f"    rmv_show {first_motif:<20}  Highlight & render {first_motif}")
-                print(f"    rmv_super {first_motif:<19}  Superimpose {first_motif} instances")
-            print(f"    rmv_show ALL             Show all motif types with objects")
         print("=" * 50 + "\n")
     
     def _deactivate_other_objects(self, keep_active):
@@ -882,13 +869,6 @@ class VisualizationManager:
         pad_note = f" (padding=±{padding})" if padding > 0 else ""
         self.logger.success(f"Showing {len(motif_details)} {motif_type} instances{pad_note}")
         
-        # Print follow-up suggestions
-        print("  Next steps:")
-        print(f"    rmv_show {motif_type} <NO>         Zoom to specific instance (1-{len(motif_details)})")
-        print(f"    rmv_super {motif_type}             Superimpose all {motif_type} instances")
-        print(f"    rmv_show <OTHER_MOTIF>       Show different motif type")
-        print(f"    rmv_show ALL                 Show all motif types")
-        print()
         return True
     
     def _create_single_instance_object(self, motif_type: str, instance_no: int,
@@ -1402,18 +1382,6 @@ class VisualizationManager:
                                          source_suffix=source_suffix,
                                          pdb_id=inst_pdb_id)
         
-        # Print follow-up suggestions
-        print("  Next steps:")
-        if instance_no > 1:
-            print(f"    rmv_show {motif_type} {instance_no-1}             View previous instance")
-        if instance_no < len(motif_details):
-            print(f"    rmv_show {motif_type} {instance_no+1}             View next instance")
-        print(f"    rmv_show {motif_type}               Show all {motif_type} instances")
-        print(f"    rmv_super {motif_type}              Superimpose all {motif_type} instances")
-        print(f"    rmv_save {motif_type} {instance_no}              Save image of this instance")
-        print(f"    rmv_show ALL                 Show all motif types")
-        print()
-        
         return True
     
     def _print_single_instance_info(self, motif_type: str, instance_no: int, 
@@ -1598,16 +1566,6 @@ class VisualizationManager:
             count = active_counts[motif_type]
             print(f"    {obj_name:<25} {motif_type} ({count} instances)")
         
-        # Print follow-up suggestions
-        print("\n  Next steps:")
-        if loaded_motifs:
-            first_motif = next(iter(sorted(active_counts)), None)
-            if first_motif:
-                print(f"    rmv_show {first_motif:<20}  Focus on specific motif type")
-        print(f"    rmv_summary              View motif summary table")
-        print(f"    rmv_save ALL             Save all motif images")
-        print(f"    rmv_save HL              Save specific motif type images")
-        print(f"    rmv_fetch <PDB_ID>       Load a different structure")
         print()
     
     def save_all_motif_images(self, representation: str = 'cartoon') -> bool:
@@ -2072,11 +2030,6 @@ class VisualizationManager:
         self._print_motif_instance_table(motif_type, motif_details)
         self.logger.success(f"Viewing {len(motif_details)} {motif_type} instances")
 
-        print("  Next steps:")
-        print(f"    rmv_view {motif_type} <NO>         Zoom to specific instance")
-        print(f"    rmv_view {motif_type} hide         Remove {motif_type} coloring")
-        print(f"    rmv_show {motif_type}              Create objects & render")
-        print()
         return True
 
     def view_motif_instance(self, motif_type: str, instance_no: int,
@@ -2158,13 +2111,4 @@ class VisualizationManager:
 
         sel_display = sanitize_pymol_name(f"sele_{motif_type}_{instance_no}")
         print(f"  Selection: {sel_display}")
-        print()
-        print("  Next steps:")
-        if instance_no > 1:
-            print(f"    rmv_view {motif_type} {instance_no-1}             Previous instance")
-        if instance_no < len(motif_details):
-            print(f"    rmv_view {motif_type} {instance_no+1}             Next instance")
-        print(f"    rmv_view {motif_type} hide         Remove {motif_type} coloring")
-        print(f"    rmv_show {motif_type} {instance_no}              Create object & render")
-        print()
         return True

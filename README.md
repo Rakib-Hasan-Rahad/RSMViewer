@@ -161,8 +161,8 @@ superimposition, combination, coloring, and export.
 | `rmv_create_object <ID\|group>` | Create selectable PyMOL objects (camera unchanged). |
 | `rmv_super <ID\|group>` | Medoid-based superimposition (sequence-independent). |
 | `rmv_align <ID\|group>` | Medoid-based superimposition (sequence-dependent). |
-| `rmv_combine <group>, <group>[, ...], as <group>` | Combine saved groups into a new group. |
-| `rmv_set_color <group>, <color>` | Set a group color; preserved per source through `rmv_combine`. |
+| `rmv_combine_groups <group>, <group>[, ...], as <group>` | Combine saved groups into a new group. |
+| `rmv_set_color <group>, <color>` | Set a group color; preserved per source through `rmv_combine_groups`. |
 | `rmv_color <motif>, <color>` | Set a motif-family color preference. |
 | `rmv_bg_color <color>` | Change the background (non-motif) color. |
 | `rmv_save <group\|ID\|ALL> cif` | Export minimal coordinates-only mmCIF files (prints the output directory). |
@@ -265,7 +265,7 @@ rmv_select SR, 1S72, not RNA3DMotifAtlas and RNAMotifScanX, as group_FP
 rmv_select SR, 1S72, RNA3DMotifAtlas, as group_known
 rmv_set_color group_FP, red
 rmv_set_color group_known, blue
-rmv_combine group_FP, group_known, as group_combined
+rmv_combine_groups group_FP, group_known, as group_combined
 rmv_create_object group_combined
 rmv_super group_combined
 ```
@@ -304,12 +304,14 @@ so repeated queries are offline. Use `rmv_refresh` to bypass the cache.
 
    It must contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`.
 
-2. **Install** FR3D's Python dependencies once (`numpy`, `scipy`, `mmcif-pdbx`):
+2. **Set up** FR3D in one step (finds a Python, installs `numpy`, `scipy`,
+   `mmcif-pdbx`, and registers the source):
 
    ```text
-   rmv_fr3d setup
+   rmv_setup FR3D
    ```
 
+   To use a specific interpreter: `rmv_setup FR3D /absolute/path/to/python`.
    Alternatively, set `python_path` in `config/fr3d_config.json` to an
    interpreter that already has them.
 
@@ -430,7 +432,7 @@ residue sets that neither overlap by ≥ 0.60 Jaccard nor by ≥ 0.80 containmen
 so they sit on separate rows. Inspect with `rmv_list`.
 
 **FR3D is unavailable.** Confirm the checkout path in `config/fr3d_config.json`,
-run `rmv_fr3d setup`, and check `rmv_fr3d status`. Geometric queries need
+run `rmv_setup FR3D`, and check `rmv_fr3d status`. Geometric queries need
 `allow_network: true`.
 
 **RMSX returns no motifs.** A result can legitimately contain zero accepted
