@@ -732,7 +732,6 @@ class VisualizationManager:
         
         if motif_type not in loaded_motifs:
             self.logger.error(f"Motif type '{motif_type}' not loaded")
-            self.logger.info(f"Available: {', '.join(loaded_motifs.keys())}")
             return False
         
         # Get structure name and motif details
@@ -1894,7 +1893,7 @@ class VisualizationManager:
 
         if not motif_type:
             # Reset everything
-            self.cmd.color('gray80', f"model {structure_name} and polymer.nucleic")
+            self.cmd.color('gray80', f"model {structure_name}")
             self.logger.success("View coloring reset to gray")
             return True
 
@@ -1973,7 +1972,6 @@ class VisualizationManager:
 
         if motif_type not in loaded_motifs:
             self.logger.error(f"Motif type '{motif_type}' not loaded")
-            self.logger.info(f"Available: {', '.join(loaded_motifs.keys())}")
             return False
 
         info = loaded_motifs[motif_type]
@@ -2001,7 +1999,7 @@ class VisualizationManager:
         self.cmd.show('cartoon', f"model {structure_name} and polymer.nucleic")
         self.cmd.set('cartoon_nucleic_acid_mode', 4, f"model {structure_name}")
         self.cmd.set('cartoon_tube_radius', 0.37, f"model {structure_name}")
-        self.cmd.color('gray80', f"model {structure_name} and polymer.nucleic")
+        self.cmd.color('gray80', f"model {structure_name}")
 
         # Collect all residue selections for zoom target
         all_selections = []
@@ -2073,7 +2071,7 @@ class VisualizationManager:
         self.cmd.show('cartoon', f"model {structure_name} and polymer.nucleic")
         self.cmd.set('cartoon_nucleic_acid_mode', 4, f"model {structure_name}")
         self.cmd.set('cartoon_tube_radius', 0.37, f"model {structure_name}")
-        self.cmd.color('gray80', f"model {structure_name} and polymer.nucleic")
+        self.cmd.color('gray80', f"model {structure_name}")
 
         detail = motif_details[instance_no - 1]
         residues = detail.get('residues', [])

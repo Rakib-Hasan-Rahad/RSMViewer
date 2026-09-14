@@ -520,15 +520,17 @@ def superimpose_onto_medoid(objects, medoid_idx, method="super"):
 #  Colouring
 # ------------------------------------------------------------------ #
 
-def color_superimposed(objects, medoid_idx):
-    """Assign a unique colour to each object; medoid gets green."""
-    color_idx = 0
-    for i, obj in enumerate(objects):
-        if i == medoid_idx:
-            cmd.color(MEDOID_COLOR, obj)
-        else:
-            cmd.color(SUPER_COLORS[color_idx % len(SUPER_COLORS)], obj)
-            color_idx += 1
+def color_superimposed(objects, color_key):
+    """Colour every superimposed instance with one inherited colour.
+
+    The whole group inherits a single colour: the user's session colour for
+    the group/motif if one was set (rmv_set_color / rmv_color), otherwise the
+    default motif-family colour. Instances are not coloured individually and
+    the medoid is not highlighted separately.
+    """
+    from . import colors
+    for obj in objects:
+        colors.set_motif_color_in_pymol(cmd, obj, color_key)
 
 
 # ------------------------------------------------------------------ #
@@ -536,7 +538,7 @@ def color_superimposed(objects, medoid_idx):
 # ------------------------------------------------------------------ #
 
 def print_medoid_report(method, motif_type, objects, medoid_idx,
-                        avg_rmsd_list, super_results, skipped):
+                        avg_rmsd_list, super_results, skipped, color_key=None):
     """Print a formatted medoid superimposition report.
 
     Plain-ASCII output only (no box-drawing/emoji) so it renders correctly
@@ -553,19 +555,16 @@ def print_medoid_report(method, motif_type, objects, medoid_idx,
     print(f"  | Medoid:  {medoid_obj}  (avg RMSD: {avg_rmsd_list[medoid_idx]:.3f} A)")
     print(f"  +{rule}+")
 
-    print(f"  | {'#':<4} {'Instance':<30} {'Color':<10} {'RMSD to medoid':<16}")
+    print(f"  | {'#':<4} {'Instance':<30} {'Color':<12} {'RMSD to medoid':<16}")
 
-    color_idx = 0
+    group_color = color_key or motif_type
     for i, (obj, rmsd, ok) in enumerate(super_results):
         num = i + 1
         if i == medoid_idx:
-            c = MEDOID_COLOR.upper()
             rmsd_str = "- (medoid)"
         else:
-            c = SUPER_COLORS[color_idx % len(SUPER_COLORS)]
-            color_idx += 1
             rmsd_str = f"{rmsd:.3f} A" if ok else "FAILED"
-        print(f"  | {num:<4} {obj:<30} {c:<10} {rmsd_str:<16}")
+        print(f"  | {num:<4} {obj:<30} {group_color:<12} {rmsd_str:<16}")
 
     print(f"  +{rule}+")
 
@@ -648,17 +647,13 @@ def _run_medoid_pipeline(motif_type, pdb_src_tags, method, indices=None, padding
         if n > 200:
             print("  Tip: narrow with specific PDB_SRC tags.")
 
-    # ---------- enable instance objects, hide parent structure & combined objects ----------
-    all_pymol_objects = cmd.get_object_list()
-    for obj in all_pymol_objects:
-        upper = obj.upper()
-        if "_ALL_" in upper:
+    # ---------- show only the superimposed instances; hide every other object ----------
+    superimposed_set = set(objects)
+    for obj in cmd.get_object_list():
+        if obj in superimposed_set:
+            cmd.enable(obj)
+        else:
             cmd.disable(obj)
-        elif len(obj) == 4 and obj[0].isdigit() and obj.isalnum():
-            cmd.disable(obj)
-
-    for obj in objects:
-        cmd.enable(obj)
 
     method_label = "rmv_super" if method == "super" else "rmv_align"
     tag_desc = ", ".join(pdb_src_tags) if pdb_src_tags else "all loaded"
@@ -676,15 +671,15 @@ def _run_medoid_pipeline(motif_type, pdb_src_tags, method, indices=None, padding
     super_results = superimpose_onto_medoid(objects, medoid_idx, method=method)
 
     # ---------- colour ----------
-    color_superimposed(objects, medoid_idx)
+    color_superimposed(objects, motif_type)
 
-    # ---------- zoom ----------
+    # ---------- zoom + auto-orient onto the superimposed section ----------
     sel = " or ".join(objects)
-    cmd.zoom(sel)
+    cmd.orient(sel)
 
     # ---------- report ----------
     print_medoid_report(method_label, motif_type, objects, medoid_idx,
-                        avg_rmsd, super_results, skipped)
+                        avg_rmsd, super_results, skipped, color_key=motif_type)
 
 
 # ------------------------------------------------------------------ #
@@ -1023,12 +1018,22 @@ def register_alignment_commands():
                 medoid_idx,
                 method='align' if method_label == 'rmv_align' else 'super',
             )
-            color_superimposed(objects, medoid_idx)
+            color_superimposed(objects, target)
         finally:
             try:
                 cmd.feedback("enable", "executive", "actions")
             except Exception:
                 pass
+
+        # Show only the superimposed group; hide every other object, then
+        # auto-orient and zoom onto the superimposed section.
+        superimposed_set = set(objects)
+        for obj in cmd.get_object_list():
+            if obj in superimposed_set:
+                cmd.enable(obj)
+            else:
+                cmd.disable(obj)
+        cmd.orient(" or ".join(objects))
 
         print_medoid_report(
             method_label,
@@ -1038,6 +1043,7 @@ def register_alignment_commands():
             [averages[object_name] for object_name in objects],
             super_results,
             skipped_pairs,
+            color_key=target,
         )
         return True
 

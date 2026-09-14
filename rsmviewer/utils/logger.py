@@ -53,8 +53,9 @@ class PluginLogger:
         self._write(self._format_message("WARNING", message))
     
     def error(self, message):
-        """Log error level message."""
-        self._write(self._format_message("ERROR", message))
+        """Log error level message (no [ERROR] tag in the output)."""
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self._write(f"[{timestamp}] {message}")
     
     def debug(self, message):
         """Log debug level message."""
