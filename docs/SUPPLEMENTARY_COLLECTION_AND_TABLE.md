@@ -16,8 +16,9 @@ Found 223 motifs in 1S72
 Loaded 223 motif(s) in 44 families from 1S72
 ```
 
-Later, `rmv_list` may print stable IDs ending at approximately 210 rows. This
-is expected and does not mean that 13 annotations were lost.
+Later, a selected or combined group may contain fewer physical rows because
+overlapping annotations are consolidated within that explicit scope. This is
+expected and does not mean that raw annotations were lost.
 
 The counts mean:
 
@@ -25,13 +26,14 @@ The counts mean:
 | --- | --- |
 | `223 motifs` | Raw motif instances returned by the selected provider and accepted by the loader. |
 | `44 families` | Distinct display-family keys in the loaded summary. |
-| `210 table rows` | Distinct physical residue-set clusters after residue-based consolidation. |
-| `L1`, `L2`, `L3` | Source hierarchy labels stored on one consolidated row. |
+| Source-table rows | Raw source records retained by `rmv_db`. |
+| Selected/combined rows | Distinct physical residue-set clusters after scoped consolidation. |
+| `L1`, `L2`, `L3` | Source hierarchy labels stored on a selected or combined row. |
 
 Several raw annotations can describe the same physical residue fragment. They
-therefore occupy one consolidated row. Their labels are retained in
-`source_annotations` and `source_hierarchy` instead of producing duplicate
-stable IDs.
+remain separate after `rmv_db`; they occupy one consolidated row only when the
+user selects a family or explicitly combines groups. Their source labels are
+retained in `source_annotations` and `source_hierarchy`.
 
 For example, these two raw annotations may become one row:
 
@@ -53,11 +55,13 @@ Structure coordinates
     -> provider retrieval
     -> provider conversion to MotifInstance objects
     -> source-label normalization for matching only
-    -> residue normalization
-    -> residue-based consolidation
+    -> residue normalization into source-specific raw records
+    -> separate source tables (no overlap merging at rmv_db)
+    -> family selection or explicit group combination
+    -> residue-based consolidation within the requested scope
     -> source labels and hierarchy attached to rows
-    -> stable motif IDs
-    -> query groups and PyMOL operations
+    -> stable motif IDs and query groups
+    -> PyMOL operations
 ```
 
 The source-specific labels are not discarded during normalization. A canonical
@@ -409,14 +413,21 @@ rmv_fetch 1S72
 rmv_db RNA3DMotifAtlas, Rfam
 ```
 
-The sources are loaded into the same structure-local consolidated table. A row
-may contain one source, the other source, or both:
+The sources are retained separately in the structure-local annotation table.
+`rmv_db` does not perform containment filtering, Jaccard merging, or
+cross-source consolidation. Source-specific family tables report raw counts
+independently. Consolidation is deferred to `rmv_select` and
+`rmv_combine_groups`:
 
 ```text
-MOTIF_ID       Atlas                 Rfam
-1S72_00016     Sarcin-Ricin          -
-1S72_00042     -                     sarcin-ricin-1
-1S72_00051     Sarcin-Ricin          sarcin-ricin-2
+Source: RNA3DMotifAtlas
+SELECTABLE NAME       ANNOTATION NAME       COUNT
+Sarcin-Ricin          Sarcin-Ricin          8
+
+Source: Rfam
+SELECTABLE NAME       ANNOTATION NAME       COUNT
+Sarcin-Ricin          sarcin-ricin-1 /      5
+                       sarcin-ricin-2
 ```
 
 A shared-source query requires that **both sources label the same row as the
@@ -802,58 +813,29 @@ any consolidation.
 These are counts of raw provider instances, not table rows. A single physical
 motif can be described by several raw instances.
 
-### 21.2 Step 2 — consolidation into the structure table
+### 21.2 Step 2 — deferred consolidation
 
-Annotations are added to the structure's `ConsolidatedAnnotationTable`, source
-by source, in the order requested (Atlas first, then Rfam). Two residue sets are
-merged onto one row when
+The raw source records remain separate after `rmv_db`. Two residue sets are
+merged only within the scope requested by `rmv_select`, or when the user
+explicitly calls `rmv_combine_groups`, using
 
 ```text
 Jaccard(A, B) >= 0.60   OR   containment(A, B) >= 0.80
 ```
 
-The `... consolidated motif row(s) ...` line prints the number of distinct
-physical rows after this step.
+The selected or combined group contains physical residue rows. Its source
+columns retain the original database labels, including different family
+assignments for the same merged region. The original source records and input
+groups remain unchanged.
 
-| Structure | Rows carrying Atlas | Rows carrying Rfam | Total rows |
-| --- | --- | --- | --- |
-| 1S72 | 210 | 32 | 212 |
-| 1FFK | 205 | 8 | 205 |
+### 21.3 Step 3 — family counts in the source tables
 
-How the 1S72 total row count (212) is reached:
-
-```text
-Atlas: 223 raw  -> 210 rows        (13 raw absorbed into equal residue sets)
-Rfam:   35 raw  ->  32 labelled rows
-          of those 32 Rfam-labelled rows:
-              30 land on existing Atlas rows  (become dual-source rows)
-               2 create brand-new rows        (Rfam-only)
-
-Total rows = Atlas rows + Rfam-only rows
-           = 210 + 2
-           = 212
-```
-
-The same relation checks out from set arithmetic:
-
-```text
-rows carrying Atlas  = 210
-rows carrying Rfam   =  32
-rows carrying both   = 210 + 32 - 212 = 30
-Atlas-only rows      = 210 - 30 = 180
-Rfam-only rows       =  32 - 30 =   2
-180 + 30 + 2 = 212   ✓
-```
-
-For 1FFK, all 8 Rfam-labelled rows fall on existing Atlas rows, so no new rows
-are created and the total equals the Atlas row count (205).
-
-### 21.3 Step 3 — family counts in the printed table
-
-The `COUNT` column is not a count of rows. It counts, for each canonical family,
-how many rows carry at least one label that maps to that family — across both
-`source_annotations` and `source_hierarchy`, from either source. This is exactly
-what `rmv_select` matches, so the two always agree.
+The `COUNT` column is source-specific. It counts, for each canonical family,
+how many raw rows from that source carry at least one label that maps to that
+family. The selectable name is canonicalized for matching, while the annotation
+column retains the source's original wording. Selection may subsequently merge
+rows within its requested family and source scope, so a source-table count is
+not a combined-group row count.
 
 A row is counted once per family it belongs to. Because one row can carry more
 than one family label, a row can be counted under several families.
@@ -884,41 +866,19 @@ it requires both sources on the same row:
 rmv_select SR, 1S72, RNA3DMotifAtlas and Rfam    -> 5   (subset of the 8)
 ```
 
-This is why the suggested next-step command uses `or`: it reproduces the count
-shown in the table.
+### 21.4 Step 4 — the source-specific `Total` line
 
-### 21.4 Step 4 — the `Total` line
-
-`Total` is the sum of the `COUNT` column: the number of (row, family)
-memberships. It is deliberately different from the row count because a row can
-belong to several families.
-
-For 1S72:
-
-```text
-sum of all COUNT values        = 231   (Total)
-distinct consolidated rows     = 212
-difference                     =  19    (memberships contributed by rows that
-                                         belong to more than one family)
-```
-
-A concrete multi-family row is `1FFK_00043`, which carries both `C-loop` and
-`sarcin-ricin-1`, so it is counted once under `C-LOOP` and once under
-`SARCIN-RICIN`. Rows with a two-level hierarchy (for example `IL` then
-`Kink-turn`) are likewise counted under both `IL` and `K-TURN`.
-
-Full 1S72/1FFK summary of the four printed numbers:
-
-| Structure | Raw (Atlas + Rfam) | Rows | Families | Total (memberships) |
-| --- | --- | --- | --- | --- |
-| 1S72 | 223 + 35 | 212 | 45 | 231 |
-| 1FFK | 214 + 10 | 205 | 45 | 216 |
+`Total` at the bottom of each source table is that source's raw annotation
+total. It is intentionally not a cross-source total and not a count of rows in
+a selected or combined group. A family count can be smaller or larger than a
+physical-row count because one raw row may carry multiple hierarchy labels.
 
 ### 21.5 Display-name normalization
 
-The `COUNT` column shows one representative name per canonical family. Three
-labels are normalized for display only, because their raw source spelling is
-inconsistent while `rmv_select` already treats them as one family:
+The `SELECTABLE NAME` column shows one canonical copyable name per family. Three
+names are normalized for selection, because their raw source spelling is
+inconsistent while `rmv_select` treats them as one family. The `ANNOTATION NAME`
+column retains the original source wording:
 
 ```text
 Ribsomal LSU H95     -> Ribosomal LSU H95   (source typo)
@@ -926,40 +886,23 @@ right_angle-3        -> Right-angle         (Rfam index suffix)
 twist_up             -> Twist-up            (Rfam short name)
 ```
 
-The stored `source_annotations` keep the original spelling for provenance;
-only the printed family label is normalized. Queries such as
+The stored `source_annotations` and displayed annotation values keep the
+original spelling for provenance/display; only the selectable family label is
+normalized. Queries such as
 `rmv_select Right-angle, ...` and `rmv_select twist_up, ...` both resolve to the
 same canonical family.
 
 ### 21.6 Reading the numbers together
 
-```text
-223 + 35   raw provider annotations (before consolidation)
-   212      distinct physical rows (what rmv_list shows, what you can view)
-    45      canonical families present
-   231      family memberships (sum of the COUNT column)
-```
-
-None of these contradict each other. They answer four different questions:
-how much each source reported, how many physical fragments exist, how many
-families are present, and how many family-level selections those fragments
-support.
+For each PDB, the load log reports the raw total for each source. The following
+source table reports the same source-specific total and breaks it down by
+selectable family. A later `rmv_select` or `rmv_combine_groups` result is a
+separate, scope-specific physical-fragment view and should not be added to the
+raw source totals.
 
 
-### worked example
-Results — all checks pass
-1S72
+2. "43 families" — that's correct, not a bug
+It's genuinely what BGSU Atlas annotates for 1S72 (the large 23S/5S rRNA subunit). The table lists 43 distinct canonical families totaling 223 motif instances. The counter groups every source spelling into its canonical family:
 
-rows=212  families=45  Total=231
-atlas_rows=210  rfam_rows=32  both=30  atlas_only=180  rfam_only=2
-union check: 210 + 32 − 30 = 212                     ✓
-multi_family_rows=15  extra_memberships=19
-Total check: 212 + 19 = 231                          ✓
-family COUNT vs rmv_select mismatches: 0 / 45         ✓
-1FFK
-rows=205  families=45  Total=216
-atlas_rows=205  rfam_rows=8  both=8  atlas_only=197  rfam_only=0
-union check: 205 + 8 − 8 = 205                       ✓
-multi_family_rows=11  extra_memberships=11
-Total check: 205 + 11 = 216                          ✓
-family COUNT vs rmv_select mismatches: 0 / 45         ✓
+HAIRPIN LOOP (HL) + OTHER HL → one family (Hairpin-Loop)
+RIBSOMAL LSU H95 (source typo) → Ribosomal-Lsu-H95

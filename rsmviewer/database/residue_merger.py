@@ -205,6 +205,20 @@ def _annotate_overlap(ref_inst: MotifInstance, discarded_inst: MotifInstance) ->
             also.append(label)
     
     ref_inst.metadata['_also_found_in'] = also
+    _merge_family_labels(ref_inst, discarded_inst)
+
+
+def _merge_family_labels(dst_inst, src_inst) -> None:
+    """Union per-source original wording so a retained row keeps every
+    database's own label from the instances merged into it."""
+    if not getattr(dst_inst, 'metadata', None) or not getattr(src_inst, 'metadata', None):
+        return
+    dst_map = dst_inst.metadata.setdefault('_source_family_labels', {})
+    for source, labels in src_inst.metadata.get('_source_family_labels', {}).items():
+        existing = dst_map.setdefault(source, [])
+        for label in labels:
+            if label and label not in existing:
+                existing.append(label)
 
 
 class ResidueMerger:
@@ -513,6 +527,7 @@ class ResidueMerger:
                             if lbl and lbl != ref_label_str and lbl not in also:
                                 also.append(lbl)
                         u_inst.metadata['_also_found_in'] = also
+                        _merge_family_labels(u_inst, c_ref_inst)
                         # Update ref_all so later comparisons use the larger set
                         for idx, (rk, ri, rs) in enumerate(ref_all):
                             if ri is c_ref_inst:

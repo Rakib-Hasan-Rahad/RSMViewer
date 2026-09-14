@@ -1600,7 +1600,7 @@ class MotifVisualizerGUI:
             if ok:
                 self.logger.success(f"Ready interpreter with FR3D dependencies: {cand}")
                 if self.register_fr3d_source(str(self.default_fr3d_config)):
-                    self.logger.success("FR3D is ready. Next: rmv_fetch <PDB_ID> ; rmv_db FR3D")
+                    self.logger.success("FR3D is ready.")
                     return True
                 return False
 
@@ -1614,7 +1614,7 @@ class MotifVisualizerGUI:
             return False
 
         if self.register_fr3d_source(str(self.default_fr3d_config)):
-            self.logger.success("FR3D is fully set up. Next: rmv_fetch <PDB_ID> ; rmv_db FR3D")
+            self.logger.success("FR3D is fully set up.")
             return True
         self.logger.error("Dependencies installed but FR3D registration still failed; see the reason above.")
         return False
@@ -1717,12 +1717,9 @@ class MotifVisualizerGUI:
                 self.logger.info(f"Note: interpreter installed deps but repo import check said: {detail}")
 
         if getattr(self, 'fr3d_registered', False):
-            self.logger.info("FR3D is ready. Next: rmv_fetch <PDB_ID> ; rmv_load_motif")
+            self.logger.info("FR3D is ready.")
         else:
-            self.logger.info(
-                "FR3D interpreter is ready. Next: rmv_fetch <PDB_ID> ; rmv_db FR3D ; "
-                "rmv_load_motif"
-            )
+            self.logger.info("FR3D interpreter is ready.")
         return True
 
     def _get_current_source_motifs(self):
@@ -2716,18 +2713,7 @@ class MotifVisualizerGUI:
         return result
 
     def _family_source_breakdown(self, structure_id: str, source_names: Optional[List[str]] = None):
-        """Per-family, per-source breakdown for the rmv_db table.
-
-        Returns ``(source_order, families, totals)`` where:
-          - ``source_order`` is the ordered list of source columns to show,
-          - ``families`` is a list of dicts with keys ``display`` (copy-paste
-            family name), ``representative`` (a canonical spelling), ``total``
-            (rows across the shown sources) and ``per_source`` mapping each
-            source to ``(labels_text, count)``,
-          - ``totals`` maps each source to its loaded-row count.
-        Each source's own label(s) and count are kept separate so a combined
-        load shows one annotation + count column per database.
-        """
+        """Return source-specific family rows without changing annotation data."""
         from collections import Counter, defaultdict
         from .database.motif_aliases import canonical_motif, converted_family_name
 
@@ -2742,27 +2728,25 @@ class MotifVisualizerGUI:
             for source in row.source_annotations:
                 if source not in present:
                     present.append(source)
-        if source_names:
-            source_order = [s for s in source_names if s in present]
-            for s in present:
-                if s not in source_order:
-                    source_order.append(s)
-        else:
-            source_order = present
+        source_order = list(source_names or present)
+        for source in present:
+            if source not in source_order:
+                source_order.append(source)
         filter_set = set(source_order)
 
         fam_source_count: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
         fam_source_labels: Dict[str, Dict[str, Counter]] = defaultdict(lambda: defaultdict(Counter))
-        label_pool: Dict[str, Counter] = defaultdict(Counter)
         totals: Dict[str, int] = defaultdict(int)
+        canonical_display = {
+            "RIBOSOMAL LSU H95": "Ribosomal LSU H95",
+            "RIGHT-ANGLE": "Right-angle",
+            "TWIST-UP": "Twist-up",
+        }
 
         for row in table.rows:
             if getattr(row, 'structure_id', structure_id) != structure_id:
                 continue
-            row_sources = set(row.source_annotations) & filter_set
-            if not row_sources:
-                continue
-            for source in row_sources:
+            for source in set(row.source_annotations) & filter_set:
                 totals[source] += 1
                 labels = list(row.source_annotations.get(source, ())) + list(
                     row.source_hierarchy.get(source, ())
@@ -2773,108 +2757,89 @@ class MotifVisualizerGUI:
                         continue
                     canonical = canonical_motif(label)
                     families_here.add(canonical)
-                    label_pool[canonical][label] += 1
                     fam_source_labels[canonical][source][label] += 1
                 for canonical in families_here:
                     fam_source_count[canonical][source] += 1
 
-        canonical_display = {
-            "RIBOSOMAL LSU H95": "Ribosomal LSU H95",
-            "RIGHT-ANGLE": "Right-angle",
-            "TWIST-UP": "Twist-up",
-        }
-        families = []
-        for canonical, per_source_counts in fam_source_count.items():
-            representative = canonical_display.get(
-                canonical, label_pool[canonical].most_common(1)[0][0])
-            per_source = {}
-            for source in source_order:
+        source_families = {}
+        for source in source_order:
+            rows = []
+            for canonical, per_source_counts in fam_source_count.items():
                 count = per_source_counts.get(source, 0)
-                if count:
-                    labels_text = " / ".join(
-                        label for label, _ in fam_source_labels[canonical][source].most_common()
-                    )
-                else:
-                    labels_text = ""
-                per_source[source] = (labels_text, count)
-            families.append({
-                "display": converted_family_name(representative),
-                "representative": representative,
-                "total": sum(per_source_counts.values()),
-                "per_source": per_source,
-            })
-        families.sort(key=lambda item: (-item["total"], item["display"].upper()))
-        return source_order, families, dict(totals)
+                if not count:
+                    continue
+                labels = sorted(fam_source_labels[canonical][source])
+                rows.append({
+                    "selectable": converted_family_name(
+                        canonical_display.get(canonical, canonical)
+                    ),
+                    "annotation": " / ".join(labels),
+                    "count": count,
+                    "canonical": canonical,
+                })
+            rows.sort(key=lambda row: (-row["count"], row["selectable"].upper()))
+            source_families[source] = rows
+        return source_order, source_families, dict(totals)
 
-    def _print_family_table_sources(self, source_order, families, totals) -> None:
-        """Print the rmv_db family table with one annotation + count column per source."""
-        columns = ["SELECTABLE FAMILY NAME"]
-        for source in source_order:
-            columns.append(f"{source} ANNOTATION")
-            columns.append(f"# LOADED ({source})")
-
-        data_rows = []
-        for family in families:
-            cells = [family["display"]]
-            for source in source_order:
-                labels_text, count = family["per_source"].get(source, ("", 0))
-                cells.append(labels_text if labels_text else "-")
-                cells.append(str(count) if count else "-")
-            data_rows.append(cells)
-
-        total_cells = ["Total"]
-        for source in source_order:
-            total_cells.append("")
-            total_cells.append(str(totals.get(source, 0)))
-
-        widths = [len(header) for header in columns]
-        for cells in data_rows + [total_cells]:
-            for index, cell in enumerate(cells):
-                widths[index] = max(widths[index], len(cell))
-
-        def _fmt(cells):
-            return "  " + "   ".join(cell.ljust(widths[index]) for index, cell in enumerate(cells))
-
-        print("")
-        print(_fmt(columns))
-        print("  " + "   ".join("-" * widths[index] for index in range(len(columns))))
-        for cells in data_rows:
-            print(_fmt(cells))
-        print(_fmt(total_cells))
-        print("")
-        print("  (copy the SELECTABLE FAMILY NAME column into rmv_select)")
-        print("  Input is normalized, so minor differences in spaces, hyphens,")
-        print("  capitalization, or parentheses are accepted. Each source keeps")
-        print("  its own annotation name and its own loaded-motif count.")
+    @staticmethod
+    def _print_wrapped_family_table(source, rows, total) -> None:
+        """Print one compact source table with aligned wrapped text columns."""
+        selectable_width = min(36, max([len("SELECTABLE NAME")] + [len(r["selectable"]) for r in rows]))
+        annotation_width = min(42, max([len("ANNOTATION NAME")] + [len(r["annotation"]) for r in rows]))
+        count_width = max(len("COUNT"), len(str(total)))
+        line = f"{'SELECTABLE NAME':<{selectable_width}}  {'ANNOTATION NAME':<{annotation_width}}  {'COUNT':>{count_width}}"
+        rule = f"{'-' * selectable_width}  {'-' * annotation_width}  {'-' * count_width}"
+        print(f"\nSource: {source}")
+        if not rows:
+            print("No annotations reported for this source.")
+            return
+        print(f"Raw annotations: {total} | Families: {len(rows)}\n")
+        print(line)
+        print(rule)
+        for row in rows:
+            left = [row["selectable"][i:i + selectable_width] for i in range(0, len(row["selectable"]), selectable_width)]
+            right = [row["annotation"][i:i + annotation_width] for i in range(0, len(row["annotation"]), annotation_width)]
+            height = max(len(left), len(right))
+            for index in range(height):
+                selectable = left[index] if index < len(left) else ""
+                annotation = right[index] if index < len(right) else ""
+                count = str(row["count"]) if index == 0 else ""
+                print(f"{selectable:<{selectable_width}}  {annotation:<{annotation_width}}  {count:>{count_width}}")
+        print(f"{'Total':<{selectable_width}}  {'':<{annotation_width}}  {total:>{count_width}}")
 
     def _report_loaded_families(self, pdb_id, pdb_id_upper, source_suffix, source_fallback, motif_summary) -> None:
         """Log the load summary and print the per-source family table."""
         tag = f"{pdb_id_upper}{source_suffix}" if source_suffix else pdb_id_upper
         source_list = ", ".join(self.current_source_names) if self.current_source_names else source_fallback
-        source_order, families, totals = self._family_source_breakdown(
+        source_order, source_families, totals = self._family_source_breakdown(
             pdb_id_upper, self.current_source_names
         )
 
-        table_obj = self.annotation_tables.get(pdb_id_upper)
-        source_filter_set = set(self.current_source_names)
-        if table_obj:
-            row_count = sum(
-                1 for row in table_obj.rows if set(row.source_annotations) & source_filter_set
-            )
-        else:
-            row_count = sum(totals.values())
+        row_count = sum(totals.values())
+        displayed_rows = [
+            row for source in source_order for row in source_families.get(source, [])
+        ]
 
-        if families:
+        if displayed_rows:
             self.logger.success(
-                f"Loaded {row_count} motif row(s) in {len(families)} "
-                f"families from {pdb_id} via {source_list} (tag: {tag})")
-            self._print_family_table_sources(source_order, families, totals)
-            preferred = next(
-                (f["representative"] for f in families if 'SARCIN' in f["representative"].upper()),
-                families[0]["representative"],
+                f"Loaded {row_count} raw annotation(s) from {len(source_order)} "
+                f"source(s) for {pdb_id} via {source_list} (tag: {tag})"
+            )
+            for source in source_order:
+                self._print_wrapped_family_table(
+                    source,
+                    source_families.get(source, []),
+                    totals.get(source, 0),
+                )
+            print("\nCopy a SELECTABLE NAME into rmv_select.")
+            print("Input normalization accepts minor differences in capitalization, spaces,")
+            print("hyphens, and parentheses.")
+            first_source = next(
+                (source for source in source_order if source_families.get(source)),
+                None,
             )
         else:
-            # Fallback to raw per-type counts if the table is empty.
+            # Fallback for providers that return raw motifs before table rows exist.
             family_rows = []
             for key, info in motif_summary.items():
                 names = info.get('display_names')
@@ -2884,13 +2849,22 @@ class MotifVisualizerGUI:
             if not row_count:
                 row_count = sum(count for _, count in family_rows)
             self.logger.success(
-                f"Loaded {row_count} motif row(s) in {len(family_rows)} "
-                f"families from {pdb_id} via {source_list} (tag: {tag})")
-            self._print_family_table(family_rows)
-            preferred = next(
-                (name for name, _ in family_rows if 'SARCIN' in name.upper()),
-                family_rows[0][0] if family_rows else 'MOTIF',
+                f"Loaded {row_count} raw annotation(s) from {len(source_order)} "
+                f"source(s) for {pdb_id} via {source_list} (tag: {tag})"
             )
+            fallback_source = source_order[0] if source_order else source_fallback
+            fallback_rows = [
+                {
+                    "selectable": converted_family_name(name),
+                    "annotation": name,
+                    "count": count,
+                }
+                for name, count in family_rows
+            ]
+            self._print_wrapped_family_table(fallback_source, fallback_rows, row_count)
+            print("\nCopy a SELECTABLE NAME into rmv_select.")
+            print("Input normalization accepts minor differences in capitalization, spaces,")
+            print("hyphens, and parentheses.")
 
     def _auto_color_motifs_on_structure(self, structure_name: str):
         """Color all loaded motif residues on the base PDB structure.
@@ -4661,7 +4635,7 @@ class MotifVisualizerGUI:
         print(f"  rmv_super {motif_arg}             Superimpose all {motif_arg} instances\n")
 
     @staticmethod
-    def _instance_from_residue_set(residue_set, family, source_label, instance_id):
+    def _instance_from_residue_set(residue_set, family, source_label, instance_id, source_labels=()):
         """Build a lightweight MotifInstance from a consolidated row residue set."""
         from .database.base_provider import MotifInstance, ResidueSpec
         residues = [
@@ -4673,13 +4647,19 @@ class MotifVisualizerGUI:
             )
             for chain, number, insertion, model in residue_set
         ]
+        # _source_family_labels keeps each database's original wording so the
+        # displayed value is not collapsed to the normalized query family.
+        family_labels = {source_label: list(source_labels)} if source_label and source_labels else {}
         return MotifInstance(
             instance_id=str(instance_id),
             motif_id=str(family),
             pdb_id='',
             residues=residues,
             annotation='',
-            metadata={'_source_label': source_label},
+            metadata={
+                '_source_label': source_label,
+                '_source_family_labels': family_labels,
+            },
         )
 
     def _merge_source_instances(self, structure_id, ordered_sources, ordered_labels, group_name):
@@ -4709,10 +4689,13 @@ class MotifVisualizerGUI:
                 index += 1
                 meta = instance.metadata or {}
                 labels = [meta.get('_source_label', '')] + list(meta.get('_also_found_in', []))
+                family_labels = meta.get('_source_family_labels', {}) or {}
                 source_annotations = {}
                 for label in labels:
-                    if label:
-                        source_annotations.setdefault(label, (str(motif_type),))
+                    if not label:
+                        continue
+                    original = tuple(family_labels.get(label, ()))
+                    source_annotations.setdefault(label, original or (str(motif_type),))
                 rows.append(
                     AnnotationRow(
                         motif_id=f"{group_name}_{index:03d}",
@@ -4738,8 +4721,13 @@ class MotifVisualizerGUI:
             for source in sources:
                 if source not in discovered:
                     discovered.append(source)
+                original_labels = list(row.source_annotations.get(source, ()))
+                for label in row.source_hierarchy.get(source, ()):
+                    if label and label not in original_labels:
+                        original_labels.append(label)
                 instance = self._instance_from_residue_set(
-                    row.residue_set, family, source, f"{source}:{row.motif_id}"
+                    row.residue_set, family, source, f"{source}:{row.motif_id}",
+                    source_labels=original_labels,
                 )
                 per_source[source].setdefault(family, []).append(instance)
 
@@ -4916,18 +4904,7 @@ class MotifVisualizerGUI:
                 family_by_structure.setdefault(structure_id, []).append((row, row_sources))
 
         if not family_by_structure:
-            available = sorted({
-                label
-                for table in self.annotation_tables.values()
-                for row in table.rows
-                for values in row.source_hierarchy.values()
-                for label in values
-            })
-            hint = ", ".join(available[:12]) if available else "no motif labels are loaded"
-            self.logger.error(
-                f"No motifs matched '{query.motif}'. Available motif hints: {hint}. "
-                "Use rmv_list to inspect stable motif IDs."
-            )
+            self.logger.error(f"No motifs matched '{query.motif}'.")
             return
 
         # Step 2: containment + Jaccard merge over this family only (across all
@@ -5231,7 +5208,7 @@ class MotifVisualizerGUI:
 
     def view_annotation_results(
         self, target: str, color_override: Optional[str] = None,
-        hide: bool = False, padding: int = 0
+        hide: bool = False, padding: int = 0, gray_base: bool = True
     ) -> None:
         """Highlight a stable motif ID or saved group on its parent structure."""
         if target in self.query_groups:
@@ -5247,7 +5224,7 @@ class MotifVisualizerGUI:
         from .utils.parser import SelectionParser
 
         # Gray out the base structure(s) so the highlighted motifs stand out.
-        if not hide:
+        if gray_base and not hide:
             self._gray_out_base_structures(
                 {self.loaded_structures.get(row.structure_id, row.structure_id)
                  for row in rows})
@@ -5824,10 +5801,6 @@ class MotifVisualizerGUI:
         config = get_config()
         config.specific_source = None
         
-        # Sources are loaded and kept separate; any residue merging is deferred
-        # to rmv_select / rmv_combine_groups (professor's design). rmv_db does not merge.
-        self.logger.success(
-            f"Loaded {len(source_ids)} sources - kept separate (merging happens in rmv_select/rmv_combine_groups)")
         for i, sid in enumerate(source_ids, 1):
             info = SOURCE_ID_MAP[sid]
             public_name = (
@@ -5894,8 +5867,6 @@ class MotifVisualizerGUI:
         self.logger.debug(f"  - self.current_local_source = {self.current_local_source}")
         self.logger.debug(f"  - config.specific_source = {config.specific_source}")
         self.logger.debug(f"  - Expected to load from: {subtype} ONLY")
-        if not self.loaded_pdb_id:
-            self.logger.info("Next: rmv_fetch <PDB_ID> to load a structure.")
     
     def _handle_web_source_by_id(self, source_id: int, source_info: Dict, extra_args: str = None):
         """Handle online source selection by ID."""
@@ -5929,8 +5900,6 @@ class MotifVisualizerGUI:
         self.logger.debug(f"  - self.current_web_source = {self.current_web_source}")
         self.logger.debug(f"  - config.specific_source = {config.specific_source}")
         self.logger.debug(f"  - Expected to load from: {provider_id} ONLY")
-        if not self.loaded_pdb_id:
-            self.logger.info("Next: rmv_fetch <PDB_ID> to load a structure.")
     
     def _handle_user_source_by_id(self, source_id: int, source_info: Dict, extra_args: str = None):
         """Handle user annotation source selection by ID.
@@ -6430,23 +6399,27 @@ class MotifVisualizerGUI:
         """
         Force refresh cache and collect motif data again.
         
-        Uses the last loaded PDB and last selected source (or combined sources).
-        Clears the cached data for that PDB, then re-fetches fresh motif data
-        from the same source(s) that were last used.
+        Uses all active loaded PDBs when no PDB is specified, or only the
+        requested PDB when one is specified. Clears cached data and re-fetches
+        motif data from the same source(s) that were last used.
         
         Args:
-            pdb_id (str): PDB ID to refresh (uses currently loaded PDB if not specified)
+            pdb_id (str): PDB ID to refresh, or all active PDBs when omitted
         """
         try:
-            # Determine PDB ID - use current if not specified
-            if not pdb_id:
-                pdb_id = self.loaded_pdb_id
-            
-            if not pdb_id:
+            if pdb_id:
+                pdb_ids = [str(pdb_id).upper()]
+            else:
+                active_objects = set(cmd.get_object_list())
+                pdb_ids = sorted(
+                    structure_id
+                    for structure_id, object_name in self.loaded_structures.items()
+                    if object_name in active_objects
+                )
+
+            if not pdb_ids:
                 self.logger.error("No structure loaded. Use rmv_fetch <PDB_ID> first.")
                 return
-            
-            pdb_id = pdb_id.upper()
             
             # Determine which source(s) to refresh from
             if not self.current_source_mode:
@@ -6465,24 +6438,25 @@ class MotifVisualizerGUI:
             else:
                 source_desc = self.current_source_mode
             
-            self.logger.info(f"Clearing cache and re-collecting motifs for {pdb_id} from {source_desc}...")
-            
-            # Clear cache for this PDB
             from .database import get_source_selector
             source_selector = get_source_selector()
-            
-            if source_selector and hasattr(source_selector, '_cache_manager'):
-                try:
-                    source_selector._cache_manager.clear_cache_for_pdb(pdb_id)
-                    self.logger.debug(f"Cleared cache entries for {pdb_id}")
-                except Exception:
-                    pass  # Cache clearing is best-effort
-            
-            # Re-run the same fetch pipeline that rmv_load_motif uses
-            self.fetch_motif_data_action(pdb_id)
-            
-            self.logger.success(f"Refresh complete for {pdb_id} from {source_desc}")
-            self.logger.info(f"Next: rmv_summary | rmv_show <TYPE>")
+
+            for active_pdb_id in pdb_ids:
+                self.logger.info(
+                    f"Clearing cache and re-collecting motifs for {active_pdb_id} from {source_desc}..."
+                )
+                if source_selector and hasattr(source_selector, '_cache_manager'):
+                    try:
+                        source_selector._cache_manager.clear_cache_for_pdb(active_pdb_id)
+                        self.logger.debug(f"Cleared cache entries for {active_pdb_id}")
+                    except Exception:
+                        pass  # Cache clearing is best-effort
+
+                self.fetch_motif_data_action(active_pdb_id)
+                self.logger.success(
+                    f"Refresh complete for {active_pdb_id} from {source_desc}"
+                )
+
                 
         except Exception as e:
             self.logger.error(f"Failed to refresh motifs: {e}")
@@ -6705,7 +6679,7 @@ def initialize_gui():
                 )
                 if already:
                     gui.logger.info(
-                        f"{display_id} is already loaded - skipping (use rmv_refresh to reload it).")
+                        f"{display_id} is already loaded - skipping.")
                 else:
                     kept.append(token)
             if not kept:
@@ -7067,7 +7041,6 @@ def initialize_gui():
             if structure:
                 cmd.color('gray80', f"model {structure}")
                 gui.logger.info(f"Dehighlighted all motif residues on {structure}.")
-                gui.logger.info("Next: rmv_view <Motif_ID|group> to highlight again.")
             else:
                 gui.command_error("No structure loaded. Use rmv_fetch first.")
             return
@@ -7075,7 +7048,6 @@ def initialize_gui():
             value in table._rows for table in gui.annotation_tables.values()
         ):
             gui.view_annotation_results(value, hide=True)
-            gui.logger.info(f"Next: rmv_view {value} to highlight it again.")
             return
         gui.command_error(
             f"Unknown hide target '{value}'. Use rmv_hide <Motif_ID|group> or rmv_hide all."
@@ -7283,12 +7255,13 @@ def initialize_gui():
     def refresh_motifs(pdb_id=''):
         """PyMOL command: Force refresh cache and collect motif data again.
         
-        Clears cached data for the currently loaded PDB and re-fetches
-        motif information from the last selected source (or combined
-        sources if combine mode was used).
+        Clears cached data for all active loaded PDBs and re-fetches motif
+        information from the last selected source (or combined sources if
+        combine mode was used). A PDB argument limits the refresh to that PDB.
         
         Usage:
-            rmv_refresh        - Refresh current PDB from last selected source
+            rmv_refresh        - Refresh all active PDBs from the last selected source
+            rmv_refresh <PDB_ID> - Refresh one active PDB
         """
         pdb_arg = str(pdb_id).strip() if pdb_id else None
         gui.refresh_motifs_action(pdb_arg)
@@ -7621,13 +7594,22 @@ def initialize_gui():
             for name in missing_targets:
                 gui.logger.warning(
                     f"'{name}' is not a saved group or motif ID; skipping it.")
-            last_index = len(valid_targets) - 1
+            # Gray every involved base structure once so highlighting a later
+            # target does not erase the colors of an earlier one.
+            if not hide_target:
+                involved = {
+                    gui.loaded_structures.get(row.structure_id, row.structure_id)
+                    for name in valid_targets
+                    for row in gui._rows_for_target(name)
+                }
+                gui._gray_out_base_structures(involved)
             for index, name in enumerate(valid_targets):
                 gui.view_annotation_results(
                     name,
                     color_override=color_override,
                     hide=hide_target,
                     padding=padding,
+                    gray_base=False,
                 )
             return
 
