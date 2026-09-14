@@ -735,7 +735,7 @@ class MotifVisualizerGUI:
                     self.logger.warning(f"Ignoring invalid P-value for '{motif_name}' in {path}")
             if overrides:
                 self.user_rmsx_custom_pvalues = overrides
-                self.logger.success(f"Loaded {len(overrides)} P-value cutoff(s) from {path}")
+                self.logger.debug(f"Loaded {len(overrides)} P-value cutoff(s) from {path}")
 
 
     def _run_rmsx_runtime_setup(self, build: bool = False) -> Dict:
@@ -2309,7 +2309,7 @@ class MotifVisualizerGUI:
                 else source_name
             )
             if len(self.current_source_names) == 1:
-                self.logger.success(
+                self.logger.debug(
                     f"Found {total_count} motifs in {pdb_id} (source: {public_source})")
             
             # Process motifs for data access (WITHOUT creating PyMOL objects)
@@ -2528,11 +2528,10 @@ class MotifVisualizerGUI:
                 safe_group = family_short_code(preferred)
                 converted_preferred = converted_family_name(preferred)
                 print("")
-                print("  Next steps:")
+                print("  Then use:")
+                print("  Use a SELECTABLE FAMILY NAME from the first column in rmv_select.")
+                print("  Example:")
                 print(f"    rmv_select {converted_preferred}, {pdb_id_upper}, {source_expr}, as group_{safe_group}")
-                print(f"    rmv_view group_{safe_group}             Highlight the saved group")
-                print(f"    rmv_create_object group_{safe_group}    Create selectable objects")
-                print(f"    rmv_super group_{safe_group}            Superimpose the group")
                 print("")
             else:
                 self.logger.warning(f"No valid motifs found for {pdb_id}")
@@ -2553,7 +2552,7 @@ class MotifVisualizerGUI:
             (converted_family_name(name), name, count) for name, count in family_rows
         ]
         conv_header, name_header, count_header = (
-            "CONVERTED NAME", "ANNOTATION NAME", "# LOADED MOTIFS",
+            "SELECTABLE FAMILY NAME", "SOURCE ANNOTATION NAME", "# LOADED MOTIFS",
         )
         conv_width = max([len(conv) for conv, _, _ in rows] + [len(conv_header), len("Total")])
         name_width = max([len(name) for _, name, _ in rows] + [len(name_header)])
@@ -2565,8 +2564,10 @@ class MotifVisualizerGUI:
         total = sum(count for _, _, count in rows)
         print(f"  {'Total'.ljust(conv_width)}   {' ' * name_width}   {total}")
         print("")
-        print("  Copy a CONVERTED NAME (first column) straight into rmv_select.")
-        print("  A motif may belong to more than one family, so family counts can exceed the row total.")
+        print("  (copy this exact name into rmv_select)")
+        print("  Input is normalized, so minor differences in spaces, hyphens,")
+        print("  capitalization, or parentheses are accepted. For the clearest")
+        print("  results, copy the first-column name.")
 
     def _family_counts_from_table(self, structure_id: str, source_filter: Optional[List[str]] = None):
         """Return [(display_name, row_count), ...] for one structure's table.
@@ -3027,7 +3028,7 @@ class MotifVisualizerGUI:
                         copied = self._copy_preannotated_rmsx(rmsx_cfg, pdb_id)
                         if copied.get('copied', 0):
                             self.user_data_paths[7] = self.rmsx_output_path
-                            self.logger.info(
+                            self.logger.debug(
                                 f"Using {copied['copied']} preannotated RNAMotifScanX result(s); no executable run."
                             )
                         else:
@@ -3108,7 +3109,7 @@ class MotifVisualizerGUI:
                 if tool_lower == 'fr3d':
                     self.logger.info(f"Using custom FR3D data path: {_udp}")
                 else:
-                    self.logger.info(f"Using custom data path for {tool.upper()}: {_udp}")
+                    self.logger.debug(f"Using custom data path for {tool.upper()}: {_udp}")
             
             # Set filtering state based on current settings (for RMS, RMSX, and NoBIAS)
             if tool_lower in ['rms', 'rnamotifscan']:
@@ -3209,7 +3210,7 @@ class MotifVisualizerGUI:
             from .utils.parser import SelectionParser
             
             total_count = sum(len(instances) for instances in available_motifs.values())
-            self.logger.success(f"Found {total_count} motifs in {pdb_id} (source: {tool.upper()})")
+            self.logger.debug(f"Found {total_count} motifs in {pdb_id} (source: {tool.upper()})")
 
             # Feed the same structure-local consolidated table used by
             # fetch_motif_data_action, so RMSX/FR3D/RMS rows participate in
@@ -3308,7 +3309,7 @@ class MotifVisualizerGUI:
                         'main_selection': main_motif_sel,
                         'source_suffix': source_suffix,
                     }
-                    self.logger.success(f"Loaded {len(motif_details)} {display_type_upper} motifs")
+                    self.logger.debug(f"Loaded {len(motif_details)} {display_type_upper} motifs")
             
             # Sort motif_details within each type by minimum residue number
             def _get_min_residue(detail):
@@ -3421,11 +3422,10 @@ class MotifVisualizerGUI:
                 safe_group = family_short_code(preferred)
                 converted_preferred = converted_family_name(preferred)
                 print("")
-                print("  Next steps:")
+                print("  Then use:")
+                print("  Use a SELECTABLE FAMILY NAME from the first column in rmv_select.")
+                print("  Example:")
                 print(f"    rmv_select {converted_preferred}, {pdb_id_upper}, {source_expr}, as group_{safe_group}")
-                print(f"    rmv_view group_{safe_group}             Highlight the saved group")
-                print(f"    rmv_create_object group_{safe_group}    Create selectable objects")
-                print(f"    rmv_super group_{safe_group}            Superimpose the group")
                 print("")
             
         except Exception as e:
@@ -5748,8 +5748,6 @@ class MotifVisualizerGUI:
         self.set_source_mode('local')
         self.logger.debug(f"Set config.specific_source = {subtype}")
         self.logger.success(f"Source: {source_info['name']}")
-        self.logger.info(f"Coverage: {source_info['coverage']}")
-        self.logger.info(f"Type: {source_info['description']}")
         
         # VERIFICATION: Print source configuration
         self.logger.debug(f"SOURCE CONFIG VERIFICATION:")
@@ -5785,8 +5783,6 @@ class MotifVisualizerGUI:
         self.logger.debug(f"Set config.specific_source = {provider_id} (from subtype={subtype})")
         
         self.logger.success(f"Source: {source_info['name']}")
-        self.logger.info(f"Coverage: {source_info['coverage']}")
-        self.logger.info(f"Type: {source_info['description']}")
         
         # VERIFICATION: Print source configuration
         self.logger.debug(f"SOURCE CONFIG VERIFICATION:")
@@ -5905,13 +5901,6 @@ class MotifVisualizerGUI:
         if _udp:
             self.logger.info(f"  Data path: {_udp}")
         
-        self.logger.info("\nNext steps:")
-        if self.loaded_pdb_id:
-            self.logger.info(f"  rmv_db {public_name}             Load annotations for {self.loaded_pdb_id}")
-        else:
-            self.logger.info("  rmv_fetch <PDB_ID>         Load PDB structure")
-            self.logger.info("  rmv_fetch <PDB_ID>         Load a structure first")
-    
     def _handle_source_info_command(self, source_id_str: str = None):
         """Display information about the active source, or detailed info about a specific source.
         
