@@ -122,13 +122,22 @@ rmv_list 1S72_00001
 rmv_list SARCIN-RICIN        # every row any source labels as this family
 ```
 
-Highlight residues on the parent structure without creating objects:
+Highlight residues on the parent structure without creating objects. The whole
+structure (all atoms, including protein and ligands) is set to gray80 first so
+the highlighted motif residues stand out:
 
 ```text
 rmv_view 1S72_00001
 rmv_view group_SR
 rmv_view group_SR, color=red
 rmv_view group_SR, padding=2
+```
+
+Several targets can be highlighted together; each keeps its own color instead of
+overwriting the previous one:
+
+```text
+rmv_view group_SR, group_KT, group_CL
 ```
 
 Remove a highlight:
@@ -158,7 +167,12 @@ rmv_super group_SR
 
 RSMViewer measures pairwise RMSD on temporary copies, reports the
 minimum-average-RMSD medoid, and applies the final transformations to the
-selected objects. Parent structures are not replaced by motif fragments.
+selected objects. The superimposed instances inherit a single color — the
+group's session color if you set one (`rmv_set_color` / `rmv_color`), otherwise
+the default motif-family color — rather than a different color per instance. The
+view auto-orients and zooms onto the superimposed section, and only the
+superimposed objects stay visible. Parent structures are not replaced by motif
+fragments.
 
 ---
 
@@ -180,6 +194,12 @@ colors are preserved for each member. After `rmv_create_object group_combined`,
 the `group_FP` objects remain red and the `group_known` objects remain blue. An
 explicit color set on the combined group itself instead colors every member
 uniformly.
+
+The combined group keeps each database's own columns and original labels (for
+example separate `RNAMotifScanX` and `FR3D` columns), not the input group names.
+When overlapping instances merge, the surviving row retains every contributing
+database's label, including differing family assignments. The original input
+groups and raw annotations are left unchanged.
 
 ---
 

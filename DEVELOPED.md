@@ -156,36 +156,51 @@ table in `gui.annotation_tables`.
 ### `rmv_db`
 
 `select_database` parses canonical names via `SourceRegistry`, records
-`current_source_names`, selects adapters, and loads every fetched structure. In
-combined mode, `_load_combined_motifs` fetches each source, runs within-source
-dedup, populates the `ConsolidatedAnnotationTable`, and merges with
-`ResidueMerger`. When RNAMotifScanX (source 7) is among the sources,
+`current_source_names`, selects adapters, and loads every fetched structure. Each
+source's raw records are stored separately in the structure's
+`ConsolidatedAnnotationTable` (`merge_enabled=False`): `rmv_db` performs no
+containment/Jaccard merging, so overlapping and nested annotations are preserved
+for later `rmv_select` / `rmv_combine_groups`. The load prints one compact table
+per source per structure (`SELECTABLE NAME`, `ANNOTATION NAME`, `COUNT`) via
+`_family_source_breakdown`. When RNAMotifScanX (source 7) is among the sources,
 `_ensure_rmsx_preannotated` ingests its preannotated results first.
 
 ### `rmv_select`
 
 `rsmviewer/database/query_parser.py` parses four clauses into a
 `QueryExpression` (motif, structures, sources predicate, group, text).
-`gui.select_annotation_query` matches rows by the source predicate and
-`labels_match_motif`, then saves the motif IDs under the group name.
+`gui.select_annotation_query` gathers the raw rows any source labels as the
+family, consolidates them per structure with `ResidueMerger` (containment +
+Jaccard), evaluates the Boolean source predicate against each merged row's
+contributing sources, and saves the resulting motif IDs under the group name.
+Each merged row keeps every contributing database's original label.
 
 ### `rmv_list` / `rmv_view` / `rmv_hide`
 
 Read `ConsolidatedAnnotationTable` rows. `rmv_list` resolves its argument as a
 saved group, a stable motif ID, or a motif-family name (e.g. `SARCIN-RICIN`);
 for a family it lists every row any source labels as that family. `rmv_view`
-highlights parent-structure residues (optionally with `color=` and `padding=`)
-without copying objects; `rmv_hide` recolors to neutral gray.
+sets the whole target structure(s) to gray80 (all atoms, including protein and
+ligands) and then highlights the parent-structure residues (optionally with
+`color=` and `padding=`) without copying objects; for several targets it grays
+the involved structures once so each highlight is preserved. `rmv_hide` recolors
+the structure back to neutral gray.
 
 ### `rmv_create_object` / `rmv_super` / `rmv_combine_groups`
 
 `create_annotation_objects` builds `motif_<id>` objects and colors each one by
-its group. `rmv_combine_groups` unions the motif IDs of query groups into a new group
-and records each member's origin group in `member_colors`, so per-source colors
-set with `rmv_set_color` survive the combine: `_group_member_color_key` colors
-each object by its origin group unless an explicit color is set on the combined
-group itself. `rmv_super` copies objects temporarily, computes pairwise RMSD,
-chooses the minimum-average-RMSD medoid, and transforms the selected objects.
+its group. `rmv_combine_groups` unions the motif IDs of query groups into a new
+group and preserves each database's original source labels as separate columns
+(never the input group names); overlapping merged rows keep every contributing
+database's label, including differing family assignments. It records each
+member's origin group in `member_colors`, so per-source colors set with
+`rmv_set_color` survive the combine: `_group_member_color_key` colors each object
+by its origin group unless an explicit color is set on the combined group itself.
+`rmv_super` copies objects temporarily, computes pairwise RMSD, chooses the
+minimum-average-RMSD medoid, and transforms the selected objects. Every
+superimposed instance inherits one color (the group's session color if set,
+otherwise the motif-family color); the view auto-orients onto the superimposed
+section and only the superimposed objects remain enabled.
 
 ### `rmv_set_color`
 

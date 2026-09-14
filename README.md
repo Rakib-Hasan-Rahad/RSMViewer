@@ -129,15 +129,19 @@ the medoid and per-instance RMSDs. New to the commands? Follow the
 annotations. Multiple structures can be loaded in one session.
 
 **Sources.** `rmv_db` loads one or more named sources for every fetched
-structure. Source names are case-insensitive and always shown canonically.
+structure. Source names are case-insensitive and always shown canonically. Each
+source's raw records are kept separate at load time; `rmv_db` prints one compact
+table per source per structure (`SELECTABLE NAME`, `ANNOTATION NAME`, `COUNT`)
+and performs no overlap merging.
 
-**Consolidated table.** Each structure has one table indexed by residue set.
-Two residue sets are treated as the **same** fragment when their Jaccard index
-is at least `0.60`, **or** when one set is largely nested inside the other
-(overlap coefficient at least `0.80`). This containment rule lets a tight motif
-core from one source and an extended annotation of the same motif from another
-source share a single row. Every source keeps its own label and hierarchy on
-that row.
+**Consolidation.** Residue-set consolidation is applied within the requested
+scope during `rmv_select` (one family per structure) and, across families, only
+when you run `rmv_combine_groups`. Two residue sets are treated as the **same**
+fragment when their Jaccard index is at least `0.60`, **or** when one set is
+largely nested inside the other (overlap coefficient at least `0.80`). This
+containment rule lets a tight motif core from one source and an extended
+annotation of the same motif from another source share a single row, while each
+source keeps its own original label on that row.
 
 **Stable motif IDs.** Each consolidated row has a deterministic ID of the form
 `<PDBID>_00001`, independent of load order.
@@ -157,7 +161,7 @@ superimposition, combination, coloring, and export.
 | `rmv_select <motif>, <structures>, <sources>, as <group>` | Save a Boolean query as stable motif IDs. |
 | `rmv_list [ID\|group\|family]` | List all rows, one motif ID, a saved group, or every row in a family (e.g. `SARCIN-RICIN`). |
 | `rmv_view <ID\|group> [, color=<name>] [, padding=<n>]` | Highlight motif residues on parent structures. |
-| `rmv_hide <ID\|group\|all>` | Remove highlight (recolor to neutral gray). |
+| `rmv_hide <ID\|group\|all>` | Remove highlight (recolor the structure to neutral gray). |
 | `rmv_create_object <ID\|group>` | Create selectable PyMOL objects (camera unchanged). |
 | `rmv_super <ID\|group>` | Medoid-based superimposition (sequence-independent). |
 | `rmv_align <ID\|group>` | Medoid-based superimposition (sequence-dependent). |
@@ -176,7 +180,7 @@ superimposition, combination, coloring, and export.
 | `rmv_rmsx_doctor` | Diagnose the RMSX runtime and dependencies. |
 | `rmv_pair <selection>` / `rmv_pair_batch <selection>` | Inspect base-pair interactions. |
 | `rmv_chains` / `rmv_loaded` | Show chain diagnostics / loaded structure and source tags. |
-| `rmv_refresh` | Bypass caches and re-fetch. |
+| `rmv_refresh [PDB]` | Bypass caches and re-fetch. With no argument, refreshes every active structure; with a PDB ID, refreshes only that one. |
 | `rmv_debug ON\|OFF` | Toggle verbose diagnostics (off by default). |
 | `rmv_help` | Show the in-PyMOL command reference. |
 | `rmv_reset` | Delete all objects and clear all caches and session state. |
