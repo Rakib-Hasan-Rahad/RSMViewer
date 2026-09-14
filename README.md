@@ -2,8 +2,8 @@
 
 **A PyMOL plugin for retrieving, integrating, visualizing, and comparing RNA structural motif annotations.**
 
-![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-blue)
-![PyMOL 2.x+](https://img.shields.io/badge/PyMOL-2.x%2B-brightgreen)
+![Version 3.0.0](https://img.shields.io/badge/version-2.0.0-blue)
+![PyMOL 3.x+](https://img.shields.io/badge/PyMOL-2.x%2B-brightgreen)
 ![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22097090-orange)](https://doi.org/10.5281/zenodo.22097090)
@@ -29,7 +29,7 @@ Fetch structures  ->  Load named sources  ->  Query motifs  ->  View · Compare 
 ```
 
 - **Version:** 2.0.0
-- **Compatible with:** PyMOL 2.x and later (tested on PyMOL 3.x, macOS/Linux/Windows)
+- **Compatible with:** PyMOL 3.x and later (tested on PyMOL 3.x, macOS/Linux/Windows)
 - **License:** see [LICENSE](LICENSE)
 
 ---
@@ -77,7 +77,7 @@ with this project; they are provided by the user under `external/`.
 
 1. Open PyMOL.
 2. Open **Plugin → Plugin Manager → Settings → Add new directory**.
-3. Select the directory containing this project.
+3. Select the "rsmviewer" directory containing in this project file.
 4. Restart PyMOL.
 5. Verify:
 
@@ -298,6 +298,8 @@ so repeated queries are offline. Use `rmv_refresh` to bypass the cache.
 
 1. **Paste** the official fr3d-python software into:
 
+  Download the Fr3d software package from this link : https://github.com/BGSU-RNA/fr3d-python/tree/latest 
+  
    ```text
    external/fr3d/fr3d-python-latest/
    ```
