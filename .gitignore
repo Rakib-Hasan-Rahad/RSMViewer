@@ -26,6 +26,8 @@ GITHUB_UPLOAD_INSTRUCTIONS.txt
 # ── Structures fetched locally during development/testing ───────────────────
 /*.cif
 /*.cif.gz
+/cached_structures/*
+!/cached_structures/.gitkeep
 
 # ── RMSX benchmark/test run outputs ──────────────────────────────────────────
 /output/rmsx_results/
