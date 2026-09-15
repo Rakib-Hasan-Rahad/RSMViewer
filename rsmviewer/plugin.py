@@ -53,7 +53,7 @@ def __init_plugin__(app):
     print("\nIntegrate motif annotations, Visualize motif instances, Compare structural variation")
 
     print("\nSUPPORTED ANNOTATION SOURCES:")
-    print("   RNA 3D Motif Atlas, Rfam, FR3D, RNAMotifScanX")
+    print("   RNA3DMotifAtlas, Rfam, FR3D, RNAMotifScanX")
 
     print("\nQUICK START:")
     print("   rmv_fetch 1S72")
