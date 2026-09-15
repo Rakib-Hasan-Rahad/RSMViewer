@@ -1,0 +1,132 @@
+{
+  "study_title": "RSMViewer cached-workflow runtime across increasing RNA structure workloads and annotation-source configurations",
+  "metric": "Mean total workflow time (s)",
+  "x_axis_label": "Number of RNA structures + cumulative RNA size (nt)",
+  "structure_counts": [
+    1,
+    2,
+    4,
+    8,
+    12
+  ],
+  "cumulative_rna_nucleotides": [
+    159,
+    253,
+    3613,
+    7194,
+    13663
+  ],
+  "source_rows": [
+    {
+      "source_number": 1,
+      "label": "RNA3DMotifAtlas"
+    },
+    {
+      "source_number": 2,
+      "label": "RNA3DMotifAtlas + Rfam"
+    },
+    {
+      "source_number": 3,
+      "label": "RNA3DMotifAtlas + Rfam + FR3D"
+    },
+    {
+      "source_number": 4,
+      "label": "RNA3DMotifAtlas + Rfam + FR3D + RNAMotifScanX"
+    }
+  ],
+  "workloads": [
+    {
+      "structure_count": 1,
+      "pdb_entries": [
+        "2R8S"
+      ],
+      "cumulative_rna_nucleotides": 159
+    },
+    {
+      "structure_count": 2,
+      "pdb_entries": [
+        "2R8S",
+        "2GIS"
+      ],
+      "cumulative_rna_nucleotides": 253
+    },
+    {
+      "structure_count": 4,
+      "pdb_entries": [
+        "2R8S",
+        "2GIS",
+        "1HR2",
+        "1S72"
+      ],
+      "cumulative_rna_nucleotides": 3613
+    },
+    {
+      "structure_count": 8,
+      "pdb_entries": [
+        "2R8S",
+        "2GIS",
+        "1HR2",
+        "1S72",
+        "1JJ2",
+        "1Y0Q",
+        "1MME",
+        "1U6B"
+      ],
+      "cumulative_rna_nucleotides": 7194
+    },
+    {
+      "structure_count": 12,
+      "pdb_entries": [
+        "2R8S",
+        "2GIS",
+        "1HR2",
+        "1S72",
+        "1JJ2",
+        "1Y0Q",
+        "1MME",
+        "1U6B",
+        "1KXK",
+        "3CC2",
+        "1NBS",
+        "1FFK"
+      ],
+      "cumulative_rna_nucleotides": 13663
+    }
+  ],
+  "matrix_mean_seconds": [
+    [
+      0.010624000003736,
+      0.014469183800974861,
+      0.1466388254018966,
+      0.2683574166032486,
+      0.5100263331987662
+    ],
+    [
+      0.0035882332012988627,
+      0.003640325203014072,
+      0.023167525001917967,
+      0.040694725399953315,
+      0.07144329120201291
+    ],
+    [
+      0.004086033396015409,
+      0.005219075201603118,
+      0.02361377480265219,
+      0.04184974219824653,
+      0.07334279199567391
+    ],
+    [
+      0.0035267422033939512,
+      0.003627433002111502,
+      0.023259583600156473,
+      0.04103367500356399,
+      0.0719773832053761
+    ]
+  ],
+  "matrix_shape": [
+    4,
+    5
+  ],
+  "sequence_counting_method": "Deposited RNA polymer lengths from local mmCIF/RCSB sequence records, counting every RNA chain and excluding proteins and small-molecule ligands.",
+  "benchmark_repeats": 5
+}

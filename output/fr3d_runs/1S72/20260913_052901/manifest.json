@@ -1,0 +1,45 @@
+{
+  "target": "1S72",
+  "target_cif": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/1s72.cif",
+  "run_id": "20260913_052901",
+  "data_mode": "run_fr3d_pipeline",
+  "data_mode_internal": "cif_local",
+  "fr3d_repo": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest",
+  "fr3d_commit": "3784f3c0df49ea0c529f7cd2637bf80e4b4f74f5",
+  "fr3d_branch": "main",
+  "fr3d_dirty": true,
+  "python": "/opt/homebrew/Cellar/pymol/3.1.0_2/libexec/bin/python",
+  "queries": [
+    {
+      "query_name": "geometric_5_sarcin_ricin",
+      "query_file": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/queries/geometric_5_sarcin_ricin.json",
+      "ok": true,
+      "candidate_count": 12,
+      "changed_fields": {
+        "numPositions": {
+          "original": 5,
+          "executed": 5
+        },
+        "name": {
+          "original": null,
+          "executed": "geometric_5_sarcin_ricin"
+        },
+        "searchFiles": {
+          "original": [
+            "4V9F",
+            "7K00"
+          ],
+          "executed": [
+            "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/1s72.cif"
+          ]
+        },
+        "PDB_data_file": {
+          "original": null,
+          "executed": {}
+        }
+      },
+      "run_dir": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_052901/queries/geometric_5_sarcin_ricin",
+      "csv": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_052901/ingest/1S72_fr3d_query_geometric_5_sarcin_ricin.csv"
+    }
+  ]
+}

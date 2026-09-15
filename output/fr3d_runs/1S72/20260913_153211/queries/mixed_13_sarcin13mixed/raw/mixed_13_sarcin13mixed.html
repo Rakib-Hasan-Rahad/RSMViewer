@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<link rel="shortcut icon" href="https://rna.bgsu.edu/rna3dhub/icons/F_icon.png">
+<head>
+  <title>FR3D mixed_13_sarcin13mixed</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+  <script src="/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/js/jsmol/JSmol.min.nojq.js"></script>
+  <script src="/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/js/jquery.jmolTools.WebFR3D.js"></script>
+  <script src="/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/js/imagehandling.js"></script>
+  <script src="/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/js/sort.table.js" type="text/javascript"></script>
+  
+  <style>
+      tr:nth-child(even) {background-color: #E6F2F2;}
+      td:nth-child(18) { font-family:'consolas','monaco','andale mono','caravan','courier new','monospace';}
+      th {position: sticky; top: 0px; background: white; cursor: pointer;}
+  </style>
+</head>
+
+<body>
+
+<h2>FR3D output</h2>
+Query name: mixed_13_sarcin13mixed.<br>Found 6 candidates from 1 of 1 files in 90 seconds.
+<a href="https://rna.bgsu.edu/fr3d/modify?id=mixed_13_sarcin13mixed" target="_blank">See and modify query</a>  |
+<a href="mixed_13_sarcin13mixed.csv">See CSV output</a>
+
+    <br>Columns of the table show candidate number in geometric similarity order,
+    checkbox to display coordinates or not, structure resolution,
+    discrepancy from query in geometric or mixed searches,
+    unit ids matching each position in the query,
+    sequence of the units and backbone connectivity,
+    glycosidic bond conformation if requested,
+    basepair and stack interactions present, base-phosphate interactions,
+    base-ribose interactions, oxygen stacking interactions,
+    and the number of nested AU, GC, GU Watson-Crick pairs crossed by each annotated interaction.
+    Click on a column header to sort by that column.
+    Click on the diagonal of the heatmap to select an instance; right click to de-select.
+    Click above the diagonal to select a range of instances, below the diagonal to compare two instances.
+    
+
+<div style="height:300px;width:100%;border:solid 2px black;overflow:scroll;overflow-x:scroll;overflow-y:scroll;">
+<table id="instances"; style="white-space:nowrap;">
+<tr><th onclick="sortTable(0,'instances','numeric')">S.</th><th onclick="sortTable(1,'instances','checkbox')">Show</th><th onclick="sortTable(2,'instances','numeric')">Discrepancy</th><th onclick="sortTable(3,'instances','numeric')">Res. &#8491;</th><th onclick="sortTable(4,'instances','alpha')">Position 1</th><th onclick="sortTable(5,'instances','alpha')">Position 2</th><th onclick="sortTable(6,'instances','alpha')">Position 3</th><th onclick="sortTable(7,'instances','alpha')">Position 4</th><th onclick="sortTable(8,'instances','alpha')">Position 5</th><th onclick="sortTable(9,'instances','alpha')">Position 6</th><th onclick="sortTable(10,'instances','alpha')">Position 7</th><th onclick="sortTable(11,'instances','alpha')">Position 8</th><th onclick="sortTable(12,'instances','alpha')">Position 9</th><th onclick="sortTable(13,'instances','alpha')">Position 10</th><th onclick="sortTable(14,'instances','alpha')">Position 11</th><th onclick="sortTable(15,'instances','alpha')">Position 12</th><th onclick="sortTable(16,'instances','alpha')">Position 13</th><th onclick="sortTable(17,'instances','alpha')">Sequence</th><th onclick="sortTable(18,'instances','alpha')">1--2</td><th onclick="sortTable(19,'instances','alpha')">1--13</td><th onclick="sortTable(20,'instances','alpha')">2--3</td><th onclick="sortTable(21,'instances','alpha')">2--11</td><th onclick="sortTable(22,'instances','alpha')">2--12</td><th onclick="sortTable(23,'instances','alpha')">2--13</td><th onclick="sortTable(24,'instances','alpha')">3--4</td><th onclick="sortTable(25,'instances','alpha')">3--5</td><th onclick="sortTable(26,'instances','alpha')">3--10</td><th onclick="sortTable(27,'instances','alpha')">3--11</td><th onclick="sortTable(28,'instances','alpha')">4--5</td><th onclick="sortTable(29,'instances','alpha')">4--9</td><th onclick="sortTable(30,'instances','alpha')">5--6</td><th onclick="sortTable(31,'instances','alpha')">5--9</td><th onclick="sortTable(32,'instances','alpha')">5--10</td><th onclick="sortTable(33,'instances','alpha')">6--7</td><th onclick="sortTable(34,'instances','alpha')">6--9</td><th onclick="sortTable(35,'instances','alpha')">6--10</td><th onclick="sortTable(36,'instances','alpha')">7--8</td><th onclick="sortTable(37,'instances','alpha')">7--9</td><th onclick="sortTable(38,'instances','alpha')">8--9</td><th onclick="sortTable(39,'instances','alpha')">10--11</td><th onclick="sortTable(40,'instances','alpha')">11--12</td><th onclick="sortTable(41,'instances','alpha')">12--13</td><th onclick="sortTable(42,'instances','alpha')">7--10</td><th onclick="sortTable(43,'instances','alpha')">3--10</td><th onclick="sortTable(44,'instances','alpha')">3--11</td><th onclick="sortTable(45,'instances','alpha')">4--10</td><th onclick="sortTable(46,'instances','alpha')">7--6</td><th onclick="sortTable(47,'instances','alpha')">9--5</td><th onclick="sortTable(48,'instances','alpha')">11--3</td><th onclick="sortTable(49,'instances','alpha')">12--11</td><th onclick="sortTable(50,'instances','alpha')">13--12</td><th onclick="sortTable(51,'instances','alpha')">2--3</td><th onclick="sortTable(52,'instances','alpha')">5--4</td><th onclick="sortTable(53,'instances','alpha')">6--5</td><th onclick="sortTable(54,'instances','alpha')">6--9</td><th onclick="sortTable(55,'instances','alpha')">7--10</td><th onclick="sortTable(56,'instances','alpha')">9--4</td><th onclick="sortTable(57,'instances','alpha')">10--9</td><th onclick="sortTable(58,'instances','alpha')">11--2</td><th onclick="sortTable(59,'instances','alpha')">12--2</td><th onclick="sortTable(60,'instances','alpha')">12--11</td><th onclick="sortTable(61,'instances','alpha')">13--2</td><th onclick="sortTable(62,'instances','alpha')">Crossing 7--10</th></tr>
+<tr><td>1.</td><td><label><input type="checkbox" id="0" class="jmolInline" data-coord="1s72|1|0|U|210,1s72|1|0|U|211,1s72|1|0|A|212,1s72|1|0|G|213,1s72|1|0|U|214,1s72|1|0|A|215,1s72|1|0|A|216,1s72|1|0|U|224,1s72|1|0|G|225,1s72|1|0|G|393,1s72|1|0|A|227,1s72|1|0|C|228,1s72|1|0|G|229">&nbsp</label></td><td>0.4453</td><td>NA</td><td>1s72|1|0|U|210</td><td>1s72|1|0|U|211</td><td>1s72|1|0|A|212</td><td>1s72|1|0|G|213</td><td>1s72|1|0|U|214</td><td>1s72|1|0|A|215</td><td>1s72|1|0|A|216</td><td>1s72|1|0|U|224</td><td>1s72|1|0|G|225</td><td>1s72|1|0|G|393</td><td>1s72|1|0|A|227</td><td>1s72|1|0|C|228</td><td>1s72|1|0|G|229</td><td>U-U-A-G-U-A-A&#8594;U-G&#8594;G&#8592;A-C-G</td><td>s35</td><td>cWW</td><td>s33</td><td>ns33</td><td>tSH</td><td></td><td>s55</td><td>s55</td><td></td><td>tHH</td><td>cSH</td><td>s33</td><td>s35</td><td>s33</td><td></td><td>s35</td><td>tHS</td><td></td><td>cWW</td><td>s55</td><td>s35</td><td></td><td>s35</td><td>s35</td><td>tSR</td><td></td><td>6BPh</td><td></td><td></td><td>5BPh</td><td>n6BPh</td><td></td><td></td><td>n9BR</td><td>n9BR</td><td></td><td>6BR</td><td>n2BR</td><td>n5BR</td><td></td><td></td><td>n6BR</td><td></td><td>n3BR</td><td>15</td></tr>
+<tr><td>2.</td><td><label><input type="checkbox" id="1" class="jmolInline" data-coord="1s72|1|0|U|210,1s72|1|0|U|211,1s72|1|0|A|212,1s72|1|0|G|213,1s72|1|0|U|214,1s72|1|0|A|215,1s72|1|0|A|216,1s72|1|0|U|224,1s72|1|0|G|225,1s72|1|0|A|226,1s72|1|0|A|227,1s72|1|0|C|228,1s72|1|0|G|229">&nbsp</label></td><td>0.2092</td><td>NA</td><td>1s72|1|0|U|210</td><td>1s72|1|0|U|211</td><td>1s72|1|0|A|212</td><td>1s72|1|0|G|213</td><td>1s72|1|0|U|214</td><td>1s72|1|0|A|215</td><td>1s72|1|0|A|216</td><td>1s72|1|0|U|224</td><td>1s72|1|0|G|225</td><td>1s72|1|0|A|226</td><td>1s72|1|0|A|227</td><td>1s72|1|0|C|228</td><td>1s72|1|0|G|229</td><td>U-U-A-G-U-A-A&#8594;U-G-A-A-C-G</td><td>s35</td><td>cWW</td><td>s33</td><td>ns33</td><td>tSH</td><td></td><td>s55</td><td>s55</td><td>ns53</td><td>tHH</td><td>cSH</td><td>s33</td><td>s35</td><td>s33</td><td>tWH</td><td>s35</td><td>tHS</td><td>s55</td><td>cWW</td><td>s55</td><td>s35</td><td>s35</td><td>s35</td><td>s35</td><td></td><td></td><td>6BPh</td><td>4BPh</td><td></td><td>5BPh</td><td>n6BPh</td><td></td><td></td><td>n9BR</td><td>n9BR</td><td></td><td>6BR</td><td></td><td>n5BR</td><td></td><td></td><td>n6BR</td><td></td><td>n3BR</td><td></td></tr>
+<tr><td>3.</td><td><label><input type="checkbox" id="2" class="jmolInline" data-coord="1s72|1|0|A|1367,1s72|1|0|U|1368,1s72|1|0|A|1369,1s72|1|0|G|1370,1s72|1|0|U|1371,1s72|1|0|A|1372,1s72|1|0|G|1373,1s72|1|0|U|2052,1s72|1|0|G|2053,1s72|1|0|A|2054,1s72|1|0|A|2055,1s72|1|0|C|2056,1s72|1|0|U|2057">&nbsp</label></td><td>0.1882</td><td>NA</td><td>1s72|1|0|A|1367</td><td>1s72|1|0|U|1368</td><td>1s72|1|0|A|1369</td><td>1s72|1|0|G|1370</td><td>1s72|1|0|U|1371</td><td>1s72|1|0|A|1372</td><td>1s72|1|0|G|1373</td><td>1s72|1|0|U|2052</td><td>1s72|1|0|G|2053</td><td>1s72|1|0|A|2054</td><td>1s72|1|0|A|2055</td><td>1s72|1|0|C|2056</td><td>1s72|1|0|U|2057</td><td>A-U-A-G-U-A-G&#8594;U-G-A-A-C-U</td><td>s35</td><td>cWW</td><td>s33</td><td></td><td>tSH</td><td></td><td></td><td>s55</td><td>ns53</td><td>tHH</td><td>cSH</td><td>s33</td><td>ns35</td><td>s33</td><td>tWH</td><td>s35</td><td>tHS</td><td>s55</td><td>cWW</td><td></td><td>s35</td><td>s35</td><td>s35</td><td>s35</td><td></td><td></td><td>6BPh</td><td>3BPh</td><td></td><td>5BPh</td><td>n6BPh</td><td></td><td>n9BPh</td><td>n9BR</td><td>n9BR</td><td></td><td>6BR</td><td></td><td>n5BR</td><td>n0BR</td><td></td><td>6BR</td><td></td><td></td><td></td></tr>
+<tr><td>4.</td><td><label><input type="checkbox" id="3" class="jmolInline" data-coord="1s72|1|0|A|2689,1s72|1|0|U|2690,1s72|1|0|A|2691,1s72|1|0|G|2692,1s72|1|0|U|2693,1s72|1|0|A|2694,1s72|1|0|C|2695,1s72|1|0|G|2700,1s72|1|0|G|2701,1s72|1|0|A|2702,1s72|1|0|A|2703,1s72|1|0|C|2704,1s72|1|0|U|2705">&nbsp</label></td><td>0.0330</td><td>NA</td><td>1s72|1|0|A|2689</td><td>1s72|1|0|U|2690</td><td>1s72|1|0|A|2691</td><td>1s72|1|0|G|2692</td><td>1s72|1|0|U|2693</td><td>1s72|1|0|A|2694</td><td>1s72|1|0|C|2695</td><td>1s72|1|0|G|2700</td><td>1s72|1|0|G|2701</td><td>1s72|1|0|A|2702</td><td>1s72|1|0|A|2703</td><td>1s72|1|0|C|2704</td><td>1s72|1|0|U|2705</td><td>A-U-A-G-U-A-C&#8594;G-G-A-A-C-U</td><td>s35</td><td>cWW</td><td>s33</td><td></td><td>tSH</td><td></td><td></td><td>s55</td><td>s53</td><td>tHH</td><td>cSH</td><td>s33</td><td>s35</td><td>s33</td><td>tWH</td><td>s35</td><td>tHS</td><td>s55</td><td>cWW</td><td>s55</td><td>s35</td><td>s35</td><td>s35</td><td>s35</td><td></td><td></td><td>6BPh</td><td>3BPh</td><td>8BPh</td><td>5BPh</td><td>n6BPh</td><td></td><td>n9BPh</td><td>n9BR</td><td>n9BR</td><td></td><td>6BR</td><td></td><td>n5BR</td><td>n0BR</td><td>n6BR</td><td>n6BR</td><td>n0BR</td><td></td><td></td></tr>
+<tr><td>5.</td><td><label><input type="checkbox" id="4" class="jmolInline" data-coord="1s72|1|9|G|75,1s72|1|9|G|76,1s72|1|9|A|77,1s72|1|9|G|78,1s72|1|9|U|79,1s72|1|9|A|80,1s72|1|9|C|81,1s72|1|9|G|101,1s72|1|9|G|102,1s72|1|9|A|103,1s72|1|9|A|104,1s72|1|9|A|105,1s72|1|9|C|106">&nbsp</label></td><td>0.1882</td><td>NA</td><td>1s72|1|9|G|75</td><td>1s72|1|9|G|76</td><td>1s72|1|9|A|77</td><td>1s72|1|9|G|78</td><td>1s72|1|9|U|79</td><td>1s72|1|9|A|80</td><td>1s72|1|9|C|81</td><td>1s72|1|9|G|101</td><td>1s72|1|9|G|102</td><td>1s72|1|9|A|103</td><td>1s72|1|9|A|104</td><td>1s72|1|9|A|105</td><td>1s72|1|9|C|106</td><td>G-G-A-G-U-A-C&#8594;G-G-A-A-A-C</td><td>s35</td><td>cWW</td><td>s33</td><td>s33</td><td>tSH</td><td>ns55</td><td>s55</td><td>s55</td><td>ns53</td><td>tHH</td><td>cSH</td><td>s33</td><td>s35</td><td>s33</td><td>tWH</td><td>s35</td><td>tHS</td><td>s55</td><td>cWW</td><td>s55</td><td>s35</td><td>s35</td><td>s35</td><td>s35</td><td></td><td>n2BPh</td><td>6BPh</td><td>5BPh</td><td></td><td>5BPh</td><td></td><td></td><td></td><td></td><td>n9BR</td><td></td><td>6BR</td><td></td><td>5BR</td><td></td><td></td><td>6BR</td><td></td><td></td><td></td></tr>
+<tr><td>6.</td><td><label><input type="checkbox" id="5" class="jmolInline" data-coord="1s72|1|0|C|585,1s72|1|0|C|586,1s72|1|0|A|587,1s72|1|0|G|588,1s72|1|0|U|589,1s72|1|0|A|590,1s72|1|0|A|591,1s72|1|0|U|567,1s72|1|0|G|568,1s72|1|0|A|569,1s72|1|0|C|570,1s72|1|0|C|571,1s72|1|0|G|572">&nbsp</label></td><td>0.2238</td><td>NA</td><td>1s72|1|0|C|585</td><td>1s72|1|0|C|586</td><td>1s72|1|0|A|587</td><td>1s72|1|0|G|588</td><td>1s72|1|0|U|589</td><td>1s72|1|0|A|590</td><td>1s72|1|0|A|591</td><td>1s72|1|0|U|567</td><td>1s72|1|0|G|568</td><td>1s72|1|0|A|569</td><td>1s72|1|0|C|570</td><td>1s72|1|0|C|571</td><td>1s72|1|0|G|572</td><td>C-C-A-G-U-A-A&#8592;U-G-A-C-C-G</td><td>s35</td><td>cWW</td><td>s33</td><td></td><td></td><td>s55</td><td></td><td>s55</td><td>s53</td><td></td><td>cSH</td><td>s33</td><td>s35</td><td>s33</td><td>tWH</td><td>s35</td><td>tHS</td><td>s55</td><td>cWW</td><td>s55</td><td>s35</td><td>s35</td><td>s35</td><td>s35</td><td></td><td></td><td>6BPh</td><td>3BPh</td><td></td><td>5BPh</td><td></td><td>n9BPh</td><td></td><td>n9BR</td><td>n9BR</td><td>n0BR</td><td>6BR</td><td></td><td>n5BR</td><td>n0BR</td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+
+</div>
+
+<table border=0>
+<tr>
+<td valign="top">
+
+<script src="/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/js/jmolplugin.js" type="text/javascript"></script>
+
+    <input type="button" id="neighborhood" value="Show neighborhood">
+    <input type="button" id="prev" value="Previous">
+    <input type="button" id="next" value="Next">
+    <input type="button" id='all' value='Hide all'>
+    <label><input type="checkbox" id="showNtNums">Nucleotide numbers</label>
+    <!--<label><input type="checkbox" id="stereo1">Stereo</label>-->
+    <input type="button" id="stereo2" value="Stereo">
+    Coloring options: <select id="colorOPT">
+                    <option value="Default" selected>Default</option>
+                    <option value="Bases">Bases</option>
+                    <option value="CPK">CPK</option>
+                    <option value="RSR">Real Space R (RSR)</option>
+                    <option value="RSRZ">RSR Z-Score (RSRZ)</option>
+    </select>
+</div>
+
+    <div class='showRSR' style="display:none">
+                    <svg height="30" width="340">
+                        <defs>
+                            <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="10%" style="stop-color:#0d0887; stop-opacity:1" />
+                                <stop offset="20%" style="stop-color:#6603a5; stop-opacity:1" />
+                                <stop offset="30%" style="stop-color:#8a0da2; stop-opacity:1" />
+                                <stop offset="40%" style="stop-color:#ac2693; stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#ca457a; stop-opacity:1" />
+                                <stop offset="60%" style="stop-color:#df6264; stop-opacity:1" />
+                                <stop offset="70%" style="stop-color:#f0824d; stop-opacity:1" />
+                                <stop offset="80%" style="stop-color:#faa638; stop-opacity:1" />
+                                <stop offset="90%" style="stop-color:#fbcc27; stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#f0f921; stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    <rect x="20" y="0" width="300" height="15" fill="url(#grad3)"  />
+                    <text x="20" y="30" font-family="sans-serif" font-size="12px" fill="black">0.0</text>
+                    <text x="90" y="30" font-family="sans-serif" font-size="12px" fill="black">RSR Scale truncated at 0.5</text>
+                    <text x="310" y="30" font-family="sans-serif" font-size="12px" fill="black">0.5</text>
+                    </svg>
+    </div>
+
+                <div class='showRSRZ' style="display:none">
+                    <svg height="45" width="340">
+                        <defs>
+                        <text x="120" y="0" font-family="sans-serif" font-size="12px" fill="black">RSRZ Scale</text>
+                            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="25%" style="stop-color:green;stop-opacity:1" />
+                                <stop offset="25%" style="stop-color:yellow;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:yellow;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:orange;stop-opacity:1" />
+                                <stop offset="75%" style="stop-color:orange;stop-opacity:1" />
+                                <stop offset="75%" style="stop-color:red;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:red;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    <rect x="20" y="0" width="300" height="15" fill="url(#grad2)"  />
+                    <text x="92" y="30" font-family="sans-serif" font-size="12px" fill="black">1</text>
+                    <text x="167" y="30" font-family="sans-serif" font-size="12px" fill="black">2</text>
+                    <text x="243" y="30" font-family="sans-serif" font-size="12px" fill="black">3</text>
+                    <text x="140" y="45" font-family="sans-serif" font-size="12px" fill="black">RSRZ Scale</text>
+                    </svg>
+                </div>
+</td>
+
+
+    <td valign="top">
+        <div id ='heatmap' style="text-align: left;">
+          <script src="//d3js.org/d3.v4.min.js"></script>
+
+<script type="text/javascript">
+var data = ["#heatmap",[
+[0.0000,0.4095,0.4306,0.4489,0.4463,0.4995],
+[0.4095,0.0000,0.1657,0.2188,0.2054,0.2552],
+[0.4306,0.1657,0.0000,0.1929,0.2359,0.2856],
+[0.4489,0.2188,0.1929,0.0000,0.1917,0.2276],
+[0.4463,0.2054,0.2359,0.1917,0.0000,0.1986],
+[0.4995,0.2552,0.2856,0.2276,0.1986,0.0000],
+],
+["1s72|1|0|U|210","1s72|1|0|U|210","1s72|1|0|A|1367","1s72|1|0|A|2689","1s72|1|9|G|75","1s72|1|0|C|585"]
+]
+</script>
+<script src="/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/js/heatmap_2024.js" type="text/javascript"></script>
+</div>
+</td>
+</tr>
+</table>
+<br>User messages:<br>Loaded /Users/rakibhasanrahad/4V9F.cif<br>file_reading: Wrote 2808 nucleotides to /Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_153211/queries/mixed_13_sarcin13mixed/data/units/4V9F-1-0_NA.pickle<br>file_reading: Wrote  122 nucleotides to /Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_153211/queries/mixed_13_sarcin13mixed/data/units/4V9F-1-9_NA.pickle<br>file_reading: Wrote 2808 nucleotides to /Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_153211/queries/mixed_13_sarcin13mixed/data/units/4V9F-1-0_NA_unit_annotations.pickle<br>file_reading: Wrote  122 nucleotides to /Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_153211/queries/mixed_13_sarcin13mixed/data/units/4V9F-1-9_NA_unit_annotations.pickle<br>file_reading: Wrote 3928 amino acids to /Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_153211/queries/mixed_13_sarcin13mixed/data/units/4V9F_protein.pickle.gz<br>file_reading: Wrote 2808 nucleotides to /Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_153211/queries/mixed_13_sarcin13mixed/data/units/4V9F-1-0_NA_phosphate_sugar.pickle<br>file_reading: Wrote  122 nucleotides to /Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260913_153211/queries/mixed_13_sarcin13mixed/data/units/4V9F-1-9_NA_phosphate_sugar.pickle<br>FR3D completed successfully<br>
+
+<script src="/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/js/shift.click.checkbox.js" type="text/javascript"></script>
+</body>
+</html>

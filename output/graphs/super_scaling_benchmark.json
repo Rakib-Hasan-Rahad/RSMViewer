@@ -1,0 +1,162 @@
+{
+  "pool_size": 417,
+  "requested_sizes": [
+    2,
+    5,
+    10,
+    15,
+    20,
+    30,
+    40,
+    50
+  ],
+  "achieved_sizes": [
+    2,
+    5,
+    10,
+    15,
+    20,
+    30,
+    40,
+    50
+  ],
+  "note": "Pool is capped by cached local annotation data (1S72 + 1FFK, RNA3DMotifAtlas + Rfam) with no network calls. rmv_create_object is run once per group size as untimed setup; only rmv_super is timed.",
+  "results": [
+    {
+      "motif_count": 2,
+      "pairwise_comparisons": 1,
+      "runs": [
+        0.02290087495930493,
+        0.017429625033400953,
+        0.018857457907870412
+      ],
+      "median_seconds": 0.018857457907870412,
+      "mean_seconds": 0.0197293193001921,
+      "min_seconds": 0.017429625033400953,
+      "max_seconds": 0.02290087495930493,
+      "structures_used": [
+        "1FFK",
+        "1S72"
+      ]
+    },
+    {
+      "motif_count": 5,
+      "pairwise_comparisons": 10,
+      "runs": [
+        0.1117280840408057,
+        0.13290670805145055,
+        0.12743941694498062
+      ],
+      "median_seconds": 0.12743941694498062,
+      "mean_seconds": 0.12402473634574562,
+      "min_seconds": 0.1117280840408057,
+      "max_seconds": 0.13290670805145055,
+      "structures_used": [
+        "1FFK",
+        "1S72"
+      ]
+    },
+    {
+      "motif_count": 10,
+      "pairwise_comparisons": 45,
+      "runs": [
+        0.4898065000306815,
+        0.4717386250849813,
+        0.46459016611333936
+      ],
+      "median_seconds": 0.4717386250849813,
+      "mean_seconds": 0.4753784304096674,
+      "min_seconds": 0.46459016611333936,
+      "max_seconds": 0.4898065000306815,
+      "structures_used": [
+        "1FFK",
+        "1S72"
+      ]
+    },
+    {
+      "motif_count": 15,
+      "pairwise_comparisons": 105,
+      "runs": [
+        1.0001954999752343,
+        1.017659500008449,
+        1.0205640000058338
+      ],
+      "median_seconds": 1.017659500008449,
+      "mean_seconds": 1.012806333329839,
+      "min_seconds": 1.0001954999752343,
+      "max_seconds": 1.0205640000058338,
+      "structures_used": [
+        "1FFK",
+        "1S72"
+      ]
+    },
+    {
+      "motif_count": 20,
+      "pairwise_comparisons": 190,
+      "runs": [
+        1.8281182500068098,
+        1.8277437499491498,
+        1.822450624895282
+      ],
+      "median_seconds": 1.8277437499491498,
+      "mean_seconds": 1.8261042082837473,
+      "min_seconds": 1.822450624895282,
+      "max_seconds": 1.8281182500068098,
+      "structures_used": [
+        "1FFK",
+        "1S72"
+      ]
+    },
+    {
+      "motif_count": 30,
+      "pairwise_comparisons": 435,
+      "runs": [
+        4.247384499991313,
+        4.514792292029597,
+        4.415495250024833
+      ],
+      "median_seconds": 4.415495250024833,
+      "mean_seconds": 4.392557347348581,
+      "min_seconds": 4.247384499991313,
+      "max_seconds": 4.514792292029597,
+      "structures_used": [
+        "1FFK",
+        "1S72"
+      ]
+    },
+    {
+      "motif_count": 40,
+      "pairwise_comparisons": 780,
+      "runs": [
+        7.915833750041202,
+        8.469576042029075,
+        7.985659041907638
+      ],
+      "median_seconds": 7.985659041907638,
+      "mean_seconds": 8.123689611325972,
+      "min_seconds": 7.915833750041202,
+      "max_seconds": 8.469576042029075,
+      "structures_used": [
+        "1FFK",
+        "1S72"
+      ]
+    },
+    {
+      "motif_count": 50,
+      "pairwise_comparisons": 1225,
+      "runs": [
+        13.32114291691687,
+        12.948911999934353,
+        12.35648079100065
+      ],
+      "median_seconds": 12.948911999934353,
+      "mean_seconds": 12.87551190261729,
+      "min_seconds": 12.35648079100065,
+      "max_seconds": 13.32114291691687,
+      "structures_used": [
+        "1FFK",
+        "1S72"
+      ]
+    }
+  ]
+}
