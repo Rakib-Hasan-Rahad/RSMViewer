@@ -14,7 +14,12 @@ for arg in "$@"; do
     esac
 done
 
-docker run --rm --platform linux/amd64 \
+name_args=()
+if [[ -n "${RMSX_CONTAINER_NAME:-}" ]]; then
+    name_args+=(--name "$RMSX_CONTAINER_NAME")
+fi
+
+docker run --rm --platform linux/amd64 "${name_args[@]}" \
     -e RNAMOTIFSCANX_PATH=/work/external/rmsx/RNAMotifScanX_src \
     -v "$repo_root:/work" \
     ubuntu:22.04 \

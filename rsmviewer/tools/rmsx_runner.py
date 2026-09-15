@@ -37,6 +37,8 @@ import subprocess
 import sys
 import tempfile
 import tarfile
+import time
+import uuid
 from pathlib import Path
 
 
@@ -941,6 +943,7 @@ def run_rmsx_for_family(rmsx_exe: str, query_file: str, annotation_file: str,
         '--structure', annotation_file,
         '--max_num_strands', str(max_strands),
         '--num_threads', str(num_threads),
+        '--pvalue', '1.0',
     ]
     cmd_legacy = [
         rmsx_exe,
@@ -949,6 +952,7 @@ def run_rmsx_for_family(rmsx_exe: str, query_file: str, annotation_file: str,
         '-c', chain_str,
         '-s', str(max_strands),
         '-p', str(num_threads),
+        '-v', '1.0',
         '-o', out_dir,
     ]
 
@@ -1098,11 +1102,12 @@ def run_pipeline(config: dict, pdb_id: str, cif_file: str = '', force_fresh: boo
     pdb_file = ''
 
     # Prefer prebuilt targets when available (unless fresh rerun is requested).
-    if not force_fresh:
-        prepared_targets = _copy_prebuilt_targets_from_directory(
-            prebuild_dir, pdb_id, output_dir, chains
-        )
-    if not force_fresh and not prepared_targets:
+    # --fresh means rerun scan outputs; it does not discard valid prepared
+    # .rmsx.in/.nch inputs supplied by the prebuilt-data directory/archive.
+    prepared_targets = _copy_prebuilt_targets_from_directory(
+        prebuild_dir, pdb_id, output_dir, chains
+    )
+    if not prepared_targets:
         prepared_targets = _extract_prebuilt_targets_from_archive(
             prebuild_archive, pdb_id, output_dir, chains
         )
@@ -1201,29 +1206,461 @@ def run_pipeline(config: dict, pdb_id: str, cif_file: str = '', force_fresh: boo
             continue
 
         print(f"[rmsx_runner] Running RMSX for motif family: {family}")
-        chain_id = str(chains[0]) if chains else ''
-        target_for_scan = prepared_targets.get(chain_id)
-        if not target_for_scan:
-            if prepared_targets:
-                target_for_scan = next(iter(prepared_targets.values()))
-            else:
-                target_for_scan = annot_file or pdb_file or cif_file
+        scan_targets = list(prepared_targets.items())
+        if not scan_targets:
+            scan_targets = [(str(chains[0]) if chains else '', annot_file or pdb_file or cif_file)]
 
-        ok = run_rmsx_for_family(
-            rmsx_exe, family_query_file, target_for_scan,
-            family_out_dir, pdb_id, chains, max_str, threads,
-            force_fresh=force_fresh
-        )
-        if ok:
-            log = os.path.join(family_out_dir, 'result_0_100_withbs.log')
-            if os.path.isfile(log) and _result_file_has_pdb_hits(log, pdb_id):
+        chain_logs = []
+        for chain_id, target_for_scan in scan_targets:
+            chain_out_dir = os.path.join(family_out_dir, f"_chain_{chain_id or 'default'}")
+            ok = run_rmsx_for_family(
+                rmsx_exe, family_query_file, target_for_scan,
+                chain_out_dir, pdb_id, [str(chain_id)] if chain_id else chains,
+                max_str, threads, force_fresh=force_fresh
+            )
+            chain_log = os.path.join(chain_out_dir, 'result_0_100_withbs.log')
+            if ok and os.path.isfile(chain_log):
+                chain_logs.append(chain_log)
+
+        log = os.path.join(family_out_dir, 'result_0_100_withbs.log')
+        if chain_logs:
+            with open(log, 'wb') as output:
+                for chain_log in chain_logs:
+                    with open(chain_log, 'rb') as source:
+                        output.write(source.read())
+                        output.write(b'\n')
+            for chain_log in chain_logs:
+                shutil.rmtree(os.path.dirname(chain_log), ignore_errors=True)
+            if _result_file_has_pdb_hits(log, pdb_id):
                 results[family] = log
-            elif os.path.isfile(log):
+            else:
                 print(f"[rmsx_runner]   WARNING: {family} log produced but has no hits for {pdb_id}; skipping")
 
     if results:
         print(f"[rmsx_runner] Done: {len(results)}/{len(families)} families available")
     return results
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# scan_prepared mode
+#
+# Minimal prepared-input workflow: run the RNAMotifScanX ``scan`` executable
+# directly against locally prepared ``.rmsx.in``/``.rmsx.nch`` inputs, skipping
+# MC-Annotate and RNAVIEW. The command mirrors the one recorded in the header of
+# the distributed preannotated logs:
+#
+#   scan <query.struct> <target.rmsx.in> --map_pdb=<target.rmsx.nch> \
+#        --pvalue 1.0 --num_threads <N> --write_alignment
+#
+# Preannotated results are never read, substituted, or used as a fallback in
+# this mode.
+# ─────────────────────────────────────────────────────────────────────────────
+
+SCAN_PREPARED_PVALUE = '1.0'
+
+
+def locate_prepared_inputs(prebuild_dir: str, pdb_id: str, chains=None):
+    """Locate prepared ``.rmsx.in``/``.rmsx.nch`` pairs for ``pdb_id``.
+
+    Returns ``(pairs, problems)`` where ``pairs`` maps ``chain -> {'in','nch'}``
+    for readable, matched pairs only, and ``problems`` lists every missing or
+    unreadable input encountered. Nothing is substituted for a missing pair.
+    """
+    problems: list[str] = []
+    root = Path(os.path.expanduser(str(prebuild_dir or ''))).resolve()
+    pdb_lower = str(pdb_id).strip().lower()
+
+    entry = root / pdb_lower
+    if not entry.is_dir():
+        entry = root / str(pdb_id).strip().upper()
+    if not entry.is_dir():
+        problems.append(f"No prepared-input directory for {pdb_id} under {root}")
+        return {}, problems
+
+    wanted = {str(c).strip() for c in (chains or []) if str(c).strip()}
+    accept_any = not wanted  # '0' is a real chain label, never a wildcard here.
+
+    pairs: dict = {}
+    # Prepared chains live in per-chain subdirectories (e.g. {pdb}/A, {pdb}/0);
+    # ``_prep*`` staging folders are intermediate and are not scanned directly.
+    chain_dirs = sorted(
+        d for d in entry.iterdir() if d.is_dir() and not d.name.startswith('_')
+    )
+    for chain_dir in chain_dirs:
+        chain = chain_dir.name
+        if not accept_any and chain not in wanted:
+            continue
+        in_files = sorted(chain_dir.glob('*.rmsx.in'))
+        nch_files = sorted(chain_dir.glob('*.rmsx.nch'))
+        if not in_files:
+            problems.append(f"chain {chain}: missing .rmsx.in in {chain_dir}")
+            continue
+        if not nch_files:
+            problems.append(f"chain {chain}: missing .rmsx.nch in {chain_dir}")
+            continue
+        in_path, nch_path = in_files[0], nch_files[0]
+        if not os.access(in_path, os.R_OK):
+            problems.append(f"chain {chain}: unreadable {in_path}")
+            continue
+        if not os.access(nch_path, os.R_OK):
+            problems.append(f"chain {chain}: unreadable {nch_path}")
+            continue
+        pairs[chain] = {'in': str(in_path), 'nch': str(nch_path)}
+
+    if wanted:
+        for chain in sorted(wanted):
+            if chain not in pairs and not any(f"chain {chain}:" in p for p in problems):
+                problems.append(f"chain {chain}: no prepared-input directory under {entry}")
+    if not pairs and not problems:
+        problems.append(f"No prepared per-chain inputs found under {entry}")
+    return pairs, problems
+
+
+def _executable_runs_natively(exe: str) -> bool:
+    """Return True when ``exe`` can be exec'd directly on the current host."""
+    try:
+        with open(exe, 'rb') as fh:
+            magic = fh.read(4)
+    except OSError:
+        return False
+    system = platform.system()
+    machine = platform.machine().lower()
+    if magic[:2] == b'#!':
+        return True
+    if magic == b'\x7fELF':
+        return system == 'Linux' and machine in ('x86_64', 'amd64')
+    if magic[:2] == b'MZ':
+        return system == 'Windows'
+    if magic in (b'\xcf\xfa\xed\xfe', b'\xce\xfa\xed\xfe',
+                 b'\xca\xfe\xba\xbe', b'\xbe\xba\xfe\xca'):
+        return system == 'Darwin'
+    return False
+
+
+def _find_scan_docker_wrapper(config: dict) -> str:
+    """Return a runnable ``scan_docker_*.sh`` wrapper path, or '' when absent."""
+    exe = os.path.expanduser(str(config.get('rmsx_executable', '') or '').strip())
+    search_dirs = []
+    if exe:
+        search_dirs.append(Path(exe).resolve().parent)
+    for base in list(search_dirs):
+        for name in ('scan_docker_x86_64.sh', 'scan_docker.sh'):
+            candidate = base / name
+            if candidate.is_file() and os.access(candidate, os.X_OK):
+                return str(candidate)
+    return ''
+
+
+def resolve_scan_command(config: dict):
+    """Resolve how to invoke ``scan``.
+
+    Returns ``(argv_prefix, note)``. ``argv_prefix`` is a list to prepend to the
+    scan arguments, or ``None`` when no runnable executable/wrapper exists (with
+    ``note`` explaining why).
+    """
+    exe = os.path.expanduser(str(config.get('rmsx_executable', '') or '').strip())
+
+    # Candidate native binaries: the configured path first, then the compiled
+    # binary that ships in the RNAMotifScanX source tree (config points at the
+    # unversioned bin/ folder, which may be empty on a fresh checkout).
+    native_candidates = []
+    if exe:
+        native_candidates.append(exe)
+        rmsx_root = Path(exe).resolve().parent.parent  # …/external/rmsx/bin/scan → …/external/rmsx
+        native_candidates.append(str(rmsx_root / 'RNAMotifScanX_src' / 'scan'))
+        native_candidates.append(str(rmsx_root / 'bin' / 'scan'))
+    for candidate in native_candidates:
+        if candidate and os.path.isfile(candidate) and os.access(candidate, os.X_OK) \
+                and _executable_runs_natively(candidate):
+            return [candidate], f"native scan executable: {candidate}"
+
+    wrapper = _find_scan_docker_wrapper(config)
+    if wrapper and shutil.which('docker'):
+        return [wrapper], f"docker scan wrapper: {wrapper}"
+
+    reasons = []
+    if not exe or not os.path.isfile(exe):
+        reasons.append(f"configured rmsx_executable not found: {exe or '(unset)'}")
+    elif not os.access(exe, os.X_OK):
+        reasons.append(f"scan binary is not executable (chmod +x needed): {exe}")
+    elif not _executable_runs_natively(exe):
+        reasons.append(
+            f"scan binary cannot run natively on {platform.system()}/{platform.machine()}: {exe}"
+        )
+    if wrapper and not shutil.which('docker'):
+        reasons.append(f"docker wrapper present but Docker is not installed: {wrapper}")
+    elif not wrapper:
+        reasons.append("no scan_docker_*.sh wrapper found next to the executable")
+    return None, '; '.join(reasons)
+
+
+def _candidate_query_dirs(config: dict) -> list:
+    """Directories that may hold ``{family}_consensus.struct`` templates."""
+    dirs = []
+    qd = os.path.expanduser(str(config.get('query_motifs_dir', '') or '').strip())
+    if qd:
+        dirs.append(qd)
+    exe = os.path.expanduser(str(config.get('rmsx_executable', '') or '').strip())
+    if exe:
+        rmsx_root = Path(exe).resolve().parent.parent  # …/external/rmsx/bin/scan → …/external/rmsx
+        dirs.append(str(rmsx_root / 'RNAMotifScanX_src' / 'Queries'))
+        dirs.append(str(rmsx_root / 'RNAMotifScanX_src' / 'Queries' / 'reduced'))
+        dirs.append(str(rmsx_root / 'queries'))
+    seen, unique = set(), []
+    for d in dirs:
+        if d and d not in seen and os.path.isdir(d):
+            seen.add(d)
+            unique.append(d)
+    return unique
+
+
+def _resolve_family_query(family: str, query_dirs: list) -> str:
+    names = [
+        f"{family}_consensus.struct", f"{family}.struct",
+        f"{family}_consensus.txt", f"{family}.txt",
+    ]
+    for directory in query_dirs:
+        for name in names:
+            candidate = os.path.join(directory, name)
+            if os.path.isfile(candidate):
+                return candidate
+    return ''
+
+
+def _rmsx_src_root(scan_prefix: list) -> str:
+    """Locate the RNAMotifScanX source root that holds the ``mat/`` resources."""
+    exe = scan_prefix[0] if scan_prefix else ''
+    if not exe:
+        return ''
+    base = Path(exe).resolve().parent
+    for candidate in (base, base.parent, base.parent / 'RNAMotifScanX_src'):
+        if (candidate / 'mat').is_dir():
+            return str(candidate)
+    return ''
+
+
+def _count_alignment_hits(log_path: str) -> int:
+    """Count ``# Aligning`` alignment blocks in a scan output log."""
+    count = 0
+    try:
+        with open(log_path, 'r', encoding='utf-8', errors='ignore') as fh:
+            for line in fh:
+                if re.search(r"^#\s+Aligning\s+", line):
+                    count += 1
+    except OSError:
+        return 0
+    return count
+
+
+def _run_one_scan(scan_prefix, query_file, in_file, nch_file,
+                  num_threads, run_dir, timeout=3600, cancel_event=None):
+    """Run scan once for one (chain, family). Captures stdout/stderr/exit code.
+
+    Supports cooperative cancellation: when ``cancel_event`` is set mid-run the
+    scanner process is terminated and, for the docker wrapper, the container is
+    force-removed so no work continues in the background.
+    """
+    os.makedirs(run_dir, exist_ok=True)
+    map_pdb_abs = os.path.abspath(nch_file)
+    # The docker wrapper only rewrites bare arguments that live under the repo
+    # root into container paths, so pass --map_pdb as a separate token there.
+    # For a native binary use the exact "=" form recorded in the validated logs.
+    is_wrapper = bool(scan_prefix) and str(scan_prefix[0]).endswith('.sh')
+    map_pdb_args = ['--map_pdb', map_pdb_abs] if is_wrapper else [f"--map_pdb={map_pdb_abs}"]
+    cmd = list(scan_prefix) + [
+        os.path.abspath(query_file),
+        os.path.abspath(in_file),
+        *map_pdb_args,
+        '--pvalue', SCAN_PREPARED_PVALUE,
+        '--num_threads', str(num_threads),
+        '--write_alignment',
+    ]
+    stdout_path = os.path.join(run_dir, 'scan.stdout.log')
+    stderr_path = os.path.join(run_dir, 'scan.stderr.log')
+    cmd_path = os.path.join(run_dir, 'command.txt')
+    with open(cmd_path, 'w', encoding='utf-8') as fh:
+        fh.write(' '.join(cmd) + '\n')
+
+    env = os.environ.copy()
+    src_root = _rmsx_src_root(scan_prefix)
+    if src_root:
+        env['RNAMOTIFSCANX_PATH'] = src_root
+    container_name = ''
+    if is_wrapper:
+        container_name = f"rmsx_scan_{os.getpid()}_{uuid.uuid4().hex[:8]}"
+        env['RMSX_CONTAINER_NAME'] = container_name
+
+    result = {
+        'chain': '', 'family': '', 'cmd': cmd, 'cmd_str': ' '.join(cmd),
+        'run_dir': run_dir, 'stdout': stdout_path, 'stderr': stderr_path,
+        'container': container_name, 'exit_code': None, 'ok': False,
+        'error': '', 'hits': 0,
+    }
+
+    def _terminate(proc):
+        # Kill the scanner and, for docker, force-remove the container so the
+        # scan actually stops instead of only skipping later tasks.
+        try:
+            proc.terminate()
+        except Exception:
+            pass
+        if container_name:
+            try:
+                subprocess.run(['docker', 'rm', '-f', container_name],
+                               capture_output=True, text=True, timeout=30)
+            except Exception:
+                pass
+        try:
+            proc.kill()
+        except Exception:
+            pass
+
+    try:
+        with open(stdout_path, 'w', encoding='utf-8') as out_fh, \
+                open(stderr_path, 'w', encoding='utf-8') as err_fh:
+            proc = subprocess.Popen(cmd, stdout=out_fh, stderr=err_fh, env=env,
+                                    start_new_session=True)
+            deadline = time.time() + timeout
+            while True:
+                try:
+                    return_code = proc.wait(timeout=0.5)
+                    break
+                except subprocess.TimeoutExpired:
+                    return_code = None
+                if cancel_event is not None and cancel_event.is_set():
+                    _terminate(proc)
+                    result['error'] = 'cancelled'
+                    return result
+                if time.time() > deadline:
+                    _terminate(proc)
+                    result['error'] = 'timeout'
+                    return result
+    except OSError as exc:
+        with open(stderr_path, 'a', encoding='utf-8') as fh:
+            fh.write(f"OSError: {exc}\n")
+        result['error'] = f"OSError: {exc}"
+        return result
+
+    result['exit_code'] = return_code
+    result['ok'] = (return_code == 0)
+    if not result['ok'] and not result['error']:
+        result['error'] = 'nonzero_exit'
+    if result['ok']:
+        result['hits'] = _count_alignment_hits(stdout_path)
+    return result
+
+
+def run_scan_prepared(config: dict, pdb_id: str, output_dir: str, chains=None,
+                      families=None, progress_cb=None, cancel_event=None) -> dict:
+    """Run RNAMotifScanX against prepared inputs for ``pdb_id``.
+
+    Returns a structured report. Never reads or substitutes preannotated data.
+    """
+    def emit(message: str):
+        if progress_cb:
+            try:
+                progress_cb(message)
+            except Exception:
+                pass
+        print(f"[scan_prepared] {message}")
+
+    pdb_upper = str(pdb_id).strip().upper()
+    prebuild_dir = os.path.expanduser(str(config.get('pdb_prebuild_dir', '') or ''))
+    families = list(families or config.get('motif_families', list(DEFAULT_FAMILY_FOLDER_MAP.keys())))
+    num_threads = int(config.get('num_threads', 4))
+    output_dir = os.path.abspath(os.path.expanduser(output_dir))
+
+    report = {
+        'pdb_id': pdb_upper, 'output_dir': output_dir, 'executable': '',
+        'runs': [], 'families': {}, 'failed_runs': [], 'problems': [],
+        'ok': False, 'cancelled': False, 'total_hits': 0,
+    }
+
+    pairs, problems = locate_prepared_inputs(prebuild_dir, pdb_upper, chains)
+    report['problems'].extend(problems)
+    for problem in problems:
+        emit(f"input problem: {problem}")
+    if not pairs:
+        emit("No readable prepared .rmsx.in/.rmsx.nch pairs found; aborting "
+             "(preannotated data is NOT substituted).")
+        return report
+
+    emit("Using locally prepared RMSX inputs; MC-Annotate and RNAVIEW are skipped.")
+
+    scan_prefix, note = resolve_scan_command(config)
+    report['executable'] = note
+    if not scan_prefix:
+        emit(f"RMSX scan executable/wrapper is not runnable: {note}")
+        report['problems'].append(note)
+        return report
+    emit(f"Scan command source: {note}")
+
+    query_dirs = _candidate_query_dirs(config)
+    if not query_dirs:
+        emit("No query-template directory found; cannot supply motif templates.")
+        report['problems'].append("no query template directory")
+        return report
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    for chain in sorted(pairs):
+        if cancel_event is not None and cancel_event.is_set():
+            report['cancelled'] = True
+            emit(f"Cancelled before chain {chain}.")
+            break
+        paths = pairs[chain]
+        emit(f"Running RNAMotifScanX for PDB {pdb_upper}, chain {chain}.")
+        for family in families:
+            if cancel_event is not None and cancel_event.is_set():
+                report['cancelled'] = True
+                emit("Cancelled during scan.")
+                break
+            query_file = _resolve_family_query(family, query_dirs)
+            if not query_file:
+                message = f"chain {chain}: no query template for family '{family}'"
+                report['problems'].append(message)
+                emit(message)
+                continue
+            run_dir = os.path.join(output_dir, '_runs', f"chain_{chain}", f"{family}_consensus")
+            emit(f"  scanning family {family} (chain {chain})...")
+            result = _run_one_scan(scan_prefix, query_file, paths['in'], paths['nch'],
+                                   num_threads, run_dir, cancel_event=cancel_event)
+            result['chain'] = chain
+            result['family'] = family
+            if result.get('error') == 'cancelled':
+                report['cancelled'] = True
+                report['runs'].append(result)
+                emit(f"  chain {chain} / {family}: CANCELLED (scanner/container terminated)")
+                break
+            report['runs'].append(result)
+            if result['ok']:
+                family_dir = os.path.join(output_dir, f"{family}_consensus")
+                os.makedirs(family_dir, exist_ok=True)
+                aggregated = os.path.join(family_dir, 'result_0_100_withbs.log')
+                with open(result['stdout'], 'r', encoding='utf-8', errors='ignore') as src, \
+                        open(aggregated, 'a', encoding='utf-8') as dst:
+                    dst.write(src.read())
+                    dst.write('\n')
+                family_entry = report['families'].setdefault(
+                    family, {'log': aggregated, 'hits': 0, 'chains': []}
+                )
+                family_entry['hits'] += result['hits']
+                family_entry['chains'].append(chain)
+                emit(f"  chain {chain} / {family}: exit 0, {result['hits']} hit(s)")
+            else:
+                report['failed_runs'].append(result)
+                emit(f"  chain {chain} / {family}: FAILED "
+                     f"(exit {result.get('exit_code')}, {result.get('error')})")
+        if report['cancelled']:
+            break
+
+    report['total_hits'] = sum(entry['hits'] for entry in report['families'].values())
+    report['ok'] = (
+        bool(report['runs'])
+        and not report['failed_runs']
+        and not report['cancelled']
+    )
+    return report
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1244,10 +1681,54 @@ def main():
                         help='Only check which result files exist, do not run')
     parser.add_argument('--fresh', action='store_true',
                         help='Force fresh execution (ignore/remove cached outputs)')
+    parser.add_argument('--scan-prepared', action='store_true',
+                        help='Run scan against locally prepared .rmsx.in/.rmsx.nch inputs '
+                             '(skips MC-Annotate/RNAVIEW; never uses preannotated data)')
+    parser.add_argument('--chains', default='',
+                        help='Comma-separated prepared chains to scan (default: all)')
+    parser.add_argument('--out', default='',
+                        help='Output directory for scan_prepared results')
     args = parser.parse_args()
 
     with open(args.config, 'r', encoding='utf-8') as fh:
         config = json.load(fh)
+
+    # Resolve config-relative paths the same way RSMViewer does, so the
+    # standalone CLI locates prepared inputs and the executable correctly.
+    config_dir = os.path.dirname(os.path.abspath(args.config))
+    for key in ('rmsx_executable', 'mc_annotate_executable', 'rnaview_executable',
+                'rnaview_dir', 'pdb_prebuild_archive', 'pdb_prebuild_dir',
+                'query_motifs_dir', 'cif_input_dir', 'output_dir'):
+        value = str(config.get(key, '') or '').strip()
+        if value:
+            expanded = os.path.expanduser(value)
+            if not os.path.isabs(expanded):
+                expanded = os.path.abspath(os.path.join(config_dir, expanded))
+            config[key] = expanded
+
+    if args.scan_prepared:
+        chains = [c.strip() for c in args.chains.split(',') if c.strip()]
+        out_dir = args.out or os.path.join(
+            str(config.get('output_dir', '.') or '.'), 'scan_prepared', args.pdb.upper()
+        )
+        report = run_scan_prepared(config, args.pdb, out_dir, chains=chains or None)
+        print("\n" + "=" * 70)
+        print(f"scan_prepared report for {report['pdb_id']}")
+        print("=" * 70)
+        print(f"Executable : {report['executable'] or '(none)'}")
+        print(f"Output dir : {report['output_dir']}")
+        print(f"Runs       : {len(report['runs'])}  "
+              f"(failed: {len(report['failed_runs'])})")
+        print(f"Total hits : {report['total_hits']}")
+        print(f"Cancelled  : {report['cancelled']}")
+        print(f"OK         : {report['ok']}")
+        if report['problems']:
+            print("Problems:")
+            for problem in report['problems']:
+                print(f"  - {problem}")
+        for family, entry in sorted(report['families'].items()):
+            print(f"  {family:<20} hits={entry['hits']:<4} chains={entry['chains']} -> {entry['log']}")
+        return 0 if report['ok'] else 1
 
     if args.check:
         existing = check_results_exist(config, args.pdb)

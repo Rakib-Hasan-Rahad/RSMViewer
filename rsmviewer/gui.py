@@ -22,6 +22,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import threading
 import time
 import urllib.request
 from pymol import cmd
@@ -1942,6 +1943,8 @@ class MotifVisualizerGUI:
         print("  rmv_rmsx test")
         print("  rmv_rmsx run <PDB_ID> [EXTRA_ARGS]   # Full fresh rerun")
         print("  rmv_rmsx run_current [EXTRA_ARGS]")
+        print("  rmv_rmsx scan_prepared <PDB_ID> [CHAINS] [compare]  # Run scan on prepared inputs")
+        print("  rmv_rmsx scan_cancel                 # Cancel an in-progress scan_prepared run")
         print("\nTemplate placeholders:")
         print("  {pdb_id} {pdb_lower} {output_dir} {work_dir}")
         print("Example:")
@@ -2040,6 +2043,12 @@ class MotifVisualizerGUI:
             self.logger.error("PDB ID is required")
             self.logger.info("Usage: rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
             return False
+
+        # data_mode=scan_prepared: run scan directly on prepared inputs.
+        rmsx_cfg_probe = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
+        self.rmsx_pipeline_config = dict(rmsx_cfg_probe)
+        if str(rmsx_cfg_probe.get('data_mode', '')).strip().lower() == 'scan_prepared':
+            return self.run_rmsx_scan_prepared(pdb_upper, chains=str(extra_args or '').strip())
 
         query_override = ''
         if extra_args:
@@ -2247,6 +2256,196 @@ class MotifVisualizerGUI:
         self.logger.warning("RNAMotifScanX finished, but no motifs were loaded into RSMViewer.")
         self.logger.info("Check that output files exist under the configured output directory and match RNAMotifScanX format.")
         return False
+
+    # ── scan_prepared mode ────────────────────────────────────────────────
+    def run_rmsx_scan_prepared(self, pdb_id: str, chains: str = '', compare: bool = False):
+        """Run RNAMotifScanX against locally prepared inputs, off the GUI thread.
+
+        Skips MC-Annotate/RNAVIEW, never reads or substitutes preannotated data,
+        writes to a dedicated per-run output directory, reports progress by
+        chain, supports cancellation, and loads only its own fresh output.
+        """
+        import datetime
+
+        pdb_upper = str(pdb_id).strip().upper()
+        if not pdb_upper:
+            self.logger.error("PDB ID is required")
+            self.logger.info("Usage: rmv_rmsx scan_prepared <PDB_ID> [CHAINS]")
+            return False
+
+        existing = getattr(self, '_rmsx_scan_thread', None)
+        if existing is not None and existing.is_alive():
+            self.logger.error(
+                "A scan_prepared run is already in progress. Use 'rmv_rmsx scan_cancel' to stop it."
+            )
+            return False
+
+        rmsx_cfg = dict(getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config())
+        self.rmsx_pipeline_config = dict(rmsx_cfg)
+        chain_list = [c for c in re.split(r'[\s,]+', str(chains or '').strip()) if c]
+
+        base_out = os.path.abspath(os.path.expanduser(
+            str(rmsx_cfg.get('output_dir', self.rmsx_output_path) or self.rmsx_output_path)
+        ))
+        stamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        run_out = os.path.join(base_out, 'scan_prepared', f"{pdb_upper}_{stamp}")
+
+        self._rmsx_scan_cancel = threading.Event()
+        self.logger.info(
+            f"scan_prepared: starting for {pdb_upper}"
+            + (f" chains={chain_list}" if chain_list else " (all prepared chains)")
+        )
+        self.logger.info("Using locally prepared RMSX inputs; MC-Annotate and RNAVIEW are skipped.")
+
+        worker = threading.Thread(
+            target=self._scan_prepared_worker,
+            args=(rmsx_cfg, pdb_upper, run_out, chain_list, bool(compare)),
+            name=f"rmsx-scan-{pdb_upper}",
+            daemon=True,
+        )
+        self._rmsx_scan_thread = worker
+        worker.start()
+        return True
+
+    def cancel_rmsx_scan(self):
+        """Signal an in-progress scan_prepared run to stop."""
+        event = getattr(self, '_rmsx_scan_cancel', None)
+        thread = getattr(self, '_rmsx_scan_thread', None)
+        if event is None or thread is None or not thread.is_alive():
+            self.logger.info("No scan_prepared run is currently active.")
+            return False
+        event.set()
+        self.logger.warning("scan_prepared: cancellation requested; finishing current step...")
+        return True
+
+    def _scan_prepared_worker(self, rmsx_cfg, pdb_upper, run_out, chain_list, compare):
+        """Background worker: runs scan subprocesses off the PyMOL GUI thread."""
+        try:
+            tools_dir = str(Path(__file__).parent / 'tools')
+            if tools_dir not in sys.path:
+                sys.path.insert(0, tools_dir)
+            from rmsx_runner import run_scan_prepared  # type: ignore
+
+            def progress(message):
+                self.logger.info(f"[scan_prepared] {message}")
+
+            report = run_scan_prepared(
+                rmsx_cfg, pdb_upper, run_out,
+                chains=chain_list or None,
+                families=rmsx_cfg.get('motif_families'),
+                progress_cb=progress,
+                cancel_event=getattr(self, '_rmsx_scan_cancel', None),
+            )
+            self._rmsx_last_scan_report = report
+            self._finish_scan_prepared(report, pdb_upper, compare)
+        except Exception as exc:
+            self.logger.error(f"scan_prepared failed: {type(exc).__name__}: {exc}")
+
+    def _finish_scan_prepared(self, report, pdb_upper, compare):
+        """Load newly generated results (main outcome handling)."""
+        out_dir = report.get('output_dir', '')
+
+        if report.get('cancelled'):
+            self.logger.warning(
+                f"scan_prepared CANCELLED for {pdb_upper}. Partial output was not loaded: {out_dir}"
+            )
+            return False
+
+        if report.get('problems'):
+            for problem in report['problems']:
+                self.logger.warning(f"scan_prepared: {problem}")
+
+        if report.get('failed_runs'):
+            self.logger.error(
+                f"scan_prepared: {len(report['failed_runs'])} run(s) FAILED for {pdb_upper}. "
+                "Not loading results and NOT falling back to preannotated data."
+            )
+            for run in report['failed_runs'][:10]:
+                self.logger.error(
+                    f"  chain {run.get('chain')} / {run.get('family')}: "
+                    f"exit {run.get('exit_code')} ({run.get('error')}); stderr: {run.get('stderr')}"
+                )
+            return False
+
+        if not report.get('runs'):
+            self.logger.error(
+                f"scan_prepared produced no runs for {pdb_upper}. "
+                "See problems above; preannotated data is NOT substituted."
+            )
+            return False
+
+        # All attempted runs exited 0: load strictly from this run's output.
+        self.rmsx_output_path = out_dir
+        self.user_data_paths[7] = out_dir
+        self._rmsx_skip_pipeline_load = True
+        try:
+            try:
+                self._handle_source_by_id(7, out_dir)
+            except Exception:
+                pass
+            self.load_user_annotations_action('rnamotifscanx', pdb_upper, auto_pipeline=False)
+        finally:
+            self._rmsx_skip_pipeline_load = False
+
+        loaded = {}
+        try:
+            loaded = self.viz_manager.motif_loader.get_loaded_motifs() or {}
+        except Exception:
+            loaded = {}
+        total_instances = sum(len(info.get('motif_details', [])) for info in loaded.values())
+
+        self.logger.success("Loaded annotations from the newly generated RMSX output.")
+        self.logger.info(
+            f"scan_prepared summary for {pdb_upper}: families with hits={len(report['families'])}, "
+            f"total hits={report['total_hits']}, motif types loaded={len(loaded)}, "
+            f"instances={total_instances}"
+        )
+        self.logger.info(f"Results saved to: {out_dir}")
+        if report['total_hits'] == 0:
+            self.logger.info(
+                "Scan completed successfully with zero hits (a valid result, not a failure)."
+            )
+        if compare:
+            self._compare_scan_prepared_with_preannotated(report, pdb_upper)
+        return True
+
+    def _compare_scan_prepared_with_preannotated(self, report, pdb_upper):
+        """Development check only: compare fresh scan output with preannotated data.
+
+        This never alters, supplements, or filters the newly generated results;
+        it just reports differences for investigation.
+        """
+        try:
+            from .tools.rmsx_runner import copy_preannotated_results
+
+            rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) or {}
+            import tempfile
+            with tempfile.TemporaryDirectory(prefix='rmsx_preann_cmp_') as tmp_dir:
+                source_dir = str(rmsx_cfg.get('pdb_prebuild_dir', '') or '')
+                source_archive = str(rmsx_cfg.get('pdb_prebuild_archive', '') or '')
+                copied = {'copied': 0}
+                for source in [s for s in (source_dir, source_archive) if s]:
+                    copied = copy_preannotated_results(str(source), pdb_upper, tmp_dir)
+                    if copied.get('copied', 0):
+                        break
+                if not copied.get('copied', 0):
+                    self.logger.info(
+                        f"[compare] No preannotated dataset available for {pdb_upper}; skipping comparison."
+                    )
+                    return
+
+                from .tools.rmsx_runner import _count_alignment_hits  # type: ignore
+                self.logger.info(f"[compare] Fresh vs preannotated hit counts for {pdb_upper}:")
+                families = set(report['families'].keys())
+                for family in sorted(families):
+                    folder = f"{family}_consensus"
+                    pre_log = os.path.join(tmp_dir, folder, 'result_0_100_withbs.log')
+                    pre_hits = _count_alignment_hits(pre_log) if os.path.isfile(pre_log) else 0
+                    new_hits = report['families'].get(family, {}).get('hits', 0)
+                    flag = 'match' if pre_hits == new_hits else 'DIFF -> investigate'
+                    self.logger.info(f"  {family:<18} fresh={new_hits:<4} preannotated={pre_hits:<4} [{flag}]")
+        except Exception as exc:
+            self.logger.info(f"[compare] Comparison skipped: {type(exc).__name__}: {exc}")
 
     def load_structure_action(self, pdb_id_or_path, background_color=None,
                               database=None):
@@ -3259,8 +3458,9 @@ class MotifVisualizerGUI:
 
             # -- RMSX pipeline run (prebuilt/cache-aware by default) -----------
             # Source 7 reuses available/prebuilt results unless explicitly
-            # forced to run fresh.
-            if tool_lower in ['rmsx', 'rnamotifscanx']:
+            # forced to run fresh. scan_prepared sets _rmsx_skip_pipeline_load so
+            # this block never copies preannotated data over its fresh output.
+            if tool_lower in ['rmsx', 'rnamotifscanx'] and not getattr(self, '_rmsx_skip_pipeline_load', False):
                 rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
                 self.rmsx_pipeline_config = dict(rmsx_cfg)
                 data_mode = str(rmsx_cfg.get('data_mode', 'preannotated')).strip().lower()
@@ -8042,6 +8242,8 @@ def initialize_gui():
             rmv_rmsx test
             rmv_rmsx run <PDB_ID> [EXTRA_ARGS]
             rmv_rmsx run_current [EXTRA_ARGS]
+            rmv_rmsx scan_prepared <PDB_ID> [CHAINS] [compare]
+            rmv_rmsx scan_cancel
         """
         action_arg = str(action).strip() if action else ''
         arg1_str = str(arg1).strip() if arg1 else ''
@@ -8105,6 +8307,25 @@ def initialize_gui():
             gui.run_rmsx_wrapper(arg1_str, extras, force_fresh=True)
             return
 
+        if sub in ['scan_prepared', 'scan']:
+            if not arg1_str:
+                gui.command_error("Usage: rmv_rmsx scan_prepared <PDB_ID> [CHAINS] [compare]")
+                return
+            tokens = [str(x).strip() for x in extra_args if str(x).strip()]
+            compare = False
+            filtered = []
+            for token in tokens:
+                if token.lower() in ('compare', '--compare', 'validate'):
+                    compare = True
+                else:
+                    filtered.append(token)
+            gui.run_rmsx_scan_prepared(arg1_str, chains=' '.join(filtered).strip(), compare=compare)
+            return
+
+        if sub in ['scan_cancel', 'cancel']:
+            gui.cancel_rmsx_scan()
+            return
+
         if sub in ['run_current', 'current']:
             if not gui.loaded_pdb_id:
                 gui.logger.error("No active structure. Use rmv_fetch <PDB_ID> first.")
@@ -8115,7 +8336,7 @@ def initialize_gui():
             return
 
         gui.command_error(f"Unknown rmv_rmsx subcommand: {sub}")
-        gui.logger.info("Use: rmv_rmsx status | config | args | doctor | setup | test | run | run_current")
+        gui.logger.info("Use: rmv_rmsx status | config | args | doctor | setup | test | run | run_current | scan_prepared | scan_cancel")
 
     def rmsx_doctor_cmd(*_args, **_kwargs):
         """PyMOL command: Show integrated RMSX runtime diagnostics."""
