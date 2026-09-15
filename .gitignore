@@ -5,6 +5,8 @@
 # versioned (see external/*/README.md for what to place where):
 external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz
 external/rmsx_preannotated/rmsx_work_default/
+!external/rmsx_preannotated/rmsx_work_default/
+!external/rmsx_preannotated/rmsx_work_default/**
 external/rmsx/**/RNAVIEW/
 external/fr3d/fr3d-python-latest/*
 !external/fr3d/fr3d-python-latest/.gitkeep
@@ -27,3 +29,11 @@ GITHUB_UPLOAD_INSTRUCTIONS.txt
 
 # ── RMSX benchmark/test run outputs ──────────────────────────────────────────
 /output/rmsx_results/
+
+# ── Local manuscript/benchmark work ─────────────────────────────────────────
+# Figure S3 scripts and generated results are kept locally and are not part of
+# the distributable plugin repository.
+/figure s3/
+/external/fr3d_local_from_csv/
+/rsmviewer/database/user_annotations/fr3d/
+/output/S3_4_*/

@@ -290,7 +290,7 @@ combined group itself overrides this and colors every member uniformly.)
 | --- | --- | --- |
 | `RNA3DMotifAtlas` | BGSU RNA 3D Hub **API** | Online, cached locally. |
 | `Rfam` | Rfam **API** | Online, cached locally. |
-| `FR3D` | User-provided checkout | Runs the official fr3d-python software. |
+| `FR3D` | Local cache or user-provided checkout | Loads `external/fr3d/fr3d_cache/` by default, or runs official fr3d-python in `run_from_scratch` mode. |
 | `RNAMotifScanX` | Preannotated data or from-scratch run | See setup below. |
 
 Atlas and Rfam require network access on first retrieval; responses are cached
@@ -299,6 +299,21 @@ so repeated queries are offline. Use `rmv_refresh` to bypass the cache.
 ---
 
 ## FR3D setup
+
+The default repository configuration uses the prepared local FR3D cache:
+
+```json
+"data_mode": "cache",
+"cache_path": "../external/fr3d/fr3d_cache"
+```
+
+With this setting, `rmv_db FR3D` reads local cached annotations and does not
+run FR3D or make a network call. To execute the official FR3D Python pipeline,
+change `data_mode` to `"run_from_scratch"` in `config/fr3d_config.json`, then
+run `rmv_setup FR3D` if needed.
+
+The twelve offline structure files used by the current project workflows are
+stored in `cached_structures/`.
 
 1. **Paste** the official fr3d-python software into:
 

@@ -1,0 +1,1455 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/k-turn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v51/BA/4v51_BA.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v51/BA/4v51_BA.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:373-379_140-142_385-388:
+#  Alignment score:  47.2
+#  P-value:  3.261e-01
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 5:'BA'609-5:'BA'609,8:'BA'260-8:'BA'260,11:'BA'619-11:'BA'619
+
+	A...G~G
+	A...G~G
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(5:'BA'609)-G(8:'BA'260) trans S/S>
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(5:'BA'609)-G(11:'BA'619) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:984-994_1166-1168:
+#  Alignment score:  27.1
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 2:'BA'1658-10:'BA'1701,11:'BA'2002-11:'BA'2002
+
+	G--G...A~C
+	CGGG...A~G
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(2:'BA'1658)-G(11:'BA'2002) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(5:'BA'1687)-A(10:'BA'1701) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1303-1305_1313-1319_1279-1282:
+#  Alignment score:  27
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 0:'BA'2374-1:'BA'2375,4:'BA'2378-5:'BA'2379
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(1:'BA'2375)-A(4:'BA'2378) trans S/H>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(0:'BA'2374)-G(5:'BA'2379) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:145-148_228-229_150-153:
+#  Alignment score:  25
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 0:'BA'271-0:'BA'271,4:'BA'364-4:'BA'364,9:'BA'271.X-9:'BA'271.X
+
+	A...G~G
+	A...C~G
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(0:'BA'271)-G(9:'BA'271.X) trans H/S>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(0:'BA'271)-C(4:'BA'364) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:228-230_152-162_145-146:
+#  Alignment score:  24.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 3:'BA'271.W-3:'BA'271.W,15:'BA'271.A-15:'BA'271.A
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(3:'BA'271.W)-A(15:'BA'271.A) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:491-498_478-483:
+#  Alignment score:  24.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 7:'BA'916-7:'BA'916,9:'BA'861-9:'BA'861
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(7:'BA'916)-A(9:'BA'861) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:91-93_68-71_32-37:
+#  Alignment score:  24.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 3:'BA'117-3:'BA'117,8:'BA'53-8:'BA'53
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(3:'BA'117)-A(8:'BA'53) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:555-562_1384-1385_583-590:
+#  Alignment score:  24
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 2:'BA'1029-2:'BA'1029,8:'BA'2465-8:'BA'2465,16:'BA'1125-16:'BA'1125
+
+	A...G~G
+	A...C~G
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(2:'BA'1029)-G(16:'BA'1125) trans H/S>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(2:'BA'1029)-C(8:'BA'2465) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:276-277_21-24_319-322:
+#  Alignment score:  23.8
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 2:'BA'26-2:'BA'26,9:'BA'514-9:'BA'514
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(2:'BA'26)-A(9:'BA'514) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1142-1153_1112-1115_1067-1068:
+#  Alignment score:  23
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 6:'BA'1968-6:'BA'1968,12:'BA'1932-12:'BA'1932
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(6:'BA'1968)-A(12:'BA'1932) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1265-1268_1269-1273_1221-1222:
+#  Alignment score:  22.1
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 3:'BA'2267-3:'BA'2267,4:'BA'2268-8:'BA'2272
+
+	A...G-AAG
+	A...AAGGU
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(3:'BA'2267)-A(4:'BA'2268) trans S/S>
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(3:'BA'2267)-U(8:'BA'2272) trans W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:319-322_276-277_21-24:
+#  Alignment score:  15.9
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 1:'BA'513-1:'BA'513,6:'BA'26-7:'BA'27
+
+	A...GAAG
+	A...G--G
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(1:'BA'513)-G(7:'BA'27) trans H/S>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(1:'BA'513)-G(6:'BA'26) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:201-206_213-221:
+#  Alignment score:  14.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 4:'BA'326-5:'BA'327,6:'BA'335-7:'BA'336
+
+	GG...AC
+	GG...CC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(5:'BA'327)-C(6:'BA'335) cis W/W>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(4:'BA'326)-C(7:'BA'336) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:283-294_28-29:
+#  Alignment score:  14.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 3:'BA'462-11:'BA'467
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(4:'BA'463)-A(10:'BA'466) cis -/->
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(3:'BA'462)-G(11:'BA'467) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1221-1222_1233-1237_1263-1266:
+#  Alignment score:  14.1
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 1:'BA'2080-1:'BA'2080,2:'BA'2082-2:'BA'2082,8:'BA'2237-9:'BA'2240
+
+	G~G...AC
+	G~A...GC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<A(2:'BA'2082)-G(8:'BA'2237) trans H/S>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(1:'BA'2080)-C(9:'BA'2240) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:627-633_648-658_318-319:
+#  Alignment score:  13.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 2:'BA'1199-3:'BA'1200,16:'BA'1245-17:'BA'1246
+
+	GG...AC
+	UC...GA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<C(3:'BA'1200)-G(16:'BA'1245) cis W/W>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<U(2:'BA'1199)-A(17:'BA'1246) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:743-744_775-780_769-773:
+#  Alignment score:  13.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 0:'BA'1343-1:'BA'1344,6:'BA'1403-7:'BA'1404
+
+	GG...AC
+	GG...CC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(1:'BA'1344)-C(6:'BA'1403) cis W/W>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(0:'BA'1343)-C(7:'BA'1404) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1153-1154_1056-1063_1064-1066:
+#  Alignment score:  12.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 0:'BA'1974-0:'BA'1974,2:'BA'1799-2:'BA'1799,11:'BA'1818-12:'BA'1831
+
+	G~G...AC
+	C~G...UG
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(0:'BA'1974)-G(12:'BA'1831) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(2:'BA'1799)-U(11:'BA'1818) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1014-1015_993-997_989-990:
+#  Alignment score:  12.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 0:'BA'1747-1:'BA'1747.A,5:'BA'1711-6:'BA'1712
+
+	GG...AC
+	GG...CC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(1:'BA'1747.A)-C(5:'BA'1711) cis W/W>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(0:'BA'1747)-C(6:'BA'1712) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:228-229_377-379_141-152:
+#  Alignment score:  12.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 11:'BA'271.B-15:'BA'271.V
+
+	GG...AC
+	CC...GG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<C(12:'BA'271.C)-G(14:'BA'271.U) cis W/W>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(11:'BA'271.B)-G(15:'BA'271.V) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:356-358_681-685_678-680:
+#  Alignment score:  11.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 0:'BA'579-2:'BA'586,6:'BA'1261-6:'BA'1261
+
+	GG...A~C
+	GG...A~C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(0:'BA'579)-C(6:'BA'1261) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(1:'BA'585)-A(2:'BA'586) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1514-1516_1501-1509_1491-1493:
+#  Alignment score:  11
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 5:'BA'2831-7:'BA'2832,12:'BA'2815-12:'BA'2815
+
+	A...G~G
+	G...U~C
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<G(5:'BA'2831)-U(7:'BA'2832) trans S/S>
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<G(5:'BA'2831)-C(12:'BA'2815) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:206-214_190-193:
+#  Alignment score:  10.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 6:'BA'334-6:'BA'334,9:'BA'307-12:'BA'317
+
+	G~G...AC
+	C~G...GG
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(6:'BA'334)-G(12:'BA'317) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(9:'BA'307)-G(11:'BA'309) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:24-29_275-284:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 5:'BA'36-5:'BA'36,6:'BA'444-6:'BA'444
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(5:'BA'36)-C(6:'BA'444) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:629-633_269-275_652-658:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 3:'BA'1215-3:'BA'1215,5:'BA'423-6:'BA'424,12:'BA'1234-12:'BA'1234
+
+	G~G...A~C
+	G~A...G~U
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(3:'BA'1215)-U(12:'BA'1234) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<A(5:'BA'423)-G(6:'BA'424) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1233-1239_1263-1264:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 1:'BA'2083-1:'BA'2083,7:'BA'2236-7:'BA'2236
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(1:'BA'2083)-C(7:'BA'2236) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1152-1153_1112-1116_1140-1149:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 6:'BA'1945-6:'BA'1945,7:'BA'1961-7:'BA'1961
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(6:'BA'1945)-C(7:'BA'1961) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:937-948_799-806:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 6:'BA'1581-6:'BA'1581,13:'BA'1417-13:'BA'1417
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(6:'BA'1581)-C(13:'BA'1417) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:478-483_491-498:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 5:'BA'873-5:'BA'873,6:'BA'904-6:'BA'904
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(5:'BA'873)-C(6:'BA'904) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:32-37_91-93_68-71:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 6:'BA'146-6:'BA'146,12:'BA'133-12:'BA'133
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(6:'BA'146)-C(12:'BA'133) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:32-37_68-71_91-93:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 7:'BA'131-7:'BA'131,12:'BA'148-12:'BA'148
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(7:'BA'131)-C(12:'BA'148) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:980-986_702-703_1166-1174:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 0:'BA'1643-0:'BA'1643,7:'BA'1297-7:'BA'1297
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(0:'BA'1643)-C(7:'BA'1297) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1397-1401_555-558_584-592:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 8:'BA'1030-8:'BA'1030,9:'BA'1124-9:'BA'1124
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(8:'BA'1030)-C(9:'BA'1124) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:750-752_742-749_120-121:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 2:'BA'1368-2:'BA'1368,8:'BA'1363-8:'BA'1363
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(2:'BA'1368)-C(8:'BA'1363) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1384-1385_555-562_583-590:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 9:'BA'1031-9:'BA'1031,10:'BA'1123-10:'BA'1123
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(9:'BA'1031)-C(10:'BA'1123) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:145-146_152-162_228-230:
+#  Alignment score:  9.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 11:'BA'272.B-12:'BA'272.C,14:'BA'365-15:'BA'366
+
+	GG...AC
+	GG...CC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(12:'BA'272.C)-C(14:'BA'365) cis W/W>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(11:'BA'272.B)-C(15:'BA'366) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1056-1063_1153-1154_1064-1066:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 7:'BA'1816-7:'BA'1816,10:'BA'1817-10:'BA'1817
+
+	G...A
+	G...G
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(7:'BA'1816)-G(10:'BA'1817) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:431-440_452-457:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 5:'BA'736-5:'BA'736,14:'BA'760-14:'BA'760
+
+	G...C
+	C...G
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(5:'BA'736)-G(14:'BA'760) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:373-379_385-388_140-142:
+#  Alignment score:  8.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 6:'BA'610-6:'BA'610,7:'BA'618-7:'BA'618
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(6:'BA'610)-C(7:'BA'618) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1112-1115_1142-1153_1067-1068:
+#  Alignment score:  8.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 2:'BA'1934-2:'BA'1934,4:'BA'1964-4:'BA'1964
+
+	G...C
+	C...G
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(2:'BA'1934)-G(4:'BA'1964) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1514-1516_1491-1493_1501-1509:
+#  Alignment score:  7.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 5:'BA'2817-5:'BA'2817,6:'BA'2829-6:'BA'2829
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(5:'BA'2817)-C(6:'BA'2829) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:101-108_28-32_283-284:
+#  Alignment score:  3.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:28-32_101-108_283-284:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:283-284_28-32_101-108:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:28-32_283-284_101-108:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:743-744_769-773_775-780:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1501-1503_1507-1516_1491-1493:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:976-980_702-704:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:283-284_101-108_28-32:
+#  Alignment score:  3.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 6:'BA'178-6:'BA'178,14:'BA'52-14:'BA'52
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(6:'BA'178)-A(14:'BA'52) trans S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:769-773_743-744_775-780:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1507-1516_1501-1503_1491-1493:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:356-358_678-680_681-685:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:702-704_976-980:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1195-1197_1179-1185:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1336-1337_263-265:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1507-1516_1491-1493_1501-1503:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1275-1277_1351-1353_1327-1330:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1250-1256:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:678-680_356-358_681-685:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:160-167_228-230:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:769-773_775-780_743-744:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:678-680_681-685_356-358:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1186-1195_1182-1185_349-350:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1186-1195_349-350_1182-1185:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:349-350_1186-1195_1182-1185:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1351-1353_1275-1277_1327-1330:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1275-1277_1327-1330_1351-1353:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1324-1328_1275-1278:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:349-350_1182-1185_1186-1195:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:228-230_160-167:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1351-1353_1327-1330_1275-1277:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1327-1330_1275-1277_1351-1353:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1182-1185_349-350_1186-1195:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:105-113:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1062-1068_1056-1057:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1179-1185_1195-1197:
+#  Alignment score:  2.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1275-1278_1324-1328:
+#  Alignment score:  2.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1056-1057_1062-1068:
+#  Alignment score:  2.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1505-1508_1514-1517:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:263-265_1336-1337:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1182-1185_1186-1195_349-350:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1327-1330_1351-1353_1275-1277:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:441-448:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:769-777:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1514-1517_1505-1508:
+#  Alignment score:  1.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1470-1477:
+#  Alignment score:  1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v51_BA:1236-1240:
+#  Alignment score:  0.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

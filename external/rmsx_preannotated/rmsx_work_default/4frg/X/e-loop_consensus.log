@@ -1,0 +1,55 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/e-loop_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4frg/X/4frg_X.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4frg/X/4frg_X.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 4frg_X:59-60_31-36_27-29:
+#  Alignment score:  28.7
+#  P-value:  8.873e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:X61-1:X61,3:X33-5:X35,9:X29-10:X30
+
+	G~AG...G~UA
+	A~AU...U~UG
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(1:X61)-G(10:X30) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:X33)-U(9:X29) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(4:X34)-U(5:X35) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 4frg_X:27-29_31-36_59-60:
+#  Alignment score:  27.6
+#  P-value:  9.898e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:X30-2:X30,3:X32-3:X32,9:X60-10:X61
+
+	G~A...UA
+	G~A...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:X32)-U(9:X60) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:X30)-A(10:X61) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 4frg_X:44-52:
+#  Alignment score:  24.6
+#  P-value:  1.380e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:X47-5:X50
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:X47)-A(5:X50) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

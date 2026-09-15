@@ -1,0 +1,100 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/sarcin-ricin_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v6u/A1/4v6u_A1.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v6u/A1/4v6u_A1.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6u_A1:44-48_19-26_8-13:
+#  Alignment score:  13.4
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,7-7
+#  Target aligned region: 9:'A1'24-9:'A1'24,13:'A1'9-13:'A1'9
+
+	A...A
+	A...A
+
+#  Matched base-pairing interactions: 
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(9:'A1'24)-A(13:'A1'9) trans H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6u_A1:53-55_57-62_18-19:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 5:'A1'60-5:'A1'60,10:'A1'20-10:'A1'20
+
+	U...C
+	A...G
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(5:'A1'60)-G(10:'A1'20) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6u_A1:31-40:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'A1'34-5:'A1'37
+
+	U...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(2:'A1'34)-A(5:'A1'37) trans W/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6u_A1:57-62_18-19_53-55:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6u_A1:18-19_57-62_53-55:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6u_A1:57-62_53-55_18-19:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

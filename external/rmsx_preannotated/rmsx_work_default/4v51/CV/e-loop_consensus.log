@@ -1,0 +1,37 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/e-loop_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v51/CV/4v51_CV.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v51/CV/4v51_CV.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 4v51_CV:13-15_45-49_6-9:
+#  Alignment score:  27.6
+#  P-value:  8.662e-02
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 0:'CV'14-1:'CV'15,6:'CV'48-6:'CV'48,9:'CV'8-9:'CV'8
+
+	AG...G~U
+	AG...C~U
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(0:'CV'14)-U(9:'CV'8) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(1:'CV'15)-C(6:'CV'48) trans W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 4v51_CV:21-22_7-13_45-48:
+#  Alignment score:  7.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 1:'CV'22-1:'CV'22,4:'CV'10-4:'CV'10,9:'CV'45-10:'CV'46
+
+	A~G...GU
+	G~G...GG
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(1:'CV'22)-G(10:'CV'46) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(4:'CV'10)-G(9:'CV'45) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

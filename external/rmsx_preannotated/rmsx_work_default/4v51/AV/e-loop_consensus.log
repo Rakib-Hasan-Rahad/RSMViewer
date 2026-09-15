@@ -1,0 +1,35 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/e-loop_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v51/AV/4v51_AV.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v51/AV/4v51_AV.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 4v51_AV:13-14_45-49_6-9:
+#  Alignment score:  27.6
+#  P-value:  9.544e-02
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 0:'AV'14-1:'AV'15,5:'AV'48-5:'AV'48,8:'AV'8-8:'AV'8
+
+	AG...G~U
+	AG...C~U
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(0:'AV'14)-U(8:'AV'8) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(1:'AV'15)-C(5:'AV'48) trans W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 4v51_AV:6-9_13-14_45-49:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

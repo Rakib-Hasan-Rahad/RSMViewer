@@ -1,0 +1,3384 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/e-loop_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3cc2/0/3cc2_0.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3cc2/0/3cc2_0.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1638-1641_1542-1545:
+#  Alignment score:  62
+#  P-value:  1.246e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'1640-3:'0'1642,4:'0'1543-6:'0'1545
+
+	GAG...GUA
+	CAA...GUC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(3:'0'1642)-G(4:'0'1543) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'1641)-U(5:'0'1544) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(1:'0'1640)-C(6:'0'1545) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:936-937_718-721_705-708:
+#  Alignment score:  61.8
+#  P-value:  1.255e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:'0'720-5:'0'722,6:'0'706-8:'0'708
+
+	GAG...GUA
+	GAG...GCA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(5:'0'722)-G(6:'0'706) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'721)-C(7:'0'707) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'720)-A(8:'0'708) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1883-1885_2015-2016_1845-1846:
+#  Alignment score:  52.2
+#  P-value:  1.862e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'1884-2:'0'1886,3:'0'2016-4:'0'2017,6:'0'1847-6:'0'1847
+
+	GAG...GU~A
+	GAA...UU~A
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(2:'0'1886)-U(3:'0'2016) cis W/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'1884)-A(6:'0'1847) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'1885)-U(4:'0'2017) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:910-913_1069-1070_1291-1293:
+#  Alignment score:  50.9
+#  P-value:  1.977e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'911-3:'0'914,4:'0'1070-4:'0'1070,7:'0'1293-8:'0'1294
+
+	GA-G...G~UA
+	GAAA...A~UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'912)-U(7:'0'1293) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(3:'0'914)-A(4:'0'1070) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'911)-A(8:'0'1294) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2007-2009_1945-1946_1970-1973:
+#  Alignment score:  49.6
+#  P-value:  2.103e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'2009-2:'0'2010,4:'0'1947-4:'0'1947,5:'0'1971-7:'0'1973
+
+	GA~G...GUA
+	GA~G...GUA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'2010)-U(6:'0'1972) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(4:'0'1947)-G(5:'0'1971) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2009)-A(7:'0'1973) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2050-2053_1430-1431_1370-1373:
+#  Alignment score:  49.4
+#  P-value:  2.123e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'2053-3:'0'2054,6:'0'1371-7:'0'1372
+
+	GA...UA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'2054)-U(6:'0'1371) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'2053)-A(7:'0'1372) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1092-1093_563-568_587-591:
+#  Alignment score:  47
+#  P-value:  2.394e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 6:'0'568-7:'0'569,9:'0'589-10:'0'590
+
+	GA...UA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(7:'0'569)-U(9:'0'589) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(6:'0'568)-A(10:'0'590) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1007-1012_952-957:
+#  Alignment score:  46.4
+#  P-value:  2.470e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 4:'0'1012-5:'0'1013,7:'0'954-8:'0'955
+
+	GA...UA
+	AA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(5:'0'1013)-U(7:'0'954) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(4:'0'1012)-A(8:'0'955) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:289-292_357-361:
+#  Alignment score:  46.2
+#  P-value:  2.496e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'292-3:'0'293,5:'0'359-6:'0'360
+
+	GA...UA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'293)-U(5:'0'359) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'292)-A(6:'0'360) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:156-159_174-179:
+#  Alignment score:  46.2
+#  P-value:  2.496e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'159-3:'0'160,5:'0'176-6:'0'177
+
+	GA...UA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'160)-U(5:'0'176) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'159)-A(6:'0'177) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2697-2701_2691-2695_2565-2566:
+#  Alignment score:  46.2
+#  P-value:  2.496e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 3:'0'2701-4:'0'2702,6:'0'2693-7:'0'2694
+
+	GA...UA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'2702)-U(6:'0'2693) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'2701)-A(7:'0'2694) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:403-406_380-385:
+#  Alignment score:  46.2
+#  P-value:  2.496e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'406-3:'0'407,5:'0'382-6:'0'383
+
+	GA...UA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'407)-U(5:'0'382) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'406)-A(6:'0'383) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:473-476_461-466:
+#  Alignment score:  46
+#  P-value:  2.522e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'475-2:'0'476,7:'0'465-8:'0'466
+
+	GA...UA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'476)-U(7:'0'465) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'475)-A(8:'0'466) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:223-226_211-215:
+#  Alignment score:  46
+#  P-value:  2.522e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'225-2:'0'226,6:'0'214-7:'0'215
+
+	GA...UA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'226)-U(6:'0'214) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'225)-A(7:'0'215) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1680-1685_1694-1696_1411-1413:
+#  Alignment score:  44.8
+#  P-value:  2.690e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 0:'0'1681-1:'0'1682,7:'0'1696-7:'0'1696,11:'0'1414-11:'0'1414
+
+	GA...U~A
+	GA...U~A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'1681)-A(11:'0'1414) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'1682)-U(7:'0'1696) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2558-2559_2796-2798_2773-2776:
+#  Alignment score:  44.5
+#  P-value:  2.735e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 3:'0'2798-4:'0'2799,5:'0'2774-7:'0'2776
+
+	GA...U-A
+	GA...UAA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'2798)-A(7:'0'2776) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'2799)-U(5:'0'2774) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1061-1062_2305-2307_2298-2301:
+#  Alignment score:  44.2
+#  P-value:  2.781e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'1063-1:'0'1063,3:'0'2307-4:'0'2308,5:'0'2299-7:'0'2301
+
+	G~AG...GUA
+	G~AU...GAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(4:'0'2308)-G(5:'0'2299) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'1063)-A(7:'0'2301) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'2307)-A(6:'0'2300) trans H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2256-2258_2132-2133_2240-2244:
+#  Alignment score:  43.3
+#  P-value:  2.925e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'2257-1:'0'2258,4:'0'2134-4:'0'2134,5:'0'2241-8:'0'2244
+
+	GA~G...GU-A
+	GA~G...CUCA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'2257)-A(8:'0'2244) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'2258)-U(6:'0'2242) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(4:'0'2134)-C(5:'0'2241) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1655-1657_1483-1488_1455-1458:
+#  Alignment score:  42.5
+#  P-value:  3.063e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:'0'1484-6:'0'1487,10:'0'1457-12:'0'1459
+
+	GAG...G~U-A
+	GAA...A~UAA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'1484)-A(12:'0'1459) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'1485)-U(10:'0'1457) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(5:'0'1486)-A(6:'0'1487) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1257-1260_1094-1097_1083-1084:
+#  Alignment score:  42.3
+#  P-value:  3.099e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'1258-3:'0'1261,5:'0'1096-7:'0'1098
+
+	GAG...G~U-A
+	GAG...A~UAA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'1258)-A(7:'0'1098) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'1259)-U(5:'0'1096) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(2:'0'1260)-A(3:'0'1261) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2808-2813_2672-2676_2660-2661:
+#  Alignment score:  41.7
+#  P-value:  3.211e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'2810-5:'0'2814,6:'0'2673-8:'0'2675
+
+	GAG...G~U-A
+	GAA...A~UGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(3:'0'2812)-A(5:'0'2814) cis W/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2810)-A(8:'0'2675) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'2811)-U(6:'0'2673) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:793-796_815-818:
+#  Alignment score:  39
+#  P-value:  3.798e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'795-3:'0'797,4:'0'816-6:'0'818
+
+	GAG...GUA
+	GAA...GGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(3:'0'797)-G(4:'0'816) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'796)-G(5:'0'817) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'795)-A(6:'0'818) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:517-520_21-24:
+#  Alignment score:  39
+#  P-value:  3.798e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'518-2:'0'520,5:'0'23-7:'0'25
+
+	GAG...GUA
+	GAA...GGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(2:'0'520)-G(5:'0'23) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'519)-G(6:'0'24) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'518)-A(7:'0'25) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1600-1607_1586-1589:
+#  Alignment score:  38.2
+#  P-value:  4.003e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 4:'0'1605-6:'0'1607,9:'0'1588-11:'0'1590
+
+	GAG...GUA
+	GAA...GGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(6:'0'1607)-G(9:'0'1588) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(5:'0'1606)-G(10:'0'1589) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(4:'0'1605)-A(11:'0'1590) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:207-209_679-682_662-665:
+#  Alignment score:  37.2
+#  P-value:  4.284e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:'0'680-6:'0'683,7:'0'663-10:'0'666
+
+	G-AG...GU-A
+	GGAG...CUAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(6:'0'683)-C(7:'0'663) cis W/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'680)-A(10:'0'666) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(5:'0'682)-U(8:'0'664) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:375-378_240-243_266-269:
+#  Alignment score:  36.6
+#  P-value:  4.466e-02
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 4:'0'241-5:'0'242,10:'0'269-11:'0'270
+
+	AG...GU
+	AA...GU
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(5:'0'242)-G(10:'0'269) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'241)-U(11:'0'270) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1315-1318_1337-1342_25-26:
+#  Alignment score:  36.6
+#  P-value:  4.466e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'1316-2:'0'1318,5:'0'1339-7:'0'1341
+
+	GAG...GUA
+	GAA...GGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(2:'0'1318)-G(5:'0'1339) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'1317)-G(6:'0'1340) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'1316)-A(7:'0'1341) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1621-1625_1570-1573_1510-1511:
+#  Alignment score:  34.7
+#  P-value:  5.129e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'1623-4:'0'1626,5:'0'1571-7:'0'1573
+
+	GA-G...GUA
+	CAUA...GAA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'1624)-A(6:'0'1572) trans H/H>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(4:'0'1626)-G(5:'0'1571) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(1:'0'1623)-A(7:'0'1573) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2777-2783_2787-2793:
+#  Alignment score:  34.1
+#  P-value:  5.369e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 4:'0'2782-6:'0'2784,7:'0'2788-11:'0'2792
+
+	GAG...GU--A
+	GAA...AUCUA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(6:'0'2784)-A(7:'0'2788) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(4:'0'2782)-A(11:'0'2792) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(5:'0'2783)-U(8:'0'2789) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:188-193_202-205_433-436:
+#  Alignment score:  33
+#  P-value:  5.856e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'190-3:'0'192,6:'0'203-6:'0'203,10:'0'434-11:'0'435
+
+	GAG...G~UA
+	GAA...G~UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'191)-U(10:'0'434) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(3:'0'192)-G(6:'0'203) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'190)-A(11:'0'435) trans W/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1661-1663_1524-1528:
+#  Alignment score:  31.8
+#  P-value:  6.466e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'1663-2:'0'1664,3:'0'1525-6:'0'1528
+
+	GA~G...GUA
+	GA~G...AAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(3:'0'1525)-A(4:'0'1526) cis -/->
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'1664)-A(5:'0'1527) trans H/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'1663)-A(6:'0'1528) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1882-1883_1828-1831_1844-1847:
+#  Alignment score:  31.4
+#  P-value:  6.690e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'1884-1:'0'1884,3:'0'1830-4:'0'1831,6:'0'1845-8:'0'1847
+
+	G~AG...GUA
+	G~CU...AUA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(4:'0'1831)-A(6:'0'1845) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'1884)-A(8:'0'1847) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<C(3:'0'1830)-U(7:'0'1846) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:93-99_76-80:
+#  Alignment score:  31
+#  P-value:  6.927e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:'0'97-5:'0'99,8:'0'78-10:'0'80
+
+	GAG...GUA
+	GAA...GGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(5:'0'99)-G(8:'0'78) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'98)-G(9:'0'79) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'97)-A(10:'0'80) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:636-637_517-521_20-23:
+#  Alignment score:  30.3
+#  P-value:  7.372e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 4:'0'520-6:'0'522,7:'0'21-9:'0'23
+
+	GAG...GUA
+	AAU...GUG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(6:'0'522)-G(7:'0'21) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(5:'0'521)-U(8:'0'22) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(4:'0'520)-G(9:'0'23) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1705-1708_788-790_1709-1711:
+#  Alignment score:  30.2
+#  P-value:  7.439e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'1706-1:'0'1707,4:'0'789-4:'0'789,7:'0'1710-9:'0'1712
+
+	GA~G...GUA
+	GG~C...AAA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(1:'0'1707)-A(8:'0'1711) trans S/H>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(4:'0'789)-A(7:'0'1710) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'1706)-A(9:'0'1712) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2688-2692_2702-2705:
+#  Alignment score:  30
+#  P-value:  7.576e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'2690-4:'0'2693,5:'0'2703-6:'0'2704
+
+	GAG...G~UA
+	UAG...U~AC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(3:'0'2692)-U(4:'0'2693) cis S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'2691)-A(5:'0'2703) trans H/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(1:'0'2690)-C(6:'0'2704) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1365-1370_2054-2057:
+#  Alignment score:  30
+#  P-value:  7.576e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 2:'0'1368-5:'0'1371,6:'0'2055-7:'0'2056
+
+	GAG...G~UA
+	UAG...U~AC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(4:'0'1370)-U(5:'0'1371) cis S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'1369)-A(6:'0'2055) trans H/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(2:'0'1368)-C(7:'0'2056) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:208-213_226-230:
+#  Alignment score:  30
+#  P-value:  7.576e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 2:'0'211-5:'0'214,6:'0'227-7:'0'228
+
+	GAG...G~UA
+	UAG...U~AC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(4:'0'213)-U(5:'0'214) cis S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'212)-A(6:'0'227) trans H/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(2:'0'211)-C(7:'0'228) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2514-2517_2501-2504:
+#  Alignment score:  29.6
+#  P-value:  7.862e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'2516-3:'0'2518,4:'0'2502-6:'0'2504
+
+	GAG...GUA
+	GAC...CAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(3:'0'2518)-C(4:'0'2502) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'2517)-A(5:'0'2503) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2516)-A(6:'0'2504) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2427-2432_2458-2461:
+#  Alignment score:  29
+#  P-value:  8.322e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'2428-2:'0'2430,7:'0'2460-9:'0'2462
+
+	GAG...GUA
+	GAA...AUG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(2:'0'2430)-A(7:'0'2460) trans H/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'2429)-U(8:'0'2461) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'2428)-G(9:'0'2462) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1915-1922:
+#  Alignment score:  29
+#  P-value:  8.322e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'1917-6:'0'1922
+
+	GA...UA
+	GU...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(2:'0'1918)-A(5:'0'1921) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'1917)-A(6:'0'1922) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1195-1203:
+#  Alignment score:  29
+#  P-value:  8.322e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'1197-6:'0'1202
+
+	GA...UA
+	GU...CA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(2:'0'1198)-C(5:'0'1201) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'1197)-A(6:'0'1202) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1488-1489_1531-1534_1654-1658:
+#  Alignment score:  28.8
+#  P-value:  8.484e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 2:'0'1532-4:'0'1534,8:'0'1657-10:'0'1659
+
+	GAG...GUA
+	GAC...AAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(4:'0'1534)-A(8:'0'1657) trans W/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'1533)-A(9:'0'1658) trans H/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'1532)-A(10:'0'1659) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:852-853_788-789_825-827:
+#  Alignment score:  28.6
+#  P-value:  8.651e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'854-1:'0'854,2:'0'789-2:'0'789,4:'0'826-5:'0'827
+
+	G~A...UA
+	G~C...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<C(2:'0'789)-U(4:'0'826) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'854)-A(5:'0'827) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:303-305_328-331_343-346:
+#  Alignment score:  28.5
+#  P-value:  8.736e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'304-0:'0'304,3:'0'329-5:'0'331,8:'0'345-10:'0'347
+
+	G~A-G...GUA
+	G~ACA...GUA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'304)-A(10:'0'347) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'329)-U(9:'0'346) cis S/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(5:'0'331)-G(8:'0'345) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1742-1746_1751-1753_2031-2035:
+#  Alignment score:  28.3
+#  P-value:  8.911e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 2:'0'1745-3:'0'1746,5:'0'1752-7:'0'1754,8:'0'2032-10:'0'2034
+
+	GA~G...G~U-A
+	GA~G...A~UGU
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'1745)-U(10:'0'2034) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'1746)-U(8:'0'2032) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(5:'0'1752)-A(7:'0'1754) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1763-1765_1775-1779:
+#  Alignment score:  28.2
+#  P-value:  9.000e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'1765-2:'0'1766,5:'0'1778-6:'0'1779
+
+	GA...UA
+	GU...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(2:'0'1766)-A(5:'0'1778) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'1765)-A(6:'0'1779) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1764-1767_1774-1778:
+#  Alignment score:  28.2
+#  P-value:  9.000e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'1765-3:'0'1768,4:'0'1775-8:'0'1779
+
+	G-AG...GU--A
+	GUAC...AAGAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(3:'0'1768)-A(4:'0'1775) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'1765)-A(8:'0'1779) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'1767)-A(5:'0'1776) trans H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2599-2601_2579-2582_2595-2597:
+#  Alignment score:  27.8
+#  P-value:  9.370e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'2600-2:'0'2602,4:'0'2581-4:'0'2581,8:'0'2597-9:'0'2598
+
+	GAG...G~UA
+	AAG...U~UU
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'2601)-U(8:'0'2597) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(2:'0'2602)-U(4:'0'2581) cis H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(0:'0'2600)-U(9:'0'2598) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:468-469_773-774_470-472:
+#  Alignment score:  27.8
+#  P-value:  9.370e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 0:'0'469-0:'0'469,2:'0'774-2:'0'774,4:'0'471-5:'0'472
+
+	G~A...UA
+	G~C...GA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'469)-A(5:'0'472) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<C(2:'0'774)-G(4:'0'471) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1451-1454_1489-1490_1673-1675:
+#  Alignment score:  27.6
+#  P-value:  9.564e-02
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 1:'0'1453-2:'0'1454,5:'0'1491-5:'0'1491,6:'0'1674-6:'0'1674
+
+	AG...G~U
+	GU...G~C
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(2:'0'1454)-G(5:'0'1491) trans H/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(1:'0'1453)-C(6:'0'1674) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2880-2883_2872-2875_1786-1788:
+#  Alignment score:  27.6
+#  P-value:  9.564e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'2882-3:'0'2884,4:'0'2873-6:'0'2875
+
+	GAG...GUA
+	GAG...CGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(3:'0'2884)-C(4:'0'2873) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'2883)-G(5:'0'2874) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2882)-A(6:'0'2875) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1644-1645_1612-1617_1578-1581:
+#  Alignment score:  27.6
+#  P-value:  9.564e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:'0'1614-7:'0'1618,8:'0'1579-10:'0'1581
+
+	G-AG...G~U-A
+	GAAC...G~CAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(6:'0'1617)-G(7:'0'1618) cis S/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'1614)-A(10:'0'1581) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(5:'0'1616)-C(8:'0'1579) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2499-2500_1227-1229_1130-1133:
+#  Alignment score:  27.2
+#  P-value:  9.971e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 3:'0'1229-4:'0'1230,6:'0'1132-7:'0'1133
+
+	GA...UA
+	CA...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'1230)-A(6:'0'1132) trans H/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(3:'0'1229)-A(7:'0'1133) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2350-2351_2354-2355_2330-2332:
+#  Alignment score:  27.2
+#  P-value:  9.971e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'2352-1:'0'2352,2:'0'2355-2:'0'2355,4:'0'2331-5:'0'2332
+
+	G~A...UA
+	G~G...CA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(2:'0'2355)-C(4:'0'2331) cis W/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2352)-A(5:'0'2332) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1159-1163_1189-1190_1205-1206:
+#  Alignment score:  26.8
+#  P-value:  1.040e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 0:'0'1160-0:'0'1160,6:'0'1191-6:'0'1191,7:'0'1206-8:'0'1207
+
+	G~A...UA
+	G~A...UA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'1160)-A(8:'0'1207) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(6:'0'1191)-U(7:'0'1206) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2388-2390_2395-2398:
+#  Alignment score:  26.8
+#  P-value:  1.040e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'2390-2:'0'2391,4:'0'2397-5:'0'2398
+
+	GA...UA
+	UC...GA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<C(2:'0'2391)-G(4:'0'2397) trans H/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(1:'0'2390)-A(5:'0'2398) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1291-1293_1069-1070_910-913:
+#  Alignment score:  26.8
+#  P-value:  1.040e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 3:'0'1070-4:'0'1071,7:'0'913-8:'0'914
+
+	GA...UA
+	AG...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(4:'0'1071)-A(7:'0'913) trans H/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(3:'0'1070)-A(8:'0'914) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:315-318_335-338_311-314:
+#  Alignment score:  26.6
+#  P-value:  1.063e-01
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'316-1:'0'317,5:'0'337-6:'0'338,9:'0'313-10:'0'314
+
+	GA~G...G~UA
+	AA~A...C~UG
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'317)-U(9:'0'313) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(5:'0'337)-C(6:'0'338) cis S/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(0:'0'316)-G(10:'0'314) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:260-266_243-248:
+#  Alignment score:  26.4
+#  P-value:  1.087e-01
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:'0'264-5:'0'266,8:'0'245-10:'0'247
+
+	GAG...GUA
+	GUG...CGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(5:'0'266)-C(8:'0'245) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(4:'0'265)-G(9:'0'246) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'264)-A(10:'0'247) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:767-770_159-172_890-894:
+#  Alignment score:  26.4
+#  P-value:  1.087e-01
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 6:'0'162-16:'0'172,20:'0'893-20:'0'893
+
+	GAG...GU~A
+	CUG...CU~C
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(8:'0'164)-C(15:'0'171) cis W/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(6:'0'162)-C(20:'0'893) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(7:'0'163)-U(16:'0'172) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1417-1418_1447-1451_1675-1677:
+#  Alignment score:  26.2
+#  P-value:  1.111e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'1419-1:'0'1419,2:'0'1448-2:'0'1448,8:'0'1677-9:'0'1678
+
+	G~A...UA
+	U~A...UA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'1448)-U(8:'0'1677) trans H/W>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(1:'0'1419)-A(9:'0'1678) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:677-680_230-231_664-668:
+#  Alignment score:  26.2
+#  P-value:  1.111e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'680-2:'0'680,4:'0'231-4:'0'231,6:'0'665-7:'0'666
+
+	G~A...UA
+	G~G...AA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'680)-A(7:'0'666) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(4:'0'231)-A(6:'0'665) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2722-2725_2038-2040_2754-2757:
+#  Alignment score:  25.8
+#  P-value:  1.162e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'2725-3:'0'2726,6:'0'2041-6:'0'2041,9:'0'2757-9:'0'2757
+
+	GA...U~A
+	GU...G~A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'2725)-A(9:'0'2757) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(3:'0'2726)-G(6:'0'2041) cis H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2126-2127_1907-1909_1928-1930:
+#  Alignment score:  25.6
+#  P-value:  1.189e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'1908-2:'0'1908,5:'0'1929-7:'0'1931
+
+	G~A...UA
+	G~G...AA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'1908)-A(7:'0'1931) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(5:'0'1929)-A(6:'0'1930) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1068-1073_1290-1292_1084-1087:
+#  Alignment score:  25.4
+#  P-value:  1.216e-01
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:'0'1072-4:'0'1073,7:'0'1292-8:'0'1293,11:'0'1087-12:'0'1088
+
+	GA~G...G~UA
+	GA~G...U~GA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'1073)-G(11:'0'1087) trans H/S>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(7:'0'1292)-U(8:'0'1293) cis S/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'1072)-A(12:'0'1088) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1861-1862_1474-1475_1864-1867:
+#  Alignment score:  25
+#  P-value:  1.275e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'1863-1:'0'1863,2:'0'1475-2:'0'1475,4:'0'1865-5:'0'1866
+
+	G~A...UA
+	G~G...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(2:'0'1475)-A(4:'0'1865) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'1863)-A(5:'0'1866) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:198-202_425-428_191-194:
+#  Alignment score:  25
+#  P-value:  1.275e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 4:'0'203-4:'0'203,7:'0'428-8:'0'429,9:'0'192-9:'0'192
+
+	G~A...U~A
+	G~G...A~A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(4:'0'203)-A(9:'0'192) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(7:'0'428)-A(8:'0'429) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2044-2045_1728-1733:
+#  Alignment score:  24.6
+#  P-value:  1.338e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'2046-1:'0'2046,6:'0'1733-6:'0'1733
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2046)-A(6:'0'1733) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:688-690_692-696_730-731:
+#  Alignment score:  24.6
+#  P-value:  1.338e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:'0'691-2:'0'691,4:'0'694-4:'0'694
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'691)-A(4:'0'694) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:313-317_337-342_333-336:
+#  Alignment score:  24.6
+#  P-value:  1.338e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'315-1:'0'315,6:'0'339-6:'0'339,12:'0'335-13:'0'336
+
+	G~A...UA
+	G~A...UG
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'315)-G(13:'0'336) trans S/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(6:'0'339)-U(12:'0'335) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:450-455_28-31:
+#  Alignment score:  24.6
+#  P-value:  1.338e-01
+#  Query aligned region: 1-1,4-4
+#  Target aligned region: 2:'0'453-2:'0'453,7:'0'30-7:'0'30
+
+	A...U
+	A...U
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'453)-U(7:'0'30) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2876-2879:
+#  Alignment score:  24.6
+#  P-value:  1.338e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 0:'0'2877-3:'0'2880
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'2877)-A(3:'0'2880) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2695-2698:
+#  Alignment score:  24.6
+#  P-value:  1.338e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 0:'0'2696-3:'0'2699
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'2696)-A(3:'0'2699) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:501-503_511-514_484-489:
+#  Alignment score:  24.4
+#  P-value:  1.371e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'503-1:'0'503,4:'0'513-4:'0'513,10:'0'488-11:'0'489
+
+	G~A...UA
+	G~A...UA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'503)-A(11:'0'489) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'513)-U(10:'0'488) trans W/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1714-1717_1403-1408_1700-1702:
+#  Alignment score:  24.2
+#  P-value:  1.405e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 0:'0'1715-1:'0'1716,5:'0'1405-5:'0'1405,12:'0'1703-12:'0'1703
+
+	GA...U~A
+	CA...U~G
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(0:'0'1715)-G(12:'0'1703) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'1716)-U(5:'0'1405) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1169-1172:
+#  Alignment score:  24.2
+#  P-value:  1.405e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 0:'0'1170-3:'0'1173
+
+	G...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(0:'0'1170)-A(3:'0'1173) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:263-267_242-245:
+#  Alignment score:  24.2
+#  P-value:  1.405e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 4:'0'268-4:'0'268,5:'0'243-5:'0'243
+
+	G...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(4:'0'268)-A(5:'0'243) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2753-2756_2893-2895_2724-2727:
+#  Alignment score:  24.2
+#  P-value:  1.405e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'2755-2:'0'2756,6:'0'2896-6:'0'2896,9:'0'2727-9:'0'2727
+
+	GA...U~A
+	GU...A~A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2755)-A(9:'0'2727) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(2:'0'2756)-A(6:'0'2896) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:10-12_529-531:
+#  Alignment score:  24.2
+#  P-value:  1.405e-01
+#  Query aligned region: 2-2,3-3
+#  Target aligned region: 1:'0'12-1:'0'12,4:'0'531-4:'0'531
+
+	G...G
+	U...G
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(1:'0'12)-G(4:'0'531) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:822-825_1707-1709_788-790:
+#  Alignment score:  24
+#  P-value:  1.441e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'824-1:'0'824,6:'0'1710-6:'0'1710,7:'0'789-8:'0'790
+
+	G~A...UA
+	G~A...CA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'824)-A(8:'0'790) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(6:'0'1710)-C(7:'0'789) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1051-1054_1056-1062:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 3:'0'1055-3:'0'1055,5:'0'1058-5:'0'1058
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'1055)-A(5:'0'1058) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:424-425_412-414_191-201:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 9:'0'196-12:'0'199
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(9:'0'196)-A(12:'0'199) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2801-2804_2768-2771:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 3:'0'2805-3:'0'2805,4:'0'2769-4:'0'2769
+
+	G...A
+	A...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(3:'0'2805)-C(4:'0'2769) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2640-2642_2621-2622_1838-1841:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:'0'2643-2:'0'2643,3:'0'2622-3:'0'2622
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'2643)-A(3:'0'2622) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2409-2417:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:'0'2412-5:'0'2415
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'2412)-A(5:'0'2415) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2247-2253:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'2249-4:'0'2252
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2249)-A(4:'0'2252) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2268-2273_2120-2123:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'2270-1:'0'2270,8:'0'2123-8:'0'2123
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2270)-A(8:'0'2123) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1792-1798:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'1794-4:'0'1797
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'1794)-A(4:'0'1797) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1211-1215_1150-1154:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'1214-3:'0'1215,5:'0'1151-6:'0'1152
+
+	GA...UA
+	GA...GA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'1215)-G(5:'0'1151) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'1214)-A(6:'0'1152) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:803-808:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'805-4:'0'808
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'805)-A(4:'0'808) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:120-121_108-113_47-51:
+#  Alignment score:  23.8
+#  P-value:  1.478e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 5:'0'112-5:'0'112,9:'0'49-9:'0'49
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(5:'0'112)-A(9:'0'49) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:503-508_480-485_510-511:
+#  Alignment score:  23.6
+#  P-value:  1.517e-01
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 2:'0'506-4:'0'508,7:'0'482-8:'0'483,12:'0'511-12:'0'511
+
+	GAG...GU~A
+	GAA...GC~A
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(4:'0'508)-G(7:'0'482) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'506)-A(12:'0'511) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'507)-C(8:'0'483) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2359-2361_2294-2295_2423-2425:
+#  Alignment score:  23.4
+#  P-value:  1.557e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 0:'0'2360-1:'0'2361,3:'0'2295-3:'0'2295,6:'0'2425-6:'0'2425
+
+	GA...U~A
+	CA...G~A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(0:'0'2360)-A(6:'0'2425) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'2361)-G(3:'0'2295) trans S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1273-1282:
+#  Alignment score:  23.4
+#  P-value:  1.557e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:'0'1276-6:'0'1280
+
+	G...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(2:'0'1276)-A(6:'0'1280) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:217-218_219-221_167-170:
+#  Alignment score:  23.4
+#  P-value:  1.557e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 0:'0'218-0:'0'218,4:'0'222-4:'0'222
+
+	G...A
+	C...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(0:'0'218)-A(4:'0'222) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2822-2827_2911-2913_2666-2667:
+#  Alignment score:  22.8
+#  P-value:  1.687e-01
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:'0'2826-5:'0'2828,6:'0'2912-8:'0'2914
+
+	GAG...GUA
+	GAG...CAA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(5:'0'2828)-C(6:'0'2912) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'2827)-A(7:'0'2913) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'2826)-A(8:'0'2914) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2863-2867_2888-2889_2890-2891:
+#  Alignment score:  22.8
+#  P-value:  1.687e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'2865-2:'0'2866,5:'0'2889-5:'0'2889,7:'0'2891-7:'0'2891
+
+	GA...U~A
+	GU...U~A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2865)-A(7:'0'2891) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(2:'0'2866)-U(5:'0'2889) trans S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1030-1033_935-939:
+#  Alignment score:  22.4
+#  P-value:  1.784e-01
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'1031-2:'0'1033,5:'0'937-7:'0'939
+
+	GAG...GUA
+	GAC...CGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(2:'0'1033)-C(5:'0'937) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'1032)-G(6:'0'938) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'1031)-A(7:'0'939) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1092-1093_587-591_563-568:
+#  Alignment score:  22.4
+#  P-value:  1.784e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 6:'0'592-6:'0'592,7:'0'564-9:'0'566
+
+	G~A...UA
+	G~G...AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(7:'0'564)-A(8:'0'565) cis S/H>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(6:'0'592)-A(9:'0'566) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:492-498:
+#  Alignment score:  22.3
+#  P-value:  1.809e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'494-5:'0'498
+
+	G-A...UA
+	CAG...AA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(1:'0'494)-A(5:'0'498) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(3:'0'496)-A(4:'0'497) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1626-1628_1630-1632_1567-1569:
+#  Alignment score:  22.2
+#  P-value:  1.835e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:'0'1629-2:'0'1629,4:'0'1632-4:'0'1632
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'1629)-A(4:'0'1632) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:146-147_42-47_111-114:
+#  Alignment score:  22.2
+#  P-value:  1.835e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 6:'0'47-6:'0'47,9:'0'113-9:'0'113
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(6:'0'47)-A(9:'0'113) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2848-2854_2900-2905_2833-2834:
+#  Alignment score:  22.2
+#  P-value:  1.835e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:'0'2851-2:'0'2851,12:'0'2906-12:'0'2906
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'2851)-A(12:'0'2906) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2621-2622_2640-2642_1838-1841:
+#  Alignment score:  21.8
+#  P-value:  1.944e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:'0'2641-2:'0'2641,8:'0'1842-8:'0'1842
+
+	G...A
+	C...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(2:'0'2641)-A(8:'0'1842) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2504-2507_2561-2563_2509-2514:
+#  Alignment score:  21.6
+#  P-value:  2.003e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:'0'2507-2:'0'2507,5:'0'2563-6:'0'2564,10:'0'2513-10:'0'2513
+
+	G~A...U~A
+	G~U...G~A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(2:'0'2507)-A(10:'0'2513) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(5:'0'2563)-G(6:'0'2564) trans S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:366-368_279-284:
+#  Alignment score:  21.4
+#  P-value:  2.064e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 0:'0'367-0:'0'367,8:'0'285-8:'0'285
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(0:'0'367)-A(8:'0'285) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:844-846_840-843_835-837:
+#  Alignment score:  21.4
+#  P-value:  2.064e-01
+#  Query aligned region: 2-2,3-3
+#  Target aligned region: 0:'0'845-0:'0'845,6:'0'844-6:'0'844
+
+	G...G
+	U...A
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(0:'0'845)-A(6:'0'844) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2787-2793_2777-2783:
+#  Alignment score:  21.4
+#  P-value:  2.064e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 2:'0'2790-2:'0'2790,9:'0'2780-9:'0'2780
+
+	G...A
+	C...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(2:'0'2790)-C(9:'0'2780) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:484-486_480-483_504-510:
+#  Alignment score:  21.4
+#  P-value:  2.064e-01
+#  Query aligned region: 1-1,4-4
+#  Target aligned region: 0:'0'485-0:'0'485,3:'0'481-3:'0'481
+
+	A...U
+	A...U
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(0:'0'485)-U(3:'0'481) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:480-483_484-486_504-510:
+#  Alignment score:  21.4
+#  P-value:  2.064e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'482-1:'0'482,5:'0'486-5:'0'486
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'482)-A(5:'0'486) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:251-256:
+#  Alignment score:  21.4
+#  P-value:  2.064e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'253-4:'0'256
+
+	G...A
+	U...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(1:'0'253)-C(4:'0'256) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2888-2891_2863-2866:
+#  Alignment score:  21
+#  P-value:  2.194e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'2890-2:'0'2891
+
+	G...A
+	A...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(1:'0'2890)-A(2:'0'2891) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:900-901_640-642_1354-1359:
+#  Alignment score:  20.8
+#  P-value:  2.264e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 3:'0'642-3:'0'642,6:'0'1356-8:'0'1358
+
+	G~A...UA
+	G~A...AA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(3:'0'642)-A(8:'0'1358) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(6:'0'1356)-A(7:'0'1357) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2364-2370_2354-2355_2328-2331:
+#  Alignment score:  20.6
+#  P-value:  2.338e-01
+#  Query aligned region: 1-1,4-4
+#  Target aligned region: 4:'0'2369-4:'0'2369,10:'0'2330-10:'0'2330
+
+	A...U
+	A...U
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'2369)-U(10:'0'2330) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1838-1842_1832-1834:
+#  Alignment score:  20.4
+#  P-value:  2.415e-01
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:'0'1840-4:'0'1843,6:'0'1834-7:'0'1835
+
+	GAG...G~UA
+	ACA...A~CU
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<C(2:'0'1841)-C(6:'0'1834) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(3:'0'1842)-A(4:'0'1843) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(1:'0'1840)-U(7:'0'1835) trans H/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2672-2676_2808-2813_2660-2661:
+#  Alignment score:  19.8
+#  P-value:  2.671e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 1:'0'2674-1:'0'2674,9:'0'2813-9:'0'2813
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'2674)-A(9:'0'2813) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:438-441_183-185_149-152:
+#  Alignment score:  19.8
+#  P-value:  2.671e-01
+#  Query aligned region: 2-2,3-3
+#  Target aligned region: 5:'0'185-5:'0'185,7:'0'150-7:'0'150
+
+	G...G
+	G...G
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(5:'0'185)-G(7:'0'150) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2771-2774_2798-2799_2800-2801:
+#  Alignment score:  18.6
+#  P-value:  3.321e-01
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 5:'0'2800-5:'0'2800,6:'0'2801-6:'0'2801
+
+	G...A
+	A...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(5:'0'2800)-A(6:'0'2801) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2082-2084_531-533_2811-2813:
+#  Alignment score:  18.2
+#  P-value:  3.591e-01
+#  Query aligned region: 2-2,3-3
+#  Target aligned region: 4:'0'533-4:'0'533,6:'0'2812-6:'0'2812
+
+	G...G
+	U...A
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(4:'0'533)-A(6:'0'2812) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:31-32_458-459_450-456:
+#  Alignment score:  7.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:'0'33-1:'0'33,3:'0'460-3:'0'460,8:'0'455-9:'0'456
+
+	G~A...UA
+	G~A...AG
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:'0'33)-G(9:'0'456) cis -/->
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'460)-A(8:'0'455) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1938-1943_1892-1897:
+#  Alignment score:  7.4
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,4-4
+#  Target aligned region: 3:'0'1942-3:'0'1942,7:'0'1894-7:'0'1894
+
+	A...U
+	A...C
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:'0'1942)-C(7:'0'1894) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1497-1506:
+#  Alignment score:  7.3
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 1:'0'1499-6:'0'1504
+
+	AG...GU
+	UU...UA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(2:'0'1500)-U(5:'0'1503) cis -/->
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(1:'0'1499)-A(6:'0'1504) trans W/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:865-870_883-886_773-779:
+#  Alignment score:  7
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 2:'0'868-2:'0'868,9:'0'887-9:'0'887,10:'0'774-11:'0'775
+
+	A~G...GU
+	G~G...CG
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(2:'0'868)-G(11:'0'775) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(9:'0'887)-C(10:'0'774) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1236-1238_1101-1103_1239-1240:
+#  Alignment score:  6.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'1237-2:'0'1239,5:'0'1104-5:'0'1104,6:'0'1240-7:'0'1241
+
+	GAG...G~UA
+	UCG...C~GG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(2:'0'1239)-C(5:'0'1104) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<C(1:'0'1238)-G(6:'0'1240) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(0:'0'1237)-G(7:'0'1241) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2080-2082_533-534_2061-2063:
+#  Alignment score:  6.2
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 0:'0'2081-1:'0'2082,4:'0'535-4:'0'535,7:'0'2064-7:'0'2064
+
+	AG...G~U
+	AG...G~U
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(0:'0'2081)-U(7:'0'2064) cis W/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(1:'0'2082)-G(4:'0'535) trans W/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2480-2485_2534-2537_2100-2105:
+#  Alignment score:  5.8
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,4-4
+#  Target aligned region: 4:'0'2485-4:'0'2485,7:'0'2536-7:'0'2536
+
+	A...U
+	A...C
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(4:'0'2485)-C(7:'0'2536) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:128-134_140-146_114-115:
+#  Alignment score:  5.8
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 2:'0'131-3:'0'132,12:'0'146-13:'0'147
+
+	AG...GU
+	AA...UG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(3:'0'132)-U(12:'0'146) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'131)-G(13:'0'147) cis W/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:233-236_433-435_189-193:
+#  Alignment score:  5
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 0:'0'234-3:'0'237,5:'0'435-6:'0'436
+
+	GAG...G~UA
+	ACA...G~AA
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<C(1:'0'235)-A(5:'0'435) cis -/->
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<A(2:'0'236)-G(3:'0'237) cis S/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(0:'0'234)-A(6:'0'436) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1424-1429_1433-1439:
+#  Alignment score:  4.8
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 2:'0'1427-3:'0'1428,11:'0'1439-12:'0'1440
+
+	AG...GU
+	AC...CU
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(3:'0'1428)-C(11:'0'1439) cis -/->
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'1427)-U(12:'0'1440) cis W/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2487-2490_2068-2073_624-629:
+#  Alignment score:  4.6
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 0:'0'2488-1:'0'2489,7:'0'2072-8:'0'2073
+
+	AG...GU
+	AG...GG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<G(1:'0'2489)-G(7:'0'2072) cis -/->
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(0:'0'2488)-G(8:'0'2073) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2067-2075_624-629:
+#  Alignment score:  4.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 7:'0'2075-7:'0'2075,14:'0'631-14:'0'631
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(7:'0'2075)-A(14:'0'631) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2476-2479_892-898_764-767:
+#  Alignment score:  4.1
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 6:'0'895-7:'0'896,12:'0'766-13:'0'767
+
+	AG...GU
+	AC...AA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(7:'0'896)-A(12:'0'766) trans W/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(6:'0'895)-A(13:'0'767) trans W/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2716-2721_2760-2763:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 2:'0'2719-3:'0'2720,8:'0'2763-9:'0'2764
+
+	AG...GU
+	AC...GC
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(3:'0'2720)-G(8:'0'2763) cis W/S>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:'0'2719)-C(9:'0'2764) trans W/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1003-1009_957-964:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,4-4
+#  Target aligned region: 1:'0'1005-1:'0'1005,8:'0'959-8:'0'959
+
+	A...U
+	A...C
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(1:'0'1005)-C(8:'0'959) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2646-2649_2609-2612_2094-2096:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 1-2,3-4
+#  Target aligned region: 3:'0'2650-3:'0'2650,4:'0'2610-7:'0'2613,8:'0'2095-8:'0'2095
+
+	A~G...G~U
+	U~U...G~A
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(4:'0'2610)-G(7:'0'2613) cis -/->
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<U(3:'0'2650)-A(8:'0'2095) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:957-964_1003-1009:
+#  Alignment score:  3
+#  P-value:  1.000e+00
+#  Query aligned region: 2-2,3-3
+#  Target aligned region: 13:'0'1009-14:'0'1010
+
+	G...G
+	U...C
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(13:'0'1009)-C(14:'0'1010) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:147-149_40-43:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2575-2579_2551-2556_2598-2601:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1928-1930_2126-2127_1907-1909:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:31-32_450-456_458-459:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2864-2868_2887-2889:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2534-2537_2100-2105_2480-2485:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2100-2105_2534-2537_2480-2485:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1973-1981_2003-2004_2005-2007:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2072-2076_627-629:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2575-2579_2598-2601_2551-2556:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2551-2556_2575-2579_2598-2601:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1892-1897_1938-1943:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1832-1834_1838-1842:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,5-5
+#  Target aligned region: 0:'0'1833-0:'0'1833,7:'0'1843-7:'0'1843
+
+	G...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<U(0:'0'1833)-A(7:'0'1843) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:912-917_1041-1042_925-927:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1041-1042_912-917_925-927:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1041-1042_925-927_912-917:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:450-456_31-32_458-459:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:450-456_458-459_31-32:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1840-1844_1830-1832:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1830-1832_1840-1844:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1484-1489_1655-1658:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2525-2526_2523-2524_2492-2496:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2523-2524_2492-2496_2525-2526:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2523-2524_2525-2526_2492-2496:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2598-2601_2575-2579_2551-2556:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2534-2537_2480-2485_2100-2105:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2609-2612_2646-2649_2094-2096:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2609-2612_2094-2096_2646-2649:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:883-886_773-779_865-870:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:773-779_883-886_865-870:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2003-2004_2005-2007_1973-1981:
+#  Alignment score:  2.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2598-2601_2551-2556_2575-2579:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:773-779_865-870_883-886:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2005-2007_1973-1981_2003-2004:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2003-2004_1973-1981_2005-2007:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1973-1981_2005-2007_2003-2004:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2492-2496_2523-2524_2525-2526:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1041-1044_913-915_1068-1071:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:40-43_147-149:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2551-2556_2598-2601_2575-2579:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2005-2007_2003-2004_1973-1981:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:627-629_2072-2076:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1655-1658_1484-1489:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:470-472_773-774_468-469:
+#  Alignment score:  2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:860-861_1484-1487:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:432-435_234-236_189-193:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:432-435_189-193_234-236:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2492-2496_2525-2526_2523-2524:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2525-2526_2492-2496_2523-2524:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:692-693_731-732:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2887-2889_2864-2868:
+#  Alignment score:  1.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:2811-2813_531-533_2082-2084:
+#  Alignment score:  1.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1417-1418_1675-1677_1447-1451:
+#  Alignment score:  1.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1484-1487_860-861:
+#  Alignment score:  1.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1630-1631_1552-1553:
+#  Alignment score:  1.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:1552-1553_1630-1631:
+#  Alignment score:  1.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3cc2_0:731-732_692-693:
+#  Alignment score:  1.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

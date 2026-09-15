@@ -1,0 +1,95 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/k-turn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/2gis/A/2gis_A.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/2gis/A/2gis_A.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 2gis_A:16-20_30-37:
+#  Alignment score:  126.4
+#  P-value:  1.163e-02
+#  Query aligned region: 0-4,5-12
+#  Target aligned region: 0:A17-4:A21,5:A31-12:A38
+
+	GGGAG...CGAAGAAC
+	UGGAG...CGAUGAAA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(1:A18)-A(11:A37) trans S/H>
+	<G(2:)-A(10:) trans S/H>                       MATCHES	<G(2:A19)-A(10:A36) trans S/H>
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(3:A20)-G(9:A35) trans H/S>
+	<G(4:)-C(5:) cis W/W>                          MATCHES	<G(4:A21)-C(5:A31) cis W/W>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(3:A20)-G(6:A32) cis -/->
+	<G(4:)-A(10:) trans S/S>                       MATCHES	<G(4:A21)-A(10:A36) cis -/->
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<U(0:A17)-A(12:A38) cis W/W>
+#  Matched base-stacking interactions: 
+	<A(3:)-A(10:) outward>                         MATCHES	<A(3:A20)-A(10:A36) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 2gis_A:55-59_8-14_39-46:
+#  Alignment score:  12
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 2:A58-2:A58,8:A12-8:A12,15:A43-16:A44
+
+	G~G...AC
+	G~A...GC
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(2:A58)-C(16:A44) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<A(8:A12)-G(15:A43) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 2gis_A:39-46_55-59_8-14:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 1:A41-2:A42,12:A60-12:A60,17:A13-17:A13
+
+	GG...A~C
+	CG...C~G
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(1:A41)-G(17:A13) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(2:A42)-C(12:A60) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 2gis_A:8-14_55-59_39-46:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 6:A15-6:A15,12:A40-12:A40
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(6:A15)-C(12:A40) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 2gis_A:51-55_45-49_88-89:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 2:A54-2:A54,8:A49-8:A49
+
+	G...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<U(2:A54)-A(8:A49) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

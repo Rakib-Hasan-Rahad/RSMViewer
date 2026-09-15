@@ -1,0 +1,164 @@
+PDB data file name: 1asy.pdb_new
+uncommon residue PSU  613  on chain R [#13] assigned to: P
+uncommon residue H2U  616  on chain R [#16] assigned to: u
+uncommon residue H2U  619  on chain R [#19] assigned to: u
+uncommon residue PSU  632  on chain R [#32] assigned to: P
+uncommon residue 1MG  637  on chain R [#37] assigned to: g
+uncommon residue 5MC  649  on chain R [#48] assigned to: c
+uncommon residue 5MU  654  on chain R [#53] assigned to: u
+uncommon residue PSU  655  on chain R [#54] assigned to: P
+uncommon residue PSU  613  on chain S [#88] assigned to: P
+uncommon residue H2U  616  on chain S [#91] assigned to: u
+uncommon residue H2U  619  on chain S [#94] assigned to: u
+uncommon residue PSU  632  on chain S [#107] assigned to: P
+uncommon residue 1MG  637  on chain S [#112] assigned to: g
+uncommon residue 5MC  649  on chain S [#123] assigned to: c
+uncommon residue 5MU  654  on chain S [#128] assigned to: u
+uncommon residue PSU  655  on chain S [#129] assigned to: P
+-----------------------------------------------------------
+CRITERIA USED TO GENERATE BASE-PAIR: 
+  3.40 --> upper H-bond length limits (ON..ON).
+ 26.00 --> max. distance between paired base origins.
+  2.50 --> max. vertical distance between paired base origins.
+ 65.00 --> max. angle between paired bases [0-90].
+  5.40 --> min. distance between RN9/YN1 atoms.
+  8.00 --> max. distance criterion for helix break[0-12]
+-----------------------------------------------------------
+BASE-PAIR INSTRUCTIONS: 
+Column 1 is rnaview assigned base numbers n1_n2, start from 1.
+Column 2 & 3 are chain ID & residue number in input PDB file.
+Column 4 is for base pair. The left & right are the bases as 
+         identified by column 2 & 3 and 5 & 6.
+Column 5 & 6 are residue number & chain ID in input PDB file.
+Column 7 is for base pair annotation. The standard Watson-Crick
+         (W.C.) pairs are annotated as -/- (AU,AT) or +/+ (GC).
+         Other pairs are annotated as Leontis_Westhof Classification.
+         The three edges: W(Watson-Crick); H(Hoogsteen); S(suger).
+         e.g. W/H means the pair is edge of Watson-Crick & Hoogsteen.
+Column 8 is glycosidic bond orientation (either cis or trans).
+         e.g. 'W/H cis' means the pair is interaction on Watson-Crick
+         and Hoogsteen side, glycosidic bond orientation is 'cis'.
+Column 9 corresponds to Saenger Classification.
+
+Other columns: 
+        Syn sugar-base conformations are annotated as (syn).
+        Stacked base pairs are annotated as (stack).
+        Non-identified edges are annotated as (.) or (?)
+        Tertiary interactions are marked by (!) in the line.
+Reference:
+Yang et al (2003) Nucleic Acids Research, Vol31,No13,p3450-3461.
+-----------------------------------------------------------
+BEGIN_base-pair
+     1_71, R:   601 U-A   672 R: -/- cis         XX
+     2_70, R:   602 C-G   671 R: +/+ cis         XIX
+     3_69, R:   603 C-G   670 R: +/+ cis         XIX
+     4_68, R:   604 G-C   669 R: +/+ cis         XIX
+     5_67, R:   605 U-G   668 R: W/W cis         XXVIII
+     6_66, R:   606 G-C   667 R: +/+ cis         XIX
+     7_65, R:   607 A-U   666 R: -/- cis         XX
+     8_13, R:   608 U-P   613 R:      stacked
+     8_14, R:   608 U-A   614 R: W/H tran        XXIV
+     9_23, R:   609 A-A   623 R: H/H tran        II
+    10_25, R:   610 G-U   625 R: W/W cis         XXVIII
+    10_45, R:   610 G-G   645 R: H/S cis         n/a
+    11_24, R:   611 U-A   624 R: -/- cis         XX
+    12_23, R:   612 U-A   623 R: -/- cis         XX
+    13_22, R:   613 P-G   622 R: W/W cis         n/a
+    14_21, R:   614 A-A   621 R: W/S cis         n/a
+    15_47, R:   615 A-U   648 R: W/W tran        XXI
+    17_54, R:   617 G-P   655 R: W/W tran        n/a
+    18_55, R:   618 G-C   656 R: +/+ cis    syn    XIX
+    22_46, R:   622 G-A   646 R: H/W tran        n/a
+    26_44, R:   626 G-A   644 R: W/W cis         VIII
+    27_43, R:   627 G-C   643 R: +/+ cis         XIX
+    27_44, R:   627 G-A   644 R:      stacked
+    28_29, R:   628 G-C   629 R:      stacked
+    28_42, R:   628 G-C   642 R: +/+ cis         XIX
+    28_43, R:   628 G-C   643 R:      stacked
+    29_41, R:   629 C-G   641 R: W/W cis         n/a
+    30_40, R:   630 G-U   640 R: W/W cis         XXVIII
+    31_39, R:   631 C-G   639 R: +/+ cis         XIX
+    32_39, R:   632 P-G   639 R:      stacked
+    42_43, R:   642 C-C   643 R:      stacked
+    47_58, R:   648 U-U   659 R:      stacked
+    48_49, R:   649 c-G   650 R:      stacked
+    48_64, R:   649 c-G   665 R: +/+ cis         XIX
+    49_63, R:   650 G-C   664 R: +/+ cis         XIX
+    50_62, R:   651 G-C   663 R: +/+ cis         XIX
+    51_61, R:   652 G-C   662 R: +/+ cis         XIX
+    52_60, R:   653 G-C   661 R: +/+ cis         XIX
+    53_57, R:   654 u-A   658 R: W/H tran     syn  XXIV
+    65_66, R:   666 U-C   667 R:      stacked
+   76_146, S:   601 U-A   672 S: -/- cis         XX
+   76_147, S:   601 U-G   673 S:      stacked
+   77_145, S:   602 C-G   671 S: +/+ cis         XIX
+   78_144, S:   603 C-G   670 S: +/+ cis         XIX
+   79_143, S:   604 G-C   669 S: +/+ cis         XIX
+    80_81, S:   605 U-G   606 S:      stacked
+   80_142, S:   605 U-G   668 S: W/W cis         XXVIII
+   81_141, S:   606 G-C   667 S: +/+ cis         XIX
+   82_140, S:   607 A-U   666 S: -/- cis         XX
+    83_89, S:   608 U-A   614 S: W/H tran        XXIV
+    84_98, S:   609 A-A   623 S: H/H tran        II
+   85_100, S:   610 G-U   625 S: W/W cis         XXVIII
+   85_120, S:   610 G-G   645 S: H/S cis         n/a
+    86_99, S:   611 U-A   624 S: -/- cis         XX
+    87_98, S:   612 U-A   623 S: -/- cis         XX
+    88_97, S:   613 P-G   622 S: W/W cis         n/a
+    89_96, S:   614 A-A   621 S: W/S cis         n/a
+   90_122, S:   615 A-U   648 S: W/W tran        XXI
+   91_133, S:   616 u-U   659 S: W/W tran        XII,XIII
+   92_129, S:   617 G-P   655 S: W/S tran        n/a
+   93_130, S:   618 G-C   656 S: +/+ cis         XIX
+   97_121, S:   622 G-A   646 S: H/W tran        n/a
+  100_120, S:   625 U-G   645 S: W/W cis         XXVIII
+  101_119, S:   626 G-A   644 S: W/W cis         VIII
+  102_118, S:   627 G-C   643 S: +/+ cis         XIX
+  103_104, S:   628 G-C   629 S:      stacked
+  103_117, S:   628 G-C   642 S: +/+ cis         XIX
+  104_116, S:   629 C-G   641 S: +/+ cis         XIX
+  105_115, S:   630 G-U   640 S: W/W cis         XXVIII
+  106_114, S:   631 C-G   639 S: +/+ cis         XIX
+  123_139, S:   649 c-G   665 S: +/+ cis         XIX
+  124_138, S:   650 G-C   664 S: +/+ cis         XIX
+  125_137, S:   651 G-C   663 S: +/+ cis         XIX
+  126_136, S:   652 G-C   662 S: +/+ cis         XIX
+  126_137, S:   652 G-C   663 S:      stacked
+  127_128, S:   653 G-u   654 S:      stacked
+  127_135, S:   653 G-C   661 S: +/+ cis         XIX
+  128_132, S:   654 u-A   658 S: W/H tran     syn  XXIV
+  133_134, S:   659 U-U   660 S:      stacked
+  147_148, S:   673 G-C   674 S:      stacked
+    32_38, R:   632 P-C   638 R: W/W cis         !1H(b_b).
+     8_21, R:   608 U-A   621 R: S/W tran        !(b_s)
+    57_59, R:   658 A-U   660 R: S/S tran   syn syn  !(b_s)
+    83_96, S:   608 U-A   621 S: S/W tran        !(b_s)
+    19_20, R:   619 u-C   620 R: S/S cis    syn    !(s_s)
+    25_37, R:   625 U-g   637 R: ?/W cis         !(s_s)
+    31_40, R:   631 C-U   640 R: W/W cis         !(s_s)
+   82_139, S:   607 A-G   665 S: W/W cis         !(s_s)
+   83_121, S:   608 U-A   646 S: s/S cis         !(s_s)
+  100_112, S:   625 U-g   637 S: ?/W cis         !(s_s)
+  132_134, S:   658 A-U   660 S: S/S tran   syn    !(s_s)
+  134_135, S:   660 U-C   661 S: S/H cis         !(s_s)
+END_base-pair
+
+Summary of triplets and higher multiplets
+BEGIN_multiplets
+8_14_21_| [1 3]  R: 608 U  +  R: 614 A  +  R: 621 A
+9_12_23_| [2 3]  R: 609 A  +  R: 612 U  +  R: 623 A
+10_25_45_| [3 3]  R: 610 G  +  R: 625 U  +  R: 645 G
+13_22_46_| [4 3]  R: 613 P  +  R: 622 G  +  R: 646 A
+83_89_96_| [5 3]  S: 608 U  +  S: 614 A  +  S: 621 A
+84_87_98_| [6 3]  S: 609 A  +  S: 612 U  +  S: 623 A
+85_100_120_| [7 3]  S: 610 G  +  S: 625 U  +  S: 645 G
+88_97_121_| [8 3]  S: 613 P  +  S: 622 G  +  S: 646 A
+END_multiplets
+
+  The total base pairs =  64 (from  150 bases)
+------------------------------------------------
+ Standard  WW--cis  WW-tran  HH--cis  HH-tran  SS--cis  SS-tran
+       35       12        4        0        2        0        0
+  WH--cis  WH-tran  WS--cis  WS-tran  HS--cis  HS-tran
+        0        6        2        1        2        0
+------------------------------------------------

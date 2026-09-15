@@ -1,0 +1,90 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/sarcin-ricin_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3f2q/X/3f2q_X.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3f2q/X/3f2q_X.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 3f2q_X:30-31_26-27_9-14:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 3:X28-3:X28,8:X14-8:X14
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(3:X28)-A(8:X14) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 3f2q_X:31-32_6-9_103-106:
+#  Alignment score:  21.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:X9-4:X9,6:X104-6:X104
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(4:X9)-A(6:X104) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 3f2q_X:24-26_14-21_89-90:
+#  Alignment score:  19.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:X19-7:X19,11:X90-11:X90
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(7:X19)-A(11:X90) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 3f2q_X:9-14_26-27_30-31:
+#  Alignment score:  17.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-4,5-8
+#  Target aligned region: 1:X11-5:X15,6:X27-7:X28,8:X31-9:X32
+
+	UAGUA...GA~AC
+	GGCAG...CG~CG
+
+#  Matched base-pairing interactions: 
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<C(3:X13)-A(4:X14) cis S/H>
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<G(5:X15)-C(6:X27) cis W/W>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<A(4:X14)-G(7:X28) trans H/S>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<G(2:X12)-C(8:X31) cis S/S>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(1:X11)-G(9:X32) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 3f2q_X:42-44_34-39_69-74:
+#  Alignment score:  15
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 6:X38-6:X38,9:X70-9:X70
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(6:X38)-G(9:X70) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

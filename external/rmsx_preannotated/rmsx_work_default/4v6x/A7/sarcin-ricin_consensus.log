@@ -1,0 +1,140 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/sarcin-ricin_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v6x/A7/4v6x_A7.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v6x/A7/4v6x_A7.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6x_A7:679-680_801-802_1255-1257:
+#  Alignment score:  86
+#  P-value:  2.048e-02
+#  Query aligned region: 2-4,5-6
+#  Target aligned region: 0:'A7'75-1:'A7'76,2:'A7'77-2:'A7'77,5:'A7'99-6:'A7'100
+
+	GU~A...GA
+	GU~A...GA
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(2:'A7'77)-G(5:'A7'99) trans H/S>
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<U(1:'A7'76)-A(6:'A7'100) trans W/H>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<G(0:'A7'75)-U(1:'A7'76) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(4:)-A(6:) outward>                          MATCHES	<A(2:'A7'77)-A(6:'A7'100) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6x_A7:1091-1095_922-925:
+#  Alignment score:  16.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'A7'90-1:'A7'90,7:'A7'87-7:'A7'87
+
+	A...G
+	A...G
+
+#  Matched base-pairing interactions: 
+	<A(4:)-G(5:) trans H/S>                        MATCHES	<A(1:'A7'90)-G(7:'A7'87) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6x_A7:1256-1259_677-680:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 2:'A7'101-2:'A7'101,5:'A7'74-5:'A7'74
+
+	U...C
+	A...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(2:'A7'101)-A(5:'A7'74) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6x_A7:310-312_313-314_422-424:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 4:'A7'34-4:'A7'34,6:'A7'46-6:'A7'46
+
+	U...C
+	C...C
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<C(4:'A7'34)-C(6:'A7'46) cis W/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6x_A7:422-424_310-312_313-314:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 0:'A7'45-0:'A7'45,5:'A7'32-5:'A7'32
+
+	U...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<U(0:'A7'45)-A(5:'A7'32) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6x_A7:313-314_310-312_422-424:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6x_A7:422-424_313-314_310-312:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 4v6x_A7:313-314_422-424_310-312:
+#  Alignment score:  2.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+# scan failed rc=-11

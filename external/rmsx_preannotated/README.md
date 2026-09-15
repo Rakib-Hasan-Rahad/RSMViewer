@@ -1,9 +1,11 @@
 # RMSX Preannotated Data
 
 RSMViewer loads RNAMotifScanX (Source 7) results from preannotated data placed
-in this directory (`external/rmsx_preannotated/`).
+in this directory (`external/rmsx_preannotated/`). The extracted
+`rmsx_work_default/` directory is the repository's preferred local runtime
+data and is versioned when included in a project distribution.
 
-## Recommended: paste the extracted folder (fast)
+## Recommended: paste the extracted folder
 
 Extract `rmsx_preannotated_input_output.tar.gz` here so that the extracted
 folder sits directly in this directory:

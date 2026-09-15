@@ -5,7 +5,9 @@ Loads motif data from user-uploaded FR3D and RNAMotifScanX annotation files.
 Uses converters to transform external formats to standard MotifInstance format.
 """
 
+import json
 import os
+import re
 from copy import deepcopy
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -96,7 +98,7 @@ class UserAnnotationProvider(BaseProvider):
                 if tool_name.lower() == 'fr3d':
                     # FR3D: Scan files directly in fr3d/ folder
                     for file_path in tool_dir.glob('*'):
-                        if file_path.is_file() and file_path.suffix in ['.csv', '.tsv', '.txt']:
+                        if file_path.is_file() and file_path.suffix.lower() in ['.csv', '.tsv', '.txt', '.json']:
                             # Extract PDB ID from filename (usually first 4 chars)
                             filename = file_path.stem.lower()
                             pdb_id = filename.split('_')[0]
@@ -215,7 +217,7 @@ class UserAnnotationProvider(BaseProvider):
                 # loading only the freshest non-query file.
                 fr3d_candidates = []
                 for file_path in tool_dir.iterdir():
-                    if not file_path.is_file() or file_path.suffix not in ['.csv', '.tsv', '.txt']:
+                    if not file_path.is_file() or file_path.suffix.lower() not in ['.csv', '.tsv', '.txt', '.json']:
                         continue
                     if file_path.stem.lower().startswith(pdb_id_lower):
                         fr3d_candidates.append(file_path)
@@ -232,7 +234,16 @@ class UserAnnotationProvider(BaseProvider):
                         for motif_key, instances in incoming.items():
                             target.setdefault(motif_key, []).extend(instances)
 
-                    if query_files:
+                    json_files = [candidate for candidate in fr3d_candidates if candidate.suffix.lower() == '.json']
+
+                    if json_files:
+                        selected_file = next((p for p in json_files if p.stem.lower() == pdb_id_lower), json_files[0])
+                        try:
+                            motifs = self._load_fr3d_cache_json(selected_file, pdb_id)
+                            _merge_motifs(all_motifs, motifs)
+                        except Exception as e:
+                            print(f"Warning: Could not load {selected_file}: {e}")
+                    elif query_files:
                         query_files.sort(key=lambda candidate: candidate.stat().st_mtime)
                         for selected_file in query_files:
                             try:
@@ -343,6 +354,38 @@ class UserAnnotationProvider(BaseProvider):
         self._motif_types[pdb_id] = sum(result.values(), [])
         
         return result
+
+    def _load_fr3d_cache_json(self, file_path: Path, pdb_id: str) -> Dict[str, List[MotifInstanceSimple]]:
+        """Load the repository's local FR3D cache JSON format."""
+        rows = json.loads(file_path.read_text(encoding='utf-8'))
+        motifs: Dict[str, List[MotifInstanceSimple]] = {}
+        segment_re = re.compile(r"(-?\d+)/([A-Za-z0-9]*)/(-?\d+):(-?\d+)")
+        for index, row in enumerate(rows):
+            raw = str(row.get('location_raw', '') or '').strip()
+            if not raw or raw.upper() == 'NA':
+                continue
+            parts = [part for part in raw.split(',') if part.strip()]
+            segments = segment_re.findall(raw)
+            if len(parts) != len(segments):
+                continue
+            residues = []
+            for _model, chain, start, end in segments:
+                lo, hi = sorted((int(start), int(end)))
+                residues.extend(('N', number, chain) for number in range(lo, hi + 1))
+            if not residues:
+                continue
+            motif_type = str(row.get('motif_family') or row.get('motif_class') or 'FR3D').strip()
+            if motif_type.lower() == 'no text annotation':
+                motif_type = str(row.get('motif_class') or 'FR3D').strip()
+            instance_id = str(row.get('native_id') or f"FR3D_{pdb_id}_{index}")
+            motifs.setdefault(motif_type, []).append(MotifInstanceSimple(
+                motif_id=motif_type,
+                instance_id=instance_id,
+                residues=residues,
+                annotation=motif_type,
+                metadata={'source_format': 'fr3d_cache_json', 'pdb_id': pdb_id},
+            ))
+        return motifs
     
     def get_available_pdb_ids(self) -> List[str]:
         """Get list of all PDB IDs with annotation files."""

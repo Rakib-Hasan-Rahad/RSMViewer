@@ -1,0 +1,57 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/reverse-kturn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4frg/X/4frg_X.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4frg/X/4frg_X.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4frg_X:44-52:
+#  Alignment score:  35.6
+#  P-value:  7.934e-02
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 1:X46-6:X51
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(2:X47)-A(5:X50) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(1:X46)-G(6:X51) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4frg_X:28-32_65-67_55-62:
+#  Alignment score:  21.4
+#  P-value:  6.782e-01
+#  Query aligned region: 1-3,4-9
+#  Target aligned region: 1:X30-3:X32,7:X68-7:X68,8:X56-13:X61
+
+	G-A~G...CACAAA
+	GAA~G...CGGUUA
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(7:X68)-C(8:X56) cis W/W>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(3:X32)-U(12:X60) cis -/->
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:X30)-A(13:X61) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4frg_X:55-62_28-32_65-67:
+#  Alignment score:  11.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 2:X58-2:X58,8:X29-12:X33,13:X66-13:X66
+
+	G~GA...AA~C
+	G~UG...AA~C
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(9:X30)-A(11:X32) cis -/->
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(2:X58)-C(13:X66) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<U(8:X29)-A(12:X33) trans W/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

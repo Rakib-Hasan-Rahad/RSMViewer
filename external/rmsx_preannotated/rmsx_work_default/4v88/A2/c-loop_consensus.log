@@ -1,0 +1,1442 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/c-loop_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v88/A2/4v88_A2.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v88/A2/4v88_A2.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1156-1162_1615-1621:
+#  Alignment score:  64.6
+#  P-value:  3.449e-02
+#  Query aligned region: 1-4,5-10
+#  Target aligned region: 0:'A2'1157-4:'A2'1161,7:'A2'1616-12:'A2'1621
+
+	A-UGU...ACCACU
+	ACCAC...GUCCCU
+
+#  Matched base-pairing interactions: 
+	<A(1:)-C(7:) trans H/W>                        MATCHES	<A(0:'A2'1157)-C(9:'A2'1618) trans H/W>
+	<A(1:)-U(10:) cis W/W>                         MATCHES	<A(0:'A2'1157)-U(12:'A2'1621) cis W/W>
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(4:'A2'1161)-G(7:'A2'1616) cis W/W>
+	<G(3:)-C(6:) cis W/W>                          MATCHES	<A(3:'A2'1160)-U(8:'A2'1617) cis W/W>
+	<G(3:)-C(9:) cis S/W>                          MATCHES	<A(3:'A2'1160)-C(11:'A2'1620) cis S/W>
+#  Matched base-stacking interactions: 
+	<A(1:)-G(3:) upward>                           MATCHES	<A(0:'A2'1157)-A(3:'A2'1160) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:457-463_524-526_438-447:
+#  Alignment score:  34.3
+#  P-value:  6.992e-01
+#  Query aligned region: 0-4,5-11
+#  Target aligned region: 0:'A2'458-3:'A2'461,7:'A2'525-7:'A2'525,13:'A2'442-19:'A2'448
+
+	U-AUG~U...ACCACUG
+	GGA-G~A...CCCAAUC
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(6:) cis W/W>                          MATCHES	<G(3:'A2'461)-C(14:'A2'443) cis W/W>
+	<G(3:)-C(9:) cis S/W>                          MATCHES	<G(3:'A2'461)-A(17:'A2'446) trans S/W>
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<A(7:'A2'525)-C(13:'A2'442) trans W/S>
+	<U(0:)-G(11:) cis W/W>                         MATCHES	<G(0:'A2'458)-C(19:'A2'448) cis W/W>
+	<A(1:)-C(7:) trans H/W>                        MATCHES	<A(2:'A2'460)-C(15:'A2'444) trans H/W>
+	<A(1:)-U(10:) cis W/W>                         MATCHES	<A(2:'A2'460)-U(18:'A2'447) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:142-149_163-171_84-86:
+#  Alignment score:  14.5
+#  P-value:  1.000e+00
+#  Query aligned region: 0-4,5-11
+#  Target aligned region: 4:'A2'147-7:'A2'150,8:'A2'164-10:'A2'166,17:'A2'85-18:'A2'86
+
+	UAUGU...ACC~UG
+	AA-CU...AGC~AA
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(7:'A2'150)-A(8:'A2'164) cis W/W>
+	<G(3:)-C(6:) cis W/W>                          MATCHES	<C(6:'A2'149)-G(9:'A2'165) cis W/W>
+	<A(1:)-U(10:) cis W/W>                         MATCHES	<A(5:'A2'148)-A(17:'A2'85) cis -/->
+	<U(0:)-G(11:) cis W/W>                         MATCHES	<A(4:'A2'147)-A(18:'A2'86) cis -/->
+	<A(1:)-C(7:) trans H/W>                        MATCHES	<A(5:'A2'148)-C(10:'A2'166) trans H/W>
+#  Matched base-stacking interactions: 
+	<A(1:)-G(3:) upward>                           MATCHES	<A(5:'A2'148)-C(6:'A2'149) hbond>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1101-1102_624-632_965-973:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'626-3:'A2'626,18:'A2'973-18:'A2'973
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(3:'A2'626)-A(18:'A2'973) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1116-1117_347-356_308-316:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'A2'348-2:'A2'348,19:'A2'316-19:'A2'316
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(2:'A2'348)-A(19:'A2'316) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:264-269_284-289_173-175:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'A2'267-2:'A2'267,9:'A2'288-9:'A2'288
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(2:'A2'267)-A(9:'A2'288) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:144-151_84-86_161-170:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 7:'A2'152-7:'A2'152,11:'A2'162-11:'A2'162
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(7:'A2'152)-A(11:'A2'162) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:142-149_84-86_163-171:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 7:'A2'150-7:'A2'150,11:'A2'164-11:'A2'164
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(7:'A2'150)-A(11:'A2'164) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:593-594_465-474_30-40:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'A2'466-2:'A2'466,22:'A2'41-22:'A2'41
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(2:'A2'466)-A(22:'A2'41) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:593-594_30-40_465-474:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 8:'A2'37-8:'A2'37,18:'A2'471-18:'A2'471
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(8:'A2'37)-A(18:'A2'471) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:9-18_1136-1143_5-8:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'A2'12-2:'A2'12,15:'A2'1142-15:'A2'1142
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(2:'A2'12)-A(15:'A2'1142) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:727-729_724-726_706-713:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'725-3:'A2'725,13:'A2'714-13:'A2'714
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(3:'A2'725)-G(13:'A2'714) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:708-714_721-729:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 6:'A2'715-6:'A2'715,8:'A2'723-8:'A2'723
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(6:'A2'715)-G(8:'A2'723) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1440-1449_1262-1263_1212-1219:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 9:'A2'1450-9:'A2'1450,12:'A2'1213-12:'A2'1213
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(9:'A2'1450)-G(12:'A2'1213) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1649-1651_1128-1133_1110-1117:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'1129-3:'A2'1129,16:'A2'1118-16:'A2'1118
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(3:'A2'1129)-G(16:'A2'1118) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1785-1791_1020-1027_975-979:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 8:'A2'1022-8:'A2'1022,18:'A2'979-18:'A2'979
+
+	U...A
+	C...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(8:'A2'1022)-A(18:'A2'979) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:961-967_861-865_630-634:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 6:'A2'968-6:'A2'968,12:'A2'631-12:'A2'631
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(6:'A2'968)-G(12:'A2'631) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:470-472_762-768_769-773:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 4:'A2'764-4:'A2'764,12:'A2'772-12:'A2'772
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(4:'A2'764)-G(12:'A2'772) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1136-1143_9-18_5-8:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 7:'A2'1144-7:'A2'1144,8:'A2'10-8:'A2'10
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(7:'A2'1144)-G(8:'A2'10) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1177-1179_1459-1461_1457-1458:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'A2'1180-2:'A2'1180,6:'A2'1458-6:'A2'1458
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(2:'A2'1180)-G(6:'A2'1458) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1306-1308_1304-1305_1313-1318:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'A2'1309-2:'A2'1309,7:'A2'1316-7:'A2'1316
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(2:'A2'1309)-G(7:'A2'1316) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1304-1305_1313-1318_1306-1308:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 5:'A2'1317-5:'A2'1317,9:'A2'1308-9:'A2'1308
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(5:'A2'1317)-G(9:'A2'1308) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1341-1348_1511-1517_1376-1382:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 0:'A2'1342-0:'A2'1342,21:'A2'1383-21:'A2'1383
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(0:'A2'1342)-G(21:'A2'1383) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:133-143_168-175:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 10:'A2'144-10:'A2'144,13:'A2'171-13:'A2'171
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(10:'A2'144)-A(13:'A2'171) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1714-1721_1678-1684:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'1718-3:'A2'1718,12:'A2'1683-12:'A2'1683
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(3:'A2'1718)-C(12:'A2'1683) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:192-198_185-189:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'196-3:'A2'196,10:'A2'189-10:'A2'189
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(3:'A2'196)-C(10:'A2'189) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1002-1011_992-998_901-906:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 7:'A2'1010-7:'A2'1010,11:'A2'994-11:'A2'994
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(7:'A2'1010)-G(11:'A2'994) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1410-1411_1406-1409_1386-1390:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 2:'A2'1407-2:'A2'1407,10:'A2'1391-10:'A2'1391
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(2:'A2'1407)-A(10:'A2'1391) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1262-1263_1212-1219_1440-1449:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 0:'A2'1263-0:'A2'1263,9:'A2'1220-9:'A2'1220
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(0:'A2'1263)-C(9:'A2'1220) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1615-1621_1156-1162:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 0:'A2'1616-0:'A2'1616,11:'A2'1161-11:'A2'1161
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(0:'A2'1616)-C(11:'A2'1161) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1785-1791_975-979_1020-1027:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 11:'A2'980-11:'A2'980,12:'A2'1021-12:'A2'1021
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(11:'A2'980)-C(12:'A2'1021) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:861-865_630-634_961-967:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 4:'A2'866-4:'A2'866,10:'A2'962-10:'A2'962
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(4:'A2'866)-C(10:'A2'962) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1101-1102_965-973_624-632:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 10:'A2'974-10:'A2'974,11:'A2'625-11:'A2'625
+
+	U...A
+	A...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<A(10:'A2'974)-C(11:'A2'625) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1132-1137_1106-1111_606-614:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'A2'1134-1:'A2'1134,10:'A2'1111-10:'A2'1111
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(1:'A2'1134)-G(10:'A2'1111) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:524-526_438-447_457-463:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'439-3:'A2'439,19:'A2'464-19:'A2'464
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(3:'A2'439)-A(19:'A2'464) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:387-393_403-408_398-401:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 1:'A2'389-1:'A2'389,11:'A2'408-11:'A2'408
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(1:'A2'389)-C(11:'A2'408) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:403-408_387-393_398-401:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 5:'A2'409-5:'A2'409,6:'A2'388-6:'A2'388
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(5:'A2'409)-G(6:'A2'388) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:284-289_264-269_173-175:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 4:'A2'289-4:'A2'289,6:'A2'265-6:'A2'265
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(4:'A2'289)-A(6:'A2'265) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:161-170_144-151_84-86:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'165-3:'A2'165,14:'A2'149-14:'A2'149
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(3:'A2'165)-C(14:'A2'149) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:163-171_142-149_84-86:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 8:'A2'172-8:'A2'172,9:'A2'143-9:'A2'143
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(8:'A2'172)-G(9:'A2'143) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:351-356_304-313_101-108:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 6:'A2'305-6:'A2'305,23:'A2'109-23:'A2'109
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(6:'A2'305)-G(23:'A2'109) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:356-361_306-308_101-106:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 6:'A2'307-6:'A2'307,14:'A2'107-14:'A2'107
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(6:'A2'307)-C(14:'A2'107) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:278-286_268-274:
+#  Alignment score:  9.4
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 4:'A2'283-4:'A2'283,13:'A2'273-13:'A2'273
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(4:'A2'283)-G(13:'A2'273) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1519-1527_1479-1485_1587-1591:
+#  Alignment score:  9.3
+#  P-value:  1.000e+00
+#  Query aligned region: 0-3,6-11
+#  Target aligned region: 4:'A2'1524-7:'A2'1527,11:'A2'1482-11:'A2'1482,16:'A2'1588-18:'A2'1590
+
+	UAUG...C~C~CUG
+	AA-A...C~C~GCG
+
+#  Matched base-pairing interactions: 
+	<A(1:)-C(7:) trans H/W>                        MATCHES	<A(5:'A2'1525)-C(11:'A2'1482) trans H/W>
+	<U(0:)-G(11:) cis W/W>                         MATCHES	<A(4:'A2'1524)-G(18:'A2'1590) cis -/->
+	<A(1:)-U(10:) cis W/W>                         MATCHES	<A(5:'A2'1525)-C(17:'A2'1589) cis -/->
+	<G(3:)-C(6:) cis W/W>                          MATCHES	<A(6:'A2'1526)-C(7:'A2'1527) cis -/->
+	<G(3:)-C(9:) cis S/W>                          MATCHES	<A(6:'A2'1526)-G(16:'A2'1588) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:268-274_278-286:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 6:'A2'275-6:'A2'275,9:'A2'281-9:'A2'281
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(6:'A2'275)-G(9:'A2'281) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:360-364_754-756_378-382:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 0:'A2'361-0:'A2'361,12:'A2'383-12:'A2'383
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(0:'A2'361)-G(12:'A2'383) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1106-1107_602-613_367-372:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 0:'A2'1107-0:'A2'1107,13:'A2'614-13:'A2'614
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(0:'A2'1107)-C(13:'A2'614) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:97-99_430-437_41-47:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 5:'A2'433-5:'A2'433,11:'A2'42-11:'A2'42
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(5:'A2'433)-G(11:'A2'42) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1587-1591_1519-1527_1479-1485:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 12:'A2'1527-12:'A2'1527,14:'A2'1480-14:'A2'1480
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(12:'A2'1527)-G(14:'A2'1480) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1568-1573_1530-1541_1468-1474:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 5:'A2'1574-5:'A2'1574,19:'A2'1470-19:'A2'1470
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(5:'A2'1574)-C(19:'A2'1470) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:90-92_396-404_392-395:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 10:'A2'404-10:'A2'404,12:'A2'393-12:'A2'393
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(10:'A2'404)-C(12:'A2'393) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:385-388_422-428_49-56:
+#  Alignment score:  9
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 7:'A2'426-7:'A2'426,15:'A2'54-15:'A2'54
+
+	U...A
+	G...C
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(7:'A2'426)-C(15:'A2'54) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:38-44_460-466_433-445:
+#  Alignment score:  7.4
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 9:'A2'463-9:'A2'463,21:'A2'441-21:'A2'441
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(9:'A2'463)-A(21:'A2'441) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:38-44_433-445_460-466:
+#  Alignment score:  7.4
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 16:'A2'443-16:'A2'443,20:'A2'461-20:'A2'461
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(16:'A2'443)-G(20:'A2'461) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1272-1277_1426-1437:
+#  Alignment score:  7.4
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'1276-3:'A2'1276,15:'A2'1436-15:'A2'1436
+
+	U...A
+	U...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(3:'A2'1276)-A(15:'A2'1436) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1426-1437_1272-1277:
+#  Alignment score:  7
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 7:'A2'1434-7:'A2'1434,16:'A2'1277-16:'A2'1277
+
+	U...A
+	U...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<U(7:'A2'1434)-G(16:'A2'1277) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:573-582_561-566:
+#  Alignment score:  6.6
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 9:'A2'583-9:'A2'583,10:'A2'562-10:'A2'562
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(9:'A2'583)-G(10:'A2'562) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:375-376_363-365_755-756:
+#  Alignment score:  5.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 0:'A2'376-0:'A2'376,3:'A2'365-3:'A2'365
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(0:'A2'376)-G(3:'A2'365) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:536-543_509-514_476-477:
+#  Alignment score:  5.4
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 8:'A2'510-8:'A2'510,15:'A2'478-15:'A2'478
+
+	U...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(8:'A2'510)-A(15:'A2'478) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1551-1555_1593-1601_1200-1205:
+#  Alignment score:  4.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1593-1601_1200-1205_1551-1555:
+#  Alignment score:  4.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:90-92_397-404_393-396:
+#  Alignment score:  4.2
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 0:'A2'91-0:'A2'91,14:'A2'397-14:'A2'397
+
+	U...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<G(0:'A2'91)-A(14:'A2'397) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1551-1555_1200-1205_1593-1601:
+#  Alignment score:  4.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1593-1601_1551-1555_1200-1205:
+#  Alignment score:  4.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1200-1205_1593-1601_1551-1555:
+#  Alignment score:  4.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:827-828_829-831_217-220:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1554-1559_1550-1552_1596-1597:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 0:'A2'1555-0:'A2'1555,8:'A2'1553-8:'A2'1553
+
+	U...A
+	A...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<A(0:'A2'1555)-G(8:'A2'1553) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:996-1007:
+#  Alignment score:  3.8
+#  P-value:  1.000e+00
+#  Query aligned region: 4-4,5-5
+#  Target aligned region: 3:'A2'1000-5:'A2'1002
+
+	U...A
+	C...G
+
+#  Matched base-pairing interactions: 
+	<U(4:)-A(5:) cis W/W>                          MATCHES	<C(3:'A2'1000)-G(5:'A2'1002) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:829-831_827-828_217-220:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:90-92_393-396_397-404:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:827-828_217-220_829-831:
+#  Alignment score:  3.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1200-1205_1551-1555_1593-1601:
+#  Alignment score:  3.3
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:829-831_217-220_827-828:
+#  Alignment score:  3.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:393-396_397-404_90-92:
+#  Alignment score:  3.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:393-396_90-92_397-404:
+#  Alignment score:  2.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1596-1597_1550-1552_1554-1559:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:217-220_827-828_829-831:
+#  Alignment score:  2.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1550-1552_1554-1559_1596-1597:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:217-220_829-831_827-828:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:713-724:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1550-1552_1596-1597_1554-1559:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:755-756_363-365_375-376:
+#  Alignment score:  2.1
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:375-376_755-756_363-365:
+#  Alignment score:  1.9
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:755-756_375-376_363-365:
+#  Alignment score:  1.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning c-loop_conseusus and 4v88_A2:1055-1062:
+#  Alignment score:  1.2
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

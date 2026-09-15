@@ -1,0 +1,56 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/reverse-kturn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4lvw/A/4lvw_A.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4lvw/A/4lvw_A.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4lvw_A:74-79_6-11_34-35:
+#  Alignment score:  36.2
+#  P-value:  6.835e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 2:A77-5:A80,7:A8-8:A9
+
+	GGA...A~AC
+	UGC...A~AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(3:A78)-A(7:A8) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<C(4:A79)-A(5:A80) cis -/->
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(2:A77)-G(8:A9) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4lvw_A:55-64:
+#  Alignment score:  34.2
+#  P-value:  8.232e-02
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 2:A58-7:A63
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(3:A59)-A(6:A62) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(2:A58)-G(7:A63) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4lvw_A:50-58_22-27_62-68:
+#  Alignment score:  10.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 0:A51-1:A52,12:A26-13:A27
+
+	GG...AC
+	AA...GU
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(1:A52)-G(12:A26) cis W/W>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<A(0:A51)-U(13:A27) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

@@ -1,0 +1,55 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/reverse-kturn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/1nbs/A/1nbs_A.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/1nbs/A/1nbs_A.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 1nbs_A:52-56_80-85:
+#  Alignment score:  34.4
+#  P-value:  1.049e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 0:A138-1:A139,7:A168-10:A171
+
+	GG~A...AAC
+	AA~G...UAU
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(1:A139)-A(9:A170) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(7:A168)-U(8:A169) cis S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<A(0:A138)-U(10:A171) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 1nbs_A:145-146_93-99_140-142:
+#  Alignment score:  27.3
+#  P-value:  2.542e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 5:A182-8:A185,11:A228-11:A228
+
+	G-G...A~C
+	GCC...A~U
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(5:A182)-U(11:A228) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<C(7:A184)-A(8:A185) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 1nbs_A:135-140_109-111_101-108:
+#  Alignment score:  6.6
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 3:A224-3:A224,14:A192-14:A192
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(3:A224)-C(14:A192) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

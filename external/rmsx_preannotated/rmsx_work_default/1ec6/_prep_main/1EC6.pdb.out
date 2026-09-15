@@ -1,0 +1,59 @@
+PDB data file name: 1ec6.pdb_new
+-----------------------------------------------------------
+CRITERIA USED TO GENERATE BASE-PAIR: 
+  3.40 --> upper H-bond length limits (ON..ON).
+ 26.00 --> max. distance between paired base origins.
+  2.50 --> max. vertical distance between paired base origins.
+ 65.00 --> max. angle between paired bases [0-90].
+  5.40 --> min. distance between RN9/YN1 atoms.
+  8.00 --> max. distance criterion for helix break[0-12]
+-----------------------------------------------------------
+BASE-PAIR INSTRUCTIONS: 
+Column 1 is rnaview assigned base numbers n1_n2, start from 1.
+Column 2 & 3 are chain ID & residue number in input PDB file.
+Column 4 is for base pair. The left & right are the bases as 
+         identified by column 2 & 3 and 5 & 6.
+Column 5 & 6 are residue number & chain ID in input PDB file.
+Column 7 is for base pair annotation. The standard Watson-Crick
+         (W.C.) pairs are annotated as -/- (AU,AT) or +/+ (GC).
+         Other pairs are annotated as Leontis_Westhof Classification.
+         The three edges: W(Watson-Crick); H(Hoogsteen); S(suger).
+         e.g. W/H means the pair is edge of Watson-Crick & Hoogsteen.
+Column 8 is glycosidic bond orientation (either cis or trans).
+         e.g. 'W/H cis' means the pair is interaction on Watson-Crick
+         and Hoogsteen side, glycosidic bond orientation is 'cis'.
+Column 9 corresponds to Saenger Classification.
+
+Other columns: 
+        Syn sugar-base conformations are annotated as (syn).
+        Stacked base pairs are annotated as (stack).
+        Non-identified edges are annotated as (.) or (?)
+        Tertiary interactions are marked by (!) in the line.
+Reference:
+Yang et al (2003) Nucleic Acids Research, Vol31,No13,p3450-3461.
+-----------------------------------------------------------
+BEGIN_base-pair
+     1_20, C:     1 G-C    20 C: +/+ cis         XIX
+     2_19, C:     2 A-U    19 C: -/- cis         XX
+     3_18, C:     3 G-C    18 C: +/+ cis         XIX
+     4_17, C:     4 G-C    17 C: +/+ cis         XIX
+     7_10, C:     7 C-G    10 C: S/W tran     syn  n/a
+    21_40, D:     1 G-C    20 D: +/+ cis         XIX
+    22_39, D:     2 A-U    19 D: -/- cis         XX
+    23_38, D:     3 G-C    18 D: +/+ cis         XIX
+    24_37, D:     4 G-C    17 D: +/+ cis         XIX
+    30_31, D:    10 G-A    11 D:   syn  stacked
+     5_16, C:     5 A-C    16 C: W/W cis         !1H(b_b)
+    25_36, D:     5 A-C    16 D: W/W cis         !1H(b_b).
+     8_10, C:     8 U-G    10 C: S/H cis      syn  !(b_s)
+    28_30, D:     8 U-G    10 D: S/? tran        !(b_s)
+    12_13, C:    12 U-C    13 C: S/S cis         !(s_s)
+    33_34, D:    13 C-A    14 D: S/H cis         !(s_s)
+END_base-pair
+  The total base pairs =   9 (from   40 bases)
+------------------------------------------------
+ Standard  WW--cis  WW-tran  HH--cis  HH-tran  SS--cis  SS-tran
+        8        0        0        0        0        0        0
+  WH--cis  WH-tran  WS--cis  WS-tran  HS--cis  HS-tran
+        0        0        0        1        0        0
+------------------------------------------------

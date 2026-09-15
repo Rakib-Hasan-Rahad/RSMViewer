@@ -303,6 +303,12 @@ rmv_super group_combined
 
 ## 10. FR3D pipeline
 
+The repository default is `data_mode: "cache"` in
+`config/fr3d_config.json`. In this mode `rmv_db FR3D` loads local cached
+annotations from `external/fr3d/fr3d_cache/` and does not run FR3D or use the
+network. To execute the official FR3D pipeline, change the field to
+`data_mode: "run_from_scratch"`, then complete the setup below.
+
 ### Setup
 
 1. Paste the official fr3d-python software into
@@ -329,8 +335,9 @@ rmv_fetch 1S72
 rmv_db FR3D
 ```
 
-RSMViewer runs FR3D's own default queries from the checkout against the loaded
-structure and loads the resulting candidates. FR3D's geometric queries define
+In `run_from_scratch` mode, RSMViewer runs FR3D's own default queries from the
+checkout against the loaded structure and loads the resulting candidates.
+FR3D's geometric queries define
 their template from a reference PDB, so set `allow_network: true` in
 `config/fr3d_config.json` to let FR3D download that reference. Do not pass an
 FR3D result file to `rmv_fetch`.

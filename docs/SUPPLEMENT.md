@@ -275,7 +275,11 @@ during ingestion, and both sources' labels and hierarchies are stored per row.
 
 ### S7.2 FR3D
 
-FR3D is executed through a **user-provided** official fr3d-python checkout placed
+By default, FR3D is loaded from the repository's local cache at
+`external/fr3d/fr3d_cache/` using `data_mode: "cache"` in
+`config/fr3d_config.json`; this mode does not execute FR3D or make network
+requests. When `data_mode` is set to `"run_from_scratch"`, FR3D is executed
+through a **user-provided** official fr3d-python checkout placed
 under `external/fr3d/fr3d-python-latest/`; RSMViewer never vendors or modifies
 that checkout. The runner (`tools/fr3d_search_runner.py`) resolves the checkout
 and a Python interpreter that can import `numpy`, `scipy`, `mmcif-pdbx`, and

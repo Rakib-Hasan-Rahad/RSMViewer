@@ -1,0 +1,503 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/k-turn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3igi/A/3igi_A.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3igi/A/3igi_A.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:168-174_126-127_189-196:
+#  Alignment score:  70
+#  P-value:  4.597e-02
+#  Query aligned region: 2-3,6-10
+#  Target aligned region: 4:A173-5:A174,8:A128-8:A128,10:A191-11:A192
+
+	GA...G~GA
+	GA...G~AA
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(5:A174)-A(10:A191) trans H/S>
+	<G(2:)-A(10:) trans S/H>                       MATCHES	<G(4:A173)-A(11:A192) trans S/H>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(5:A174)-G(8:A128) trans S/S>
+#  Matched base-stacking interactions: 
+	<A(3:)-A(10:) outward>                         MATCHES	<A(5:A174)-A(11:A192) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:107-116_11-12_70-77:
+#  Alignment score:  59.4
+#  P-value:  8.017e-02
+#  Query aligned region: 0-3,6-12
+#  Target aligned region: 5:A113-9:A117,12:A71-15:A74
+
+	GGGA...G~GAAC
+	GGAC...G~UAAC
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<C(8:A116)-U(12:A71) trans H/S>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<C(8:A116)-G(9:A117) cis -/->
+	<G(2:)-A(10:) trans S/H>                       MATCHES	<A(7:A115)-A(13:A72) cis -/->
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(6:A114)-A(14:A73) trans S/H>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(5:A113)-C(15:A74) cis W/W>
+#  Matched base-stacking interactions: 
+	<A(3:)-A(10:) outward>                         MATCHES	<C(8:A116)-A(13:A72) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:64-67_242-248_118-122:
+#  Alignment score:  45.2
+#  P-value:  2.464e-01
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 2:A67-2:A67,9:A248-9:A248,12:A120-12:A120
+
+	A...G~G
+	A...G~A
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(2:A67)-G(9:A248) trans S/S>
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(2:A67)-A(12:A120) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:311-319_265-267_296-306:
+#  Alignment score:  41.6
+#  P-value:  3.764e-01
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 7:A319-7:A319,9:A266-9:A266,13:A298-13:A298
+
+	A...G~G
+	A...G~U
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(7:A319)-G(9:A266) trans S/S>
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(7:A319)-U(13:A298) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:228-230_132-135_137-144:
+#  Alignment score:  36.4
+#  P-value:  8.661e-01
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 5:A135-6:A136,9:A140-10:A141
+
+	GG...AC
+	GG...AC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(6:A136)-A(9:A140) trans S/H>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(5:A135)-C(10:A141) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:242-248_118-122_64-67:
+#  Alignment score:  36.4
+#  P-value:  8.661e-01
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 0:A243-1:A244,10:A122-11:A123
+
+	GG...AC
+	GG...AC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(1:A244)-A(10:A122) trans S/H>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(0:A243)-C(11:A123) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:105-109_373-377_258-261:
+#  Alignment score:  25.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 1:A107-1:A107,9:A378-9:A378,11:A260-12:A261
+
+	G~G...AC
+	G~G...AC
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(1:A107)-C(12:A261) cis -/->
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(9:A378)-A(11:A260) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:279-285_266-273_88-94:
+#  Alignment score:  25.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 15:A89-20:A94
+
+	GG...AC
+	GG...AC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(16:A90)-A(19:A93) trans S/H>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(15:A89)-C(20:A94) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:56-62_196-198_45-49:
+#  Alignment score:  25.2
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 3:A60-3:A60,7:A197-7:A197,12:A48-12:A48
+
+	A...G~G
+	A...C~G
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(3:A60)-G(12:A48) trans H/S>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(3:A60)-C(7:A197) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:277-285_91-93_266-274:
+#  Alignment score:  24.6
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 4:A282-4:A282,11:A94-11:A94,16:A271-16:A271
+
+	A...G~G
+	A...C~U
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(4:A282)-C(11:A94) trans S/S>
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(4:A282)-U(16:A271) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:266-268_289-297_319-326:
+#  Alignment score:  24
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 3:A290-4:A291,18:A326-19:A327
+
+	GG...AC
+	AG...AA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(4:A291)-A(18:A326) trans S/H>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<A(3:A290)-A(19:A327) cis S/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:353-361_287-289_381-388:
+#  Alignment score:  23.6
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 1:A355-1:A355,11:A290-11:A290,18:A388-18:A388
+
+	A...G~G
+	A...A~G
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(1:A355)-G(18:A388) trans H/S>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(1:A355)-A(11:A290) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:91-93_277-285_266-274:
+#  Alignment score:  22.6
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,6-9
+#  Target aligned region: 1:A93-1:A93,6:A281-6:A281,17:A272-17:A272
+
+	A...G~G
+	A...G~C
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(1:A93)-G(6:A281) trans S/S>
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(1:A93)-C(17:A272) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:258-261_70-77_106-115:
+#  Alignment score:  22.2
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 4:A71-4:A71,21:A116-21:A116
+
+	G...A
+	U...C
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<U(4:A71)-C(21:A116) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:318-320_279-285_265-273:
+#  Alignment score:  19.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 6:A283-7:A284,13:A269-14:A270
+
+	GG...AC
+	AG...GG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(7:A284)-G(13:A269) trans S/H>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<A(6:A283)-G(14:A270) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:353-359_322-328_287-293:
+#  Alignment score:  15.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 7:A323-8:A324,19:A293-20:A294
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(8:A324)-A(19:A293) cis -/->
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(7:A323)-G(20:A294) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:265-268_315-320_295-302:
+#  Alignment score:  14.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 4:A316-5:A317,16:A302-17:A303
+
+	GG...AC
+	GG...AC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(5:A317)-A(16:A302) cis -/->
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(4:A316)-C(17:A303) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:4-9_301-318_259-265:
+#  Alignment score:  13.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 5:A10-5:A10,15:A311-16:A312,26:A262-26:A262
+
+	G~G...A~C
+	G~G...C~C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(5:A10)-C(26:A262) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(15:A311)-C(16:A312) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:2-4_365-375_104-106:
+#  Alignment score:  13.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 5:A368-10:A373
+
+	GG...AC
+	CG...CG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(6:A369)-C(9:A372) trans S/W>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(5:A368)-G(10:A373) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:23-29_245-246_34-42:
+#  Alignment score:  13.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 6:A30-6:A30,7:A246-7:A246,11:A37-12:A38
+
+	G~G...AC
+	G~A...UC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<A(7:A246)-U(11:A37) cis -/->
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(6:A30)-C(12:A38) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:153-161_215-223_178-179:
+#  Alignment score:  12.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 1:A155-2:A156,14:A221-14:A221,19:A180-19:A180
+
+	GG...A~C
+	GG...U~C
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(1:A155)-C(19:A180) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(2:A156)-U(14:A221) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:23-29_34-42_245-246:
+#  Alignment score:  10.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 0:A24-0:A24,8:A36-8:A36,16:A246-17:A247
+
+	G~G...AC
+	U~G...AA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<U(0:A24)-A(17:A247) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(8:A36)-A(16:A246) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:261-263_8-12_107-109:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 5:A11-7:A13,8:A108-8:A108
+
+	GG...A~C
+	CA...U~G
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<A(6:A12)-U(7:A13) trans S/S>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(5:A11)-G(8:A108) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:2-3_74-81_99-112:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 6:A79-6:A79,13:A103-13:A103
+
+	G...C
+	G...U
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(6:A79)-U(13:A103) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:196-198_56-62_45-49:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 7:A61-7:A61,11:A47-11:A47
+
+	G...C
+	A...U
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<A(7:A61)-U(11:A47) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:287-289_353-361_381-388:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 5:A356-5:A356,17:A387-17:A387
+
+	G...C
+	A...U
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<A(5:A356)-U(17:A387) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:12-17_253-257:
+#  Alignment score:  3.7
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 3igi_A:253-257_12-17:
+#  Alignment score:  2.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

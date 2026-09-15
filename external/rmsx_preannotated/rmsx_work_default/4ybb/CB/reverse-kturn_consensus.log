@@ -1,0 +1,92 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/reverse-kturn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4ybb/CB/4ybb_CB.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4ybb/CB/4ybb_CB.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4ybb_CB:93-98_76-82:
+#  Alignment score:  38
+#  P-value:  7.974e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 3:'CB'97-5:'CB'99,6:'CB'77-8:'CB'79
+
+	GGA...AAC
+	CGA...UAG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(5:'CB'99)-U(6:'CB'77) trans H/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(4:'CB'98)-A(7:'CB'78) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(3:'CB'97)-G(8:'CB'79) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4ybb_CB:70-77_98-104:
+#  Alignment score:  35.6
+#  P-value:  9.885e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 0:'CB'71-2:'CB'73,12:'CB'103-14:'CB'105
+
+	GGA...AAC
+	CGA...UAG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(2:'CB'73)-U(12:'CB'103) trans H/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CB'72)-A(13:'CB'104) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(0:'CB'71)-G(14:'CB'105) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4ybb_CB:101-108_64-74_12-15:
+#  Alignment score:  22.4
+#  P-value:  6.982e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 4:'CB'106-5:'CB'107,12:'CB'69-13:'CB'70
+
+	GG...AC
+	GG...GC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(5:'CB'107)-G(12:'CB'69) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(4:'CB'106)-C(13:'CB'70) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4ybb_CB:64-68_10-14_15-17:
+#  Alignment score:  14.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 2:'CB'67-4:'CB'69,7:'CB'13-7:'CB'13,10:'CB'16-11:'CB'17
+
+	GGA...A~AC
+	GCG...G~GC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<C(3:'CB'68)-G(10:'CB'16) cis W/W>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(4:'CB'69)-G(7:'CB'13) cis -/->
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(2:'CB'67)-C(11:'CB'17) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4ybb_CB:76-82_93-98:
+#  Alignment score:  3.4
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

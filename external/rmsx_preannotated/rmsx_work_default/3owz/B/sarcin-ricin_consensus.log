@@ -1,0 +1,56 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/sarcin-ricin_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3owz/B/3owz_B.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3owz/B/3owz_B.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 3owz_B:61-67_35-40:
+#  Alignment score:  37.8
+#  P-value:  4.412e-01
+#  Query aligned region: 0-3,6-8
+#  Target aligned region: 0:B62-4:B66,9:B38-12:B41
+
+	U-AGU...AA-C
+	GAAAC...GCAA
+
+#  Matched base-pairing interactions: 
+	<U(3:)-A(6:) trans W/H>                        MATCHES	<C(4:B66)-G(9:B38) cis W/W>
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(0:B62)-A(12:B41) trans S/H>
+	<A(1:)-A(7:) trans H/H>                        MATCHES	<A(2:B64)-C(10:B39) trans H/W>
+	<G(2:)-U(3:) cis S/H>                          MATCHES	<A(3:B65)-C(4:B66) cis S/H>
+#  Matched base-stacking interactions: 
+	<A(1:)-U(3:) outward>                          MATCHES	<A(2:B64)-C(4:B66) upward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 3owz_B:78-82_29-32_6-10:
+#  Alignment score:  19.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 1:B80-1:B80,11:B9-11:B9
+
+	U...C
+	G...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<G(1:B80)-A(11:B9) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning sarcin-ricin_consensus and 3owz_B:7-11_68-73_28-34:
+#  Alignment score:  19
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,8-8
+#  Target aligned region: 7:B71-7:B71,16:B34-16:B34
+
+	U...C
+	A...A
+
+#  Matched base-pairing interactions: 
+	<U(0:)-C(8:) trans S/H>                        MATCHES	<A(7:B71)-A(16:B34) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

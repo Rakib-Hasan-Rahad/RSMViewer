@@ -1,0 +1,58 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/reverse-kturn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3owz/A/3owz_A.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3owz/A/3owz_A.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 3owz_A:6-9_30-32_78-82:
+#  Alignment score:  36.8
+#  P-value:  6.929e-02
+#  Query aligned region: 0-3,4-10
+#  Target aligned region: 0:A7-3:A10,5:A32-5:A32,8:A80-10:A82
+
+	GGAG...C~AAC
+	GGAG...G~GAC
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(3:A10)-G(5:A32) cis S/S>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(2:A9)-G(8:A80) trans H/S>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:A8)-A(9:A81) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(0:A7)-C(10:A82) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 3owz_A:63-71_7-8_30-37:
+#  Alignment score:  35.8
+#  P-value:  7.576e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 6:A70-7:A71,9:A8-9:A8,13:A33-15:A35
+
+	GG~A...AAC
+	CA~G...AAG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(7:A71)-A(14:A34) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(9:A8)-A(13:A33) cis -/->
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(6:A70)-G(15:A35) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 3owz_A:56-62_39-46:
+#  Alignment score:  35.6
+#  P-value:  7.716e-02
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 4:A61-5:A62,8:A41-9:A42
+
+	GG...AC
+	UG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(5:A62)-A(8:A41) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(4:A61)-G(9:A42) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

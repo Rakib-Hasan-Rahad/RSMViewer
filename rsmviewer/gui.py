@@ -512,6 +512,7 @@ class MotifVisualizerGUI:
         # vendored, patched, or checked out on the user's behalf.
         fr3d_dir = plugin_dir / 'database' / 'user_annotations' / 'fr3d'
         self.default_fr3d_config = distribution_dir / 'config' / 'fr3d_config.json'
+        self.fr3d_cache_path = str((distribution_dir / 'external' / 'fr3d' / 'fr3d_cache').resolve())
         self.fr3d_output_dir = str((distribution_dir / 'output' / 'fr3d_runs').resolve())
         self._fr3d_reset_state()
 
@@ -874,6 +875,8 @@ class MotifVisualizerGUI:
     def _fr3d_mode_aliases(self) -> Dict[str, str]:
         """Map user-facing data_mode names to internal behavior modes."""
         return {
+            'cache': 'cache',
+            'run_from_scratch': 'cif_local',
             # New user-requested names
             'run_fr3d_pipeline': 'cif_local',
             'fr3d_local_data': 'fr3d_native_data',
@@ -893,6 +896,7 @@ class MotifVisualizerGUI:
         self.fr3d_branch = ''
         self.fr3d_dirty = None
         self.fr3d_data_mode = 'run_fr3d_pipeline'
+        self.fr3d_cache_path = str((Path(__file__).parent.parent / 'external' / 'fr3d' / 'fr3d_cache').resolve())
         self.fr3d_query_path = ''
         self.fr3d_query_selection = 'all'
         self.fr3d_default_query = ''
@@ -1082,6 +1086,32 @@ class MotifVisualizerGUI:
                 p = os.path.join(cfg_dir, p)
             return os.path.abspath(p)
 
+        mode_aliases = self._fr3d_mode_aliases()
+        data_mode = str(cfg.get('data_mode', 'run_from_scratch') or 'run_from_scratch').strip()
+        if data_mode not in mode_aliases:
+            self.logger.error(f"FR3D config: unknown data_mode '{data_mode}'")
+            self.logger.info("  Allowed: cache | run_from_scratch")
+            return False
+        canonical_mode = mode_aliases[data_mode]
+
+        if canonical_mode == 'cache':
+            cache_path = _abspath(cfg.get('cache_path'))
+            if not cache_path:
+                cache_path = str((Path(cfg_dir).parent / 'external' / 'fr3d' / 'fr3d_cache').resolve())
+            if not os.path.isdir(cache_path):
+                self.logger.error(f"FR3D cache directory not found: {cache_path}")
+                return False
+            self.fr3d_config_path = cfg_abs
+            self.fr3d_data_mode = data_mode
+            self.fr3d_cache_path = cache_path
+            self.fr3d_allow_network = False
+            self.fr3d_query_path = ''
+            self.fr3d_query_selection = 'cache'
+            self.fr3d_registered = True
+            self.user_data_paths[5] = cache_path
+            self.logger.success(f"FR3D cache registered: {cache_path}")
+            return True
+
         # --- required: fr3d_python_path ------------------------------------
         repo_root = _abspath(cfg.get('fr3d_python_path'))
         if not repo_root or not os.path.isdir(repo_root):
@@ -1092,15 +1122,6 @@ class MotifVisualizerGUI:
             self.logger.error(f"FR3D config: {repo_err}")
             self.logger.info(f"  Checked under: {repo_root}")
             return False
-
-        # --- data mode -----------------------------------------------------
-        mode_aliases = self._fr3d_mode_aliases()
-        data_mode = str(cfg.get('data_mode', 'run_fr3d_pipeline') or 'run_fr3d_pipeline').strip()
-        if data_mode not in mode_aliases:
-            self.logger.error(f"FR3D config: unknown data_mode '{data_mode}'")
-            self.logger.info("  Allowed: run_fr3d_pipeline | fr3d_local_data | rna3dhub_web_interactions")
-            return False
-        canonical_mode = mode_aliases[data_mode]
 
         # --- query path ----------------------------------------------------
         query_path = _abspath(cfg.get('query_path'))
@@ -1278,6 +1299,13 @@ class MotifVisualizerGUI:
                 cand = os.path.join(d, nm + '.cif')
                 if os.path.isfile(cand):
                     return os.path.abspath(cand), ''
+
+        cached_dir = Path(__file__).parent.parent / 'cached_structures'
+        for nm in names:
+            if nm:
+                cached = cached_dir / f"{nm.lower()}.cif"
+                if cached.is_file():
+                    return str(cached.resolve()), ''
 
         if self.fr3d_allow_network and len(pdb_upper) == 4 and pdb_upper.isalnum():
             try:
@@ -7142,6 +7170,9 @@ def initialize_gui():
                         "Source 5 (FR3D) does not accept rmv_load_motif path arguments; "
                         "register it with 'rmv_db FR3D' instead."
                     )
+                if getattr(gui, 'fr3d_data_mode', '') == 'cache':
+                    gui.load_user_annotations_action(gui.current_user_tool, pdb_id, auto_pipeline=False)
+                    return
                 gui.run_fr3d_search(pdb_id)
                 return
 

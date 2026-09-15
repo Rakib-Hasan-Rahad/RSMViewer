@@ -8,8 +8,9 @@ motif-search pipelines:
 | `rmsx_config.json` | RNAMotifScanX (RMSX) source | `rmv_db RNAMotifScanX` / source 7 |
 | `fr3d_config.json` | FR3D source | `rmv_db FR3D` / source 5 |
 
-The RNA 3D Motif Atlas and Rfam sources need no configuration; they are fetched
-directly from their public APIs and cached locally.
+The RNA 3D Motif Atlas and Rfam sources use their local cache files when
+available and only contact their public APIs when a cache entry is missing or
+refresh is explicitly requested.
 
 ### How paths are resolved
 
@@ -110,11 +111,28 @@ with RSMViewer.
 
 ## `fr3d_config.json` — FR3D
 
+FR3D has two supported modes:
+
+| `data_mode` | Behavior |
+| --- | --- |
+| `cache` | Load the prepared local FR3D cache from `cache_path`; no FR3D search or network call is made. |
+| `run_from_scratch` | Run the official `fr3d-python` pipeline using the configured checkout and queries. |
+
+The repository default is `cache`. The current cache is stored at
+`external/fr3d/fr3d_cache/` and contains one JSON file per cached structure.
+To run FR3D itself, change only this field to:
+
+```json
+"data_mode": "run_from_scratch"
+```
+
 ### Fields
 
 | Field | Type | Meaning / possible values |
 | --- | --- | --- |
+| `data_mode` | string | `"cache"` loads `cache_path`; `"run_from_scratch"` runs the official FR3D pipeline. |
 | `fr3d_python_path` | path | Root of the fr3d-python checkout (must contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`). |
+| `cache_path` | path | Local FR3D cache directory; default repository value is `../external/fr3d/fr3d_cache`. |
 | `query_path` | path | A queries directory (runs every top-level `.json`) or a single query `.json` file. Defaults to the checkout's own `fr3d/search/queries`. |
 | `python_path` | path | Optional. Interpreter used to run FR3D; must have `numpy`, `scipy`, `mmcif-pdbx`. Omit to auto-detect. |
 | `interactions_path` | path | Optional local interaction data directory. |
@@ -146,6 +164,17 @@ with RSMViewer.
 
 ### Running FR3D
 
+For the repository's prepared cache, use:
+
+```text
+rmv_fetch 1S72
+rmv_db FR3D
+```
+
+To run the FR3D Python pipeline instead, set `"data_mode":
+"run_from_scratch"` in `config/fr3d_config.json` first, then run the same
+commands.
+
 ```text
 rmv_fetch 1S72
 rmv_db FR3D
@@ -170,6 +199,6 @@ rmv_db                      List sources and usage (no argument)
 rmv_db RNA3DMotifAtlas      Load Atlas (API, cached)
 rmv_db Rfam                 Load Rfam (API, cached)
 rmv_db RNAMotifScanX        Load RMSX (preannotated or from-scratch)
-rmv_db FR3D                 Run FR3D on the loaded structure
+rmv_db FR3D                 Load the FR3D cache, or run FR3D when data_mode is run_from_scratch
 rmv_refresh                 Bypass caches and re-fetch
 ```

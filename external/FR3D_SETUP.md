@@ -7,6 +7,17 @@ RSMViewer PyMOL plugin on any PC (Windows / macOS / Linux).
 
 ## 1. One-time setup
 
+RSMViewer supports two FR3D modes. The repository default is `cache`, which
+loads prepared local data from `external/fr3d/fr3d_cache/` and does not run
+FR3D or make a network call. To execute the official FR3D Python pipeline,
+set this field in `config/fr3d_config.json`:
+
+```json
+"data_mode": "run_from_scratch"
+```
+
+After changing the mode, run `rmv_db FR3D` again.
+
 1. **Paste the FR3D code.** Put the official `fr3d-python` checkout here:
 
    ```
@@ -15,7 +26,8 @@ RSMViewer PyMOL plugin on any PC (Windows / macOS / Linux).
 
    It must contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`.
 
-2. **Set up and check FR3D** from inside PyMOL (uses PyMOL's own Python — no
+2. **Set up and check FR3D** from inside PyMOL when using
+  `run_from_scratch` (uses PyMOL's own Python — no
   separate Python needed):
 
    ```
@@ -36,8 +48,10 @@ rmv_fetch 1S72
 rmv_db FR3D
 ```
 
-`rmv_db FR3D` annotates the loaded structure, then runs the motif queries
-listed in the config. Results load straight into RSMViewer.
+With `data_mode: "cache"`, `rmv_db FR3D` loads the matching local cache file.
+With `data_mode: "run_from_scratch"`, it annotates the loaded structure by
+running the motif queries listed in the config. Results load straight into
+RSMViewer in both modes.
 
 > **First run is slow, later runs are fast.** FR3D's `geometric_*` queries
 > embed large reference structures (e.g. `4V9F`, `7K00`, `8GLP`) in their
@@ -58,7 +72,9 @@ Good structures to try: `1S72`, `4V9F`, `4V88`, `1HR2`, `1KXK`, `3CC2`,
 
 ```json
 {
+  "data_mode": "cache",
   "fr3d_python_path": "../external/fr3d/fr3d-python-latest",
+  "cache_path": "../external/fr3d/fr3d_cache",
   "query_path": "../external/fr3d/fr3d-python-latest/fr3d/search/queries",
   "query_selection": "families",
   "query_families": [

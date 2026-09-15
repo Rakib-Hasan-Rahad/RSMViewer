@@ -1,0 +1,110 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/k-turn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v88/A8/4v88_A8.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v88/A8/4v88_A8.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v88_A8:69-75_78-88:
+#  Alignment score:  71.9
+#  P-value:  5.083e-02
+#  Query aligned region: 2-4,5-10
+#  Target aligned region: 0:'A8'70-2:'A8'72,7:'A8'79-16:'A8'88
+
+	GAG...C--G--AAGA
+	GAA...AAUUCCGUGA
+
+#  Matched base-pairing interactions: 
+	<A(3:)-G(9:) trans H/S>                        MATCHES	<A(1:'A8'71)-G(15:'A8'87) trans H/S>
+	<A(3:)-G(6:) trans S/S>                        MATCHES	<A(1:'A8'71)-U(10:'A8'82) trans W/W>
+	<G(4:)-C(5:) cis W/W>                          MATCHES	<A(2:'A8'72)-A(7:'A8'79) cis W/W>
+	<G(2:)-A(10:) trans S/H>                       MATCHES	<G(0:'A8'70)-A(16:'A8'88) trans S/H>
+	<G(4:)-A(10:) trans S/S>                       MATCHES	<A(2:'A8'72)-A(16:'A8'88) cis -/->
+#  Matched base-stacking interactions: 
+	<A(3:)-A(10:) outward>                         MATCHES	<A(1:'A8'71)-A(16:'A8'88) outward>
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v88_A8:86-88_69-73_75-78:
+#  Alignment score:  23.8
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 7:'A8'74-7:'A8'74,8:'A8'76-8:'A8'76
+
+	G...A
+	U...C
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<U(7:'A8'74)-C(8:'A8'76) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v88_A8:62-63_34-43_96-104:
+#  Alignment score:  22.2
+#  P-value:  1.000e+00
+#  Query aligned region: 1-1,11-11
+#  Target aligned region: 6:'A8'39-6:'A8'39,19:'A8'104-19:'A8'104
+
+	G...A
+	G...A
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<G(6:'A8'39)-A(19:'A8'104) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v88_A8:105-109_110-115_36-38:
+#  Alignment score:  13.5
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 2:'A8'108-3:'A8'109,6:'A8'112-8:'A8'114
+
+	GG...A-C
+	CA...UUG
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<C(2:'A8'108)-G(8:'A8'114) cis W/W>
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<A(3:'A8'109)-U(6:'A8'112) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v88_A8:88-98_62-67:
+#  Alignment score:  11
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,11-12
+#  Target aligned region: 4:'A8'93-5:'A8'94,13:'A8'65-14:'A8'66
+
+	GG...AC
+	UC...AA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(11:) trans S/H>                       MATCHES	<C(5:'A8'94)-A(13:'A8'65) cis W/W>
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<U(4:'A8'93)-A(14:'A8'66) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning k-turn_consensus and 4v88_A8:54-62_41-47_96-101:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-0,12-12
+#  Target aligned region: 9:'A8'42-9:'A8'42,21:'A8'102-21:'A8'102
+
+	G...C
+	G...U
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(12:) cis W/W>                         MATCHES	<G(9:'A8'42)-U(21:'A8'102) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

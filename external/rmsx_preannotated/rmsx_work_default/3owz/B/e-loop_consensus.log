@@ -1,0 +1,75 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/e-loop_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3owz/B/3owz_B.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3owz/B/3owz_B.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3owz_B:60-63_38-41:
+#  Alignment score:  29
+#  P-value:  6.397e-02
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 1:B62-3:B64,4:B39-6:B41
+
+	G-A...U-A
+	GAA...CAA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:B62)-A(6:B41) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(3:B64)-C(4:B39) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3owz_B:78-82_30-32_6-9:
+#  Alignment score:  26
+#  P-value:  8.669e-02
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 1:B80-3:B82,8:B7-10:B9
+
+	GAG...GUA
+	GAC...GGA
+
+#  Matched base-pairing interactions: 
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<C(3:B82)-G(8:B7) cis W/W>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<A(2:B81)-G(9:B8) trans H/S>
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<G(1:B80)-A(10:B9) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3owz_B:68-71_7-9_30-34:
+#  Alignment score:  22
+#  P-value:  1.420e-01
+#  Query aligned region: 0-1,4-5
+#  Target aligned region: 2:B71-2:B71,4:B8-4:B8,9:B33-10:B34
+
+	G~A...UA
+	A~G...AA
+
+#  Matched base-pairing interactions: 
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<A(2:B71)-A(10:B34) trans S/H>
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(4:B8)-A(9:B33) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning Eloop_consensus and 3owz_B:7-9_30-34_68-71:
+#  Alignment score:  7.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,3-5
+#  Target aligned region: 3:B31-4:B32,8:B69-11:B72
+
+	GA~G...GUA
+	CG~U...CAG
+
+#  Matched base-pairing interactions: 
+	<A(1:)-U(4:) trans H/W>                        MATCHES	<G(4:B32)-A(10:B71) trans H/W>
+	<G(2:)-G(3:) trans H/S>                        MATCHES	<U(8:B69)-C(9:B70) cis -/->
+	<G(0:)-A(5:) trans S/H>                        MATCHES	<C(3:B31)-G(11:B72) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

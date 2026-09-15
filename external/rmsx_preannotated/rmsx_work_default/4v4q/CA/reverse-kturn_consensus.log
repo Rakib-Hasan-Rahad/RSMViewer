@@ -1,0 +1,1081 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/reverse-kturn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v4q/CA/4v4q_CA.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v4q/CA/4v4q_CA.rmsx.nch --pvalue 1.0 --num_threads 16 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:886-893_904-909:
+#  Alignment score:  62.4
+#  P-value:  2.030e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 0:'CA'887-2:'CA'889,11:'CA'908-13:'CA'910
+
+	GGA...AAC
+	GGA...AAC
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(2:'CA'889)-A(11:'CA'908) trans H/H>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'888)-A(12:'CA'909) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(0:'CA'887)-C(13:'CA'910) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1429-1436_333-334_1464-1469:
+#  Alignment score:  41.2
+#  P-value:  6.427e-02
+#  Query aligned region: 0-3,4-10
+#  Target aligned region: 0:'CA'1430-3:'CA'1433,9:'CA'335-9:'CA'335,13:'CA'1468-15:'CA'1470
+
+	GGAG...C~AAC
+	AAGA...C~ACU
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<A(3:'CA'1433)-C(9:'CA'335) cis -/->
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(2:'CA'1432)-A(13:'CA'1468) trans S/H>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(1:'CA'1431)-C(14:'CA'1469) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<A(0:'CA'1430)-U(15:'CA'1470) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:445-449_480-487_390-391:
+#  Alignment score:  38
+#  P-value:  8.254e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 0:'CA'446-2:'CA'448,10:'CA'486-12:'CA'488
+
+	GGA...AAC
+	GGA...UAC
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(2:'CA'448)-U(10:'CA'486) trans H/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'447)-A(11:'CA'487) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(0:'CA'446)-C(12:'CA'488) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:936-937_1371-1377_1343-1349:
+#  Alignment score:  37.8
+#  P-value:  8.394e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 2:'CA'1372-5:'CA'1375,11:'CA'1346-15:'CA'1350
+
+	GG-A...A--AC
+	UGAA...AGUAA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(3:'CA'1373)-A(14:'CA'1349) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(5:'CA'1375)-A(11:'CA'1346) trans H/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(2:'CA'1372)-A(15:'CA'1350) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:796-802_778-783_695-696:
+#  Alignment score:  37.7
+#  P-value:  8.465e-02
+#  Query aligned region: 0-3,4-10
+#  Target aligned region: 2:'CA'799-6:'CA'803,7:'CA'779-11:'CA'783
+
+	GGA-G...CACAAAC
+	GGUAG...C--AAAC
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(6:'CA'803)-C(7:'CA'779) cis W/W>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<U(4:'CA'801)-A(9:'CA'781) trans W/H>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(3:'CA'800)-A(10:'CA'782) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(2:'CA'799)-C(11:'CA'783) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:650-653_752-758_580-587:
+#  Alignment score:  37.4
+#  P-value:  8.683e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 8:'CA'757-10:'CA'759,12:'CA'582-14:'CA'584
+
+	GGA...AAC
+	UCA...CAG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(10:'CA'759)-C(12:'CA'582) trans H/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<C(9:'CA'758)-A(13:'CA'583) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(8:'CA'757)-G(14:'CA'584) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:377-380_381-383_60-61:
+#  Alignment score:  37.4
+#  P-value:  8.683e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 1:'CA'379-3:'CA'381,4:'CA'382-6:'CA'384
+
+	GGA...AAC
+	CGC...AAG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<C(3:'CA'381)-A(4:'CA'382) cis -/->
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(2:'CA'380)-A(5:'CA'383) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(1:'CA'379)-G(6:'CA'384) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1415-1420_1479-1483:
+#  Alignment score:  37.2
+#  P-value:  8.833e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 0:'CA'1416-2:'CA'1418,8:'CA'1482-10:'CA'1484
+
+	GGA...AAC
+	GGA...GAC
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(2:'CA'1418)-G(8:'CA'1482) trans H/S>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'1417)-A(9:'CA'1483) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(0:'CA'1416)-C(10:'CA'1484) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:19-21_884-887_908-914:
+#  Alignment score:  36.8
+#  P-value:  9.146e-02
+#  Query aligned region: 0-3,4-10
+#  Target aligned region: 0:'CA'20-2:'CA'22,5:'CA'887-5:'CA'887,8:'CA'910-13:'CA'915
+
+	GGA~G...CACAAAC
+	UGG~G...C-UCAAA
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(5:'CA'887)-C(8:'CA'910) cis W/W>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(2:'CA'22)-A(11:'CA'913) cis -/->
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'21)-A(12:'CA'914) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(0:'CA'20)-A(13:'CA'915) trans W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1299-1308_944-946_1328-1333:
+#  Alignment score:  36.6
+#  P-value:  9.308e-02
+#  Query aligned region: 0-3,4-10
+#  Target aligned region: 3:'CA'1303-6:'CA'1306,12:'CA'947-12:'CA'947,16:'CA'1332-18:'CA'1334
+
+	GGAG...C~AAC
+	CGGA...G~AAG
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<A(6:'CA'1306)-G(12:'CA'947) cis S/S>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(5:'CA'1305)-A(16:'CA'1332) trans S/H>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(4:'CA'1304)-A(17:'CA'1333) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(3:'CA'1303)-G(18:'CA'1334) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1281-1282_1258-1265_1269-1275:
+#  Alignment score:  35.7
+#  P-value:  1.010e-01
+#  Query aligned region: 0-3,4-10
+#  Target aligned region: 2:'CA'1259-6:'CA'1263,12:'CA'1272-16:'CA'1276
+
+	GGA-G...CACAAAC
+	CGACC...G--CAAG
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<C(6:'CA'1263)-G(12:'CA'1272) cis W/W>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(4:'CA'1261)-A(14:'CA'1274) trans H/S>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(3:'CA'1260)-A(15:'CA'1275) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(2:'CA'1259)-G(16:'CA'1276) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1234-1236_942-945_1332-1339:
+#  Alignment score:  35.6
+#  P-value:  1.019e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 3:'CA'943-4:'CA'944,13:'CA'1339-14:'CA'1340
+
+	GG...AC
+	UG...AA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(4:'CA'944)-A(13:'CA'1339) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(3:'CA'943)-A(14:'CA'1340) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:185-190:
+#  Alignment score:  35.6
+#  P-value:  1.019e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 0:'CA'186-5:'CA'191
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'187)-A(4:'CA'190) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(0:'CA'186)-G(5:'CA'191) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:857-862_569-571_863-873:
+#  Alignment score:  35.2
+#  P-value:  1.058e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 4:'CA'862-5:'CA'863,7:'CA'571-7:'CA'571,10:'CA'865-12:'CA'867
+
+	GG~A...AAC
+	CU~U...ACG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<U(5:'CA'863)-C(11:'CA'866) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<U(7:'CA'571)-A(10:'CA'865) cis W/W>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(4:'CA'862)-G(12:'CA'867) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:408-415_426-432:
+#  Alignment score:  34.8
+#  P-value:  1.099e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 0:'CA'409-1:'CA'410,13:'CA'432-14:'CA'433
+
+	GG...AC
+	UG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'410)-A(13:'CA'432) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(0:'CA'409)-G(14:'CA'433) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1164-1170:
+#  Alignment score:  34.7
+#  P-value:  1.109e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 0:'CA'1165-6:'CA'1171
+
+	GG-A...AAC
+	UGAU...AAA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'1166)-A(5:'CA'1170) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<U(3:'CA'1168)-A(4:'CA'1169) cis S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(0:'CA'1165)-A(6:'CA'1171) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:552-560_24-31:
+#  Alignment score:  33.7
+#  P-value:  1.225e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 3:'CA'556-6:'CA'559,9:'CA'25-11:'CA'27
+
+	G-GA...AAC
+	CGGA...CAG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(6:'CA'559)-C(9:'CA'25) trans W/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(3:'CA'556)-G(11:'CA'27) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(5:'CA'558)-A(10:'CA'26) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:569-571_863-873_857-862:
+#  Alignment score:  33.4
+#  P-value:  1.263e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 7:'CA'868-9:'CA'870,15:'CA'859-17:'CA'861
+
+	GGA...AAC
+	CGU...GAG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<U(9:'CA'870)-G(15:'CA'859) trans H/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(8:'CA'869)-A(16:'CA'860) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(7:'CA'868)-G(17:'CA'861) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:526-529_532-535_515-521:
+#  Alignment score:  32
+#  P-value:  1.467e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 1:'CA'528-2:'CA'529,6:'CA'535-7:'CA'536,12:'CA'520-13:'CA'521
+
+	GG~A...A~AC
+	CG~A...C~AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(2:'CA'529)-A(12:'CA'520) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(6:'CA'535)-C(7:'CA'536) cis S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(1:'CA'528)-G(13:'CA'521) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:688-691_785-786_693-697:
+#  Alignment score:  31
+#  P-value:  1.645e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 2:'CA'691-3:'CA'692,5:'CA'787-5:'CA'787,6:'CA'694-8:'CA'696
+
+	GG~A...AAC
+	GU~A...AAA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<U(3:'CA'692)-A(7:'CA'695) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(5:'CA'787)-A(6:'CA'694) cis -/->
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(2:'CA'691)-A(8:'CA'696) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1456-1460_1439-1444:
+#  Alignment score:  30.8
+#  P-value:  1.684e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 3:'CA'1460-4:'CA'1461,6:'CA'1441-7:'CA'1442
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(4:'CA'1461)-A(6:'CA'1441) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(3:'CA'1460)-G(7:'CA'1442) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:157-163:
+#  Alignment score:  30.8
+#  P-value:  1.684e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 0:'CA'158-5:'CA'163
+
+	GG...AC
+	GG...AC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'159)-A(4:'CA'162) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(0:'CA'158)-C(5:'CA'163) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:900-906_888-897_810-811:
+#  Alignment score:  28.1
+#  P-value:  2.390e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 4:'CA'905-6:'CA'907,9:'CA'891-12:'CA'894
+
+	GGA...AA-C
+	UAA...UACG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(6:'CA'907)-U(9:'CA'891) trans H/W>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(4:'CA'905)-G(12:'CA'894) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(5:'CA'906)-A(10:'CA'892) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1205-1214_1044-1051_991-995:
+#  Alignment score:  26.4
+#  P-value:  3.090e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 4:'CA'1210-5:'CA'1211,11:'CA'1046-12:'CA'1047
+
+	GG...AC
+	CU...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<U(5:'CA'1211)-A(11:'CA'1046) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(4:'CA'1210)-G(12:'CA'1047) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:779-787_794-801_695-696:
+#  Alignment score:  26.4
+#  P-value:  3.090e-01
+#  Query aligned region: 1-2,8-9
+#  Target aligned region: 0:'CA'780-1:'CA'781,15:'CA'801-16:'CA'802
+
+	GA...AA
+	AA...UA
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(1:'CA'781)-U(15:'CA'801) trans H/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(0:'CA'780)-A(16:'CA'802) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:975-977_1359-1362_979-980:
+#  Alignment score:  26.2
+#  P-value:  3.192e-01
+#  Query aligned region: 1-2,8-9
+#  Target aligned region: 1:'CA'977-2:'CA'978,3:'CA'1360-3:'CA'1360,7:'CA'980-7:'CA'980
+
+	GA...A~A
+	AA...A~C
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(1:'CA'977)-C(7:'CA'980) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(2:'CA'978)-A(3:'CA'1360) trans H/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:351-356_111-112_53-58:
+#  Alignment score:  25.2
+#  P-value:  3.787e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 4:'CA'356-5:'CA'357,9:'CA'55-10:'CA'56
+
+	GG...AC
+	AG...AU
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(5:'CA'357)-A(9:'CA'55) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<A(4:'CA'356)-U(10:'CA'56) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:696-704_684-689:
+#  Alignment score:  23.8
+#  P-value:  4.945e-01
+#  Query aligned region: 1-2,8-9
+#  Target aligned region: 6:'CA'703-7:'CA'704,10:'CA'686-11:'CA'687
+
+	GA...AA
+	GA...UA
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(7:'CA'704)-U(10:'CA'686) trans H/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(6:'CA'703)-A(11:'CA'687) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:683-688_698-705:
+#  Alignment score:  23.8
+#  P-value:  4.945e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 0:'CA'684-2:'CA'686,11:'CA'704-13:'CA'706
+
+	GGA...AAC
+	UGU...AGA
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<U(2:'CA'686)-A(11:'CA'704) trans W/H>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'685)-G(12:'CA'705) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(0:'CA'684)-A(13:'CA'706) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:319-332_106-110:
+#  Alignment score:  23.3
+#  P-value:  5.490e-01
+#  Query aligned region: 1-2,8-9
+#  Target aligned region: 4:'CA'324-5:'CA'325,14:'CA'107-16:'CA'109
+
+	GA...A-A
+	GA...GGA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(4:'CA'324)-A(16:'CA'109) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(5:'CA'325)-G(14:'CA'107) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:854-858_868-871_826-831:
+#  Alignment score:  23.2
+#  P-value:  5.610e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 2:'CA'857-4:'CA'859,6:'CA'870-6:'CA'870,10:'CA'828-11:'CA'829
+
+	GGA...A~AC
+	CGG...U~UG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(3:'CA'858)-U(10:'CA'828) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(4:'CA'859)-U(6:'CA'870) trans W/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(2:'CA'857)-G(11:'CA'829) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1393-1398_920-921:
+#  Alignment score:  21.7
+#  P-value:  8.006e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 2:'CA'1396-5:'CA'1399,6:'CA'921-6:'CA'921
+
+	G-G...A~C
+	ACA...C~U
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<A(2:'CA'1396)-U(6:'CA'921) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(4:'CA'1398)-C(5:'CA'1399) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1100-1103_1078-1085_1070-1076:
+#  Alignment score:  21
+#  P-value:  9.685e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 1:'CA'1102-1:'CA'1102,9:'CA'1084-10:'CA'1085,12:'CA'1071-14:'CA'1073
+
+	G~GA...AAC
+	A~GU...CGU
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<U(10:'CA'1085)-C(12:'CA'1071) trans H/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<A(1:'CA'1102)-U(14:'CA'1073) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(9:'CA'1084)-G(13:'CA'1072) trans S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1464-1469_333-334_1429-1436:
+#  Alignment score:  13.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 1:'CA'1466-1:'CA'1466,6:'CA'334-7:'CA'335,11:'CA'1433-13:'CA'1435
+
+	G~GA...AAC
+	C~CC...AAG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<C(7:'CA'335)-A(11:'CA'1433) cis -/->
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(1:'CA'1466)-G(13:'CA'1435) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<C(6:'CA'334)-A(12:'CA'1434) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1332-1339_942-945_1234-1236:
+#  Alignment score:  13.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 4:'CA'1337-4:'CA'1337,10:'CA'945-11:'CA'946,12:'CA'1235-14:'CA'1237
+
+	G~GA...AAC
+	G~GA...UAC
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(11:'CA'946)-U(12:'CA'1235) cis W/W>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(4:'CA'1337)-C(14:'CA'1237) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(10:'CA'945)-A(13:'CA'1236) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1355-1365:
+#  Alignment score:  13.5
+#  P-value:  1.000e+00
+#  Query aligned region: 0-3,4-10
+#  Target aligned region: 0:'CA'1356-10:'CA'1366
+
+	GGAG...CACAA-AC
+	GAUC...G--AAUGC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(1:'CA'1357)-G(9:'CA'1365) cis W/W>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<U(2:'CA'1358)-A(7:'CA'1363) trans W/W>
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<C(3:'CA'1359)-G(5:'CA'1361) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(0:'CA'1356)-C(10:'CA'1366) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:607-608_299-308_291-296:
+#  Alignment score:  13.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 6:'CA'304-7:'CA'305,12:'CA'292-13:'CA'293
+
+	GG...AC
+	UG...GG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(7:'CA'305)-G(12:'CA'292) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(6:'CA'304)-G(13:'CA'293) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:426-432_408-415:
+#  Alignment score:  12.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 0:'CA'427-1:'CA'428,13:'CA'415-14:'CA'416
+
+	GG...AC
+	UG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'428)-A(13:'CA'415) cis W/W>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(0:'CA'427)-G(14:'CA'416) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:532-535_515-521_526-529:
+#  Alignment score:  12.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 9:'CA'521-10:'CA'522,11:'CA'527-12:'CA'528
+
+	GG...AC
+	GC...GC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<C(10:'CA'522)-G(11:'CA'527) cis W/W>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(9:'CA'521)-C(12:'CA'528) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:381-383_60-61_377-380:
+#  Alignment score:  12
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 2:'CA'384-2:'CA'384,3:'CA'61-3:'CA'61,5:'CA'378-6:'CA'379
+
+	G~G...AC
+	G~G...GC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(3:'CA'61)-G(5:'CA'378) trans S/S>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(2:'CA'384)-C(6:'CA'379) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1343-1354_1286-1288_1367-1373:
+#  Alignment score:  11.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 6:'CA'1350-6:'CA'1350,13:'CA'1288-13:'CA'1288,18:'CA'1371-19:'CA'1372
+
+	G~G...AC
+	A~A...GU
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<A(6:'CA'1350)-U(19:'CA'1372) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(13:'CA'1288)-G(18:'CA'1371) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:888-897_900-906_810-811:
+#  Alignment score:  11.8
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 8:'CA'897-9:'CA'898,10:'CA'901-11:'CA'902
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(9:'CA'898)-A(10:'CA'901) cis -/->
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(8:'CA'897)-G(11:'CA'902) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:785-786_693-697_688-691:
+#  Alignment score:  11.7
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 4:'CA'696-6:'CA'698,7:'CA'689-9:'CA'691
+
+	GGA...AAC
+	AUG...CGG
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(6:'CA'698)-C(7:'CA'689) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<U(5:'CA'697)-G(8:'CA'690) trans H/S>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<A(4:'CA'696)-G(9:'CA'691) trans H/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:53-58_111-112_351-356:
+#  Alignment score:  10.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 4:'CA'58-4:'CA'58,7:'CA'113-7:'CA'113,9:'CA'353-10:'CA'354
+
+	G~G...AC
+	C~G...AG
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(4:'CA'58)-G(10:'CA'354) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(7:'CA'113)-A(9:'CA'353) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:480-487_445-449_390-391:
+#  Alignment score:  10.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 2:'CA'483-3:'CA'484,11:'CA'449-12:'CA'450
+
+	GG...AC
+	CG...GG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(3:'CA'484)-G(11:'CA'449) trans W/W>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(2:'CA'483)-G(12:'CA'450) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:67-74_93-101:
+#  Alignment score:  10.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 0:'CA'68-1:'CA'69,14:'CA'100-15:'CA'101
+
+	GG...AC
+	GG...GA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'CA'69)-G(14:'CA'100) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(0:'CA'68)-A(15:'CA'101) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1044-1051_1205-1214_991-995:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 7:'CA'1052-7:'CA'1052,8:'CA'1206-8:'CA'1206
+
+	G...C
+	U...G
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<U(7:'CA'1052)-G(8:'CA'1206) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1490-1492_1493-1494_1405-1409:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 0:'CA'1491-0:'CA'1491,8:'CA'1409-8:'CA'1409
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(0:'CA'1491)-C(8:'CA'1409) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:650-658_746-754_586-587:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 8:'CA'659-8:'CA'659,9:'CA'747-9:'CA'747
+
+	G...C
+	U...A
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<U(8:'CA'659)-A(9:'CA'747) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:586-587_650-658_746-754:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 1:'CA'588-1:'CA'588,2:'CA'651-2:'CA'651
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(1:'CA'588)-C(2:'CA'651) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:241-248_274-282:
+#  Alignment score:  9.8
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 7:'CA'249-7:'CA'249,8:'CA'275-8:'CA'275
+
+	G...C
+	U...G
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<U(7:'CA'249)-G(8:'CA'275) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:93-101_67-74:
+#  Alignment score:  9.4
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 3:'CA'97-4:'CA'98,13:'CA'72-14:'CA'73
+
+	GG...AC
+	GA...AC
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(4:'CA'98)-A(13:'CA'72) trans S/W>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(3:'CA'97)-C(14:'CA'73) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1194-1204_1052-1060:
+#  Alignment score:  8.2
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 2:'CA'1197-2:'CA'1197,18:'CA'1060-18:'CA'1060
+
+	G...C
+	A...U
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<A(2:'CA'1197)-U(18:'CA'1060) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1230-1232_962-971_948-951:
+#  Alignment score:  7.4
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 3:'CA'963-12:'CA'972
+
+	G...C
+	G...C
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(3:'CA'963)-C(12:'CA'972) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:106-110_319-332:
+#  Alignment score:  4.6
+#  P-value:  1.000e+00
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 7:'CA'322-13:'CA'328
+
+	GGA...AAC
+	CUG...GAC
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(9:'CA'324)-G(11:'CA'326) cis -/->
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<U(8:'CA'323)-A(12:'CA'327) trans W/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(7:'CA'322)-C(13:'CA'328) cis -/->
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:1359-1362_979-980_975-977:
+#  Alignment score:  2.8
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:979-980_975-977_1359-1362:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:839-845:
+#  Alignment score:  2.6
+#  P-value:  1.000e+00
+#  Query aligned region: 3-3,4-4
+#  Target aligned region: 0:'CA'840-6:'CA'846
+
+	G...C
+	C...G
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<C(0:'CA'840)-G(6:'CA'846) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v4q_CA:979-980_1359-1362_975-977:
+#  Alignment score:  2.5
+#  P-value:  1.000e+00
+#  Query aligned region: 
+#  Target aligned region: 
+
+	
+	
+
+#  Matched base-pairing interactions: 
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

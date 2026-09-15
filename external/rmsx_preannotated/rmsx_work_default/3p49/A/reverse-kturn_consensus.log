@@ -1,0 +1,95 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/reverse-kturn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3p49/A/3p49_A.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/3p49/A/3p49_A.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 3p49_A:93-98_118-121_155-165:
+#  Alignment score:  35.8
+#  P-value:  9.331e-02
+#  Query aligned region: 0-3,4-10
+#  Target aligned region: 1:A84-3:A86,8:A110-9:A111,17:A152-19:A154
+
+	GGA~G...C~AAC
+	GGA~G...A~GAC
+
+#  Matched base-pairing interactions: 
+	<G(3:)-C(4:) cis W/W>                          MATCHES	<G(8:A110)-A(9:A111) cis S/S>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(3:A86)-G(17:A152) cis -/->
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(2:A85)-A(18:A153) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(1:A84)-C(19:A154) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 3p49_A:43-46_8-12_71-74:
+#  Alignment score:  35.8
+#  P-value:  9.331e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 4:A8-6:A10,10:A62-12:A64
+
+	GGA...AAC
+	GGA...GAC
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(6:A10)-G(10:A62) cis -/->
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(5:A9)-A(11:A63) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(4:A8)-C(12:A64) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 3p49_A:49-53_93-94_54-59:
+#  Alignment score:  26.5
+#  P-value:  2.866e-01
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 2:A41-3:A42,5:A83-6:A84,7:A44-10:A47
+
+	GG~A...A~A--C
+	GU~U...G~AAUC
+
+#  Matched base-pairing interactions: 
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(2:A41)-C(10:A47) cis W/W>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<U(3:A42)-A(7:A44) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<U(5:A83)-G(6:A84) cis S/H>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 3p49_A:72-73_55-63_44-51:
+#  Alignment score:  25
+#  P-value:  3.712e-01
+#  Query aligned region: 1-2,8-9
+#  Target aligned region: 9:A52-9:A52,12:A35-14:A37
+
+	G~A...AA
+	A~G...AA
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<A(9:A52)-A(14:A37) trans S/H>
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<G(12:A35)-A(13:A36) cis S/S>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 3p49_A:54-59_93-94_49-53:
+#  Alignment score:  11.2
+#  P-value:  1.000e+00
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 5:A49-5:A49,6:A83-7:A84,8:A39-8:A39
+
+	G~G...A~C
+	U~U...G~A
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<U(6:A83)-G(7:A84) cis S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<U(5:A49)-A(8:A39) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+

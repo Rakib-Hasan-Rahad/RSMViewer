@@ -1,0 +1,38 @@
+$ /home/s081p868/scratch/RNAMotifScanX-release/bin/scan /home/s081p868/scratch/RNAMotifScanX-release/models/reverse-kturn_consensus.struct /rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v9f/9/4v9f_9.rmsx.in --map_pdb=/rfs/poseidon_share/s081p868/RNAMotifScanX_nr/rmsx_work_default/4v9f/9/4v9f_9.rmsx.nch --pvalue 1.0 --num_threads 8 --write_alignment
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v9f_9:74-82_99-105:
+#  Alignment score:  62
+#  P-value:  1.737e-02
+#  Query aligned region: 0-2,8-10
+#  Target aligned region: 0:'9'75-2:'9'77,13:'9'104-15:'9'106
+
+	GGA...AAC
+	GGA...AAU
+
+#  Matched base-pairing interactions: 
+	<A(2:)-A(8:) trans H/H>                        MATCHES	<A(2:'9'77)-A(13:'9'104) trans H/H>
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(1:'9'76)-A(14:'9'105) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<G(0:'9'75)-U(15:'9'106) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
+<<<<<<<<<<  ALIGNMENT BEGINS  <<<<<<<<<<
+
+#  Aligning reverse-kturn_conseusns and 4v9f_9:87-94:
+#  Alignment score:  34.2
+#  P-value:  1.001e-01
+#  Query aligned region: 0-1,9-10
+#  Target aligned region: 1:'9'89-6:'9'94
+
+	GG...AC
+	CG...AG
+
+#  Matched base-pairing interactions: 
+	<G(1:)-A(9:) trans S/H>                        MATCHES	<G(2:'9'90)-A(5:'9'93) trans S/H>
+	<G(0:)-C(10:) cis W/W>                         MATCHES	<C(1:'9'89)-G(6:'9'94) cis W/W>
+#  Matched base-stacking interactions: 
+
+>>>>>>>>>>   ALIGNMENT ENDS   >>>>>>>>>>
+
