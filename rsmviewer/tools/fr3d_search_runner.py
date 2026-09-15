@@ -22,6 +22,7 @@ Contract (stdin JSON on argv[1] as a path, or --spec <path>):
       "query_file":     "/abs/path/to/query.json",   # a WebFR3D-style JSON query
       "target_cif":     "/abs/path/to/TARGET.cif",    # cif_local reference target
       "run_dir":        "/abs/path/to/run",           # all outputs go under here
+    "data_dir":       "/abs/path/to/data",          # optional shared FR3D cache
       "query_name":     "sanitized_name",             # used for output naming
       "allow_network":  false,
     "data_mode":      "run_fr3d_pipeline"
@@ -240,6 +241,7 @@ def main():
     query_file = os.path.abspath(os.path.expanduser(str(spec.get("query_file", "")).strip()))
     target_cif = os.path.abspath(os.path.expanduser(str(spec.get("target_cif", "")).strip()))
     run_dir = os.path.abspath(os.path.expanduser(str(spec.get("run_dir", "")).strip()))
+    configured_data_dir = str(spec.get("data_dir", "") or "").strip()
     query_name = str(spec.get("query_name", "") or "").strip() or "query"
     allow_network = bool(spec.get("allow_network", False))
     data_mode = str(spec.get("data_mode", "run_fr3d_pipeline") or "run_fr3d_pipeline").strip()
@@ -264,7 +266,10 @@ def main():
 
     # --- run-dir layout -----------------------------------------------------
     raw_dir = os.path.join(run_dir, "raw")            # OUTPUTPATH (FR3D CSV/HTML)
-    data_dir = os.path.join(run_dir, "data")          # DATAPATH (units/pairs pickles)
+    data_dir = (
+        os.path.abspath(os.path.expanduser(configured_data_dir))
+        if configured_data_dir else os.path.join(run_dir, "data")
+    )
     json_dir = os.path.join(run_dir, "json")          # JSONPATH (executed query)
     cif_dir = os.path.dirname(target_cif) if target_cif else run_dir
     for path in (raw_dir, data_dir, json_dir,

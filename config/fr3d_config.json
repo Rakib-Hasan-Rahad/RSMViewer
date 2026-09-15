@@ -1,6 +1,14 @@
 {
   "fr3d_python_path": "../external/fr3d/fr3d-python-latest",
   "query_path": "../external/fr3d/fr3d-python-latest/fr3d/search/queries",
+  "query_selection": "families",
+  "query_families": [
+    "geometric_5_sarcin_ricin",
+    "geometric_5_kink_turn_65553",
+    "symbolic_6_GNRA_hairpin_symbolic",
+    "symbolic_4_internal_loop",
+    "symbolic_8_GU_tandem_at_end_of_helix"
+  ],
   "run_output_path": "../output/fr3d_runs",
   "allow_network": true
 }

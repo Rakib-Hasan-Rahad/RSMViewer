@@ -1372,11 +1372,29 @@ class MotifVisualizerGUI:
             return False
 
         ingest_dir = os.path.join(run_root, 'ingest')
+        # Persistent FR3D annotation cache shared across ALL runs. FR3D names its
+        # cache files by structure (e.g. 4V9F-1-0_NA.pickle), so reusing one
+        # directory is safe and matches FR3D's native DATAPATH design. This is
+        # what stops PyMOL freezing: the expensive one-time annotation of the
+        # large reference structures the queries embed (4V9F, 7K00, 8GLP, ...)
+        # is built once and reused, instead of being rebuilt on every run.
+        shared_data_dir = os.path.join(self.fr3d_run_output_path, '_fr3d_cache')
         os.makedirs(ingest_dir, exist_ok=True)
+        os.makedirs(shared_data_dir, exist_ok=True)
 
+        cache_primed = os.path.isdir(os.path.join(shared_data_dir, 'units')) and any(
+            name.endswith('_NA.pickle')
+            for name in os.listdir(os.path.join(shared_data_dir, 'units'))
+        )
         self.logger.info(
             f"Running official FR3D on {target_upper} for {len(queries)} query(ies) [{self.fr3d_data_mode}]..."
         )
+        if not cache_primed:
+            self.logger.info(
+                "  First FR3D run builds a one-time annotation cache for the reference "
+                "structures embedded in the queries (this can take several minutes; "
+                "subsequent runs reuse it and are fast)."
+            )
 
         manifest = {
             'target': target_upper,
@@ -1405,6 +1423,7 @@ class MotifVisualizerGUI:
                 'query_file': query_file,
                 'target_cif': target_cif,
                 'run_dir': q_run_dir,
+                'data_dir': shared_data_dir,
                 'query_name': qname,
                 'allow_network': self.fr3d_allow_network,
                 'data_mode': self.fr3d_data_mode,
