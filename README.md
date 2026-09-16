@@ -321,11 +321,15 @@ so repeated queries are offline. Use `rmv_refresh` to bypass the cache.
 
 FR3D has two modes, selected by `data_mode` in `config/fr3d_config.json`:
 
-- **`cache` (default):** `rmv_db FR3D` reads local cached annotations from
-  `external/fr3d/fr3d_cache/` — it does not run FR3D or make a network call.
-- **`run_from_scratch`:** `rmv_db FR3D` executes the official BGSU fr3d-python
-  pipeline on the loaded structure and loads the freshly generated results from
-  a new timestamped run directory under `output/fr3d_runs/`.
+- **`cache` (default):** `rmv_db FR3D` loads previously generated results — it
+  first looks for a prior run under `output/fr3d_runs/<PDB>/`, and if none is
+  found there it falls back to the bundled cache at `external/fr3d/fr3d_cache/`.
+  It never runs FR3D or makes a network call.
+- **`run_from_scratch`:** `rmv_db FR3D` always executes the official BGSU
+  fr3d-python pipeline on the loaded structure and loads the freshly generated
+  results from a new timestamped run directory under `output/fr3d_runs/`.
+
+`rmv_reset` clears the FR3D run cache at `output/fr3d_runs/`.
 
 To run the pipeline from scratch:
 

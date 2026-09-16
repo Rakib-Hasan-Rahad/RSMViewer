@@ -1333,6 +1333,30 @@ class MotifVisualizerGUI:
             "from a .cif file." % pdb_upper
         )
 
+    def _fr3d_find_cached_run(self, target_upper: str) -> str:
+        """Return the ingest dir of the most recent prior FR3D run for a PDB.
+
+        Scans ``output/fr3d_runs/<PDB>/<run_id>/ingest`` for a run that produced
+        query CSVs. Returns '' when no reusable run exists (e.g. after
+        rmv_reset clears the run cache).
+        """
+        base = os.path.join(self.fr3d_output_dir, target_upper)
+        if not os.path.isdir(base):
+            return ''
+        run_dirs = [
+            os.path.join(base, name)
+            for name in os.listdir(base)
+            if os.path.isdir(os.path.join(base, name))
+        ]
+        run_dirs.sort(key=lambda p: os.path.getmtime(p), reverse=True)
+        for run_dir in run_dirs:
+            ingest = os.path.join(run_dir, 'ingest')
+            if os.path.isdir(ingest) and any(
+                name.lower().endswith('.csv') for name in os.listdir(ingest)
+            ):
+                return ingest
+        return ''
+
     def run_fr3d_search(self, pdb_id: str = None) -> bool:
         """Argument-free Source-5 entry point.
 
@@ -7185,6 +7209,16 @@ def initialize_gui():
                         "register it with 'rmv_db FR3D' instead."
                     )
                 if getattr(gui, 'fr3d_data_mode', '') == 'cache':
+                    # Cache mode: prefer a prior run's output in output/fr3d_runs;
+                    # otherwise fall back to the bundled external/fr3d/fr3d_cache.
+                    cached_ingest = gui._fr3d_find_cached_run(str(pdb_id).upper())
+                    if cached_ingest:
+                        gui.logger.info(f"Using FR3D results for {str(pdb_id).upper()} from a previous run:")
+                        gui.logger.info(f"  {cached_ingest}")
+                        gui.user_data_paths[5] = cached_ingest
+                        gui._handle_source_by_id(5, cached_ingest)
+                        gui.load_user_annotations_action('fr3d', pdb_id, auto_pipeline=False)
+                        return
                     gui.load_user_annotations_action(gui.current_user_tool, pdb_id, auto_pipeline=False)
                     return
                 gui.run_fr3d_search(pdb_id)
@@ -8961,6 +8995,18 @@ def initialize_gui():
                 if preannotated_cache.exists():
                     shutil.rmtree(preannotated_cache, ignore_errors=True)
                     gui.logger.debug(f"Cleared preannotated RMSX cache: {preannotated_cache}")
+        except Exception:
+            pass
+
+        # Step 2e: Clear the FR3D run cache (output/fr3d_runs) so the next
+        # run-from-scratch FR3D search regenerates results instead of reusing a
+        # previous run's output.
+        try:
+            import shutil
+            fr3d_runs = Path(getattr(gui, 'fr3d_output_dir', '') or '')
+            if fr3d_runs and fr3d_runs.exists():
+                shutil.rmtree(fr3d_runs, ignore_errors=True)
+                gui.logger.debug(f"Cleared FR3D run cache: {fr3d_runs}")
         except Exception:
             pass
         

@@ -48,10 +48,19 @@ rmv_fetch 1S72
 rmv_db FR3D
 ```
 
-With `data_mode: "cache"`, `rmv_db FR3D` loads the matching local cache file.
-With `data_mode: "run_from_scratch"`, it annotates the loaded structure by
-running the motif queries listed in the config. Results load straight into
-RSMViewer in both modes.
+How `rmv_db FR3D` behaves depends on `data_mode`:
+
+- **`cache`:** loads previously generated results for the structure. It first
+  looks for a prior run under `output/fr3d_runs/<PDB>/`, and if none is found
+  there it falls back to the bundled cache at `external/fr3d/fr3d_cache/`.
+  It never runs FR3D.
+- **`run_from_scratch`:** always runs the motif queries listed in the config on
+  the loaded structure and loads the freshly generated results. It does **not**
+  reuse any previous run — every invocation regenerates the results.
+
+`rmv_reset` clears the FR3D run cache at `output/fr3d_runs/`, so the next
+`cache`-mode load falls back to `external/fr3d/fr3d_cache/` and the next
+`run_from_scratch` run starts clean.
 
 > **First run is slow, later runs are fast.** FR3D's `geometric_*` queries
 > embed large reference structures (e.g. `4V9F`, `7K00`, `8GLP`) in their
@@ -60,8 +69,9 @@ RSMViewer in both modes.
 > saved to a **persistent cache** that is reused by every later run, so
 > re-running FR3D — on the same or a different structure — is fast.
 >
-> The cache lives at `output/fr3d_runs/_fr3d_cache/`. Deleting it only forces
-> the one-time rebuild again; it is safe to keep.
+> The cache lives at `output/fr3d_runs/_fr3d_cache/`. `rmv_reset` removes it
+> along with the rest of `output/fr3d_runs/`, which forces the one-time rebuild
+> on the next run.
 
 Good structures to try: `1S72`, `4V9F`, `4V88`, `1HR2`, `1KXK`, `3CC2`,
 `1FFK`, `1NBS`, `1JJ2`, `1Y0Q`, `2GIS`.
