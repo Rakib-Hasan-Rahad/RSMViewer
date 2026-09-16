@@ -384,8 +384,12 @@ This section provides a fully worked numerical benchmark corresponding to
 Application 5 of the main text, using the RNA 3D Motif Atlas as the ground-truth
 reference for RNAMotifScanX on the large ribosomal subunit structure 1S72 and the
 SARCIN-RICIN (SR) family. The exact counts depend on data versions and the
-configured P-value thresholds; the values below are those produced by the
-released configuration.
+configured P-value thresholds; the values below were reproduced on a clean
+session with **only** the two benchmarked sources loaded (RSMViewer 2.0.0,
+cached RNA 3D Motif Atlas API data and the preannotated RNAMotifScanX bundle,
+$\tau_J = 0.60$, $\tau_C = 0.80$). Load only these two sources: adding a third
+source (e.g. Rfam) changes the residue-set consolidation and therefore shifts
+the TP/FP/FN partition, even though the per-source SR marginals stay the same.
 
 ```text
 rmv_fetch 1S72
@@ -401,42 +405,47 @@ three disjoint groups that together equal the union
 
 | Group | Selection | Meaning | Count |
 | --- | --- | --- | ---: |
-| TP | `RNA3DMotifAtlas and RNAMotifScanX` | both sources label the row SR | 2 |
-| FP | `not RNA3DMotifAtlas and RNAMotifScanX` | RMSX labels SR; Atlas does not | 10 |
-| FN | `RNA3DMotifAtlas and not RNAMotifScanX` | Atlas labels SR; RMSX does not | 6 |
-| Union | `RNA3DMotifAtlas or RNAMotifScanX` | any source labels SR | 18 |
+| TP | `RNA3DMotifAtlas and RNAMotifScanX` | both sources label the row SR | 1 |
+| FP | `not RNA3DMotifAtlas and RNAMotifScanX` | RMSX labels SR; Atlas does not | 11 |
+| FN | `RNA3DMotifAtlas and not RNAMotifScanX` | Atlas labels SR; RMSX does not | 7 |
+| Union | `RNA3DMotifAtlas or RNAMotifScanX` | any source labels SR | 19 |
 
-The partition is disjoint and exhaustive ($2 + 10 + 6 = 18$), and the marginals
+The partition is disjoint and exhaustive ($1 + 11 + 7 = 19$), and the marginals
 are internally consistent: Atlas-SR rows $= \mathrm{TP} + \mathrm{FN} = 8$ and
 RMSX-SR rows $= \mathrm{TP} + \mathrm{FP} = 12$, giving the union
-$8 + 12 - 2 = 18$. Treating the Atlas as ground truth,
+$8 + 12 - 1 = 19$. Treating the Atlas as ground truth,
 
-$$\text{Precision} = \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}} = \frac{2}{12} \approx 16.7\%,$$
+$$\text{Precision} = \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}} = \frac{1}{12} \approx 8.3\%,$$
 
-$$\text{Recall} = \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}} = \frac{2}{8} = 25.0\%,$$
+$$\text{Recall} = \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}} = \frac{1}{8} = 12.5\%,$$
 
-$$F_1 = \frac{2\,\mathrm{TP}}{2\,\mathrm{TP}+\mathrm{FP}+\mathrm{FN}} = \frac{4}{20} = 20.0\%.$$
+$$F_1 = \frac{2\,\mathrm{TP}}{2\,\mathrm{TP}+\mathrm{FP}+\mathrm{FN}} = \frac{2}{20} = 10.0\%.$$
 
 **Interpretation and caveat.** Two subtleties, both consequences of the
 representation and thresholds described above, matter when interpreting such a
 benchmark:
 
-1. A source predicate is per-source and per-family (S5.3). For instance, a row
-   that the Atlas labels `3-way Junction` while RMSX labels it SR is a false
-   positive for the SR benchmark, and a row that the Atlas labels SR while RMSX
-   labels it `REVERSE-K-TURN` is a false negative — the same-residue annotation
-   under a different family does **not** count as agreement.
+1. A source predicate is per-source and per-family (S5.3). For instance, an
+   RMSX SR row is a false positive whether the Atlas assigns that region a
+   *different* family (e.g. `3-way Junction`) or no annotation at all; likewise
+   an Atlas SR row that RMSX labels `REVERSE-K-TURN` (or leaves unannotated) is
+   a false negative — a same-residue annotation under a different family does
+   **not** count as agreement.
 2. Several FP/FN pairs describe the *same physical region* with slightly
-   different residue boundaries reported by the two tools. Because their overlap
-   satisfies neither the Jaccard nor the containment criterion (S3.1), they
-   remain on separate rows and are counted as one FP plus one FN. In the 1S72 SR
-   example the six nearest FP/FN pairs have residue-set Jaccard indices in the
-   range $0.44$–$0.56$, just below $\tau_J = 0.60$. Reported precision and recall
+   different residue boundaries reported by the two tools. Whether an Atlas SR
+   row and an RMSX SR row collapse into one TP row is decided by the
+   **cross-source residue merge** (S3.4: strict subset/superset, or
+   Jaccard $\ge \tau_J = 0.60$) — the containment coefficient $\tau_C$ used for
+   within-source consolidation (S3.1) is intentionally *not* applied across
+   sources. In the 1S72 SR benchmark the seven overlapping FP/FN pairs have
+   residue-set Jaccard indices of $0.44$–$0.53$, just below $\tau_J = 0.60$
+   (one pair reaches containment $0.82$ but, lacking a subset relationship and
+   with Jaccard $< 0.60$, still does not merge). Reported precision and recall
    should therefore be read as a strict, residue-identity lower bound; the
    biological agreement is likely higher, and such near-duplicate pairs are
    exactly the cases Application 6 is designed to inspect visually.
 
-`rmv_list SARCIN-RICIN` lists all 18 SR-associated rows with their per-source
+`rmv_list SARCIN-RICIN` lists all 19 SR-associated rows with their per-source
 labels, and `rmv_list group_TP` / `group_FP` / `group_FN` list each partition.
 
 ---
