@@ -45,5 +45,6 @@ external runtime or its generated files.
 ```
 
 With `preannotated`, RSMViewer prefers the extracted folder and falls back to
-`external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz` when needed.
+`external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz` (downloadable from Figshare:
+[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)) when needed.
 Keep the research-paper cutoffs in `pvalue_thresholds`; PyMOL commands do not

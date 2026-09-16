@@ -6,7 +6,7 @@
 ![PyMOL 3.x+](https://img.shields.io/badge/PyMOL-2.x%2B-brightgreen)
 ![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22097090-orange)](https://doi.org/10.5281/zenodo.22097090)
+[![DOI](https://img.shields.io/badge/DOI-10.6084%2Fm9.figshare.33826777-orange)](https://doi.org/10.6084/m9.figshare.33826777)
 
 RSMViewer is a motif-centric PyMOL plugin for retrieving, consolidating,
 querying, and comparing RNA structural motif (RSM) annotations. It integrates
@@ -369,7 +369,10 @@ RNAMotifScanX (RMSX) has two modes, selected by `data_mode` in
 
 ### Preannotated mode (default — no binaries needed)
 
-1. Place the preannotated bundle at:
+1. Download the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`) from Figshare:
+   **[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)**
+
+2. Place the preannotated bundle at:
 
    ```text
    external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz
@@ -378,7 +381,7 @@ RNAMotifScanX (RMSX) has two modes, selected by `data_mode` in
    or extract it and point `pdb_prebuild_dir` at the resulting
    `rmsx_work_default/` directory.
 
-2. Keep `"data_mode": "preannotated"` and run:
+3. Keep `"data_mode": "preannotated"` and run:
 
    ```text
    rmv_fetch 1S72
@@ -511,7 +514,7 @@ metadata is in [CITATION.cff](CITATION.cff).
 
 > Rahad, R. H., Pranjal, S., Khan, N. S., Zhang, S., & Zhong, C. RSMViewer: A
 > PyMOL plugin for RNA structural motif visualization. *Bioinformatics*.
-> DOI: [10.5281/zenodo.22097090](https://doi.org/10.5281/zenodo.22097090)
+> DOI: [10.6084/m9.figshare.33826777](https://doi.org/10.6084/m9.figshare.33826777)
 
 ## License
 

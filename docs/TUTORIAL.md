@@ -350,6 +350,9 @@ RMSX has two modes, set by `data_mode` in `config/rmsx_config.json`.
 
 ### Preannotated mode (default)
 
+Download the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`) from
+Figshare: **[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)**.
+
 Place the preannotated bundle at:
 
 ```text

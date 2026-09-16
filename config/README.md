@@ -57,7 +57,8 @@ value; it is defined in code (`rsmviewer/database/consolidated_table.py`,
 
 ### Preannotated mode (default, no binaries needed)
 
-1. Obtain the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`).
+1. Obtain the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`) from Figshare:
+   **[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)**.
 2. Place it at the path in `pdb_prebuild_archive`, i.e.
    `external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz`.
    Alternatively, extract it and point `pdb_prebuild_dir` at the resulting

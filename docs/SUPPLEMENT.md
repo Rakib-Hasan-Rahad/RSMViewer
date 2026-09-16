@@ -304,8 +304,10 @@ RNAMotifScanX (RMSX) has two modes, selected by `data_mode` in
 `config/rmsx_config.json` and driven by `tools/rmsx_runner.py`.
 
 **Preannotated mode (default).** RSMViewer reads precomputed RMSX results
-distributed as a preannotated bundle under `external/rmsx_preannotated/`. The
-bundle is keyed by PDB ID and chain and contains both the RMSX inputs and the
+distributed as a preannotated bundle under `external/rmsx_preannotated/`
+(available for download from Figshare:
+[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)).
+The bundle is keyed by PDB ID and chain and contains both the RMSX inputs and the
 precomputed alignment outputs:
 
 ```text
