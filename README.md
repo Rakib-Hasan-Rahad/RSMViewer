@@ -351,9 +351,6 @@ To run the pipeline from scratch:
 > reference, first-run cache behavior, and troubleshooting — are in
 > [external/FR3D_SETUP.md](external/FR3D_SETUP.md).
 
-The twelve offline structure files used by the current project workflows are
-stored in `cached_structures/`.
-
 ---
 
 ## RNAMotifScanX setup
@@ -382,17 +379,14 @@ binaries.
    rmv_db RNA3DMotifAtlas, RNAMotifScanX
    ```
 
-### Run-from-scratch / scan-prepared mode
+### Run-from-scratch
 
 To generate results with the real scanner instead of reading precomputed logs,
 set `"data_mode": "scan_prepared"` (or `"run_from_scratch"`) in
 `config/rmsx_config.json` and provide the binaries, then run `rmv_db RNAMotifScanX`.
 
-> **Detailed RMSX instructions** — the preannotated data layout, all three data
-> modes, the full config reference, and platform/Docker setup for a live scan —
-> are in [external/RMSX_FROM_SCRATCH.md](external/RMSX_FROM_SCRATCH.md).
+> **Detailed RMSX instructions** are in [external/RMSX_FROM_SCRATCH.md](external/RMSX_FROM_SCRATCH.md).
 
-The RNAMotifScanX software and binaries are **not** distributed with RSMViewer.
 
 ---
 
