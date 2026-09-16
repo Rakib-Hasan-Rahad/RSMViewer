@@ -1113,65 +1113,14 @@ def run_pipeline(config: dict, pdb_id: str, cif_file: str = '', force_fresh: boo
         )
 
     if not prepared_targets:
-        # ── Find CIF ──────────────────────────────────────────────────────
-        if not cif_file or not os.path.isfile(cif_file):
-            pdb_lower = pdb_id.lower()
-            for sd in [d for d in [cif_in_dir, output_dir, '.'] if d]:
-                for name in [f'{pdb_lower}.cif', f'{pdb_id}.cif',
-                             f'{pdb_lower}.cif.gz', f'{pdb_id}.cif.gz']:
-                    candidate = os.path.join(sd, name)
-                    if os.path.isfile(candidate):
-                        cif_file = candidate
-                        break
-                if cif_file:
-                    break
-        if not cif_file or not os.path.isfile(cif_file):
-            if auto_dl:
-                cif_file = _download_cif(pdb_id, output_dir)
-        if not cif_file or not os.path.isfile(cif_file):
-            print(f"[rmsx_runner] ERROR: CIF file not found for {pdb_id}")
-            return existing if existing else {}
-
-        print(f"[rmsx_runner] CIF: {cif_file}")
-
-        # ── Prepare PDB for MC-Annotate (original workflow expects PDB-like input) ──
-        for sd in [d for d in [cif_in_dir, output_dir, '.'] if d]:
-            for name in [f'{pdb_id}.pdb', f'{pdb_id.lower()}.pdb']:
-                candidate = os.path.join(sd, name)
-                if os.path.isfile(candidate):
-                    pdb_file = candidate
-                    break
-            if pdb_file:
-                break
-        if not pdb_file and auto_dl_pdb:
-            pdb_file = _download_pdb(pdb_id, output_dir)
-        if not pdb_file:
-            print(f"[rmsx_runner] ERROR: PDB file not found for {pdb_id}; cannot run MC-Annotate preparation step")
-            return existing if existing else {}
-        print(f"[rmsx_runner] PDB for annotation: {pdb_file}")
-
-        # ── Annotate (MC-Annotate + RNAVIEW → union merge → .rmsx.in) ─────
-        annot_file = run_mc_annotate(mc_exe, pdb_file, output_dir, pdb_id, force_fresh=force_fresh)
-        if not annot_file:
-            print("[rmsx_runner] WARNING: annotation step failed; RMSX search may not work.")
-
-        if annot_file:
-            try:
-                rnaview_file = run_rnaview_if_enabled(config, pdb_file, force_fresh=force_fresh)
-            except RuntimeError as exc:
-                print(f"[rmsx_runner] ERROR: {exc}")
-                return existing if existing else {}
-            prepared_targets = prepare_rmsx_inputs_from_annotation(
-                annot_file, pdb_id, output_dir, chains, seq_ref, rnaview_file
-            )
-
-    if not prepared_targets and prebuild_archive:
-        prepared_targets = _extract_prebuilt_targets_from_archive(
-            prebuild_archive, pdb_id, output_dir, chains
-        )
-
-    if not prepared_targets:
-        print("[rmsx_runner] WARNING: preparation step produced no .rmsx.in target files")
+        # run_from_scratch consumes user-provided inputs only; RSMViewer never
+        # runs MC-Annotate/RNAVIEW itself. Generate the inputs externally and
+        # place them under pdb_prebuild_dir/<pdb>/<chain>/<pdb>_<chain>.rmsx.{in,nch}.
+        expected = os.path.join(prebuild_dir or '<pdb_prebuild_dir>', pdb_id.lower(), '<chain>')
+        print(f"[rmsx_runner] ERROR: no prepared RMSX inputs (.rmsx.in/.rmsx.nch) found for {pdb_id}.")
+        print("[rmsx_runner] run_from_scratch needs externally generated inputs (RNAVIEW + MC-Annotate).")
+        print(f"[rmsx_runner]   Expected: {expected}/{pdb_id.lower()}_<chain>.rmsx.in and .rmsx.nch")
+        return existing if existing else {}
 
     # ── Resolve query mode ────────────────────────────────────────────────
     if query_file:

@@ -1,21 +1,24 @@
-# RNAMotifScanX: Preannotated, Prepared-Input, and From-Scratch Workflows
+# RNAMotifScanX: Preannotated and Run-From-Scratch Workflows
 
 This guide describes how RSMViewer uses RNAMotifScanX (RMSX), the role of
 `config/rmsx_config.json`, and how a new user on **any platform** (Linux,
 Apple-Silicon macOS, Intel macOS, or Windows) can run real RMSX scans.
 
-RSMViewer supports three data modes, set by `data_mode` in
+RSMViewer supports **two** data modes, set by `data_mode` in
 `config/rmsx_config.json`:
 
 | `data_mode` | What it does | Executes RMSX? |
 | --- | --- | --- |
-| `preannotated` (default) | Reads bundled consensus logs. Recommended for quick use. | No |
-| `scan_prepared` | Runs the real `scan` on locally prepared `.rmsx.in`/`.nch` inputs. Skips MC-Annotate/RNAVIEW. | Yes |
-| `run_from_scratch` | Full pipeline: MC-Annotate + RNAVIEW preparation, then `scan`. | Yes |
+| `preannotated` (default) | Reads bundled/downloaded consensus logs. Recommended for quick use. | No |
+| `run_from_scratch` | Runs the real `scan` on the `.rmsx.in`/`.nch` inputs **you provide**. | Yes |
 
-If you only want annotations quickly, use `preannotated`. If you want a **real
-scan** without needing MC-Annotate/RNAVIEW, use `scan_prepared` (this is the
-mode most users should run for live results).
+In `run_from_scratch` you generate the RMSX input files yourself — externally,
+with RNAVIEW and MC-Annotate — and place them under `pdb_prebuild_dir`. RSMViewer
+then runs only the RNAMotifScanX `scan` binary on those inputs and loads the
+fresh output. **RSMViewer never runs MC-Annotate or RNAVIEW itself**, and it
+never falls back to preannotated data for a from-scratch run.
+
+If you only want annotations quickly, use `preannotated`.
 
 ---
 
@@ -59,13 +62,14 @@ live scan. To support another PDB, place its preannotated directory under
 
 ---
 
-## 2. Prepared-input workflow: `scan_prepared` (real scan, recommended)
+## 2. Run-from-scratch workflow: `run_from_scratch` (real scan on your inputs)
 
-`scan_prepared` runs the **unchanged upstream `scan` executable** directly on
-the locally prepared inputs and loads the freshly generated results. It:
+`run_from_scratch` runs the **unchanged upstream `scan` executable** directly on
+the RMSX input files you provide and loads the freshly generated results. It:
 
-- uses `.rmsx.in` + matching `.rmsx.nch` files under `pdb_prebuild_dir`;
-- **skips MC-Annotate and RNAVIEW** (they are not needed for prepared inputs);
+- uses the `.rmsx.in` + matching `.rmsx.nch` files you place under
+  `pdb_prebuild_dir` (see 2.1);
+- **does not run MC-Annotate or RNAVIEW** — you generate the inputs externally;
 - writes each run to its **own timestamped output directory**;
 - captures the exact command, exit status, stdout, and stderr per scan;
 - loads only that run's fresh output — it never substitutes, supplements, or
@@ -80,34 +84,59 @@ scan <family>_consensus.struct <pdb>_<chain>.rmsx.in \
      --pvalue 1.0 --num_threads <N> --write_alignment
 ```
 
-### 2.1 Enable it
+### 2.1 Generate and place the input files
+
+Generate the RMSX target inputs for your structure externally with RNAVIEW and
+MC-Annotate (the RNAMotifScanX distribution ships the scripts that build
+`.rmsx.in`/`.rmsx.nch` from a coordinate file). Then place one directory per
+scanned chain under `pdb_prebuild_dir`:
+
+```text
+<pdb_prebuild_dir>/<pdb_id_lowercase>/<chain>/<pdb>_<chain>.rmsx.in
+<pdb_prebuild_dir>/<pdb_id_lowercase>/<chain>/<pdb>_<chain>.rmsx.nch
+```
+
+For example, with the default `pdb_prebuild_dir`
+(`external/rmsx_preannotated/rmsx_work_default`):
+
+```text
+external/rmsx_preannotated/rmsx_work_default/1kxk/A/1kxk_A.rmsx.in
+external/rmsx_preannotated/rmsx_work_default/1kxk/A/1kxk_A.rmsx.nch
+```
+
+The `_prep_main/` staging folder that the RMSX tooling produces alongside the
+per-chain folders is intermediate and is not scanned directly. If no matching
+`.rmsx.in`/`.rmsx.nch` pair is found for a structure, the run stops with a clear
+error — RSMViewer does **not** generate the inputs for you.
+
+### 2.2 Enable it
 
 ```json
-"data_mode": "scan_prepared"
+"data_mode": "run_from_scratch"
 ```
 
 You do **not** need to set `rmsx_executable` to a working binary manually — the
 runner resolves it automatically (see section 4).
 
-### 2.2 Run from PyMOL
+### 2.3 Run from PyMOL
 
 ```text
 rmv_fetch 1KXK
-rmv_rmsx scan_prepared 1KXK
+rmv_rmsx run 1KXK
 ```
 
 Options:
 
 ```text
-rmv_rmsx scan_prepared <PDB> [CHAINS] [compare]
-rmv_rmsx scan_cancel
+rmv_rmsx run <PDB> [CHAINS] [compare]
+rmv_rmsx cancel
 ```
 
 - `CHAINS`: optional, comma/space separated (for example `0,9`). Omit to scan
   every prepared chain.
 - `compare`: optional development check that prints fresh-vs-preannotated hit
   counts. It never alters the loaded results.
-- `scan_cancel`: stops an in-progress scan and **terminates the running
+- `cancel`: stops an in-progress run and **terminates the running
   scanner/container**, not just the remaining queue.
 
 The scan runs off the PyMOL GUI thread, so PyMOL stays responsive. Progress is
@@ -117,13 +146,13 @@ finishes successfully.
 Example status messages:
 
 ```text
-Using locally prepared RMSX inputs; MC-Annotate and RNAVIEW are skipped.
+Using your prepared RMSX inputs; MC-Annotate and RNAVIEW are not run by RSMViewer.
 Running RNAMotifScanX for PDB 1KXK, chain A.
 Loaded annotations from the newly generated RMSX output.
-Results saved to: .../output/rmsx_results/scan_prepared/1KXK_<timestamp>
+Results saved to: .../output/rmsx_results/run_from_scratch/1KXK_<timestamp>
 ```
 
-### 2.3 Run from the terminal (standalone)
+### 2.4 Run from the terminal (standalone)
 
 ```bash
 python rsmviewer/tools/rmsx_runner.py \
@@ -134,16 +163,17 @@ python rsmviewer/tools/rmsx_runner.py \
 python rsmviewer/tools/rmsx_runner.py \
   --config config/rmsx_config.json \
   --pdb 1S72 --scan-prepared --chains 0,9 \
-  --out output/rmsx_results/scan_prepared/1S72
+  --out output/rmsx_results/run_from_scratch/1S72
 ```
 
 Use whichever Python launches PyMOL/RSMViewer on your machine (`python`,
-`python3`, or an absolute interpreter path).
+`python3`, or an absolute interpreter path). The `--scan-prepared` flag is the
+standalone entry point for the `run_from_scratch` scan.
 
-### 2.4 Output layout for a run
+### 2.5 Output layout for a run
 
 ```text
-output/rmsx_results/scan_prepared/<PDB>_<timestamp>/
+output/rmsx_results/run_from_scratch/<PDB>_<timestamp>/
   <family>_consensus/result_0_100_withbs.log   aggregated per family (loaded)
   _runs/chain_<c>/<family>_consensus/
     command.txt        exact command used
@@ -231,7 +261,7 @@ x86-64 container equivalent to the wrapper.
 
 ## 4. How the executable is resolved
 
-For `scan_prepared`, the runner tries, in order:
+For `run_from_scratch`, the runner tries, in order:
 
 1. a **native** `scan` that can run on the current host:
    the configured `rmsx_executable`, then
@@ -251,13 +281,10 @@ preannotated data.
 
 | Key | Purpose |
 | --- | --- |
-| `data_mode` | `preannotated`, `scan_prepared`, or `run_from_scratch`. |
+| `data_mode` | `preannotated` or `run_from_scratch`. |
 | `rmsx_executable` | Optional explicit `scan` path. Leave as bundled default; the runner also finds the ELF and wrapper automatically. |
-| `mc_annotate_executable` | MC-Annotate path (only for `run_from_scratch`). |
-| `rnaview_executable` | RNAVIEW path (only for `run_from_scratch`). |
-| `rnaview_dir` | RNAVIEW directory containing `BASEPARS`. |
 | `query_motifs_dir` | Directory with the five `*_consensus.struct` query files. If empty, the runner finds `external/rmsx/RNAMotifScanX_src/Queries`. |
-| `pdb_prebuild_dir` | Extracted directory with prepared `.rmsx.in`/`.nch` inputs (used by `scan_prepared`). |
+| `pdb_prebuild_dir` | Directory holding your prepared per-chain `.rmsx.in`/`.nch` inputs (used by `run_from_scratch`). |
 | `pdb_prebuild_archive` | Optional archive of prepared inputs / preannotated logs. |
 | `output_dir` | Base destination for generated logs. |
 | `motif_families` | Families to scan: k-turn, c-loop, sarcin-ricin, reverse-kturn, e-loop. |
@@ -267,7 +294,7 @@ preannotated data.
 Relative paths in the config are resolved relative to the config file's
 directory.
 
-Prepared inputs live under `pdb_prebuild_dir`, one directory per chain:
+Your prepared inputs live under `pdb_prebuild_dir`, one directory per chain:
 
 ```text
 external/rmsx_preannotated/rmsx_work_default/1kxk/A/1kxk_A.rmsx.in
@@ -278,36 +305,36 @@ external/rmsx_preannotated/rmsx_work_default/1s72/9/1s72_9.rmsx.nch
 
 ---
 
-## 6. Complete from-scratch runs (`run_from_scratch`)
+## 6. Generating the input files externally
 
-A complete run also regenerates the prepared inputs:
+`run_from_scratch` does **not** regenerate annotations inside RSMViewer. You
+produce the `.rmsx.in`/`.rmsx.nch` target files yourself and drop them under
+`pdb_prebuild_dir`; RSMViewer then runs only the `scan` step:
 
 ```text
-PDB structure
-  -> MC-Annotate and RNAVIEW
-  -> .rmsx.in and .rmsx.nch target files
-  -> RNAMotifScanX scan for each motif family
-  -> result_0_100_withbs.log files
+PDB / mmCIF structure   (you)
+  -> RNAVIEW + MC-Annotate        (you, external tools)
+  -> .rmsx.in and .rmsx.nch       (you, placed under pdb_prebuild_dir)
+  -> RNAMotifScanX scan           (RSMViewer, run_from_scratch)
+  -> result_0_100_withbs.log      (RSMViewer output, loaded)
 ```
 
-Use this only when you must regenerate annotations from a raw structure. It
-needs compatible MC-Annotate and RNAVIEW binaries:
+The RNAMotifScanX distribution ships the annotation/preparation scripts that
+build `.rmsx.in`/`.rmsx.nch` from a coordinate file using RNAVIEW and
+MC-Annotate. Run those on your machine (native Linux is simplest), then place
+the resulting per-chain pairs as shown in section 2.1. RSMViewer intentionally
+does not call MC-Annotate or RNAVIEW, and it does not download structures for
+this mode — you control exactly which inputs are scanned.
+
+Minimal `run_from_scratch` config:
 
 ```json
 {
   "data_mode": "run_from_scratch",
-  "rmsx_executable": "/absolute/path/to/scan",
-  "mc_annotate_executable": "/absolute/path/to/MC-Annotate",
-  "rnaview_executable": "/absolute/path/to/rnaview",
-  "rnaview_dir": "/absolute/path/to/RNAVIEW",
-  "query_motifs_dir": "/absolute/path/to/Queries",
-  "pdb_prebuild_dir": "",
-  "pdb_prebuild_archive": "",
-  "output_dir": "/absolute/path/to/output/rmsx_results",
-  "auto_download_cif": true,
-  "auto_download_pdb": true,
+  "rmsx_executable": "../external/rmsx/bin/scan",
+  "pdb_prebuild_dir": "../external/rmsx_preannotated/rmsx_work_default",
+  "output_dir": "../output/rmsx_results",
   "num_threads": 4,
-  "max_strands": 3,
   "motif_families": ["k-turn", "c-loop", "sarcin-ricin", "reverse-kturn", "e-loop"],
   "pvalue_thresholds": {
     "KINK-TURN": 0.066,
@@ -322,7 +349,7 @@ needs compatible MC-Annotate and RNAVIEW binaries:
 Terminal:
 
 ```bash
-python rsmviewer/tools/rmsx_runner.py --config config/rmsx_config.json --pdb 1KXK --fresh
+python rsmviewer/tools/rmsx_runner.py --config config/rmsx_config.json --pdb 1KXK --scan-prepared
 python rsmviewer/tools/rmsx_runner.py --config config/rmsx_config.json --pdb 1S72 --check
 ```
 
@@ -334,7 +361,7 @@ When validating a new setup, compare the freshly generated results with the
 bundled preannotated dataset using equivalent templates and parameters:
 
 ```text
-rmv_rmsx scan_prepared 1KXK compare
+rmv_rmsx run 1KXK compare
 ```
 
 Expect close but not necessarily identical counts. The bundled query templates
@@ -365,9 +392,11 @@ WSL2, or the Docker/Colima wrapper (section 3.2).
 Increase VM memory (`colima start --arch x86_64 --cpu 6 --memory 10`). If it
 still crashes, run that structure on a native x86-64 Linux machine.
 
-### MC-Annotate or RNAVIEW fails (run_from_scratch only)
-Check the PDB input, executable paths, and RNAVIEW `BASEPARS`. If valid prepared
-inputs exist, use `scan_prepared` to test the core scanner separately.
+### Missing or unreadable prepared inputs (run_from_scratch)
+The run stops with "no prepared RMSX inputs found" when a structure has no
+matching `.rmsx.in`/`.rmsx.nch` pair under `pdb_prebuild_dir`. Generate the
+inputs externally (RNAVIEW + MC-Annotate) and place them as shown in section 2.1.
+RSMViewer never generates them for you and never substitutes preannotated data.
 
 ### No accepted motifs
 Header-only `result_0_100_withbs.log` means the scan ran but no motif passed the

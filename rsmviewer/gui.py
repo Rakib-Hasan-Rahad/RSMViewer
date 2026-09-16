@@ -2012,10 +2012,9 @@ class MotifVisualizerGUI:
         print("  rmv_rmsx doctor")
         print("  rmv_rmsx setup")
         print("  rmv_rmsx test")
-        print("  rmv_rmsx run <PDB_ID> [EXTRA_ARGS]   # Full fresh rerun")
-        print("  rmv_rmsx run_current [EXTRA_ARGS]")
-        print("  rmv_rmsx scan_prepared <PDB_ID> [CHAINS] [compare]  # Run scan on prepared inputs")
-        print("  rmv_rmsx scan_cancel                 # Cancel an in-progress scan_prepared run")
+        print("  rmv_rmsx run <PDB_ID> [CHAINS]       # run_from_scratch: scan your prepared inputs")
+        print("  rmv_rmsx run_current [CHAINS]")
+        print("  rmv_rmsx cancel                      # Cancel an in-progress run")
         print("\nTemplate placeholders:")
         print("  {pdb_id} {pdb_lower} {output_dir} {work_dir}")
         print("Example:")
@@ -2115,10 +2114,11 @@ class MotifVisualizerGUI:
             self.logger.info("Usage: rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
             return False
 
-        # data_mode=scan_prepared: run scan directly on prepared inputs.
+        # run_from_scratch (and legacy scan_prepared) run scan directly on the
+        # user-provided prepared .rmsx.in/.nch inputs; no MC-Annotate/RNAVIEW.
         rmsx_cfg_probe = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
         self.rmsx_pipeline_config = dict(rmsx_cfg_probe)
-        if str(rmsx_cfg_probe.get('data_mode', '')).strip().lower() == 'scan_prepared':
+        if str(rmsx_cfg_probe.get('data_mode', '')).strip().lower() in ('run_from_scratch', 'scan_prepared'):
             return self.run_rmsx_scan_prepared(pdb_upper, chains=str(extra_args or '').strip())
 
         query_override = ''
@@ -2341,13 +2341,13 @@ class MotifVisualizerGUI:
         pdb_upper = str(pdb_id).strip().upper()
         if not pdb_upper:
             self.logger.error("PDB ID is required")
-            self.logger.info("Usage: rmv_rmsx scan_prepared <PDB_ID> [CHAINS]")
+            self.logger.info("Usage: rmv_rmsx run <PDB_ID> [CHAINS]")
             return False
 
         existing = getattr(self, '_rmsx_scan_thread', None)
         if existing is not None and existing.is_alive():
             self.logger.error(
-                "A scan_prepared run is already in progress. Use 'rmv_rmsx scan_cancel' to stop it."
+                "An RMSX run is already in progress. Use 'rmv_rmsx cancel' to stop it."
             )
             return False
 
@@ -2359,14 +2359,14 @@ class MotifVisualizerGUI:
             str(rmsx_cfg.get('output_dir', self.rmsx_output_path) or self.rmsx_output_path)
         ))
         stamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-        run_out = os.path.join(base_out, 'scan_prepared', f"{pdb_upper}_{stamp}")
+        run_out = os.path.join(base_out, 'run_from_scratch', f"{pdb_upper}_{stamp}")
 
         self._rmsx_scan_cancel = threading.Event()
         self.logger.info(
-            f"scan_prepared: starting for {pdb_upper}"
+            f"run_from_scratch: starting RMSX for {pdb_upper}"
             + (f" chains={chain_list}" if chain_list else " (all prepared chains)")
         )
-        self.logger.info("Using locally prepared RMSX inputs; MC-Annotate and RNAVIEW are skipped.")
+        self.logger.info("Using your prepared RMSX inputs; MC-Annotate and RNAVIEW are not run by RSMViewer.")
 
         worker = threading.Thread(
             target=self._scan_prepared_worker,
@@ -2379,14 +2379,14 @@ class MotifVisualizerGUI:
         return True
 
     def cancel_rmsx_scan(self):
-        """Signal an in-progress scan_prepared run to stop."""
+        """Signal an in-progress run_from_scratch RMSX run to stop."""
         event = getattr(self, '_rmsx_scan_cancel', None)
         thread = getattr(self, '_rmsx_scan_thread', None)
         if event is None or thread is None or not thread.is_alive():
-            self.logger.info("No scan_prepared run is currently active.")
+            self.logger.info("No RMSX run is currently active.")
             return False
         event.set()
-        self.logger.warning("scan_prepared: cancellation requested; finishing current step...")
+        self.logger.warning("run_from_scratch: cancellation requested; finishing current step...")
         return True
 
     def _scan_prepared_worker(self, rmsx_cfg, pdb_upper, run_out, chain_list, compare):
@@ -2398,7 +2398,7 @@ class MotifVisualizerGUI:
             from rmsx_runner import run_scan_prepared  # type: ignore
 
             def progress(message):
-                self.logger.info(f"[scan_prepared] {message}")
+                self.logger.info(f"[run_from_scratch] {message}")
 
             report = run_scan_prepared(
                 rmsx_cfg, pdb_upper, run_out,
@@ -2410,7 +2410,7 @@ class MotifVisualizerGUI:
             self._rmsx_last_scan_report = report
             self._finish_scan_prepared(report, pdb_upper, compare)
         except Exception as exc:
-            self.logger.error(f"scan_prepared failed: {type(exc).__name__}: {exc}")
+            self.logger.error(f"run_from_scratch failed: {type(exc).__name__}: {exc}")
 
     def _finish_scan_prepared(self, report, pdb_upper, compare):
         """Load newly generated results (main outcome handling)."""
@@ -2418,17 +2418,17 @@ class MotifVisualizerGUI:
 
         if report.get('cancelled'):
             self.logger.warning(
-                f"scan_prepared CANCELLED for {pdb_upper}. Partial output was not loaded: {out_dir}"
+                f"run_from_scratch CANCELLED for {pdb_upper}. Partial output was not loaded: {out_dir}"
             )
             return False
 
         if report.get('problems'):
             for problem in report['problems']:
-                self.logger.warning(f"scan_prepared: {problem}")
+                self.logger.warning(f"run_from_scratch: {problem}")
 
         if report.get('failed_runs'):
             self.logger.error(
-                f"scan_prepared: {len(report['failed_runs'])} run(s) FAILED for {pdb_upper}. "
+                f"run_from_scratch: {len(report['failed_runs'])} run(s) FAILED for {pdb_upper}. "
                 "Not loading results and NOT falling back to preannotated data."
             )
             for run in report['failed_runs'][:10]:
@@ -2440,7 +2440,7 @@ class MotifVisualizerGUI:
 
         if not report.get('runs'):
             self.logger.error(
-                f"scan_prepared produced no runs for {pdb_upper}. "
+                f"run_from_scratch produced no runs for {pdb_upper}. "
                 "See problems above; preannotated data is NOT substituted."
             )
             return False
@@ -2467,7 +2467,7 @@ class MotifVisualizerGUI:
 
         self.logger.success("Loaded annotations from the newly generated RMSX output.")
         self.logger.info(
-            f"scan_prepared summary for {pdb_upper}: families with hits={len(report['families'])}, "
+            f"run_from_scratch summary for {pdb_upper}: families with hits={len(report['families'])}, "
             f"total hits={report['total_hits']}, motif types loaded={len(loaded)}, "
             f"instances={total_instances}"
         )
@@ -8331,10 +8331,9 @@ def initialize_gui():
             rmv_rmsx doctor
             rmv_rmsx setup
             rmv_rmsx test
-            rmv_rmsx run <PDB_ID> [EXTRA_ARGS]
-            rmv_rmsx run_current [EXTRA_ARGS]
-            rmv_rmsx scan_prepared <PDB_ID> [CHAINS] [compare]
-            rmv_rmsx scan_cancel
+            rmv_rmsx run <PDB_ID> [CHAINS]
+            rmv_rmsx run_current [CHAINS]
+            rmv_rmsx cancel
         """
         action_arg = str(action).strip() if action else ''
         arg1_str = str(arg1).strip() if arg1 else ''
@@ -8398,9 +8397,9 @@ def initialize_gui():
             gui.run_rmsx_wrapper(arg1_str, extras, force_fresh=True)
             return
 
-        if sub in ['scan_prepared', 'scan']:
+        if sub in ['run_from_scratch', 'from_scratch', 'scan_prepared', 'scan']:
             if not arg1_str:
-                gui.command_error("Usage: rmv_rmsx scan_prepared <PDB_ID> [CHAINS] [compare]")
+                gui.command_error("Usage: rmv_rmsx run <PDB_ID> [CHAINS]")
                 return
             tokens = [str(x).strip() for x in extra_args if str(x).strip()]
             compare = False
@@ -8427,7 +8426,7 @@ def initialize_gui():
             return
 
         gui.command_error(f"Unknown rmv_rmsx subcommand: {sub}")
-        gui.logger.info("Use: rmv_rmsx status | config | args | doctor | setup | test | run | run_current | scan_prepared | scan_cancel")
+        gui.logger.info("Use: rmv_rmsx status | config | args | doctor | setup | test | run | run_current | cancel")
 
     def rmsx_doctor_cmd(*_args, **_kwargs):
         """PyMOL command: Show integrated RMSX runtime diagnostics."""
