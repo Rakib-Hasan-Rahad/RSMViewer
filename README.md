@@ -37,7 +37,7 @@ Fetch structures  ->  Load named sources  ->  Query motifs  ->  View · Compare 
 ## Table of contents
 
 - [Features](#features)
-- [Installation](#installation)
+- [Installation in PyMOL](#installation-in-pymol)
 - [Quick start](#quick-start)
 - [Core concepts](#core-concepts)
 - [Command reference](#command-reference)
@@ -73,17 +73,23 @@ with this project; they are provided by the user under `external/`.
 
 ---
 
-## Installation
+## Installation in PyMOL
 
-1. Open PyMOL.
-2. Open **Plugin → Plugin Manager → Settings → Add new directory**.
-3. Select the "rsmviewer" directory containing in this project file.
-4. Restart PyMOL.
-5. Verify:
+1. Open **PyMOL**, then select **Plugin → Plugin Manager**.
+2. Select **Install New Plugin**.
+3. Under **Install from local file**, choose **Choose File** and navigate to the cloned or extracted `RSMViewer-main` directory.
+4. Open the `rsmviewer` folder and select the `__init__.py` file.
+5. Select **Open**, then confirm the installation when PyMOL prompts you.
+6. Return to **Plugin → Plugin Manager → Settings**.
+7. Under **Plugin override search path**, locate **RSMViewer** and move it to the top of the list.
+8. Restart PyMOL if prompted. RSMViewer should then be available from the **Plugin** menu.
 
-   ```text
-   rmv_help
-   rmv_db
+Verify the installation in PyMOL:
+
+```text
+rmv_help
+rmv_db
+```
 
 The startup banner lists the four canonical source names.
 
