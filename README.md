@@ -441,22 +441,6 @@ motifs when every reported P-value exceeds the configured threshold. Check
 
 ---
 
-## Testing
-
-Run from the project root:
-
-```bash
-python3 -m unittest discover -s tests -v
-python3 -m compileall -q rsmviewer tests
-RSMVIEWER_ROOT="$PWD" pymol -cq tests/pymol_applications_e2e.py
-RSMVIEWER_ROOT="$PWD" pymol -cq tests/pymol_smoke.py
-```
-
-`tests/pymol_applications_e2e.py` exercises all six example applications end to
-end and prints a PASS/FAIL report.
-
----
-
 ## Documentation
 
 Pick the document that matches what you need:
