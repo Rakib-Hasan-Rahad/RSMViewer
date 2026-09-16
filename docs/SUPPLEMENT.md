@@ -275,9 +275,9 @@ during ingestion, and both sources' labels and hierarchies are stored per row.
 
 ### S7.2 FR3D
 
-By default, FR3D is loaded from the repository's local cache at
-`external/fr3d/fr3d_cache/` using `data_mode: "cache"` in
-`config/fr3d_config.json`; this mode does not execute FR3D or make network
+By default, FR3D is loaded in `cache` mode (`data_mode: "cache"` in
+`config/fr3d_config.json`), which serves previously generated FR3D results for
+the structure from `output/fr3d_runs/` and does not execute FR3D or make network
 requests. When `data_mode` is set to `"run_from_scratch"`, FR3D is executed
 through a **user-provided** official fr3d-python checkout placed
 under `external/fr3d/fr3d-python-latest/`; RSMViewer never vendors or modifies

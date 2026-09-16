@@ -8,9 +8,9 @@ RSMViewer PyMOL plugin on any PC (Windows / macOS / Linux).
 ## 1. One-time setup
 
 RSMViewer supports two FR3D modes. The repository default is `cache`, which
-loads prepared local data from `external/fr3d/fr3d_cache/` and does not run
-FR3D or make a network call. To execute the official FR3D Python pipeline,
-set this field in `config/fr3d_config.json`:
+serves previously generated FR3D results for the structure from
+`output/fr3d_runs/` and does not run FR3D or make a network call. To execute the
+official FR3D Python pipeline, set this field in `config/fr3d_config.json`:
 
 ```json
 "data_mode": "run_from_scratch"
@@ -50,17 +50,15 @@ rmv_db FR3D
 
 How `rmv_db FR3D` behaves depends on `data_mode`:
 
-- **`cache`:** loads previously generated results for the structure. It first
-  looks for a prior run under `output/fr3d_runs/<PDB>/`, and if none is found
-  there it falls back to the bundled cache at `external/fr3d/fr3d_cache/`.
-  It never runs FR3D.
+- **`cache`:** loads previously generated results for the structure from
+  `output/fr3d_runs/<PDB>/`. If none exist there it reports that and asks you to
+  run from scratch. It never runs FR3D, and there is no external/bundled cache.
 - **`run_from_scratch`:** always runs the motif queries listed in the config on
   the loaded structure and loads the freshly generated results. It does **not**
   reuse any previous run — every invocation regenerates the results.
 
-`rmv_reset` clears the FR3D run cache at `output/fr3d_runs/`, so the next
-`cache`-mode load falls back to `external/fr3d/fr3d_cache/` and the next
-`run_from_scratch` run starts clean.
+`rmv_reset` clears the FR3D run cache at `output/fr3d_runs/`, so cache mode then
+reports no results until you run from scratch again.
 
 > **First run is slow, later runs are fast.** FR3D's `geometric_*` queries
 > embed large reference structures (e.g. `4V9F`, `7K00`, `8GLP`) in their
@@ -84,7 +82,6 @@ Good structures to try: `1S72`, `4V9F`, `4V88`, `1HR2`, `1KXK`, `3CC2`,
 {
   "data_mode": "cache",
   "fr3d_python_path": "../external/fr3d/fr3d-python-latest",
-  "cache_path": "../external/fr3d/fr3d_cache",
   "query_path": "../external/fr3d/fr3d-python-latest/fr3d/search/queries",
   "query_selection": "selected",
   "query_families": [

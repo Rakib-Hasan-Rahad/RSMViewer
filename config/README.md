@@ -116,11 +116,12 @@ FR3D has two supported modes:
 
 | `data_mode` | Behavior |
 | --- | --- |
-| `cache` | Load the prepared local FR3D cache from `cache_path`; no FR3D search or network call is made. |
+| `cache` | Load previously generated FR3D results for the structure from `output/fr3d_runs/`; no FR3D search or network call is made. |
 | `run_from_scratch` | Run the official `fr3d-python` pipeline using the configured checkout and queries. |
 
-The repository default is `cache`. The current cache is stored at
-`external/fr3d/fr3d_cache/` and contains one JSON file per cached structure.
+The repository default is `cache`. Cache mode serves results only from
+`output/fr3d_runs/`; when none exist there for the structure it reports that and
+asks you to run from scratch. There is no bundled/external cache.
 To run FR3D itself, change only this field to:
 
 ```json
@@ -131,9 +132,8 @@ To run FR3D itself, change only this field to:
 
 | Field | Type | Meaning / possible values |
 | --- | --- | --- |
-| `data_mode` | string | `"cache"` loads `cache_path`; `"run_from_scratch"` runs the official FR3D pipeline. |
+| `data_mode` | string | `"cache"` serves prior results from `output/fr3d_runs/`; `"run_from_scratch"` runs the official FR3D pipeline. |
 | `fr3d_python_path` | path | Root of the fr3d-python checkout (must contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`). |
-| `cache_path` | path | Local FR3D cache directory; default repository value is `../external/fr3d/fr3d_cache`. |
 | `query_path` | path | A queries directory (filtered by `query_selection`) or a single query `.json` file. Defaults to the checkout's own `fr3d/search/queries`. |
 | `python_path` | path | Optional. Interpreter used to run FR3D; must have `numpy`, `scipy`, `mmcif-pdbx`. Omit to auto-detect. |
 | `interactions_path` | path | Optional local interaction data directory. |

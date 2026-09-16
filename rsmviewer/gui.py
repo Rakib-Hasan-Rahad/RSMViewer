@@ -512,7 +512,6 @@ class MotifVisualizerGUI:
         # vendored, patched, or checked out on the user's behalf.
         fr3d_dir = plugin_dir / 'database' / 'user_annotations' / 'fr3d'
         self.default_fr3d_config = distribution_dir / 'config' / 'fr3d_config.json'
-        self.fr3d_cache_path = str((distribution_dir / 'external' / 'fr3d' / 'fr3d_cache').resolve())
         self.fr3d_output_dir = str((distribution_dir / 'output' / 'fr3d_runs').resolve())
         self._fr3d_reset_state()
 
@@ -896,7 +895,6 @@ class MotifVisualizerGUI:
         self.fr3d_branch = ''
         self.fr3d_dirty = None
         self.fr3d_data_mode = 'run_fr3d_pipeline'
-        self.fr3d_cache_path = str((Path(__file__).parent.parent / 'external' / 'fr3d' / 'fr3d_cache').resolve())
         self.fr3d_query_path = ''
         self.fr3d_query_selection = 'selected'
         self.fr3d_default_query = ''
@@ -1096,21 +1094,15 @@ class MotifVisualizerGUI:
         canonical_mode = mode_aliases[data_mode]
 
         if canonical_mode == 'cache':
-            cache_path = _abspath(cfg.get('cache_path'))
-            if not cache_path:
-                cache_path = str((Path(cfg_dir).parent / 'external' / 'fr3d' / 'fr3d_cache').resolve())
-            if not os.path.isdir(cache_path):
-                self.logger.error(f"FR3D cache directory not found: {cache_path}")
-                return False
+            # Cache mode serves previously generated FR3D results from
+            # output/fr3d_runs only; there is no external/bundled cache.
             self.fr3d_config_path = cfg_abs
             self.fr3d_data_mode = data_mode
-            self.fr3d_cache_path = cache_path
             self.fr3d_allow_network = False
             self.fr3d_query_path = ''
             self.fr3d_query_selection = 'cache'
             self.fr3d_registered = True
-            self.user_data_paths[5] = cache_path
-            self.logger.success(f"FR3D cache registered: {cache_path}")
+            self.logger.success("FR3D registered (cache mode: serves results from output/fr3d_runs)")
             return True
 
         # --- required: fr3d_python_path ------------------------------------
@@ -7209,8 +7201,8 @@ def initialize_gui():
                         "register it with 'rmv_db FR3D' instead."
                     )
                 if getattr(gui, 'fr3d_data_mode', '') == 'cache':
-                    # Cache mode: prefer a prior run's output in output/fr3d_runs;
-                    # otherwise fall back to the bundled external/fr3d/fr3d_cache.
+                    # Cache mode serves previously generated results from
+                    # output/fr3d_runs only; there is no external cache fallback.
                     cached_ingest = gui._fr3d_find_cached_run(str(pdb_id).upper())
                     if cached_ingest:
                         gui.logger.info(f"Using FR3D results for {str(pdb_id).upper()} from a previous run:")
@@ -7219,7 +7211,8 @@ def initialize_gui():
                         gui._handle_source_by_id(5, cached_ingest)
                         gui.load_user_annotations_action('fr3d', pdb_id, auto_pipeline=False)
                         return
-                    gui.load_user_annotations_action(gui.current_user_tool, pdb_id, auto_pipeline=False)
+                    gui.logger.error(f"No FR3D results found for {str(pdb_id).upper()} in output/fr3d_runs.")
+                    gui.logger.info("  Set data_mode to 'run_from_scratch' in config/fr3d_config.json to generate them.")
                     return
                 gui.run_fr3d_search(pdb_id)
                 return

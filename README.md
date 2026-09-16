@@ -309,7 +309,7 @@ combined group itself overrides this and colors every member uniformly.)
 | --- | --- | --- |
 | `RNA3DMotifAtlas` | BGSU RNA 3D Hub **API** | Online, cached locally. |
 | `Rfam` | Rfam **API** | Online, cached locally. |
-| `FR3D` | Local cache or user-provided checkout | Loads `external/fr3d/fr3d_cache/` by default, or runs official fr3d-python in `run_from_scratch` mode. |
+| `FR3D` | Previously generated results or user-provided checkout | Cache mode serves prior results from `output/fr3d_runs/`; `run_from_scratch` mode runs official fr3d-python. |
 | `RNAMotifScanX` | Preannotated data or from-scratch run | See setup below. |
 
 Atlas and Rfam require network access on first retrieval; responses are cached
@@ -321,10 +321,10 @@ so repeated queries are offline. Use `rmv_refresh` to bypass the cache.
 
 FR3D has two modes, selected by `data_mode` in `config/fr3d_config.json`:
 
-- **`cache` (default):** `rmv_db FR3D` loads previously generated results — it
-  first looks for a prior run under `output/fr3d_runs/<PDB>/`, and if none is
-  found there it falls back to the bundled cache at `external/fr3d/fr3d_cache/`.
-  It never runs FR3D or makes a network call.
+- **`cache` (default):** `rmv_db FR3D` loads previously generated results for
+  the structure from `output/fr3d_runs/<PDB>/`. If none exist there it reports
+  that and asks you to run from scratch. It never runs FR3D, makes no network
+  call, and there is no external/bundled cache.
 - **`run_from_scratch`:** `rmv_db FR3D` always executes the official BGSU
   fr3d-python pipeline on the loaded structure and loads the freshly generated
   results from a new timestamped run directory under `output/fr3d_runs/`.
