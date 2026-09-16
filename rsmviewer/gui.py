@@ -2974,10 +2974,14 @@ class MotifVisualizerGUI:
             for source in row.source_annotations:
                 if source not in present:
                     present.append(source)
-        source_order = list(source_names or present)
-        for source in present:
-            if source not in source_order:
-                source_order.append(source)
+        # When a specific set of sources was requested (e.g. the current rmv_db
+        # command), display only those; the backend still stores every source.
+        if source_names:
+            source_order = [source for source in source_names if source in present]
+            if not source_order:
+                source_order = list(present)
+        else:
+            source_order = list(present)
         filter_set = set(source_order)
 
         fam_source_count: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))

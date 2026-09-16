@@ -520,17 +520,42 @@ def superimpose_onto_medoid(objects, medoid_idx, method="super"):
 #  Colouring
 # ------------------------------------------------------------------ #
 
-def color_superimposed(objects, color_key):
-    """Colour every superimposed instance with one inherited colour.
+def color_superimposed(objects, color_key, per_object_keys=None):
+    """Colour every superimposed instance with its inherited colour.
 
-    The whole group inherits a single colour: the user's session colour for
-    the group/motif if one was set (rmv_set_color / rmv_color), otherwise the
-    default motif-family colour. Instances are not coloured individually and
-    the medoid is not highlighted separately.
+    Each instance inherits the user's session colour for the group/motif if
+    one was set (rmv_set_color / rmv_color), otherwise the default
+    motif-family colour. When *per_object_keys* is given it maps an object to
+    its own colour key, so members of a combined group keep the per-source
+    colours that rmv_create_object/rmv_view apply. The medoid is not
+    highlighted separately.
     """
     from . import colors
+    per_object_keys = per_object_keys or {}
     for obj in objects:
-        colors.set_motif_color_in_pymol(cmd, obj, color_key)
+        colors.set_motif_color_in_pymol(cmd, obj, per_object_keys.get(obj, color_key))
+
+
+def _member_color_keys(target, objects):
+    """Map each superimposed object to its group-aware colour key.
+
+    Mirrors ``gui._group_member_color_key`` so rmv_super/rmv_align inherit the
+    same per-source colours as rmv_create_object/rmv_view: an explicit colour
+    on the group paints every member uniformly, otherwise a combined group
+    colours each member by the source group it came from.
+    """
+    gui = _get_gui()
+    resolver = getattr(gui, "_group_member_color_key", None) if gui else None
+    if resolver is None or not target:
+        return {}
+    keys = {}
+    for obj in objects:
+        motif_id = obj[len("motif_"):] if obj.startswith("motif_") else obj
+        try:
+            keys[obj] = resolver(target, motif_id)
+        except Exception:
+            keys[obj] = target
+    return keys
 
 
 # ------------------------------------------------------------------ #
@@ -538,7 +563,8 @@ def color_superimposed(objects, color_key):
 # ------------------------------------------------------------------ #
 
 def print_medoid_report(method, motif_type, objects, medoid_idx,
-                        avg_rmsd_list, super_results, skipped, color_key=None):
+                        avg_rmsd_list, super_results, skipped, color_key=None,
+                        per_object_keys=None):
     """Print a formatted medoid superimposition report.
 
     Plain-ASCII output only (no box-drawing/emoji) so it renders correctly
@@ -546,6 +572,7 @@ def print_medoid_report(method, motif_type, objects, medoid_idx,
     """
     n = len(objects)
     medoid_obj = objects[medoid_idx]
+    per_object_keys = per_object_keys or {}
 
     box_w = 64
     rule = '-' * box_w
@@ -557,14 +584,15 @@ def print_medoid_report(method, motif_type, objects, medoid_idx,
 
     print(f"  | {'#':<4} {'Instance':<30} {'Color':<12} {'RMSD to medoid':<16}")
 
-    group_color = color_key or motif_type
+    default_color = color_key or motif_type
     for i, (obj, rmsd, ok) in enumerate(super_results):
         num = i + 1
         if i == medoid_idx:
             rmsd_str = "- (medoid)"
         else:
             rmsd_str = f"{rmsd:.3f} A" if ok else "FAILED"
-        print(f"  | {num:<4} {obj:<30} {group_color:<12} {rmsd_str:<16}")
+        obj_color = per_object_keys.get(obj, default_color)
+        print(f"  | {num:<4} {obj:<30} {obj_color:<12} {rmsd_str:<16}")
 
     print(f"  +{rule}+")
 
@@ -1018,7 +1046,8 @@ def register_alignment_commands():
                 medoid_idx,
                 method='align' if method_label == 'rmv_align' else 'super',
             )
-            color_superimposed(objects, target)
+            member_keys = _member_color_keys(target, objects)
+            color_superimposed(objects, target, per_object_keys=member_keys)
         finally:
             try:
                 cmd.feedback("enable", "executive", "actions")
@@ -1044,6 +1073,7 @@ def register_alignment_commands():
             super_results,
             skipped_pairs,
             color_key=target,
+            per_object_keys=member_keys,
         )
         return True
 
