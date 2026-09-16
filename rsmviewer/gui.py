@@ -3030,7 +3030,9 @@ class MotifVisualizerGUI:
     @staticmethod
     def _print_wrapped_family_table(source, rows, total) -> None:
         """Print one compact source table with aligned wrapped text columns."""
-        selectable_width = min(36, max([len("SELECTABLE NAME")] + [len(r["selectable"]) for r in rows]))
+        # Selectable names must stay on one line (they are copied verbatim), so
+        # this column is never capped/wrapped; only the annotation column wraps.
+        selectable_width = max([len("SELECTABLE NAME")] + [len(r["selectable"]) for r in rows])
         annotation_width = min(42, max([len("ANNOTATION NAME")] + [len(r["annotation"]) for r in rows]))
         count_width = max(len("COUNT"), len(str(total)))
         line = f"{'SELECTABLE NAME':<{selectable_width}}  {'ANNOTATION NAME':<{annotation_width}}  {'COUNT':>{count_width}}"
@@ -3043,7 +3045,7 @@ class MotifVisualizerGUI:
         print(line)
         print(rule)
         for row in rows:
-            left = [row["selectable"][i:i + selectable_width] for i in range(0, len(row["selectable"]), selectable_width)]
+            left = [row["selectable"]]
             right = [row["annotation"][i:i + annotation_width] for i in range(0, len(row["annotation"]), annotation_width)]
             height = max(len(left), len(right))
             for index in range(height):
