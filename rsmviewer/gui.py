@@ -898,8 +898,9 @@ class MotifVisualizerGUI:
         self.fr3d_data_mode = 'run_fr3d_pipeline'
         self.fr3d_cache_path = str((Path(__file__).parent.parent / 'external' / 'fr3d' / 'fr3d_cache').resolve())
         self.fr3d_query_path = ''
-        self.fr3d_query_selection = 'all'
+        self.fr3d_query_selection = 'families'
         self.fr3d_default_query = ''
+        self.fr3d_query_families = []
         self.fr3d_allow_network = False
         self.fr3d_run_output_path = str((Path(self.fr3d_output_dir) / 'runs').resolve())
         self.fr3d_query_timeout_seconds = 180
@@ -1128,11 +1129,18 @@ class MotifVisualizerGUI:
         if not query_path or not os.path.exists(query_path):
             self.logger.error("FR3D config: 'query_path' must point to an existing .json query file or directory")
             return False
-        query_selection = str(cfg.get('query_selection', 'all') or 'all').strip().lower()
+        query_selection = str(cfg.get('query_selection', 'families') or 'families').strip().lower()
         default_query = str(cfg.get('default_query', '') or '').strip()
+        raw_families = cfg.get('query_families', []) or []
+        if isinstance(raw_families, str):
+            raw_families = [raw_families]
+        query_families = [str(x).strip() for x in raw_families if str(x).strip()]
         if os.path.isdir(query_path):
-            if query_selection not in ('all', 'default'):
-                self.logger.error("FR3D config: 'query_selection' must be 'all' or 'default' for a query directory")
+            if query_selection not in ('families', 'all', 'default'):
+                self.logger.error("FR3D config: 'query_selection' must be 'families', 'all', or 'default' for a query directory")
+                return False
+            if query_selection == 'families' and not query_families:
+                self.logger.error("FR3D config: 'query_families' must list at least one query name when query_selection is 'families'")
                 return False
             if query_selection == 'default' and not default_query:
                 self.logger.error("FR3D config: 'default_query' is required when query_selection is 'default'")
@@ -1208,6 +1216,7 @@ class MotifVisualizerGUI:
         self.fr3d_query_path = query_path
         self.fr3d_query_selection = query_selection
         self.fr3d_default_query = default_query
+        self.fr3d_query_families = query_families
         self.fr3d_allow_network = allow_network
         self.fr3d_run_output_path = run_output_path
         self.fr3d_query_timeout_seconds = query_timeout_seconds
@@ -1222,7 +1231,12 @@ class MotifVisualizerGUI:
         self.logger.success("FR3D registered (external official fr3d-python)")
         commit = self.fr3d_commit[:12] if self.fr3d_commit else "n/a"
         if os.path.isdir(query_path):
-            extra = f", default={default_query}" if query_selection == 'default' else ''
+            if query_selection == 'default':
+                extra = f", default={default_query}"
+            elif query_selection == 'families':
+                extra = f", families={len(query_families)}"
+            else:
+                extra = ''
             qdesc = f"{query_path} (selection={query_selection}{extra})"
         else:
             qdesc = query_path
@@ -1265,6 +1279,18 @@ class MotifVisualizerGUI:
                 if base == target:
                     return [path], ''
             return [], "default_query '%s' not found among top-level .json files in %s" % (target, qp)
+        if self.fr3d_query_selection == 'families':
+            wanted = {
+                name[:-5] if name.lower().endswith('.json') else name
+                for name in self.fr3d_query_families
+            }
+            selected = [
+                path for path in entries
+                if os.path.splitext(os.path.basename(path))[0] in wanted
+            ]
+            if not selected:
+                return [], "none of query_families matched top-level .json files in %s" % qp
+            return selected, ''
         return entries, ''
 
     def _fr3d_resolve_target_cif(self, pdb_id: str, run_dir: str) -> Tuple[str, str]:
@@ -1334,7 +1360,7 @@ class MotifVisualizerGUI:
         ambiguous or missing.
         """
         if not self.fr3d_registered:
-            self.logger.error("FR3D Source 5 is not registered.")
+            self.logger.error("FR3D is not registered.")
             self.logger.info("Register the external official fr3d-python first:")
             self.logger.info("  rmv_db FR3D")
             return False
@@ -1563,7 +1589,7 @@ class MotifVisualizerGUI:
     def print_fr3d_status(self):
         """Print Source-5 FR3D registration status and usage."""
         print("\n" + "=" * 70)
-        print("FR3D Source 5 - external official fr3d-python wrapper")
+        print("FR3D - external official fr3d-python wrapper")
         print("=" * 70)
         if not self.fr3d_registered:
             print("Status     : NOT registered")
@@ -1585,6 +1611,8 @@ class MotifVisualizerGUI:
             print(f"Queries    : {self.fr3d_query_path}  (selection={self.fr3d_query_selection})")
             if self.fr3d_query_selection == 'default':
                 print(f"Default    : {self.fr3d_default_query}")
+            elif self.fr3d_query_selection == 'families':
+                print(f"Families   : {', '.join(self.fr3d_query_families)}")
         else:
             print(f"Query      : {self.fr3d_query_path}")
         print(f"Network    : {'allowed' if self.fr3d_allow_network else 'disabled'}")
@@ -1639,7 +1667,7 @@ class MotifVisualizerGUI:
             self.logger.info("  It must contain fr3d/__init__.py and fr3d/search/FR3D.py, then re-run: rmv_setup FR3D")
             return False
 
-        self.logger.info("Setting up FR3D (Source 5)...")
+        self.logger.info("Setting up FR3D...")
         self.logger.info(f"  Checkout: {repo_root}")
 
         # Fast path: an interpreter already imports the repo + all deps.
@@ -1760,7 +1788,7 @@ class MotifVisualizerGUI:
             ok, detail = self._fr3d_python_ok(target, self.fr3d_python_path)
             if ok:
                 self.fr3d_python_exe = target
-                self.logger.info(f"Source 5 interpreter set to: {target}")
+                self.logger.info(f"FR3D interpreter set to: {target}")
             elif detail:
                 self.logger.info(f"Note: interpreter installed deps but repo import check said: {detail}")
 
@@ -6229,7 +6257,7 @@ class MotifVisualizerGUI:
                 )
         elif source_id == 5:
             if not self.register_fr3d_source(str(self.default_fr3d_config)):
-                self.logger.error("FR3D (Source 5) is not ready yet - see the precise reason above.")
+                self.logger.error("FR3D is not ready yet - see the precise reason above.")
                 self.logger.info("  Run this once to install everything required and register FR3D:")
                 self.logger.info("    rmv_setup FR3D")
                 return
@@ -6378,7 +6406,7 @@ class MotifVisualizerGUI:
             if source_id == 5:
                 # FR3D - external official BGSU fr3d-python (registered via config)
                 print("\n--- Pipeline ---")
-                print("  Source 5 wraps an external, user-installed official BGSU")
+                print("  FR3D wraps an external, user-installed official BGSU")
                 print("  fr3d-python. RSMViewer never vendors or modifies that repo;")
                 print("  it only runs it in a subprocess and ingests the resulting CSV.")
                 print("\n--- Execution order ---")
@@ -8180,7 +8208,7 @@ def initialize_gui():
             print("  FR3D files:        database/user_annotations/fr3d/")
             print("  RNAMotifScan:      database/user_annotations/rnamotifscan/")
             print("  RNAMotifScanX:     database/user_annotations/RNAMotifScanX/")
-            print("\nFR3D (Source 5) commands (wraps external official BGSU fr3d-python):")
+            print("\nFR3D commands (wraps external official BGSU fr3d-python):")
             print("  rmv_setup FR3D                  One-shot: install deps + register FR3D")
             print("  rmv_fr3d register <config>     Register external FR3D from a custom config")
             print("  rmv_fr3d status                 Show FR3D registration status")

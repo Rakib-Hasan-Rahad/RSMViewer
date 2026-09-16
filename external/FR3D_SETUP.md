@@ -102,12 +102,9 @@ Good structures to try: `1S72`, `4V9F`, `4V88`, `1HR2`, `1KXK`, `3CC2`,
 
 | Value | Runs |
 | --- | --- |
-| `families` | **Default.** Only the queries listed in `query_families` (fast, for testing). |
+| `families` | **Default.** Only the queries listed in `query_families`. |
 | `all` | Every query in `query_path` — the **full pipeline** (slow; many queries). |
-| `symbolic` | All `symbolic_*` queries (search the structure directly, no network). |
-| `geometric` | All `geometric_*` queries (need a reference template; slower). |
-| `mixed` | All `mixed_*` queries. |
-| `default` | A single query named by `default_query`. |
+| `default` | A single query named by `default_query` (an exact `.json` filename). |
 
 ---
 
@@ -141,9 +138,9 @@ To run **everything** (the complete FR3D pipeline), just set:
   `geometric_*` queries embed). Every run after that reuses the cache and
   finishes in seconds. If a run pauses for minutes, it is building this cache
   for the first time; let it finish once.
-- **`all` takes a long time:** it runs 100+ queries; some `geometric_*` /
-  `mixed_*` queries download a reference structure. Use `families` for quick
-  tests, `all` only for a full analysis.
+- **`all` takes a long time:** it runs every query in the folder; some
+  `geometric_*` queries download a reference structure. Use `families` for a
+  chosen subset, `all` only for a full analysis.
 - **FR3D re-annotates on every run / stays slow:** confirm the
   `output/fr3d_runs/_fr3d_cache/units/` folder is being populated with
   `*_NA.pickle` files after the first run. If it is empty, the interpreter

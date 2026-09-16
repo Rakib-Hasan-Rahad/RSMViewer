@@ -139,7 +139,8 @@ To run FR3D itself, change only this field to:
 | `interactions_path` | path | Optional local interaction data directory. |
 | `run_output_path` | path | Where FR3D run outputs (CSV/provenance) are written. |
 | `allow_network` | bool | `false` keeps FR3D fully offline. Set `true` only to let FR3D download reference **coordinate** structures (`.cif`) that some geometric queries use as their search template. 
-| `query_selection` | string | `"all"` (default) runs every query file; `"default"` runs only `default_query`. |
+| `query_selection` | string | `"families"` (default) runs only the files listed in `query_families`; `"all"` runs every query file; `"default"` runs only `default_query`. |
+| `query_families` | list | Exact query names (with or without `.json`) to run when `query_selection` is `"families"`. |
 | `query_timeout_seconds` | int | Per-query timeout (≥ 10). |
 
 ### Setup and dependencies
