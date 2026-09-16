@@ -134,13 +134,13 @@ To run FR3D itself, change only this field to:
 | `data_mode` | string | `"cache"` loads `cache_path`; `"run_from_scratch"` runs the official FR3D pipeline. |
 | `fr3d_python_path` | path | Root of the fr3d-python checkout (must contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`). |
 | `cache_path` | path | Local FR3D cache directory; default repository value is `../external/fr3d/fr3d_cache`. |
-| `query_path` | path | A queries directory (runs every top-level `.json`) or a single query `.json` file. Defaults to the checkout's own `fr3d/search/queries`. |
+| `query_path` | path | A queries directory (filtered by `query_selection`) or a single query `.json` file. Defaults to the checkout's own `fr3d/search/queries`. |
 | `python_path` | path | Optional. Interpreter used to run FR3D; must have `numpy`, `scipy`, `mmcif-pdbx`. Omit to auto-detect. |
 | `interactions_path` | path | Optional local interaction data directory. |
 | `run_output_path` | path | Where FR3D run outputs (CSV/provenance) are written. |
 | `allow_network` | bool | `false` keeps FR3D fully offline. Set `true` only to let FR3D download reference **coordinate** structures (`.cif`) that some geometric queries use as their search template. 
-| `query_selection` | string | `"families"` (default) runs only the files listed in `query_families`; `"all"` runs every query file; `"default"` runs only `default_query`. |
-| `query_families` | list | Exact query names (with or without `.json`) to run when `query_selection` is `"families"`. |
+| `query_selection` | string | `"selected"` (default) runs only the files listed in `query_families`; `"all"` runs every query file in `query_path`. |
+| `query_families` | list | Exact query names (with or without `.json`) to run when `query_selection` is `"selected"`. |
 | `query_timeout_seconds` | int | Per-query timeout (≥ 10). |
 
 ### Setup and dependencies

@@ -898,7 +898,7 @@ class MotifVisualizerGUI:
         self.fr3d_data_mode = 'run_fr3d_pipeline'
         self.fr3d_cache_path = str((Path(__file__).parent.parent / 'external' / 'fr3d' / 'fr3d_cache').resolve())
         self.fr3d_query_path = ''
-        self.fr3d_query_selection = 'families'
+        self.fr3d_query_selection = 'selected'
         self.fr3d_default_query = ''
         self.fr3d_query_families = []
         self.fr3d_allow_network = False
@@ -1129,24 +1129,19 @@ class MotifVisualizerGUI:
         if not query_path or not os.path.exists(query_path):
             self.logger.error("FR3D config: 'query_path' must point to an existing .json query file or directory")
             return False
-        query_selection = str(cfg.get('query_selection', 'families') or 'families').strip().lower()
-        default_query = str(cfg.get('default_query', '') or '').strip()
+        query_selection = str(cfg.get('query_selection', 'selected') or 'selected').strip().lower()
+        if query_selection == 'families':   # backward-compatible alias for 'selected'
+            query_selection = 'selected'
         raw_families = cfg.get('query_families', []) or []
         if isinstance(raw_families, str):
             raw_families = [raw_families]
         query_families = [str(x).strip() for x in raw_families if str(x).strip()]
         if os.path.isdir(query_path):
-            if query_selection not in ('families', 'all', 'default'):
-                self.logger.error("FR3D config: 'query_selection' must be 'families', 'all', or 'default' for a query directory")
+            if query_selection not in ('selected', 'all'):
+                self.logger.error("FR3D config: 'query_selection' must be 'selected' or 'all' for a query directory")
                 return False
-            if query_selection == 'families' and not query_families:
-                self.logger.error("FR3D config: 'query_families' must list at least one query name when query_selection is 'families'")
-                return False
-            if query_selection == 'default' and not default_query:
-                self.logger.error("FR3D config: 'default_query' is required when query_selection is 'default'")
-                return False
-            if query_selection == 'default' and not default_query.lower().endswith('.json'):
-                self.logger.error("FR3D config: 'default_query' must be an exact .json filename when query_selection is 'default'")
+            if query_selection == 'selected' and not query_families:
+                self.logger.error("FR3D config: 'query_families' must list at least one query name when query_selection is 'selected'")
                 return False
         elif not query_path.lower().endswith('.json'):
             self.logger.error("FR3D config: a single-file 'query_path' must be a .json query")
@@ -1215,7 +1210,6 @@ class MotifVisualizerGUI:
         self.fr3d_data_mode = data_mode
         self.fr3d_query_path = query_path
         self.fr3d_query_selection = query_selection
-        self.fr3d_default_query = default_query
         self.fr3d_query_families = query_families
         self.fr3d_allow_network = allow_network
         self.fr3d_run_output_path = run_output_path
@@ -1231,12 +1225,7 @@ class MotifVisualizerGUI:
         self.logger.success("FR3D registered (external official fr3d-python)")
         commit = self.fr3d_commit[:12] if self.fr3d_commit else "n/a"
         if os.path.isdir(query_path):
-            if query_selection == 'default':
-                extra = f", default={default_query}"
-            elif query_selection == 'families':
-                extra = f", families={len(query_families)}"
-            else:
-                extra = ''
+            extra = f", selected={len(query_families)}" if query_selection == 'selected' else ''
             qdesc = f"{query_path} (selection={query_selection}{extra})"
         else:
             qdesc = query_path
@@ -1272,14 +1261,7 @@ class MotifVisualizerGUI:
         )
         if not entries:
             return [], "no top-level .json query files found in: %s" % qp
-        if self.fr3d_query_selection == 'default':
-            target = self.fr3d_default_query
-            for path in entries:
-                base = os.path.basename(path)
-                if base == target:
-                    return [path], ''
-            return [], "default_query '%s' not found among top-level .json files in %s" % (target, qp)
-        if self.fr3d_query_selection == 'families':
+        if self.fr3d_query_selection == 'selected':
             wanted = {
                 name[:-5] if name.lower().endswith('.json') else name
                 for name in self.fr3d_query_families
@@ -1495,7 +1477,7 @@ class MotifVisualizerGUI:
             except subprocess.TimeoutExpired:
                 err = (
                     f"timed out after {self.fr3d_query_timeout_seconds}s; "
-                    "try query_selection='default' or increase query_timeout_seconds"
+                    "try query_selection='selected' with fewer query_families or increase query_timeout_seconds"
                 )
                 self.logger.error(f"  [{qname}] FR3D search failed: {err}")
                 manifest['queries'].append(
@@ -1609,10 +1591,8 @@ class MotifVisualizerGUI:
         print(f"Data mode  : {self.fr3d_data_mode}")
         if os.path.isdir(self.fr3d_query_path):
             print(f"Queries    : {self.fr3d_query_path}  (selection={self.fr3d_query_selection})")
-            if self.fr3d_query_selection == 'default':
-                print(f"Default    : {self.fr3d_default_query}")
-            elif self.fr3d_query_selection == 'families':
-                print(f"Families   : {', '.join(self.fr3d_query_families)}")
+            if self.fr3d_query_selection == 'selected':
+                print(f"Selected   : {', '.join(self.fr3d_query_families)}")
         else:
             print(f"Query      : {self.fr3d_query_path}")
         print(f"Network    : {'allowed' if self.fr3d_allow_network else 'disabled'}")

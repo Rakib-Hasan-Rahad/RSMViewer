@@ -76,7 +76,7 @@ Good structures to try: `1S72`, `4V9F`, `4V88`, `1HR2`, `1KXK`, `3CC2`,
   "fr3d_python_path": "../external/fr3d/fr3d-python-latest",
   "cache_path": "../external/fr3d/fr3d_cache",
   "query_path": "../external/fr3d/fr3d-python-latest/fr3d/search/queries",
-  "query_selection": "families",
+  "query_selection": "selected",
   "query_families": [
     "geometric_5_sarcin_ricin",
     "geometric_5_kink_turn_65553",
@@ -94,7 +94,7 @@ Good structures to try: `1S72`, `4V9F`, `4V88`, `1HR2`, `1KXK`, `3CC2`,
 | `fr3d_python_path` | Where you pasted the FR3D checkout. |
 | `query_path` | FR3D's own query folder (the motif definitions). |
 | `query_selection` | Which queries to run (see table below). |
-| `query_families` | The exact query file names to run when `query_selection` is `families`. |
+| `query_families` | The exact query file names to run when `query_selection` is `selected`. |
 | `allow_network` | `true` lets FR3D fetch a structure / a query's reference template when needed. |
 | `run_output_path` | Where results and provenance are written. |
 
@@ -102,9 +102,8 @@ Good structures to try: `1S72`, `4V9F`, `4V88`, `1HR2`, `1KXK`, `3CC2`,
 
 | Value | Runs |
 | --- | --- |
-| `families` | **Default.** Only the queries listed in `query_families`. |
+| `selected` | **Default.** Only the queries listed in `query_families`. |
 | `all` | Every query in `query_path` — the **full pipeline** (slow; many queries). |
-| `default` | A single query named by `default_query` (an exact `.json` filename). |
 
 ---
 
