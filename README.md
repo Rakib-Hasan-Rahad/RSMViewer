@@ -319,81 +319,62 @@ so repeated queries are offline. Use `rmv_refresh` to bypass the cache.
 
 ## FR3D setup
 
-The default repository configuration uses the prepared local FR3D cache:
+FR3D has two modes, selected by `data_mode` in `config/fr3d_config.json`:
 
-```json
-"data_mode": "cache",
-"cache_path": "../external/fr3d/fr3d_cache"
-```
+- **`cache` (default):** `rmv_db FR3D` reads local cached annotations from
+  `external/fr3d/fr3d_cache/` — it does not run FR3D or make a network call.
+- **`run_from_scratch`:** `rmv_db FR3D` executes the official BGSU fr3d-python
+  pipeline on the loaded structure and loads the freshly generated results from
+  a new timestamped run directory under `output/fr3d_runs/`.
 
-With this setting, `rmv_db FR3D` reads local cached annotations and does not
-run FR3D or make a network call. To execute the official FR3D Python pipeline,
-change `data_mode` to `"run_from_scratch"` in `config/fr3d_config.json`, then
-run `rmv_setup FR3D` if needed.
+To run the pipeline from scratch:
 
-The twelve offline structure files used by the current project workflows are
-stored in `cached_structures/`.
-
-1. **Paste** the official fr3d-python software into:
-
-  Download the Fr3d software package from this link : https://github.com/BGSU-RNA/fr3d-python/tree/latest 
-  
-   ```text
-   external/fr3d/fr3d-python-latest/
-   ```
-
-   It must contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`.
-
-2. **Set up** FR3D in one step (finds a Python, installs `numpy`, `scipy`,
-   `mmcif-pdbx`, and registers the source):
+1. Paste the official fr3d-python checkout into `external/fr3d/fr3d-python-latest/`
+   (download from <https://github.com/BGSU-RNA/fr3d-python/tree/latest>). It must
+   contain `fr3d/__init__.py` and `fr3d/search/FR3D.py`.
+2. Set `"data_mode": "run_from_scratch"` in `config/fr3d_config.json`.
+3. Install FR3D's dependencies and register it in one step — this also prints a
+   readiness report:
 
    ```text
    rmv_setup FR3D
    ```
 
-   To use a specific interpreter: `rmv_setup FR3D /absolute/path/to/python`.
-   Alternatively, set `python_path` in `config/fr3d_config.json` to an
-   interpreter that already has them.
-
-3. **Check** status:
-
-   ```text
-   rmv_fr3d status
-   ```
-
-4. **Run** on a loaded structure — RSMViewer executes FR3D's own default queries:
+4. Run it on a loaded structure:
 
    ```text
    rmv_fetch 1S72
    rmv_db FR3D
    ```
 
-FR3D's bundled geometric queries define their motif template from a reference
-PDB, so they need `allow_network: true` in `config/fr3d_config.json` to download
-that reference. A query whose reference cannot be reached is skipped with a
-message; the remaining queries continue.
+> **Detailed FR3D instructions** — both modes, query selection, the full config
+> reference, first-run cache behavior, and troubleshooting — are in
+> [external/FR3D_SETUP.md](external/FR3D_SETUP.md).
+
+The twelve offline structure files used by the current project workflows are
+stored in `cached_structures/`.
 
 ---
 
 ## RNAMotifScanX setup
 
-RNAMotifScanX (RMSX) has two modes, selected by `data_mode` in
-`config/rmsx_config.json`.
+RNAMotifScanX (RMSX) is controlled by `data_mode` in `config/rmsx_config.json`.
+The default is `preannotated`, which loads precomputed results and needs no
+binaries.
 
-### Preannotated mode (default — no binaries needed)
+### Preannotated mode (default)
 
-1. Download the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`) from Figshare:
+1. Download the preannotated bundle from Figshare:
    **[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)**
-
-2. Place the preannotated bundle at:
+2. Extract `rmsx_preannotated_input_output.tar.gz` inside
+   `external/rmsx_preannotated/` so the extracted folder sits there:
 
    ```text
-   external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz
+   external/rmsx_preannotated/rmsx_work_default/
    ```
 
-   or extract it and point `pdb_prebuild_dir` at the resulting
-   `rmsx_work_default/` directory.
-
+   RSMViewer can also read the `.tar.gz` archive directly as a fallback; the
+   extracted folder is faster.
 3. Keep `"data_mode": "preannotated"` and run:
 
    ```text
@@ -401,48 +382,15 @@ RNAMotifScanX (RMSX) has two modes, selected by `data_mode` in
    rmv_db RNA3DMotifAtlas, RNAMotifScanX
    ```
 
-RSMViewer copies the matching family logs for the requested PDB into
-`output/rmsx_results/` and loads them.
+### Run-from-scratch / scan-prepared mode
 
-### Preannotated data layout
+To generate results with the real scanner instead of reading precomputed logs,
+set `"data_mode": "scan_prepared"` (or `"run_from_scratch"`) in
+`config/rmsx_config.json` and provide the binaries, then run `rmv_db RNAMotifScanX`.
 
-The bundle is keyed by PDB ID and chain and contains **both** the RMSX inputs
-and the precomputed alignment outputs:
-
-```text
-rmsx_work_default/
-└── <pdb_id_lowercase>/                e.g. 1s72/
-    ├── _prep_main/                     inputs used to build the targets
-    │   ├── <PDB>.pdb                   coordinates
-    │   ├── <PDB>.pdb.mca               MC-Annotate output
-    │   └── <PDB>_<chain>.rmsx.in/.nch  RMSX target inputs
-    └── <chain>/                        one folder per scanned chain, e.g. 0/
-        ├── <pdb>_<chain>.rmsx.in/.nch  RMSX inputs for this chain
-        ├── sarcin-ricin_consensus.log  alignment OUTPUT (one per family)
-        ├── k-turn_consensus.log
-        ├── c-loop_consensus.log
-        ├── e-loop_consensus.log
-        └── reverse-kturn_consensus.log
-```
-
-Each `*_consensus.log` holds one alignment block per hit. RSMViewer reads every
-block across all chains of the PDB, applies the family P-value threshold, then
-consolidates. To add a PDB, drop a `rmsx_work_default/<pdb_id>/` folder in this
-structure.
-
-### From-scratch mode (optional — needs binaries)
-
-Set `"data_mode": "run_from_scratch"` and provide working binaries under
-`external/rmsx/bin/` (`scan`, `MC-Annotate`, optional `rnaview`).
-
-Even in from-scratch mode, RSMViewer first looks for prebuilt RMSX **inputs**
-(`.rmsx.in` / `.rmsx.nch`) for the requested PDB inside the preannotated archive
-or directory and reuses them — skipping MC-Annotate. Only when no prebuilt input
-is found does it generate inputs from scratch (which needs the CIF/PDB and the
-binaries). It then runs the RMSX `scan` step to produce fresh alignment logs.
-
-If `data_mode` is not set to `run_from_scratch`, RSMViewer shows the precomputed
-outputs from the preannotated bundle.
+> **Detailed RMSX instructions** — the preannotated data layout, all three data
+> modes, the full config reference, and platform/Docker setup for a live scan —
+> are in [external/RMSX_FROM_SCRATCH.md](external/RMSX_FROM_SCRATCH.md).
 
 The RNAMotifScanX software and binaries are **not** distributed with RSMViewer.
 

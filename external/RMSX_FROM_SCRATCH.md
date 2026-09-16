@@ -25,7 +25,11 @@ mode most users should run for live results).
 "data_mode": "preannotated"
 ```
 
-RSMViewer does not execute any RMSX program. It reads consensus logs from:
+Download the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`) from
+Figshare: **<https://doi.org/10.6084/m9.figshare.33826795>**, then extract it
+inside `external/rmsx_preannotated/` so the `rmsx_work_default/` folder sits
+there. RSMViewer does not execute any RMSX program in this mode. It reads
+consensus logs from:
 
 ```text
 external/rmsx_preannotated/rmsx_work_default/<pdb_id_lowercase>/
