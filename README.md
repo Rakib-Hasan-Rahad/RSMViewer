@@ -380,7 +380,7 @@ binaries.
 
    ```text
    rmv_fetch 1S72
-   rmv_db RNA3DMotifAtlas, RNAMotifScanX
+   rmv_db RNAMotifScanX
    ```
 
 ### Run-from-scratch
