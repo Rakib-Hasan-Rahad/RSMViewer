@@ -385,9 +385,20 @@ binaries.
 
 ### Run-from-scratch
 
-To generate results with the real scanner instead of reading precomputed logs,
-set `"data_mode": "scan_prepared"` (or `"run_from_scratch"`) in
-`config/rmsx_config.json` and provide the binaries, then run `rmv_db RNAMotifScanX`.
+To run the real scanner instead of reading precomputed logs, set
+`"data_mode": "run_from_scratch"` in `config/rmsx_config.json`. In this mode you
+provide the RMSX input files yourself: generate the `.rmsx.in`/`.rmsx.nch` pairs
+externally with RNAVIEW and MC-Annotate, place them under
+`external/rmsx_preannotated/rmsx_work_default/<pdb>/<chain>/`, then run:
+
+```text
+rmv_fetch 1KXK
+rmv_rmsx run 1KXK
+```
+
+RSMViewer runs only the RNAMotifScanX `scan` binary on your inputs and loads the
+fresh output. It never runs MC-Annotate/RNAVIEW itself and never falls back to
+preannotated data.
 
 > **Detailed RMSX instructions** are in [external/RMSX_FROM_SCRATCH.md](external/RMSX_FROM_SCRATCH.md).
 
