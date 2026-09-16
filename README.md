@@ -449,10 +449,9 @@ Pick the document that matches what you need:
 | --- | --- |
 | Learn RSMViewer step by step | [docs/TUTORIAL.md](docs/TUTORIAL.md) |
 | Look up exact command syntax | [Command reference](#command-reference) · in-PyMOL `rmv_help` |
-| Understand the query grammar and consolidation | [docs/SUPPLEMENTARY_COLLECTION_AND_TABLE.md](docs/SUPPLEMENTARY_COLLECTION_AND_TABLE.md), [docs/SUPPLEMENT.md](docs/SUPPLEMENT.md) |
 | Configure FR3D / RNAMotifScanX | [config/README.md](config/README.md) |
 | Understand the design and internals | [DEVELOPED.md](DEVELOPED.md) |
-| Read the paper and its supplement | [docs/MANUSCRIPT.md](docs/MANUSCRIPT.md), [docs/SUPPLEMENT.md](docs/SUPPLEMENT.md) |
+| Read the paper and its supplement | [docs/SUPPLEMENT.md](docs/SUPPLEMENT.md) |
 
 ## Support
 
