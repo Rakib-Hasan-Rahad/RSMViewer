@@ -80,9 +80,22 @@ with this project; they are provided by the user under `external/`.
 3. Under **Install from local file**, choose **Choose File** and navigate to the cloned or extracted `RSMViewer-main` directory.
 4. Open the `rsmviewer` folder and select the `__init__.py` file.
 5. Select **Open**, then confirm the installation when PyMOL prompts you.
-6. Return to **Plugin → Plugin Manager → Settings**.
-7. Under **Plugin override search path**, locate **RSMViewer** and move it to the top of the list.
-8. Restart PyMOL if prompted. RSMViewer should then be available from the **Plugin** menu.
+
+If the plugin is loaded successfully, you should see the startup banner in your PyMOL console:
+
+```text
+================================================================================
+RSMViewer
+RNA Structural Motif Visualization and Comparative Analysis for PyMOL
+Version 2.0.0 | Updated: 13 September 2026 | Compatible with PyMOL 2.x+
+================================================================================
+```
+
+If the plugin does not load automatically, follow these steps:
+
+1. Return to **Plugin → Plugin Manager → Settings**.
+2. Under **Plugin override search path**, locate **RSMViewer** and move it to the top of the list.
+3. Restart PyMOL if prompted. RSMViewer should then be available from the **Plugin** menu.
 
 Verify the installation in PyMOL:
 
