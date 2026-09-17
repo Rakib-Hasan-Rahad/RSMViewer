@@ -272,6 +272,19 @@ and file, including `-wal`/`-shm`), the on-disk API response cache, each
 provider's in-process memory cache, the preannotated RMSX extraction cache, the
 motif loader, and custom color assignments.
 
+`rmv_reset` also accepts an optional argument to scope the reset:
+
+- `rmv_reset cache` — clears only the caches listed above (hierarchy SQLite
+  cache, API response cache, provider in-memory caches, preannotated RMSX
+  extraction cache, FR3D run cache). Loaded objects, query groups, and other
+  session state are left untouched.
+- `rmv_reset session` — deletes all PyMOL objects and resets session state
+  (loaded structures, query groups, source selections, motif loader, custom
+  colors) to defaults. Caches on disk are left untouched.
+
+With no argument, `rmv_reset` performs both (equivalent to `rmv_reset session`
+followed by `rmv_reset cache`).
+
 ---
 
 ## Module map

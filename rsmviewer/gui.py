@@ -4412,6 +4412,8 @@ class MotifVisualizerGUI:
         print("  rmv_chains [structure]              Show chain / auth-label diagnostics")
         print("  rmv_debug ON|OFF                    Turn diagnostic messages on or off")
         print("  rmv_reset                           Delete objects and clear all state/caches")
+        print("  rmv_reset cache                     Clear only the on-disk/in-memory caches")
+        print("  rmv_reset session                   Clear only objects and session state")
         print("  rmv_help                            Show this reference")
 
         print("\nQUICK START")
@@ -8899,131 +8901,166 @@ def initialize_gui():
 
     cmd.extend('rmv_loaded', show_loaded_tags)
 
-    def reset_plugin():
-        """PyMOL command: Reset everything - delete all objects and reset plugin to defaults.
-        
+    def reset_plugin(mode='', *extra_args, **_kwargs):
+        """PyMOL command: Reset plugin/session state and/or on-disk/in-memory caches.
+
         Usage:
-            rmv_reset              Delete all PyMOL objects, reset plugin state
+            rmv_reset               Delete all PyMOL objects, reset session state,
+                                     and clear all caches (equivalent to
+                                     'rmv_reset session' + 'rmv_reset cache')
+            rmv_reset cache         Clear only the caches (hierarchy SQLite cache,
+                                     API response cache, provider in-memory
+                                     caches, RMSX preannotated cache, FR3D run
+                                     cache). Loaded objects/session state untouched.
+            rmv_reset session       Delete all PyMOL objects and reset session
+                                     state (loaded structures, query groups,
+                                     source selections, colors) to defaults.
+                                     Caches on disk are left untouched.
         """
-        # Step 1: Delete all PyMOL objects
-        try:
-            cmd.delete('all')
-            gui.logger.debug("Deleted all PyMOL objects")
-        except Exception as e:
-            gui.logger.debug(f"Could not delete objects: {e}")
-        
-        # Step 2: Reset all plugin state to defaults
-        gui.loaded_pdb = None
-        gui.loaded_pdb_id = None
-        gui.loaded_structures = {}
-        gui.annotation_tables = {}
-        gui.query_groups = {}
-        gui.motif_visibility = {}
-        gui.current_source_mode = None
-        gui.current_source_names = []
-        gui.current_user_tool = None
-        gui.current_local_source = None
-        gui.current_web_source = None
-        gui.combined_source_ids = []
-        gui.current_source_id = None
-        gui.user_rms_filtering_enabled = True
-        gui.user_rmsx_filtering_enabled = True
-        gui.user_rms_custom_pvalues = {}
-        gui.user_rmsx_custom_pvalues = {}
-        gui.cif_use_auth = 1
-        gui.auth_to_label_map = {}
-        gui.loaded_sources = set()
-        gui.pdb_source_state = {}
+        mode = str(mode).strip().lower()
+        if mode not in ('', 'cache', 'session'):
+            gui.command_error("Usage: rmv_reset [cache|session]")
+            return
+        reset_session = mode in ('', 'session')
+        reset_cache = mode in ('', 'cache')
 
-        try:
-            from .database.motif_hierarchy_cache import get_hierarchy_cache, close_hierarchy_cache
-            cache = get_hierarchy_cache()
-            cache.clear_all_hierarchy_data()
-            cache.reset_all_aliases()
-            cache_path = Path(cache.db_path)
-            close_hierarchy_cache()
-            for suffix in ("", "-wal", "-shm"):
-                candidate = Path(str(cache_path) + suffix)
-                if candidate.exists():
-                    candidate.unlink()
-        except Exception:
-            pass
+        if reset_session:
+            # Step 1: Delete all PyMOL objects
+            try:
+                cmd.delete('all')
+                gui.logger.debug("Deleted all PyMOL objects")
+            except Exception as e:
+                gui.logger.debug(f"Could not delete objects: {e}")
 
-        # Step 2b: Clear the on-disk API response cache (~/.rsmviewer_cache/)
-        # so the next rmv_load_motif hits the live API instead of returning
-        # a file cached up to 30 days ago.
-        try:
-            from .database.cache_manager import get_cache_manager
-            removed = get_cache_manager().clear_cache()
-            if removed:
-                gui.logger.debug(f"Cleared {removed} cached API response(s) from disk")
-        except Exception:
-            pass
+            # Step 2: Reset all plugin state to defaults
+            gui.loaded_pdb = None
+            gui.loaded_pdb_id = None
+            gui.loaded_structures = {}
+            gui.annotation_tables = {}
+            gui.query_groups = {}
+            gui.motif_visibility = {}
+            gui.current_source_mode = None
+            gui.current_source_names = []
+            gui.current_user_tool = None
+            gui.current_local_source = None
+            gui.current_web_source = None
+            gui.combined_source_ids = []
+            gui.current_source_id = None
+            gui.user_rms_filtering_enabled = True
+            gui.user_rmsx_filtering_enabled = True
+            gui.user_rms_custom_pvalues = {}
+            gui.user_rmsx_custom_pvalues = {}
+            gui.cif_use_auth = 1
+            gui.auth_to_label_map = {}
+            gui.loaded_sources = set()
+            gui.pdb_source_state = {}
 
-        # Step 2c: Clear each provider's own in-process memory cache. Provider
-        # instances are process-lifetime singletons (held by the source
-        # selector), so a plain dict lookup like `_motif_cache[pdb_id]` would
-        # keep returning the first-ever fetch for a PDB even after the disk
-        # and SQLite caches above are wiped.
-        try:
-            from .database import get_source_selector
-            source_selector = get_source_selector()
-            if source_selector:
-                for provider in source_selector.providers.values():
-                    for attr in ('_motif_cache', '_pdb_motif_cache', '_annotation_cache', '_fetched_pdbs'):
-                        cache_obj = getattr(provider, attr, None)
-                        if cache_obj is not None:
-                            cache_obj.clear()
-        except Exception:
-            pass
+        if reset_cache:
+            try:
+                from .database.motif_hierarchy_cache import get_hierarchy_cache, close_hierarchy_cache
+                cache = get_hierarchy_cache()
+                cache.clear_all_hierarchy_data()
+                cache.reset_all_aliases()
+                cache_path = Path(cache.db_path)
+                close_hierarchy_cache()
+                for suffix in ("", "-wal", "-shm"):
+                    candidate = Path(str(cache_path) + suffix)
+                    if candidate.exists():
+                        candidate.unlink()
+            except Exception:
+                pass
 
-        # Step 2d: Clear the on-disk RMSX preannotated extraction cache so the
-        # next load re-extracts fresh consensus logs from the archive/folder.
-        try:
-            import shutil
-            rmsx_out = Path(getattr(gui, 'rmsx_output_path', '') or '')
-            if rmsx_out:
-                preannotated_cache = rmsx_out / '.preannotated_cache'
-                if preannotated_cache.exists():
-                    shutil.rmtree(preannotated_cache, ignore_errors=True)
-                    gui.logger.debug(f"Cleared preannotated RMSX cache: {preannotated_cache}")
-        except Exception:
-            pass
+            # Clear the on-disk API response cache (~/.rsmviewer_cache/) so the
+            # next rmv_load_motif hits the live API instead of returning a file
+            # cached up to 30 days ago.
+            try:
+                from .database.cache_manager import get_cache_manager
+                removed = get_cache_manager().clear_cache()
+                if removed:
+                    gui.logger.debug(f"Cleared {removed} cached API response(s) from disk")
+            except Exception:
+                pass
 
-        # Step 2e: Clear the FR3D run cache (output/fr3d_runs) so the next
-        # run-from-scratch FR3D search regenerates results instead of reusing a
-        # previous run's output.
-        try:
-            import shutil
-            fr3d_runs = Path(getattr(gui, 'fr3d_output_dir', '') or '')
-            if fr3d_runs and fr3d_runs.exists():
-                shutil.rmtree(fr3d_runs, ignore_errors=True)
-                gui.logger.debug(f"Cleared FR3D run cache: {fr3d_runs}")
-        except Exception:
-            pass
-        
-        # Step 3: Reset chain ID convention to default
-        try:
-            cmd.set("cif_use_auth", 1)
-        except:
-            pass
-        
-        # Step 4: Clear motif loader data
-        try:
-            if gui.viz_manager and gui.viz_manager.motif_loader:
-                gui.viz_manager.motif_loader.loaded_motifs = {}
-        except:
-            pass
-        
-        # Step 5: Reset colors
-        try:
-            from . import colors as color_module
-            color_module.CUSTOM_COLORS.clear()
-            color_module._dynamic_assigned.clear()
-            color_module._dynamic_color_index = 0
-        except:
-            pass
-        
+            # Clear each provider's own in-process memory cache. Provider
+            # instances are process-lifetime singletons (held by the source
+            # selector), so a plain dict lookup like `_motif_cache[pdb_id]`
+            # would keep returning the first-ever fetch for a PDB even after
+            # the disk and SQLite caches above are wiped.
+            try:
+                from .database import get_source_selector
+                source_selector = get_source_selector()
+                if source_selector:
+                    for provider in source_selector.providers.values():
+                        for attr in ('_motif_cache', '_pdb_motif_cache', '_annotation_cache', '_fetched_pdbs'):
+                            cache_obj = getattr(provider, attr, None)
+                            if cache_obj is not None:
+                                cache_obj.clear()
+            except Exception:
+                pass
+
+            # Clear the on-disk RMSX preannotated extraction cache so the next
+            # load re-extracts fresh consensus logs from the archive/folder.
+            try:
+                import shutil
+                rmsx_out = Path(getattr(gui, 'rmsx_output_path', '') or '')
+                if rmsx_out:
+                    preannotated_cache = rmsx_out / '.preannotated_cache'
+                    if preannotated_cache.exists():
+                        shutil.rmtree(preannotated_cache, ignore_errors=True)
+                        gui.logger.debug(f"Cleared preannotated RMSX cache: {preannotated_cache}")
+            except Exception:
+                pass
+
+            # Clear the FR3D run cache (output/fr3d_runs) so the next
+            # run-from-scratch FR3D search regenerates results instead of
+            # reusing a previous run's output.
+            try:
+                import shutil
+                fr3d_runs = Path(getattr(gui, 'fr3d_output_dir', '') or '')
+                if fr3d_runs and fr3d_runs.exists():
+                    shutil.rmtree(fr3d_runs, ignore_errors=True)
+                    gui.logger.debug(f"Cleared FR3D run cache: {fr3d_runs}")
+            except Exception:
+                pass
+
+        if reset_session:
+            # Reset chain ID convention to default
+            try:
+                cmd.set("cif_use_auth", 1)
+            except:
+                pass
+
+            # Clear motif loader data
+            try:
+                if gui.viz_manager and gui.viz_manager.motif_loader:
+                    gui.viz_manager.motif_loader.loaded_motifs = {}
+            except:
+                pass
+
+            # Reset colors
+            try:
+                from . import colors as color_module
+                color_module.CUSTOM_COLORS.clear()
+                color_module._dynamic_assigned.clear()
+                color_module._dynamic_color_index = 0
+            except:
+                pass
+
+        if mode == 'cache':
+            gui.logger.success("Caches cleared")
+            print("\n  All on-disk and in-memory caches cleared.")
+            print("  Loaded objects and session state were left untouched.")
+            print()
+            return
+
+        if mode == 'session':
+            gui.logger.success("Session reset to defaults")
+            print("\n  All objects deleted and session state reset.")
+            print("  Caches on disk were left untouched.")
+            print("  Ready for a fresh session.")
+            print()
+            return
+
         gui.logger.success("Plugin reset to defaults")
         print("\n  All objects deleted and plugin state and caches cleared.")
         print("  Ready for a fresh session.")

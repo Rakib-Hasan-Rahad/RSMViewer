@@ -354,7 +354,8 @@ with RSMViewer.
 
 ## S8. Caching architecture
 
-RSMViewer uses three complementary caches, all cleared by `rmv_reset`:
+RSMViewer uses three complementary caches, all cleared by `rmv_reset` (or
+`rmv_reset cache`):
 
 1. **API response cache** (`database/cache_manager.py`) — provider API responses
    stored outside the install directory with provenance and expiry; bypassed by
@@ -375,6 +376,17 @@ deletes all PyMOL objects and session state, clears the SQLite cache (data and
 file, including `-wal`/`-shm`), the API response cache, each provider's
 in-process memory cache, the preannotated extraction cache, the motif loader,
 and custom color assignments.
+
+`rmv_reset` also accepts an optional argument to scope the reset to just the
+caches or just the session state:
+
+- `rmv_reset cache` — clears only the three caches above; loaded objects,
+  query groups, and other session state are left untouched.
+- `rmv_reset session` — deletes all PyMOL objects and resets session state
+  (loaded structures, query groups, source selections, motif loader, custom
+  colors); caches on disk are left untouched.
+
+With no argument, `rmv_reset` performs both.
 
 ---
 
