@@ -7,7 +7,8 @@ same pipeline:
 
 1. Resolve the user's motif name via alias table + fuzzy matching.
 2. Collect individual instance objects (auto-create if needed).
-3. Build an N×N pairwise RMSD matrix from temporary copies.
+3. Build an N×N pairwise RMSD matrix from temporary copies
+    (both methods fit over matched non-hydrogen atoms).
 4. Identify the medoid (instance with minimum average RMSD).
 5. Superimpose every instance onto the medoid.
 6. Colour each instance uniquely (medoid = green).
@@ -422,14 +423,45 @@ def _extract_source(obj_name):
 
 
 # ------------------------------------------------------------------ #
+#  Atom-selection helpers
+# ------------------------------------------------------------------ #
+
+ALIGNMENT_ATOM_SELECTION = "not hydro"
+
+
+def _apply_atom_selection(object_name, atom_selection=None):
+    """Scope *object_name* to *atom_selection* for fitting, or leave it as-is.
+
+    Parentheses keep complex object/selection expressions correctly scoped so
+    the atom filter applies to the whole object.
+    """
+    if atom_selection:
+        return f"({object_name}) and {atom_selection}"
+    return object_name
+
+
+def _selection_has_atoms(*selections):
+    """Return True only if every selection matches at least one atom."""
+    for sel in selections:
+        try:
+            if cmd.count_atoms(sel) <= 0:
+                return False
+        except Exception:
+            return False
+    return True
+
+
+# ------------------------------------------------------------------ #
 #  Pairwise RMSD matrix
 # ------------------------------------------------------------------ #
 
-def compute_pairwise_rmsd(objects, method="super"):
+def compute_pairwise_rmsd(objects, method="super", atom_selection=None):
     """Compute NxN RMSD matrix using temporary copies.
 
-    Returns ``(matrix, skipped)`` where *skipped* is a list of
-    ``(obj_i, obj_j)`` pairs that failed.
+    When *atom_selection* is given (e.g. ``"not hydro"`` for rmv_super), the
+    fit is computed from that atom subset of each object. Returns
+    ``(matrix, skipped)`` where *skipped* lists ``(obj_i, obj_j)`` pairs that
+    failed or had an empty selection.
     """
     n = len(objects)
     matrix = [[0.0] * n for _ in range(n)]
@@ -451,15 +483,24 @@ def compute_pairwise_rmsd(objects, method="super"):
         for j in range(i + 1, n):
             work = "_medoid_work"
             cmd.create(work, temps[i])
-            try:
-                result = align_fn(work, temps[j])
-                rmsd = result[0]
-                matrix[i][j] = rmsd
-                matrix[j][i] = rmsd
-            except Exception:
+            mobile_sel = _apply_atom_selection(work, atom_selection)
+            target_sel = _apply_atom_selection(temps[j], atom_selection)
+            if atom_selection and not _selection_has_atoms(mobile_sel, target_sel):
                 matrix[i][j] = float('inf')
                 matrix[j][i] = float('inf')
                 skipped.append((objects[i], objects[j]))
+                print(f"  [!] {objects[i]} <-> {objects[j]} skipped: "
+                      f"no atoms in '{atom_selection}' selection")
+            else:
+                try:
+                    result = align_fn(mobile_sel, target_sel)
+                    rmsd = result[0]
+                    matrix[i][j] = rmsd
+                    matrix[j][i] = rmsd
+                except Exception:
+                    matrix[i][j] = float('inf')
+                    matrix[j][i] = float('inf')
+                    skipped.append((objects[i], objects[j]))
             cmd.delete(work)
             done += 1
             if done % 50 == 0:
@@ -496,20 +537,29 @@ def find_medoid(matrix):
 #  Superimpose all onto medoid
 # ------------------------------------------------------------------ #
 
-def superimpose_onto_medoid(objects, medoid_idx, method="super"):
+def superimpose_onto_medoid(objects, medoid_idx, method="super", atom_selection=None):
     """Move every non-medoid object onto the medoid in place.
 
+    When *atom_selection* is given (e.g. ``"not hydro"`` for rmv_super), the
+    fit uses that atom subset while PyMOL still transforms the whole object.
     Returns list of ``(obj_name, rmsd, success)`` tuples.
     """
     medoid_obj = objects[medoid_idx]
     align_fn = cmd.super if method == "super" else cmd.align
+    target_sel = _apply_atom_selection(medoid_obj, atom_selection)
     results = []
     for i, obj in enumerate(objects):
         if i == medoid_idx:
             results.append((obj, 0.0, True))
             continue
+        mobile_sel = _apply_atom_selection(obj, atom_selection)
+        if atom_selection and not _selection_has_atoms(mobile_sel, target_sel):
+            print(f"  [!] {obj} -> {medoid_obj} skipped: "
+                  f"no atoms in '{atom_selection}' selection")
+            results.append((obj, float('inf'), False))
+            continue
         try:
-            result = align_fn(obj, medoid_obj)
+            result = align_fn(mobile_sel, target_sel)
             results.append((obj, result[0], True))
         except Exception:
             results.append((obj, float('inf'), False))
@@ -684,19 +734,21 @@ def _run_medoid_pipeline(motif_type, pdb_src_tags, method, indices=None, padding
             cmd.disable(obj)
 
     method_label = "rmv_super" if method == "super" else "rmv_align"
+    atom_selection = ALIGNMENT_ATOM_SELECTION if method in ("super", "align") else None
     tag_desc = ", ".join(pdb_src_tags) if pdb_src_tags else "all loaded"
     print(f"\n  [{method_label}] {motif_type}: {n} instances ({tag_desc}), {pairs} pairs")
 
     # ---------- pairwise RMSD ----------
-    print(f"  Computing pairwise RMSD matrix ({method})...")
-    matrix, skipped = compute_pairwise_rmsd(objects, method=method)
+    atoms_note = f" over {atom_selection} atoms" if atom_selection else ""
+    print(f"  Computing pairwise RMSD matrix ({method}){atoms_note}...")
+    matrix, skipped = compute_pairwise_rmsd(objects, method=method, atom_selection=atom_selection)
 
     # ---------- medoid ----------
     medoid_idx, avg_rmsd = find_medoid(matrix)
 
     # ---------- superimpose ----------
     print(f"  Superimposing onto medoid: {objects[medoid_idx]}")
-    super_results = superimpose_onto_medoid(objects, medoid_idx, method=method)
+    super_results = superimpose_onto_medoid(objects, medoid_idx, method=method, atom_selection=atom_selection)
 
     # ---------- colour ----------
     color_superimposed(objects, motif_type)
@@ -1008,6 +1060,7 @@ def register_alignment_commands():
         try:
             pairwise = {}
             skipped_pairs = []
+            atom_selection = ALIGNMENT_ATOM_SELECTION
             for index, first in enumerate(objects):
                 for second in objects[index + 1:]:
                     first_copy = f"_rmv_medoid_first_{index}"
@@ -1015,11 +1068,19 @@ def register_alignment_commands():
                     try:
                         cmd.copy(first_copy, first)
                         cmd.copy(second_copy, second)
-                        if method_label == 'rmv_align':
-                            result = cmd.align(first_copy, second_copy)
+                        first_sel = _apply_atom_selection(first_copy, atom_selection)
+                        second_sel = _apply_atom_selection(second_copy, atom_selection)
+                        if atom_selection and not _selection_has_atoms(first_sel, second_sel):
+                            pairwise[(first, second)] = float('inf')
+                            skipped_pairs.append((first, second))
+                            print(f"  [!] {first} <-> {second} skipped: "
+                                  f"no atoms in '{atom_selection}' selection")
+                        elif method_label == 'rmv_align':
+                            result = cmd.align(first_sel, second_sel)
+                            pairwise[(first, second)] = float(result[0]) if result else float('inf')
                         else:
-                            result = cmd.super(first_copy, second_copy)
-                        pairwise[(first, second)] = float(result[0]) if result else float('inf')
+                            result = cmd.super(first_sel, second_sel)
+                            pairwise[(first, second)] = float(result[0]) if result else float('inf')
                     except Exception:
                         pairwise[(first, second)] = float('inf')
                         skipped_pairs.append((first, second))
@@ -1045,6 +1106,7 @@ def register_alignment_commands():
                 objects,
                 medoid_idx,
                 method='align' if method_label == 'rmv_align' else 'super',
+                atom_selection=atom_selection,
             )
             member_keys = _member_color_keys(target, objects)
             color_superimposed(objects, target, per_object_keys=member_keys)
@@ -1095,6 +1157,12 @@ def register_alignment_commands():
         print(f"    {method_label} K-TURN 2,5,8                     Instance numbers 2, 5, 8 only")
         print(f"\n  Note: without PDB_SRC tags only the most-recently loaded")
         print(f"        PDB+source is used. List tags to compare across PDBs.")
+        if method_label == "rmv_super":
+            print(f"\n  RMSD is computed over the matched non-hydrogen atoms")
+            print(f"  (selection: 'not hydro') retained after PyMOL refinement.")
+        else:
+            print(f"\n  Sequence-aware PyMOL alignment uses matched non-hydrogen atoms")
+            print(f"  (selection: 'not hydro') retained after refinement.")
         # Show currently loaded tags if any
         tags = sorted(_get_loaded_tags())
         if tags:
@@ -1106,6 +1174,9 @@ def register_alignment_commands():
     def _rmv_super(*args, **kwargs):
         """
         Medoid-based superimposition (sequence-independent, uses cmd.super).
+
+        RMSD is computed over non-hydrogen atoms (selection: ``not hydro``) for
+        the pairwise matrix, medoid selection, and the final superimposition.
 
         Usage:
             rmv_super <MOTIF_TYPE>                              Current PDB+source only
@@ -1142,6 +1213,9 @@ def register_alignment_commands():
     def _rmv_align(*args, **kwargs):
         """
         Medoid-based superimposition (sequence-dependent, uses cmd.align).
+
+        Sequence-aware PyMOL alignment uses matched non-hydrogen atoms
+        retained after refinement (selection: ``not hydro``).
 
         Usage:
             rmv_align <MOTIF_TYPE>                              Current PDB+source only
