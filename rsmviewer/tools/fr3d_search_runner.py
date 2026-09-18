@@ -246,6 +246,8 @@ def main():
     allow_network = bool(spec.get("allow_network", False))
     data_mode = str(spec.get("data_mode", "run_fr3d_pipeline") or "run_fr3d_pipeline").strip()
     mode_aliases = {
+        "cache": "cache",
+        "run_from_scratch": "cif_local",
         "run_fr3d_pipeline": "cif_local",
         "fr3d_local_data": "fr3d_native_data",
         "rna3dhub_web_interactions": "rna3dhub_interactions",

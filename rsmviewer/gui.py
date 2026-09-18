@@ -3694,9 +3694,21 @@ class MotifVisualizerGUI:
                 actual_chains = cmd.get_chains(structure_name)
                 if actual_chains:
                     if tool.lower() == 'fr3d':
-                        # FR3D: Map numeric chains (1, 2, 3...) to actual chains
+                        # FR3D: some legacy annotation sources report placeholder
+                        # numeric chains (1, 2, 3...) that need mapping to the
+                        # real chain letters by position. Never remap a
+                        # placeholder value that is ITSELF already a genuine
+                        # chain in the structure (e.g. 1S72's real RNA chains
+                        # are literally named '0', '1', '2', '3', '9') -- the
+                        # official fr3d-python CSV already reports true chain
+                        # IDs, and remapping them by position silently rewrites
+                        # correct residues onto an unrelated (often protein)
+                        # chain instead of just failing to find atoms.
                         for idx, actual_chain in enumerate(sorted(actual_chains), 1):
-                            chain_mapping[str(idx)] = actual_chain
+                            key = str(idx)
+                            if key in actual_chains:
+                                continue
+                            chain_mapping[key] = actual_chain
                     elif tool.lower() in ['rnamotifscan', 'rnamotifscanx']:
                         # RMSX/RMS: Map "0" to first chain (works for both auth and label mode)
                         sorted_chains = sorted(actual_chains)
@@ -5247,6 +5259,10 @@ class MotifVisualizerGUI:
                 # row any source labels as that family - the same union the
                 # family count after rmv_db reports.
                 from .database.motif_aliases import labels_match_motif, canonical_motif
+                # Match on the raw target text (not a pre-canonicalized copy)
+                # so labels_match_motif's own FR3D free-text handling can
+                # resolve compound/full FR3D selectable names (e.g.
+                # "Geometric-5-Kink-Turn-65553") the same way rmv_select does.
                 family_label = canonical_motif(target) or None
                 family_ids = set()
                 if family_label:
@@ -5260,7 +5276,7 @@ class MotifVisualizerGUI:
                             fr3d_labels = list(row.source_hierarchy.get("FR3D", ())) + list(
                                 row.source_annotations.get("FR3D", ())
                             )
-                            if labels_match_motif(family_label, row_labels, fr3d_labels):
+                            if labels_match_motif(target, row_labels, fr3d_labels):
                                 family_ids.add(row.motif_id)
                 if family_ids:
                     motif_ids = family_ids
@@ -9027,13 +9043,25 @@ def initialize_gui():
 
             # Clear the FR3D run cache (output/fr3d_runs) so the next
             # run-from-scratch FR3D search regenerates results instead of
-            # reusing a previous run's output.
+            # reusing a previous run's output. 1S72 is excluded: it is the
+            # single PDB the project keeps committed to git as a reference
+            # fixture (see .gitignore: "!/output/fr3d_runs/1S72/**"), so
+            # clearing caches must never blow away version-controlled data.
+            # A newer run-from-scratch result for 1S72 still takes over
+            # automatically, since cache mode always serves the most
+            # recently modified run directory.
             try:
                 import shutil
                 fr3d_runs = Path(getattr(gui, 'fr3d_output_dir', '') or '')
                 if fr3d_runs and fr3d_runs.exists():
-                    shutil.rmtree(fr3d_runs, ignore_errors=True)
-                    gui.logger.debug(f"Cleared FR3D run cache: {fr3d_runs}")
+                    for child in fr3d_runs.iterdir():
+                        if child.name == '1S72':
+                            continue
+                        if child.is_dir():
+                            shutil.rmtree(child, ignore_errors=True)
+                        else:
+                            child.unlink(missing_ok=True)
+                    gui.logger.debug(f"Cleared FR3D run cache: {fr3d_runs} (kept 1S72 reference fixture)")
             except Exception:
                 pass
 

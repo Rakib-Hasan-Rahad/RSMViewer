@@ -1,0 +1,150 @@
+{
+  "target": "1S72",
+  "target_cif": "/Users/rakibhasanrahad/1s72.cif",
+  "run_id": "20260918_043305",
+  "data_mode": "run_from_scratch",
+  "data_mode_internal": "cif_local",
+  "note": "regenerated after fixing fr3d_search_runner.py mode_aliases (missing run_from_scratch->cif_local, which was letting geometric queries search their embedded reference PDBs instead of the target structure)",
+  "queries": [
+    {
+      "query_name": "geometric_5_sarcin_ricin",
+      "query_file": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/queries/geometric_5_sarcin_ricin.json",
+      "ok": true,
+      "candidate_count": 12,
+      "changed_fields": {
+        "numPositions": {
+          "original": 5,
+          "executed": 5
+        },
+        "name": {
+          "original": null,
+          "executed": "geometric_5_sarcin_ricin"
+        },
+        "searchFiles": {
+          "original": [
+            "4V9F",
+            "7K00"
+          ],
+          "executed": [
+            "/Users/rakibhasanrahad/1s72.cif"
+          ]
+        },
+        "PDB_data_file": {
+          "original": null,
+          "executed": {}
+        }
+      },
+      "run_dir": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/queries/geometric_5_sarcin_ricin",
+      "csv": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/ingest/1S72_fr3d_query_geometric_5_sarcin_ricin.csv"
+    },
+    {
+      "query_name": "geometric_5_kink_turn_65553",
+      "query_file": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/queries/geometric_5_kink_turn_65553.json",
+      "ok": true,
+      "candidate_count": 1,
+      "changed_fields": {
+        "numPositions": {
+          "original": 5,
+          "executed": 5
+        },
+        "searchFiles": {
+          "original": [
+            "4V9F",
+            "8GLP",
+            "8B0X"
+          ],
+          "executed": [
+            "/Users/rakibhasanrahad/1s72.cif"
+          ]
+        },
+        "PDB_data_file": {
+          "original": null,
+          "executed": {}
+        }
+      },
+      "run_dir": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/queries/geometric_5_kink_turn_65553",
+      "csv": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/ingest/1S72_fr3d_query_geometric_5_kink_turn_65553.csv"
+    },
+    {
+      "query_name": "symbolic_6_GNRA_hairpin_symbolic",
+      "query_file": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/queries/symbolic_6_GNRA_hairpin_symbolic.json",
+      "ok": true,
+      "candidate_count": 2,
+      "changed_fields": {
+        "numPositions": {
+          "original": 6,
+          "executed": 6
+        },
+        "searchFiles": {
+          "original": [
+            "4V9F",
+            "5J7L"
+          ],
+          "executed": [
+            "/Users/rakibhasanrahad/1s72.cif"
+          ]
+        },
+        "PDB_data_file": {
+          "original": null,
+          "executed": {}
+        }
+      },
+      "run_dir": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/queries/symbolic_6_GNRA_hairpin_symbolic",
+      "csv": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/ingest/1S72_fr3d_query_symbolic_6_GNRA_hairpin_symbolic.csv"
+    },
+    {
+      "query_name": "symbolic_4_internal_loop",
+      "query_file": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/queries/symbolic_4_internal_loop.json",
+      "ok": true,
+      "candidate_count": 206,
+      "changed_fields": {
+        "numPositions": {
+          "original": 4,
+          "executed": 4
+        },
+        "searchFiles": {
+          "original": [
+            "4V9F"
+          ],
+          "executed": [
+            "/Users/rakibhasanrahad/1s72.cif"
+          ]
+        },
+        "PDB_data_file": {
+          "original": null,
+          "executed": {}
+        }
+      },
+      "run_dir": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/queries/symbolic_4_internal_loop",
+      "csv": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/ingest/1S72_fr3d_query_symbolic_4_internal_loop.csv"
+    },
+    {
+      "query_name": "symbolic_8_GU_tandem_at_end_of_helix",
+      "query_file": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/external/fr3d/fr3d-python-latest/fr3d/search/queries/symbolic_8_GU_tandem_at_end_of_helix.json",
+      "ok": true,
+      "candidate_count": 0,
+      "changed_fields": {
+        "numPositions": {
+          "original": 8,
+          "executed": 8
+        },
+        "searchFiles": {
+          "original": [
+            "4V9F",
+            "8GLP",
+            "8B0X"
+          ],
+          "executed": [
+            "/Users/rakibhasanrahad/1s72.cif"
+          ]
+        },
+        "PDB_data_file": {
+          "original": null,
+          "executed": {}
+        }
+      },
+      "run_dir": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/queries/symbolic_8_GU_tandem_at_end_of_helix",
+      "csv": "/Users/rakibhasanrahad/Desktop/IMPORTANT FILES 2026/RSMViewer-PyMOL PLUGIN/output/fr3d_runs/1S72/20260918_043305/ingest/1S72_fr3d_query_symbolic_8_GU_tandem_at_end_of_helix.csv"
+    }
+  ]
+}
