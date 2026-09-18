@@ -206,33 +206,30 @@ def converted_family_name(value: str) -> str:
 
 # ── Free-text keyword scan (used for FR3D query names) ───────────────────────
 # FR3D query names embed the family loosely, e.g. "geometric_5_sarcin_ricin" or
-# "geometric_3_sarcin3geometric". These distinctive keywords are scanned as
-# substrings of the alnum-normalized text. Ordered most-specific first so that
+# "geometric_3_sarcin3geometric". Distinctive keywords are scanned as
+# substrings of the alnum-normalized text, longest (most specific) first, so
 # "reverse kink" resolves to REVERSE-K-TURN before "kink" can match K-TURN.
-# Short/ambiguous abbreviations (SR, KT, HL, IL, CL, EL) are deliberately
-# excluded here because they would match inside unrelated words.
-_TEXT_KEYWORDS = [
-    ("REVERSEKINKTURN", "REVERSE-K-TURN"),
-    ("REVERSEKTURN", "REVERSE-K-TURN"),
-    ("REVERSEKINK", "REVERSE-K-TURN"),
-    ("SARCINRICIN", "SARCIN-RICIN"),
-    ("SARCIN", "SARCIN-RICIN"),
-    ("KINKTURN", "K-TURN"),
-    ("KTURN", "K-TURN"),
-    ("CLOOP", "C-LOOP"),
-    ("ELOOP", "E-LOOP"),
-    ("TLOOP", "T-LOOP"),
-    ("UTURN", "U-TURN"),
-    ("GNRA", "GNRA"),
-    ("UNCG", "UNCG"),
-    ("CUYG", "CUYG"),
-    ("TANDEMGA", "TANDEM-GA"),
-    ("RIGHTANGLE", "RIGHT-ANGLE"),
-    ("DOCKINGELBOW", "DOCKING-ELBOW"),
-    ("TWISTUP", "TWIST-UP"),
-    ("UAAGAN", "UAA-GAN"),
-    ("PSEUDOKNOT", "PSEUDOKNOT"),
-]
+#
+# Every alias/canonical name registered above is a candidate keyword here too,
+# so a query for any FR3D-loaded family (not just the handful hand-picked
+# below) can be found this way. Short/ambiguous abbreviations (SR, KT, HL, IL,
+# CL, EL, J3, ...) are excluded by a minimum-length guard because they would
+# match inside unrelated words; a short list of unambiguous exceptions
+# (GNRA/UNCG/CUYG tetraloop codes) is kept regardless of length.
+_TEXT_KEYWORD_MIN_LENGTH = 5
+_TEXT_KEYWORD_SHORT_EXCEPTIONS = {"GNRA", "UNCG", "CUYG"}
+_TEXT_KEYWORDS = sorted(
+    {
+        (_alnum(alias), canonical)
+        for canonical, aliases in _FAMILY_DEFINITIONS.items()
+        for alias in (canonical, *aliases)
+        if _alnum(alias) and (
+            len(_alnum(alias)) >= _TEXT_KEYWORD_MIN_LENGTH
+            or _alnum(alias) in _TEXT_KEYWORD_SHORT_EXCEPTIONS
+        )
+    },
+    key=lambda pair: -len(pair[0]),
+)
 
 
 def canonical_motif(value: str) -> str:
@@ -288,20 +285,31 @@ def family_short_code(value: str) -> str:
 def family_from_text(text: str) -> Optional[str]:
     """Infer a canonical family from loose free text such as an FR3D query name.
 
-    Scans distinctive family keywords as substrings, most-specific first, so
+    Scans every registered family keyword as a substring and picks the one
+    starting earliest in the text (ties broken by the longest keyword), so
     ``geometric_5_sarcin_ricin`` and ``geometric_3_sarcin3geometric`` both map
-    to ``SARCIN-RICIN`` while ``reverse_kturn_*`` maps to ``REVERSE-K-TURN`` and
-    never to ``K-TURN``. Returns None when no keyword is found.
+    to ``SARCIN-RICIN``, ``reverse_kturn_*`` maps to ``REVERSE-K-TURN`` (its
+    keywords start at the same position as but are longer than ``K-TURN``'s),
+    and ``symbolic_6_GNRA_hairpin_symbolic`` maps to ``GNRA`` rather than the
+    more generic ``HL`` (``HAIRPIN``), because ``GNRA`` appears first. Returns
+    None when no keyword is found.
     """
     if not text:
         return None
     norm = _alnum(text)
     if not norm:
         return None
+    best_key = None
+    best_canonical = None
     for keyword, canonical in _TEXT_KEYWORDS:
-        if keyword in norm:
-            return canonical
-    return None
+        idx = norm.find(keyword)
+        if idx == -1:
+            continue
+        key = (idx, -len(keyword))
+        if best_key is None or key < best_key:
+            best_key = key
+            best_canonical = canonical
+    return best_canonical
 
 
 def labels_match_motif(
@@ -321,9 +329,22 @@ def labels_match_motif(
     exact canonicalization. Pass FR3D query names here so a query for ``SR``
     matches an FR3D motif named ``geometric_5_sarcin_ricin`` by keyword, while
     other sources keep strict family matching.
+
+    When *query_motif* is not itself a recognized family (e.g. the user pasted
+    a full FR3D selectable/annotation name such as
+    ``Geometric-5-Kink-Turn-65553`` or ``GEOMETRIC 5 KINK TURN 65553``,
+    :func:`canonical_motif` only strips a trailing numeric suffix and cannot
+    resolve the embedded family), the same keyword scan used for
+    *free_text_labels* is also applied to *query_motif* so the exact name
+    printed by ``rmv_db``/``rmv_list`` always round-trips into ``rmv_select``.
+    An exact literal fallback (ignoring case/separators) additionally covers
+    FR3D query families with no curated keyword at all, so pasting the exact
+    printed name always works even for families not in the alias table.
     """
     target = canonical_motif(query_motif)
     target_norm = _alnum(target)
+    query_text_family = None if is_known_family(query_motif) else family_from_text(query_motif)
+    query_literal = _alnum(query_motif)
     for label in labels:
         if not label:
             continue
@@ -341,6 +362,13 @@ def labels_match_motif(
         ):
             return True
     for text in free_text_labels:
-        if family_from_text(text) == target:
+        if not text:
+            continue
+        label_family = family_from_text(text)
+        if label_family is not None and (label_family == target or label_family == query_text_family):
+            return True
+        if query_literal and _alnum(text) == query_literal:
             return True
     return False
+
+
