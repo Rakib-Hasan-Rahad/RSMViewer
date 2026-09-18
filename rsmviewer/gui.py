@@ -4411,7 +4411,7 @@ class MotifVisualizerGUI:
         print("  rmv_loaded                          List loaded structure + source tags")
         print("  rmv_chains [structure]              Show chain / auth-label diagnostics")
         print("  rmv_debug ON|OFF                    Turn diagnostic messages on or off")
-        print("  rmv_reset                           Delete objects and clear all state/caches")
+        print("  rmv_reset                           Show details about rmv_reset cache/session")
         print("  rmv_reset cache                     Clear only the on-disk/in-memory caches")
         print("  rmv_reset session                   Clear only objects and session state")
         print("  rmv_help                            Show this reference")
@@ -8902,12 +8902,11 @@ def initialize_gui():
     cmd.extend('rmv_loaded', show_loaded_tags)
 
     def reset_plugin(mode='', *extra_args, **_kwargs):
-        """PyMOL command: Reset plugin/session state and/or on-disk/in-memory caches.
+        """PyMOL command: Reset on-disk/in-memory caches or session state.
 
         Usage:
-            rmv_reset               Delete all PyMOL objects, reset session state,
-                                     and clear all caches (equivalent to
-                                     'rmv_reset session' + 'rmv_reset cache')
+            rmv_reset               Show details about the two subcommands below.
+                                     Performs no reset on its own.
             rmv_reset cache         Clear only the caches (hierarchy SQLite cache,
                                      API response cache, provider in-memory
                                      caches, RMSX preannotated cache, FR3D run
@@ -8918,11 +8917,26 @@ def initialize_gui():
                                      Caches on disk are left untouched.
         """
         mode = str(mode).strip().lower()
-        if mode not in ('', 'cache', 'session'):
-            gui.command_error("Usage: rmv_reset [cache|session]")
+        if mode == '':
+            print("\n  rmv_reset requires an explicit subcommand. It performs no")
+            print("  reset on its own; choose one of:")
+            print("\n    rmv_reset cache      Clear only the caches (hierarchy SQLite")
+            print("                         cache, API response cache, provider")
+            print("                         in-memory caches, RMSX preannotated")
+            print("                         cache, FR3D run cache). Loaded objects")
+            print("                         and session state are left untouched.")
+            print("\n    rmv_reset session    Delete all PyMOL objects and reset")
+            print("                         session state (loaded structures, query")
+            print("                         groups, source selections, colors) to")
+            print("                         defaults. Caches on disk are left")
+            print("                         untouched.")
+            print()
             return
-        reset_session = mode in ('', 'session')
-        reset_cache = mode in ('', 'cache')
+        if mode not in ('cache', 'session'):
+            gui.command_error("Usage: rmv_reset cache|session")
+            return
+        reset_session = mode == 'session'
+        reset_cache = mode == 'cache'
 
         if reset_session:
             # Step 1: Delete all PyMOL objects
@@ -9053,25 +9067,10 @@ def initialize_gui():
             print()
             return
 
-        if mode == 'session':
-            gui.logger.success("Session reset to defaults")
-            print("\n  All objects deleted and session state reset.")
-            print("  Caches on disk were left untouched.")
-            print("  Ready for a fresh session.")
-            print()
-            return
-
-        gui.logger.success("Plugin reset to defaults")
-        print("\n  All objects deleted and plugin state and caches cleared.")
+        gui.logger.success("Session reset to defaults")
+        print("\n  All objects deleted and session state reset.")
+        print("  Caches on disk were left untouched.")
         print("  Ready for a fresh session.")
-        print("\n  Quick Start:")
-        print("     rmv_fetch 1S72                          # Load a PDB structure")
-        print("     rmv_db RNA3DMotifAtlas,RNAMotifScanX    # Select and load sources")
-        print("     rmv_select SARCIN-RICIN, 1S72, RNA3DMotifAtlas, as group_SR")
-        print("     rmv_list group_SR                       # Inspect the motif IDs")
-        print("     rmv_view group_SR                       # Highlight the family")
-        print("     rmv_create_object group_SR              # Create selectable objects")
-        print("     rmv_super group_SR                      # Medoid superimposition")
         print()
     
     cmd.extend('rmv_reset', reset_plugin)

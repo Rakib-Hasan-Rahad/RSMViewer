@@ -57,7 +57,7 @@ How `rmv_db FR3D` behaves depends on `data_mode`:
   the loaded structure and loads the freshly generated results. It does **not**
   reuse any previous run — every invocation regenerates the results.
 
-`rmv_reset` (or `rmv_reset cache`) clears the FR3D run cache at
+`rmv_reset cache` clears the FR3D run cache at
 `output/fr3d_runs/`, so cache mode then reports no results until you run from
 scratch again.
 
@@ -68,9 +68,9 @@ scratch again.
 > saved to a **persistent cache** that is reused by every later run, so
 > re-running FR3D — on the same or a different structure — is fast.
 >
-> The cache lives at `output/fr3d_runs/_fr3d_cache/`. `rmv_reset` (or
-> `rmv_reset cache`) removes it along with the rest of `output/fr3d_runs/`,
-> which forces the one-time rebuild on the next run.
+> The cache lives at `output/fr3d_runs/_fr3d_cache/`. `rmv_reset cache` removes
+> it along with the rest of `output/fr3d_runs/`, which forces the one-time
+> rebuild on the next run.
 
 Good structures to try: `1S72`, `4V9F`, `4V88`, `1HR2`, `1KXK`, `3CC2`,
 `1FFK`, `1NBS`, `1JJ2`, `1Y0Q`, `2GIS`.

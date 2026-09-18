@@ -413,7 +413,7 @@ rmv_db               # list sources and usage (no argument)
 rmv_help             # command reference
 rmv_refresh          # bypass caches
 rmv_debug ON         # verbose diagnostics (off by default)
-rmv_reset            # clear visual/session state and all caches
+rmv_reset            # show details about rmv_reset cache/session (no reset)
 rmv_reset cache      # clear only the caches
 rmv_reset session    # clear only objects and session state
 ```

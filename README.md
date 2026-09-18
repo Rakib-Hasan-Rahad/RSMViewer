@@ -202,7 +202,7 @@ superimposition, combination, coloring, and export.
 | `rmv_refresh [PDB]` | Bypass caches and re-fetch. With no argument, refreshes every active structure; with a PDB ID, refreshes only that one. |
 | `rmv_debug ON\|OFF` | Toggle verbose diagnostics (off by default). |
 | `rmv_help` | Show the in-PyMOL command reference. |
-| `rmv_reset` | Delete all objects and clear all caches and session state. |
+| `rmv_reset` | Show details about `rmv_reset cache`/`rmv_reset session`; performs no reset on its own. |
 | `rmv_reset cache` | Clear only the caches (hierarchy SQLite cache, API response cache, provider in-memory caches, RMSX preannotated cache, FR3D run cache); loaded objects/session state untouched. |
 | `rmv_reset session` | Delete all objects and reset session state (loaded structures, query groups, source selections, colors); on-disk caches untouched. |
 
@@ -331,7 +331,7 @@ FR3D has two modes, selected by `data_mode` in `config/fr3d_config.json`:
   fr3d-python pipeline on the loaded structure and loads the freshly generated
   results from a new timestamped run directory under `output/fr3d_runs/`.
 
-`rmv_reset` (or `rmv_reset cache`) clears the FR3D run cache at `output/fr3d_runs/`.
+`rmv_reset cache` clears the FR3D run cache at `output/fr3d_runs/`.
 
 To run the pipeline from scratch:
 

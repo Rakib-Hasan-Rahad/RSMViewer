@@ -354,8 +354,7 @@ with RSMViewer.
 
 ## S8. Caching architecture
 
-RSMViewer uses three complementary caches, all cleared by `rmv_reset` (or
-`rmv_reset cache`):
+RSMViewer uses three complementary caches, all cleared by `rmv_reset cache`:
 
 1. **API response cache** (`database/cache_manager.py`) — provider API responses
    stored outside the install directory with provenance and expiry; bypassed by
@@ -371,22 +370,16 @@ RSMViewer uses three complementary caches, all cleared by `rmv_reset` (or
 
 A snapshot of the SQLite display cache and the preannotated extraction cache is
 distributed with the repository so a fresh clone works immediately; both are
-regenerated on demand. `rmv_reset` performs a complete clean-slate reset: it
-deletes all PyMOL objects and session state, clears the SQLite cache (data and
-file, including `-wal`/`-shm`), the API response cache, each provider's
-in-process memory cache, the preannotated extraction cache, the motif loader,
-and custom color assignments.
+regenerated on demand. `rmv_reset` requires an explicit subcommand to actually
+reset anything. With no argument it only prints details about the two
+subcommands below and performs no reset:
 
-`rmv_reset` also accepts an optional argument to scope the reset to just the
-caches or just the session state:
-
-- `rmv_reset cache` — clears only the three caches above; loaded objects,
-  query groups, and other session state are left untouched.
+- `rmv_reset cache` — clears the three caches above (data and file, including
+  `-wal`/`-shm` for the SQLite cache); loaded objects, query groups, and other
+  session state are left untouched.
 - `rmv_reset session` — deletes all PyMOL objects and resets session state
   (loaded structures, query groups, source selections, motif loader, custom
   colors); caches on disk are left untouched.
-
-With no argument, `rmv_reset` performs both.
 
 ---
 
@@ -552,7 +545,7 @@ normalization including the `K-TURN`/`REVERSE-K-TURN` separation
 | Color | `rmv_set_color`, `rmv_color`, `rmv_colors` |
 | Analysis & export | `rmv_super`, `rmv_align`, `rmv_save`, `rmv_pair`, `rmv_pair_batch` |
 | External pipelines | `rmv_fr3d`, `rmv_rmsx`, `rmv_rmsx_doctor` |
-| Diagnostics & session | `rmv_chains`, `rmv_loaded`, `rmv_debug`, `rmv_help`, `rmv_reset` |
+| Diagnostics & session | `rmv_chains`, `rmv_loaded`, `rmv_debug`, `rmv_help`, `rmv_reset`, `rmv_reset cache`, `rmv_reset session` |
 
 For full syntax and examples see [../README.md](../README.md) and
 [TUTORIAL.md](TUTORIAL.md); for the in-PyMOL reference, run `rmv_help`.

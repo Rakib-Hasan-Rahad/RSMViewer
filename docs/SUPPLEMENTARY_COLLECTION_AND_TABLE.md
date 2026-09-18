@@ -576,10 +576,9 @@ cached_at
 ```
 
 The cache is not a second independent annotation table. It supports hierarchy
-display, stable lookup, and saved aliases. `rmv_reset` clears the in-memory
-state and resets the cache connection/data (`rmv_reset cache` clears just this
-and the other on-disk caches; `rmv_reset session` clears in-memory session
-state without touching this cache).
+display, stable lookup, and saved aliases. `rmv_reset cache` clears this and
+the other on-disk caches; `rmv_reset session` clears in-memory session state
+without touching this cache.
 
 ## 15. Why nested rows appear in `rmv_list`
 
