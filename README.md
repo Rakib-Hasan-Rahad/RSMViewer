@@ -151,7 +151,11 @@ annotations. Multiple structures can be loaded in one session.
 structure. Source names are case-insensitive and always shown canonically. Each
 source's raw records are kept separate at load time; `rmv_db` prints one compact
 table per source per structure (`SELECTABLE NAME`, `ANNOTATION NAME`, `COUNT`)
-and performs no overlap merging.
+and performs no overlap merging. `rmv_db` accepts **only** a comma-separated
+list of the four source names (`RNA3DMotifAtlas`, `Rfam`, `FR3D`,
+`RNAMotifScanX`) — spaces around commas are optional (`rmv_db A,B`,
+`rmv_db A, B`, and `rmv_db A,B,C,D` are all valid) — and nothing else; there
+is no numeric-ID, filtering, or threshold argument.
 
 **Consolidation.** Residue-set consolidation is applied within the requested
 scope during `rmv_select` (one family per structure) and, across families, only

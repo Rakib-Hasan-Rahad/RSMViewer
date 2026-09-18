@@ -701,8 +701,8 @@ class MotifVisualizerGUI:
         Pipeline path/option keys (anything except '_'-prefixed metadata and
         'pvalue_thresholds') override the bundled runtime defaults when present
         and non-empty. 'pvalue_thresholds' seeds self.user_rmsx_custom_pvalues
-        so Source 7 filtering picks up the user's cutoffs without requiring
-        'rmv_db 7 MOTIF value' for every family.
+        so Source 7 filtering picks up the user's cutoffs from config alone;
+        rmv_db never accepts per-family P-value overrides as arguments.
         """
         path = str(getattr(self, 'rmsx_pipeline_config_path', '') or '').strip()
         if not path or not os.path.isfile(path):
@@ -4352,7 +4352,9 @@ class MotifVisualizerGUI:
         print("\n  Examples:")
         print("    rmv_db RNA3DMotifAtlas")
         print("    rmv_db RNA3DMotifAtlas,Rfam")
-        print("\n  rmv_db loads annotations immediately for the active structure.")
+        print("    rmv_db RNA3DMotifAtlas,Rfam,FR3D,RNAMotifScanX")
+        print("\n  Only source names are accepted (spaces around commas are fine);")
+        print("  rmv_db loads annotations immediately for the active structure.")
         print("="*80 + "\n")
     
     def print_help(self):
@@ -4371,7 +4373,9 @@ class MotifVisualizerGUI:
         print("\n2. LOAD ANNOTATIONS")
         print("  rmv_db                              List the available annotation sources")
         print("  rmv_db <source>[,<source>...]       Load one or more sources for the structure")
-        print("                                      e.g. rmv_db RNA3DMotifAtlas,Rfam")
+        print("                                      e.g. rmv_db RNA3DMotifAtlas,Rfam,FR3D,RNAMotifScanX")
+        print("                                      (spaces around commas are optional; only")
+        print("                                      source names are accepted, nothing else)")
         print("  rmv_refresh                         Re-fetch, bypassing the online cache")
 
         print("\n3. QUERY AND GROUP MOTIFS")
@@ -5916,21 +5920,20 @@ class MotifVisualizerGUI:
         
     def set_source_mode(self, mode: str):
         """
-        Set the motif data source mode.
-        
+        Set the internal motif data source mode (not a direct rmv_db argument).
+
+        Called internally, with a hardcoded literal, by the source-dispatch
+        handlers rmv_db resolves a source name to (e.g. 'bgsu', 'rfam',
+        'local'). rmv_db itself never passes raw user text here.
+
         Args:
-            mode (str): Source mode: auto, local, web, bgsu, rfam, all, user
+            mode (str): Source mode: auto, local, web, bgsu, rfam, all
         """
         try:
             mode_lower = mode.lower()
-            
-            # Handle user annotations specially
-            if mode_lower == 'user':
-                self._set_user_annotations_source()
-                return
-            
+
             from .database import get_config, SourceMode
-            
+
             mode_map = {
                 'auto': SourceMode.AUTO,
                 'local': SourceMode.LOCAL,
@@ -5939,13 +5942,10 @@ class MotifVisualizerGUI:
                 'rfam': SourceMode.RFAM,
                 'all': SourceMode.ALL
             }
-            
+
             if mode_lower not in mode_map:
-                valid_modes = ['auto', 'local', 'web', 'web bgsu', 'web rfam', 'local atlas', 'local rfam', 'all', 'user fr3d', 'user rnamotifscan', 'user rnamotifscanx']
-                self.logger.error(f"Invalid source mode '{mode}'.")
-                self.logger.info("Valid source modes:")
-                for m in valid_modes:
-                    self.logger.info(f"  rmv_db {m}")
+                self.logger.error(f"Invalid internal source mode '{mode}'.")
+                self.logger.info(f"Valid internal modes: {', '.join(mode_map)}")
                 return
             
             config = get_config()
@@ -5964,57 +5964,14 @@ class MotifVisualizerGUI:
         except Exception as e:
             self.logger.error(f"Failed to set source mode: {e}")
     
-    def _set_user_annotations_source(self):
-        """Set source to user annotations with tool selection."""
-        print("\n" + "="*60)
-        print("USER ANNOTATIONS")
-        print("="*60)
-        print("\nAvailable tools:")
-        print("  1. fr3d           - FR3D output format (BGSU base pairs)")
-        print("  2. rnamotifscan   - RNAMotifScan output format (RMS)")
-        print("  3. rnamotifscanx  - RNAMotifScanX output format (RMSX)")
-        print("\nAfter selecting a tool with rmv_db user <TOOL>,")
-        print("use rmv_fetch to load structures:")
-        print("\nUsage:")
-        print("  rmv_fetch <PDB_ID>")
-        print("\nExample:")
-        print("  rmv_fetch 1S72")
-        print("="*60 + "\n")
-        
-        # Store that user annotations are selected
-        self.current_source_mode = 'user'
-        self.logger.success("User Annotations mode selected")
-        self.logger.info("Use: rmv_fetch <PDB_ID>")
-        self.logger.info("Tools: fr3d, rnamotifscan, rnamotifscanx")
-    
-    def _print_source_mode_info(self):
-        """Print information about current source mode."""
-        try:
-            from .database import get_config, SourceMode
-            
-            config = get_config()
-            mode = config.source_mode
-            
-            mode_descriptions = {
-                SourceMode.AUTO: "Use the configured named-source adapter",
-                SourceMode.LOCAL: "Legacy compatibility mode; offline databases are not shipped",
-                SourceMode.BGSU: "Use the RNA 3D Motif Atlas online adapter",
-                SourceMode.RFAM: "Use the Rfam online adapter",
-                SourceMode.ALL: "Combine the explicitly selected named sources"
-            }
-            
-            print(f"\nCurrent mode: {mode.value}")
-            print(f"Description: {mode_descriptions.get(mode, 'Unknown')}")
-            
-        except ImportError:
-            print("Source selector not available")
-    
     def _handle_source_by_id(self, source_id: int, extra_args: str = None):
-        """Compatibility handler for internal provider dispatch.
-        
-        Also detects multi-source mode when extra_args contains additional
-        numeric source IDs (e.g., 'rmv_db 1 3' or 'rmv_db 2 5 3').
-        
+        """Internal provider dispatch, addressed by resolved integer source ID.
+
+        `rmv_db` itself only accepts comma-separated source names (never
+        numeric IDs) and resolves them to integer IDs before calling this;
+        the space-separated-numeric-IDs combine-mode detection below is kept
+        only for other internal callers and is not reachable from `rmv_db`.
+
         Args:
             source_id (int): Source ID (1-8)
             extra_args (str): Optional arguments:
@@ -6028,10 +5985,9 @@ class MotifVisualizerGUI:
                 self.logger.error(f"  {sid} = {info['name']}")
             return
         
-        # --- Multi-source detection ---
+        # --- Multi-source detection (internal callers only; not reachable
+        # from rmv_db, which resolves names to IDs before calling this) ---
         # If extra_args contains ONLY numeric source IDs, enter combine mode.
-        # e.g., rmv_db 1 3 -> source_id=1, extra_args='3'
-        # e.g., rmv_db 2 5 3 -> source_id=2, extra_args='5 3'
         if extra_args:
             extra_parts = str(extra_args).strip().split()
             all_numeric = all(p.isdigit() for p in extra_parts)
@@ -6073,11 +6029,11 @@ class MotifVisualizerGUI:
     
     def _handle_multi_source(self, source_ids: list):
         """Handle multi-source combine mode.
-        
-        Called when user provides multiple source IDs:
-            rmv_db 1 3     -> source_ids=[1, 3]
-            rmv_db 2 5 3   -> source_ids=[2, 5, 3]
-        
+
+        Called by rmv_db (e.g. `rmv_db RNA3DMotifAtlas,FR3D`) after resolving
+        the comma-separated source names to their internal integer IDs, e.g.
+        source_ids=[3, 5].
+
         Priority order = left to right (first = highest priority).
         
         Args:
@@ -6197,15 +6153,13 @@ class MotifVisualizerGUI:
         self.logger.debug(f"  - Expected to load from: {provider_id} ONLY")
     
     def _handle_user_source_by_id(self, source_id: int, source_info: Dict, extra_args: str = None):
-        """Handle user annotation source selection by ID.
-        
-        Supports:
-        - rmv_db 6              (RMS with default filtering ON)
-        - rmv_db 6 off          (RMS with filtering OFF)
-        - rmv_db 6 on           (RMS with filtering ON - explicit)
-        - rmv_db 6 C-LOOP 0.05 KINK-TURN 0.02  (RMS with custom P-values)
-        - rmv_db 6 /path/to/data   (RMS with custom data directory)
-        - rmv_db 7 /path/to/data   (RMSX with custom data directory)
+        """Handle user annotation source selection, addressed by resolved ID.
+
+        Internal dispatch only: rmv_db accepts nothing but comma-separated
+        source names (e.g. `rmv_db FR3D` or `rmv_db RNAMotifScanX`) and never
+        passes extra_args here. Filtering on/off, per-family P-value
+        overrides, and custom data directories are not accepted as rmv_db
+        arguments; filtering/P-values come only from config/rmsx_config.json.
         """
         tool = source_info.get('tool')
         
@@ -6332,7 +6286,7 @@ class MotifVisualizerGUI:
             self.logger.info("")
             self.logger.info("Select a source first:")
             self.logger.info("  rmv_db      List all available sources")
-            self.logger.info("  rmv_db <N>       Select source (1-8)")
+            self.logger.info("  rmv_db <SOURCE>[,<SOURCE>...]   Select source(s), e.g. rmv_db RNA3DMotifAtlas")
             return
         
         # Handle combine mode (multiple sources)
@@ -6480,13 +6434,9 @@ class MotifVisualizerGUI:
         
         # RMS/RMSX/NoBIAS specific features
         if info.get('supports_filtering'):
-            print(f"\nWith filtering control:")
-            print(f"  rmv_db {source_id} off              Disable filtering (show all motifs)")
-            print(f"  rmv_db {source_id} on               Enable filtering (default)")
-            print(f"\nWith custom P-values:")
-            print(f"  rmv_db {source_id} C-LOOP 0.05 KINK-TURN 0.02")
-            print(f"    -> Apply custom thresholds for specific motif types")
-            print(f"    -> Other motif types use default thresholds")
+            print(f"\nFiltering and P-value thresholds:")
+            print(f"  rmv_db does not accept filtering or P-value arguments.")
+            print(f"  Configure them only in config/rmsx_config.json ('pvalue_thresholds').")
         
         print("\n" + "="*70 + "\n")
     
@@ -6509,66 +6459,11 @@ class MotifVisualizerGUI:
         
         print("\n" + "="*70)
         print("Usage:")
-        print("  rmv_db <ID>                    Select source by ID")
-        print("  rmv_source info <ID>           Show detailed info")
+        print("  rmv_db <SOURCE>[,<SOURCE>...]  Select source(s) by name")
+        print("  rmv_source info <ID>           Show detailed info (ID is 1-8, this command only)")
         print("  rmv_db                    List all sources (this display)")
         print("="*70 + "\n")
     
-    def _handle_user_source(self, tool_name):
-        """Handle user annotations source selection."""
-        if not tool_name:
-            self.command_error("Usage: rmv_db user <tool_name> [on|off]")
-            self.logger.error("Available tools:")
-            self.logger.error("  rmv_db user fr3d")
-            self.logger.error("  rmv_db user rms [on|off]          (default: on)")
-            self.logger.error("  rmv_db user rmsx [on|off]         (default: on)")
-            return
-        
-        # Parse tool name and optional on/off parameter
-        parts = str(tool_name).strip().split()
-        tool = parts[0].lower()
-        filtering_enabled = True  # Default: filters ON
-        
-        # Check for optional on/off parameter (only for rms and rmsx)
-        if len(parts) > 1:
-            filter_arg = parts[1].lower()
-            if filter_arg in ['on', 'off']:
-                filtering_enabled = (filter_arg == 'on')
-            else:
-                self.logger.warning(f"Unknown parameter '{filter_arg}'. Expected 'on' or 'off'. Using default: on")
-        
-        valid_tools = ['fr3d', 'rnamotifscan', 'rms', 'rnamotifscanx', 'rmsx']
-        if tool not in valid_tools:
-            self.logger.error(f"Invalid tool '{tool}'. Valid options: {', '.join(valid_tools)}")
-            return
-        
-        # Store filtering state for RMS and RMSX
-        if tool in ['rms', 'rnamotifscan']:
-            self.user_rms_filtering_enabled = filtering_enabled
-        elif tool in ['rmsx', 'rnamotifscanx']:
-            self.user_rmsx_filtering_enabled = filtering_enabled
-        
-        self.current_source_mode = 'user'
-        self.current_user_tool = tool
-        self.current_local_source = None
-        self.current_web_source = None
-        
-        tool_descriptions = {
-            'fr3d': 'FR3D (BGSU base pair annotations)',
-            'rnamotifscan': 'RNAMotifScan (RMS - structural motif search)',
-            'rms': 'RNAMotifScan (RMS - structural motif search)',
-            'rnamotifscanx': 'RNAMotifScanX (RMSX - extended motif search)',
-            'rmsx': 'RNAMotifScanX (RMSX - extended motif search)'
-        }
-        
-        # Build status message
-        status_msg = f"Source set to user annotations: {tool_descriptions.get(tool, tool)}"
-        if tool in ['rms', 'rnamotifscan', 'rmsx', 'rnamotifscanx']:
-            filter_status = "Filtering: ON (default cutoffs applied)" if filtering_enabled else "Filtering: OFF (all motifs shown)"
-            status_msg += f" | {filter_status}"
-        
-        self.logger.success(status_msg)
-        
     def _handle_local_source(self, source_name):
         """Handle local source selection."""
         if not source_name:
@@ -6631,65 +6526,6 @@ class MotifVisualizerGUI:
             self.logger.error(f"Invalid online source '{source_name}'")
             self.logger.error("Valid online sources: bgsu, rfam")
     
-    def _handle_combine_sources(self, source_ids_str: str):
-        """Handle combining multiple sources.
-        
-        Args:
-            source_ids_str: Space-separated source IDs (e.g., "1 3" or "2 5")
-        """
-        if not source_ids_str:
-            self.command_error("Usage: rmv_db combine <ID1> <ID2> [<ID3> ...]")
-            self.logger.error("Example: rmv_db combine 1 3    (combine Atlas + BGSU)")
-            self.logger.error("Valid source IDs:")
-            self.logger.error("  1 = RNA 3D Motif Atlas (Local)")
-            self.logger.error("  2 = Rfam (Local)")
-            self.logger.error("  3 = BGSU RNA 3D Hub (Online)")
-            self.logger.error("  4 = Rfam API (Online)")
-            self.logger.error("  5 = FR3D Annotations (User)")
-            self.logger.error("  6 = RNAMotifScan (User)")
-            return
-        
-        # Parse source IDs
-        try:
-            source_ids = [int(sid.strip()) for sid in source_ids_str.split()]
-        except ValueError:
-            self.logger.error(f"Invalid source IDs: '{source_ids_str}'")
-            self.logger.error("IDs must be integers (1-6)")
-            return
-        
-        # Validate source IDs
-        try:
-            from .database.source_registry import get_source_registry
-            registry = get_source_registry()
-            is_valid, msg = registry.validate_source_ids(source_ids)
-            
-            if not is_valid:
-                self.logger.error(msg)
-                return
-            
-            # Store combined source IDs
-            self.combined_source_ids = source_ids
-            self.current_source_mode = 'combine'
-            self.current_local_source = None
-            self.current_web_source = None
-            self.current_user_tool = None
-            
-            # BUG FIX: Clear specific_source when combining multiple sources
-            from .database import get_config
-            config = get_config()
-            config.specific_source = None
-            
-            # Display what we're combining
-            source_names = registry.get_source_descriptions(source_ids)
-            self.logger.success(f"Combining {len(source_ids)} sources:")
-            for i, name in enumerate(source_names, 1):
-                self.logger.info(f"  {i}. {name}")
-            
-            self.logger.info("Use 'rmv_fetch <PDB_ID>' to load and combine data from these sources")
-            
-        except Exception as e:
-            self.logger.error(f"Failed to validate sources: {e}")
-    
     def refresh_motifs_action(self, pdb_id: str = None):
         """
         Force refresh cache and collect motif data again.
@@ -6718,7 +6554,7 @@ class MotifVisualizerGUI:
             
             # Determine which source(s) to refresh from
             if not self.current_source_mode:
-                self.logger.error("No source selected. Use rmv_db <N> first.")
+                self.logger.error("No source selected. Use rmv_db <SOURCE> first.")
                 return
             
             # Describe what we're refreshing
@@ -6756,97 +6592,6 @@ class MotifVisualizerGUI:
         except Exception as e:
             self.logger.error(f"Failed to refresh motifs: {e}")
     
-    def print_source_info(self):
-        """Print the currently selected data source, loaded PDB, and motif count."""
-        print("\n" + "="*70)
-        print("  CURRENT SOURCE")
-        print("="*70)
-        
-        # Show loaded PDB info
-        pdb_id = self.loaded_pdb_id
-        if pdb_id:
-            print(f"\n  Loaded PDB: {pdb_id.upper()}")
-            # Show motif counts if available
-            loaded_motifs = self.viz_manager.motif_loader.get_loaded_motifs() if self.viz_manager and self.viz_manager.motif_loader else {}
-            if loaded_motifs:
-                total_instances = sum(len(info.get('motif_details', [])) for info in loaded_motifs.values())
-                print(f"  Motifs: {len(loaded_motifs)} types, {total_instances} total instances")
-            else:
-                print(f"  Motifs: None loaded (run rmv_load_motif)")
-        else:
-            print(f"\n  Loaded PDB: None (run rmv_fetch <PDB_ID>)")
-        
-        # Show chain mode
-        cif_mode = getattr(self, 'cif_use_auth', 1)
-        chain_label = 'auth_asym_id' if cif_mode == 1 else 'label_asym_id'
-        print(f"  Chain ID mode: {chain_label} (cif_use_auth={cif_mode})")
-        
-        # Determine and display the active source with ID
-        print()
-        if self.current_source_mode == 'user':
-            tool_descriptions = {
-                'fr3d': '[5] FR3D (BGSU base pair annotations)',
-                'rnamotifscan': '[6] RNAMotifScan (RMS - structural motif search)',
-                'rms': '[6] RNAMotifScan (RMS - structural motif search)',
-                'rnamotifscanx': '[7] RNAMotifScanX (RMSX - extended motif search)',
-                'rmsx': '[7] RNAMotifScanX (RMSX - extended motif search)',
-            }
-            tool_name = self.current_user_tool or 'unknown'
-            description = tool_descriptions.get(tool_name, tool_name)
-            print(f"  Source: {description}")
-            print(f"  Type: User annotations")
-            
-        elif self.current_source_mode == 'local':
-            if self.current_local_source == 'atlas':
-                print(f"  Source: [1] RNA 3D Motif Atlas")
-                print(f"  Type: Local (offline) - 759 PDB structures")
-            elif self.current_local_source == 'rfam':
-                print(f"  Source: [2] Rfam")
-                print(f"  Type: Local (offline) - 173 PDB structures")
-            else:
-                print(f"  Source: [1] RNA 3D Motif Atlas + [2] Rfam")
-                print(f"  Type: Local (offline)")
-            
-        elif self.current_source_mode == 'web':
-            if self.current_web_source == 'bgsu_api':
-                print(f"  Source: [3] BGSU RNA 3D Hub")
-                print(f"  Type: Online API - ~3000+ PDB structures")
-            elif self.current_web_source == 'rfam_api':
-                print(f"  Source: [4] Rfam API")
-                print(f"  Type: Online API - All Rfam motifs")
-            else:
-                print(f"  Source: Online API (auto-select)")
-                print(f"  Type: Online API")
-            
-        elif self.current_source_mode == 'combine':
-            ids_str = ', '.join(str(s) for s in self.combined_source_ids)
-            names = []
-            for sid in self.combined_source_ids:
-                info = SOURCE_ID_MAP.get(sid, {})
-                names.append(f"[{sid}] {info.get('name', 'Unknown')}")
-            print(f"  Source: Combined - {' + '.join(names)}")
-            print(f"  Type: Multi-source merge (IDs: {ids_str})")
-            
-        else:
-            print(f"  Source: None selected")
-            print(f"  Run: rmv_db   (check available sources)")
-            print(f"  Run: rmv_db <N>    (1-8)")
-        
-        # Always show workflow steps
-        print("\n" + "-"*70)
-        print("   WORKFLOW:")
-        print("     Step 1: rmv_fetch <PDB_ID>       # Load PDB structure")
-        print("     Step 2: rmv_db               # Check available sources")
-        print("     Step 3: rmv_db <N>                # Select data source (1-8)")
-        print("     Step 4: rmv_load_motif            # Fetch motif data")
-        print("-"*70)
-        print("   AVAILABLE SOURCES:")
-        print("     [1] RNA 3D Motif Atlas   [2] Rfam          (offline)")
-        print("     [3] BGSU API       [4] Rfam API      (online)")
-        print("     [5] FR3D           [6] RMS   [7] RMSX  [8] NoBIAS (user annotations)")
-        print("")
-        print("\n" + "="*70 + "\n")
-
 
 # Global GUI instance
 _gui_instance = None
@@ -7149,7 +6894,7 @@ def initialize_gui():
         Workflow:
             rmv_fetch 1S72               # Step 1: Load PDB structure
             rmv_db                  # Step 2: Check available sources
-            rmv_db 3                     # Step 3: Select BGSU API
+            rmv_db RNA3DMotifAtlas       # Step 3: Select a source
             rmv_load_motif               # Step 4: Fetch motif data
             rmv_summary                  # Step 5: Show motif types & counts
             rmv_summary HL               # Step 6: Show instances of a type
@@ -7167,8 +6912,8 @@ def initialize_gui():
         if not gui.current_source_mode:
             gui.logger.error("No source selected.")
             gui.logger.info("Select a source first:")
-            gui.logger.info("  rmv_db <N>                 (1-8)")
-            gui.logger.info("  Example: rmv_db 3          (BGSU API)")
+            gui.logger.info("  rmv_db <SOURCE>[,<SOURCE>...]")
+            gui.logger.info("  Example: rmv_db RNA3DMotifAtlas")
             gui.logger.info("  rmv_db                (list all)")
             return
         
@@ -7291,7 +7036,7 @@ def initialize_gui():
         print(f"\n  To visualize motifs for {pdb_arg}, follow these steps:\n")
         print(f"  Step 1:  rmv_fetch {pdb_arg}        # Fetch the PDB structure")
         print(f"  Step 2:  rmv_db               # Check available data sources")
-        print(f"  Step 3:  rmv_db <N>                # Select data source (1-8)")
+        print(f"  Step 3:  rmv_db <SOURCE>            # Select a source, e.g. RNA3DMotifAtlas")
         print(f"  Step 4:  rmv_load_motif             # Fetch motif data")
         print(f"  Step 5:  rmv_summary               # Show motif types & counts")
         print(f"  Step 6:  rmv_summary <TYPE>         # Show instances of a type")
@@ -7453,7 +7198,7 @@ def initialize_gui():
             return
         gui.create_annotation_objects(value)
     
-    def select_database(mode='', tool='', jaccard_threshold=''):
+    def select_database(mode='', *extra_args, **_kwargs):
         """Select named annotation sources and load them for the active structure.
 
         Usage:
@@ -7461,17 +7206,19 @@ def initialize_gui():
             rmv_db Rfam
             rmv_db RNA3DMotifAtlas,Rfam
             rmv_db FR3D,RNAMotifScanX
+            rmv_db RNA3DMotifAtlas,Rfam,FR3D,RNAMotifScanX
+
+        The Jaccard residue-overlap threshold is code-defined (see
+        DEFAULT_JACCARD_THRESHOLD in rsmviewer/database/consolidated_table.py)
+        and is not a command-line argument here.
         """
         if not mode:
             gui.print_sources()
             return
 
-        if jaccard_threshold:
-            gui.logger.warning("Jaccard threshold is code-defined in rsmviewer/database/consolidated_table.py; command-line overrides are ignored.")
-        
-        source_parts = [str(mode).strip()]
-        if tool:
-            source_parts.append(str(tool).strip())
+        source_parts = [str(mode).strip()] + [
+            str(part).strip() for part in extra_args if str(part).strip()
+        ]
         source_expression = ",".join(source_parts)
 
         from .database.source_registry import get_source_registry
@@ -7541,7 +7288,7 @@ def initialize_gui():
             gui.command_error("Usage: rmv_source info [<ID>]")
             gui.logger.error("  rmv_source info        Show current source info")
             gui.logger.error("  rmv_source info <N>    Show detailed info about source N")
-            gui.logger.error("  rmv_db <N>             Select a source")
+            gui.logger.error("  rmv_db <SOURCE>        Select a source, e.g. rmv_db RNA3DMotifAtlas")
             return
         
         mode_arg = str(mode).strip()
@@ -7558,7 +7305,7 @@ def initialize_gui():
         
         gui.command_error(f"Unknown subcommand: {first_part}")
         gui.logger.info("Use: rmv_source info [<ID>]")
-        gui.logger.error("       rmv_db <ID>        - Select a source")
+        gui.logger.error("       rmv_db <SOURCE>    - Select a source, e.g. rmv_db RNA3DMotifAtlas")
         gui.logger.error("  rmv_source info <N>  - N can be 1-8")
     
     def refresh_motifs(pdb_id=''):
@@ -8239,11 +7986,10 @@ def initialize_gui():
             print("  rmv_fr3d status                 Show FR3D registration status")
             print("  rmv_load_motif                  Run FR3D search on loaded PDB")
             print("\nRNAMotifScanX wrapper commands:")
-            print("  rmv_db 7                     Activate integrated Source-7 runtime")
+            print("  rmv_db RNAMotifScanX          Activate integrated Source-7 runtime")
             print("  rmv_rmsx_doctor             Validate Source-7 runtime installation")
             print("  rmv_rmsx setup              Attempt first-run runtime setup")
             print("  rmv_rmsx test")
-            print("  rmv_rmsx run 1S72")
             print("  rmv_rmsx run 1S72")
             print("="*60 + "\n")
             return
@@ -8903,7 +8649,7 @@ def initialize_gui():
             print("\n  No PDB+source combinations loaded yet.")
             print("  Load data first:")
             print("    rmv_fetch 1S72")
-            print("    rmv_db 7")
+            print("    rmv_db RNAMotifScanX")
             print("    rmv_load_motif\n")
             return
 
