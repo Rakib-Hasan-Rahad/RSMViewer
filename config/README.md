@@ -97,13 +97,8 @@ Inside each downloaded archive (and in `pdb_prebuild_dir`), data is keyed by PDB
 ```text
 rmsx_work_default/
 └── <pdb_id_lowercase>/                 e.g. 1s72/
-    ├── _prep_main/                      inputs used to build the targets
-    │   ├── <PDB>.pdb                    coordinate file
-    │   ├── <PDB>.pdb.mca                MC-Annotate output
-    │   └── <PDB>_<chain>.rmsx.in/.nch   RMSX target input files
-    └── <chain>/                         one folder per scanned chain, e.g. 0/
-        ├── <pdb>_<chain>.rmsx.in/.nch   RMSX inputs for this chain
-        ├── sarcin-ricin_consensus.log   alignment OUTPUT (one per family)
+    └── <chain>/                         one folder per chain, e.g. 0/
+        ├── sarcin-ricin_consensus.log   alignment output (one per family)
         ├── k-turn_consensus.log
         ├── c-loop_consensus.log
         ├── e-loop_consensus.log

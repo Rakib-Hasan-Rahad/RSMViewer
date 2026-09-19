@@ -315,18 +315,14 @@ results, and is accepted only if the archive extracts safely and contains at
 least one `*_consensus.log`. If the server has no results for a PDB (HTTP 404),
 RSMViewer reports that explicitly and the structure can be scanned with
 `run_from_scratch`.
-Each PDB's data is keyed by PDB ID and chain and contains both the RMSX inputs and the
-precomputed alignment outputs:
+Each PDB's data is keyed by PDB ID and chain and contains the precomputed
+alignment outputs:
 
 ```text
 rmsx_work_default/
 └── <pdb_id_lowercase>/                e.g. 1s72/
-    ├── _prep_main/                     inputs used to build the targets
-    │   ├── <PDB>.pdb                   coordinates
-    │   ├── <PDB>.pdb.mca               MC-Annotate output
-    │   └── <PDB>_<chain>.rmsx.in/.nch  RMSX target inputs
-    └── <chain>/                        one folder per scanned chain, e.g. 0/
-        ├── sarcin-ricin_consensus.log  alignment OUTPUT (one per family)
+    └── <chain>/                        one folder per chain, e.g. 0/
+        ├── sarcin-ricin_consensus.log  alignment output (one per family)
         ├── k-turn_consensus.log
         ├── c-loop_consensus.log
         ├── e-loop_consensus.log

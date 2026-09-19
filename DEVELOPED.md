@@ -252,8 +252,7 @@ through `MotifVisualizerGUI._ensure_rmsx_results`, which re-reads the config.
   most up-to-date RNAMotifScanX annotations are used. The download is staged in
   a temporary directory and moved into place only when complete; unsafe archive
   paths, links, and archives with no `*_consensus.log` are rejected; an existing
-  `<pdb>/` folder is merged into, never replaced (it may hold your own prepared
-  inputs). TLS is verified (system store, then `certifi`); only if both fail is
+  `<pdb>/` folder is merged into, never replaced. TLS is verified (system store, then `certifi`); only if both fail is
   an unverified connection used, with a warning. An existing local folder is
   never re-downloaded, so to refresh a PDB delete `<pdb>/` under
   `pdb_prebuild_dir`. A PDB the server does not have (HTTP 404) produces an
@@ -262,8 +261,7 @@ through `MotifVisualizerGUI._ensure_rmsx_results`, which re-reads the config.
   files straight from that folder (no extraction cache) and concatenates **all chains** of a family into one result file (so
   no chain overwrites another).
 - **From-scratch mode:** `_run_rmsx_from_scratch` calls
-  `rmsx_runner.run_scan_prepared`, synchronously. RSMViewer never runs
-  MC-Annotate/RNAVIEW and never falls back to preannotated data. Output goes to
+  `rmsx_runner.run_scan_prepared`, synchronously, and never falls back to preannotated data. Output goes to
   `output/rmsx_results/run_from_scratch/<PDB>_<stamp>/`; a same-session repeat
   reuses it (`_rmsx_scan_runs`, cleared by `rmv_refresh` and `rmv_reset session`).
   Query models are searched in `Queries/reduced` before `Queries` because the
