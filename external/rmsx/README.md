@@ -17,29 +17,27 @@ external/rmsx_preannotated/rmsx_work_default/1s72/
 It contains the consensus result logs for chains `0` and `9` and lets the
 default `rmv_db RNA3DMotifAtlas,RNAMotifScanX` workflow run immediately for
 `1S72`. Other structures are downloaded on first use from the public results
-server (or read from the optional offline bundle; see
-`external/rmsx_preannotated/README.md`).
+server, one PDB at a time (see `external/rmsx_preannotated/README.md`).
 
 ## Run RMSX from scratch
 
-Only use this directory when `data_mode` is set to `run_from_scratch` in
-`config/rmsx_config.json`. Install the external RNAMotifScanX runtime in this
-layout:
+Only needed when `data_mode` is `"run_from_scratch"` in `config/rmsx_config.json`.
+This directory holds everything required:
 
 ```text
 external/rmsx/
-  bin/
-    scan
-    MC-Annotate
-    rnaview
-  queries/
-    *_consensus.struct
-  RNAVIEW/
-    BASEPARS/
+  RNAMotifScanX_src/     C++ source, scoring matrices (mat/), query models
+                         (Queries/reduced/, Queries/), and a Linux x86-64 build
+                         of `scan`
+  bin/<platform>/scan    a `scan` built from that source on your machine
+                         (created by `rmv_setup RNAMotifScanX`; git-ignored)
 ```
 
-The executables must have execute permission. RSMViewer does not version the
-external runtime or its generated files.
+The bundled `scan` is a Linux x86-64 executable. Run `rmv_setup RNAMotifScanX`
+once: it uses that binary on Linux x86-64, builds one from source on macOS and
+other Linux (needs a C++ compiler and Boost), or falls back to WSL2 (Windows) or
+Docker. `rmv_rmsx_doctor` shows what is available. See
+[../rmsx_setup.md](../rmsx_setup.md).
 
 ## Configuration
 
@@ -47,9 +45,7 @@ external runtime or its generated files.
 "data_mode": "preannotated"
 ```
 
-With `preannotated`, RSMViewer prefers the extracted local folder, then downloads
-the requested PDB's results from `preannotated_base_url`, and only then falls back
-to `external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz`
-(downloadable from Figshare:
-[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)).
+With `preannotated`, RSMViewer uses the local folder
+`external/rmsx_preannotated/rmsx_work_default/<pdb>/` if it has results, and
+otherwise downloads that PDB's `<pdb>.tar.gz` from `preannotated_base_url`.
 Keep the research-paper cutoffs in `pvalue_thresholds`; PyMOL commands do not

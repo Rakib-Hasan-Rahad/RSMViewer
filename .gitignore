@@ -1,17 +1,18 @@
 # ── External runtimes and datasets ───────────────────────────────────────────
 # The repository ships the external/ folder structure, its README files, and a
-# small RMSX preannotated sample so users can paste the large / user-provided
-# content locally. These three user-provided paths are intentionally NOT
-# versioned (see external/*/README.md for what to place where):
+# small RMSX preannotated sample (1s72, 1ffk). Every other PDB is downloaded
+# per PDB into rmsx_work_default/ on first use and is NOT versioned (see
+# external/rmsx_preannotated/README.md). The old offline bundle is no longer used
+# but stays ignored so a copy left on disk is never committed by accident.
 external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz
 external/rmsx_preannotated/rmsx_work_default/
 !external/rmsx_preannotated/rmsx_work_default/1s72/
 !external/rmsx_preannotated/rmsx_work_default/1s72/**
 !external/rmsx_preannotated/rmsx_work_default/1ffk/
 !external/rmsx_preannotated/rmsx_work_default/1ffk/**
-!external/rmsx_preannotated/rmsx_work_default/4v88/
-!external/rmsx_preannotated/rmsx_work_default/4v88/**
 external/rmsx/**/RNAVIEW/
+# Scanner built from source by `rmv_setup RNAMotifScanX` (one folder per platform)
+external/rmsx/bin/*/
 external/fr3d/fr3d-python-latest/*
 !external/fr3d/fr3d-python-latest/.gitkeep
 

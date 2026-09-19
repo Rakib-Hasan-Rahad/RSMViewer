@@ -310,9 +310,11 @@ RSMViewer downloads `<preannotated_base_url>/<pdb_lowercase>.tar.gz` (for exampl
 `https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default/1s72.tar.gz`)
 and extracts it under `external/rmsx_preannotated/rmsx_work_default/`; later
 loads use that local copy. The lookup order is the local folder, then the
-download, then an optional offline bundle (Figshare:
-[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)).
-If the server has no results for a PDB, RSMViewer reports that explicitly.
+download. A download is attempted only for a 4-character PDB ID with no local
+results, and is accepted only if the archive extracts safely and contains at
+least one `*_consensus.log`. If the server has no results for a PDB (HTTP 404),
+RSMViewer reports that explicitly and the structure can be scanned with
+`run_from_scratch`.
 Each PDB's data is keyed by PDB ID and chain and contains both the RMSX inputs and the
 precomputed alignment outputs:
 
@@ -334,18 +336,22 @@ rmsx_work_default/
 For each requested PDB, RSMViewer collects the matching `*_consensus.log` files
 across **all** chains of a family, concatenating them into a single result file
 so that no chain's hits overwrite another's, then applies the per-family P-value
-threshold and consolidates. The extracted logs are cached per PDB (S8) so later
-loads and later PyMOL sessions are fast. The preferred input is the local
-extracted `rmsx_work_default/<pdb>/` folder (populated by the download above); a
-large compressed offline bundle is only a last-resort fallback because enumerating
-its members requires decompressing the whole stream.
+threshold and consolidates. The logs are read directly from the local
+`rmsx_work_default/<pdb>/` folder (populated by the download above), so a PDB is
+downloaded once and later loads and PyMOL sessions need no connection.
 
-**From-scratch mode.** With `"data_mode": "run_from_scratch"`, RSMViewer runs
-only the RMSX `scan` step (`rmv_rmsx run <PDB_ID>`) on `.rmsx.in`/`.nch` inputs
-that you provide under the preannotated directory; it never runs MC-Annotate or
-RNAVIEW itself and never falls back to preannotated data. The scanner is the
-native Linux binary or, on macOS/Windows, a Docker wrapper (see
-`external/RMSX_FROM_SCRATCH.md`).
+**From-scratch mode.** With `"data_mode": "run_from_scratch"`, `rmv_db
+RNAMotifScanX` runs only the RMSX `scan` step on the PDB's prepared
+`.rmsx.in`/`.nch` inputs (downloaded from the results server if absent); it never
+runs MC-Annotate or RNAVIEW itself and never falls back to preannotated data.
+The scanner is a Linux x86-64 binary, so `rmv_setup RNAMotifScanX` prepares a
+runtime for the host: the bundled binary (Linux x86-64), a native build from the
+bundled source (macOS, other Linux), WSL2 (Windows), or Docker; `rmv_rmsx_doctor`
+diagnoses it. Query models come from `Queries/reduced` (the set that reproduces
+the published results). RMSX estimates P-values by random simulation, so
+borderline hits vary slightly between runs, and the scanner can crash on very
+large RNAs; hits printed before a crash are kept and flagged (see
+`external/rmsx_setup.md`).
 
 **P-value thresholds.** Per-family acceptance thresholds live only under
 `pvalue_thresholds` in `config/rmsx_config.json`; command-line overrides are
@@ -362,7 +368,7 @@ with RSMViewer.
 
 ## S8. Caching architecture
 
-RSMViewer uses three complementary caches, all cleared by `rmv_reset cache`:
+RSMViewer uses two complementary caches, all cleared by `rmv_reset cache`:
 
 1. **API response cache** (`database/cache_manager.py`) — provider API responses
    stored outside the install directory with provenance and expiry; bypassed by
@@ -370,21 +376,15 @@ RSMViewer uses three complementary caches, all cleared by `rmv_reset cache`:
 2. **SQLite display cache** (`database/motif_hierarchy_cache.py`) — a text-keyed
    store of per-source labels/hierarchies keyed by canonical `source_key`
    values, used to render `.L1`/`.L2` columns and saved-query metadata.
-3. **Preannotated RMSX extraction cache** (`tools/rmsx_runner.py`) — per-PDB
-   extracted `*_consensus.log` files at
-   `output/rmsx_results/.preannotated_cache/<pdb_id>/`, stamped with the source
-   archive/directory identity (path, modification time, size) so a changed
-   source invalidates the cache automatically. The per-PDB results downloaded
-   from the server into `rmsx_work_default/` are data, not cache, and are not
-   removed by `rmv_reset cache`.
+The per-PDB RMSX results downloaded from the server into `rmsx_work_default/`
+are data, not cache, and are not removed by `rmv_reset cache`.
 
-A snapshot of the SQLite display cache and the preannotated extraction cache is
-distributed with the repository so a fresh clone works immediately; both are
-regenerated on demand. `rmv_reset` requires an explicit subcommand to actually
+A snapshot of the SQLite display cache is distributed with the repository so a
+fresh clone works immediately; it is regenerated on demand. `rmv_reset` requires an explicit subcommand to actually
 reset anything. With no argument it only prints details about the two
 subcommands below and performs no reset:
 
-- `rmv_reset cache` — clears the three caches above (data and file, including
+- `rmv_reset cache` — clears the two caches above (data and file, including
   `-wal`/`-shm` for the SQLite cache); loaded objects, query groups, and other
   session state are left untouched.
 - `rmv_reset session` — deletes all PyMOL objects and resets session state
@@ -554,7 +554,7 @@ normalization including the `K-TURN`/`REVERSE-K-TURN` separation
 | Visualization & objects | `rmv_view`, `rmv_hide`, `rmv_create_object`, `rmv_bg_color`, `rmv_toggle` |
 | Color | `rmv_set_color`, `rmv_color`, `rmv_colors` |
 | Analysis & export | `rmv_super`, `rmv_align`, `rmv_save`, `rmv_pair`, `rmv_pair_batch` |
-| External pipelines | `rmv_fr3d`, `rmv_rmsx`, `rmv_rmsx_doctor` |
+| External pipelines | `rmv_fr3d`, `rmv_setup`, `rmv_rmsx_doctor` |
 | Diagnostics & session | `rmv_chains`, `rmv_loaded`, `rmv_debug`, `rmv_help`, `rmv_reset`, `rmv_reset cache`, `rmv_reset session` |
 
 For full syntax and examples see [../README.md](../README.md) and

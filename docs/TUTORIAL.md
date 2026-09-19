@@ -376,11 +376,11 @@ rmv_db RNA3DMotifAtlas, RNAMotifScanX
 
 Later loads of the same PDB use the local copy and need no internet connection
 (delete the `<pdb_id>/` folder to fetch the newest published version again).
-For each PDB the lookup order is: local folder, then download, then an optional
-offline bundle from Figshare
-([https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795))
-set in `pdb_prebuild_archive`. If the server has no results for a PDB yet,
-RSMViewer says so.
+For each PDB the lookup order is: local folder, then download. The download link
+uses the lowercase PDB ID (`<preannotated_base_url>/<pdb>.tar.gz`) and is tried
+only for a 4-character PDB ID with no local results; the archive must extract
+safely and contain at least one `*_consensus.log`. If the server has no results
+for a PDB yet, RSMViewer says so and you can scan it with `run_from_scratch`.
 
 Each PDB's data contains both the RMSX **inputs** (`.rmsx.in` / `.rmsx.nch`) and
 the precomputed **outputs** (`*_consensus.log`). In preannotated mode RSMViewer
@@ -388,19 +388,37 @@ reads the outputs directly.
 
 ### From-scratch mode
 
-Set:
+RNAMotifScanX is a C++ program and the binary shipped with RSMViewer is a Linux
+x86-64 executable, so first prepare the scanner for your machine (once):
+
+```text
+rmv_setup RNAMotifScanX
+```
+
+It uses the bundled binary on Linux x86-64, builds one from the bundled source on
+macOS and other Linux (needs a C++ compiler and Boost), or falls back to WSL2
+(Windows) or Docker. Run `rmv_rmsx_doctor` to see what is available. Then set:
 
 ```json
 "data_mode": "run_from_scratch"
 ```
 
-and provide the RMSX input files yourself (`.rmsx.in`/`.rmsx.nch`, generated
-externally with RNAVIEW and MC-Annotate) under
-`external/rmsx_preannotated/rmsx_work_default/<pdb_id>/<chain>/`. RSMViewer runs
-only the RNAMotifScanX `scan` step on those inputs (`rmv_rmsx run <PDB_ID>`); it
-never runs MC-Annotate/RNAVIEW itself and never falls back to preannotated data
-for a from-scratch run. See
-[external/RMSX_FROM_SCRATCH.md](../external/RMSX_FROM_SCRATCH.md).
+and use the same command as before:
+
+```text
+rmv_fetch 1S72
+rmv_db RNAMotifScanX
+```
+
+RSMViewer scans the PDB's prepared `.rmsx.in`/`.rmsx.nch` inputs from
+`external/rmsx_preannotated/rmsx_work_default/<pdb_id>/<chain>/` (downloaded from
+the results server if you do not have them), prints progress per chain and
+family, and loads the result. PyMOL pauses until the scan finishes (about a
+minute and a half for 1S72). It never runs MC-Annotate/RNAVIEW itself and never
+falls back to preannotated data. RNAMotifScanX estimates P-values by random
+simulation, so borderline hits vary slightly between runs. See
+[external/rmsx_setup.md](../external/rmsx_setup.md) (config modes, and setup for
+macOS, Windows and Linux).
 
 P-value thresholds are configured only under `pvalue_thresholds` in
 `config/rmsx_config.json`; the same thresholds apply to preannotated and freshly

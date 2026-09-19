@@ -163,8 +163,9 @@ containment/Jaccard merging, so overlapping and nested annotations are preserved
 for later `rmv_select` / `rmv_combine_groups`. The load prints one compact table
 per source per structure (`SELECTABLE NAME`, `ANNOTATION NAME`, `COUNT`) via
 `_family_source_breakdown`. When RNAMotifScanX (source 7) is among the sources,
-`_ensure_rmsx_preannotated` ingests its preannotated results first (downloading
-them from the results server when the PDB is not already local; see below).
+`_ensure_rmsx_results` first makes its results available per `data_mode`
+(preannotated: local folder, else a per-PDB download from the results server;
+run_from_scratch: a real scan; see below).
 
 ### `rmv_select`
 
@@ -229,9 +230,15 @@ Bundled geometric queries reference an external PDB template and require
 
 ### RNAMotifScanX
 
-Runner: `rsmviewer/tools/rmsx_runner.py`. `config/rmsx_config.json` controls
-`data_mode`, executable paths, the preannotated archive/directory, motif
-families, output directory, and `pvalue_thresholds`.
+Modules: `rsmviewer/tools/rmsx_runner.py` (preannotated data, prepared inputs, and
+running scans) and `rsmviewer/tools/rmsx_runtime.py` (finding, building and
+invoking the `scan` executable per platform, plus setup and diagnostics).
+`config/rmsx_config.json` controls `data_mode`, `scan_runtime`, paths, motif
+families, output directory, and `pvalue_thresholds`. Commands: `rmv_db
+RNAMotifScanX` (loads results per `data_mode`), `rmv_setup RNAMotifScanX`
+(`MotifVisualizerGUI.setup_rmsx_runtime`), and `rmv_rmsx_doctor`
+(`MotifVisualizerGUI.rmsx_doctor`). Both single- and multi-source `rmv_db` go
+through `MotifVisualizerGUI._ensure_rmsx_results`, which re-reads the config.
 
 - **Preannotated mode:** `MotifVisualizerGUI._copy_preannotated_rmsx` resolves a
   PDB's results in this order and stops at the first source with data:
@@ -239,9 +246,7 @@ families, output directory, and `pvalue_thresholds`.
   2. `download_preannotated_pdb`, which fetches
      `<preannotated_base_url>/<pdb_lowercase>.tar.gz` (default
      `https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default`)
-     and extracts it into `pdb_prebuild_dir`;
-  3. the optional local `pdb_prebuild_archive` (offline fallback, last because
-     reading it decompresses the whole archive).
+     and extracts it into `pdb_prebuild_dir`.
 
   The preannotated data is collected live from the project's server so that the
   most up-to-date RNAMotifScanX annotations are used. The download is staged in
@@ -253,14 +258,40 @@ families, output directory, and `pvalue_thresholds`.
   never re-downloaded, so to refresh a PDB delete `<pdb>/` under
   `pdb_prebuild_dir`. A PDB the server does not have (HTTP 404) produces an
   explicit message rather than a silent empty result.
-  `copy_preannotated_results` then extracts the matching `*_consensus.log`
-  outputs and concatenates **all chains** of a family into one result file (so
+  `copy_preannotated_results` then reads the matching `*_consensus.log`
+  files straight from that folder (no extraction cache) and concatenates **all chains** of a family into one result file (so
   no chain overwrites another).
-- **From-scratch mode:** `rmv_rmsx run <PDB>` (`run_scan_prepared`) runs the
-  RMSX `scan` step on `.rmsx.in`/`.rmsx.nch` inputs you supply under
-  `pdb_prebuild_dir`. RSMViewer never runs MC-Annotate/RNAVIEW itself (the
-  helpers in `rmsx_runner.py` are not called from any entry point) and never
-  falls back to preannotated data.
+- **From-scratch mode:** `_run_rmsx_from_scratch` calls
+  `rmsx_runner.run_scan_prepared`, synchronously, on the `.rmsx.in`/`.rmsx.nch`
+  pairs in `pdb_prebuild_dir/<pdb>/<chain>/` (`ensure_prepared_inputs` downloads
+  them from the results server when missing; the precomputed logs are never used
+  as scan results). RSMViewer never runs MC-Annotate/RNAVIEW and never falls back
+  to preannotated data. Output goes to
+  `output/rmsx_results/run_from_scratch/<PDB>_<stamp>/`; a same-session repeat
+  reuses it (`_rmsx_scan_runs`, cleared by `rmv_refresh` and `rmv_reset session`).
+  Query models are searched in `Queries/reduced` before `Queries` because the
+  reduced set reproduces the published results.
+- **Scanner runtime** (`rmsx_runtime.resolve_runtime`, `scan_runtime` config):
+  *native* (a `scan` that runs on this OS/CPU: the bundled ELF on Linux x86-64,
+  or one built by `build_native_scan` into `bin/<platform>/`), then *WSL2*
+  (Windows), then *Docker* (`ubuntu:22.04`, `linux/amd64`). `build_command`
+  builds the exact command for each runtime and translates paths (`to_wsl_path`;
+  Docker bind mounts, one per directory). `build_native_scan` compiles the 8
+  `.cc` files with the system C++ compiler and Boost (Homebrew is installed on
+  macOS when needed), links only the Boost libraries that exist (`boost_system`
+  is header-only in current Boost), and retries the link against older macOS
+  SDKs because a Command Line Tools SDK newer than the OS can have unreadable
+  `.tbd` stubs. `setup` tries native, then a native build, then WSL2, then
+  Docker (starting Colima if it is installed but stopped), verifying each by
+  starting the scanner. The Windows routes are implemented but unverified on a
+  real Windows machine.
+- **Scanner crashes:** `scan` can segfault part-way through a large structure
+  (also seen on the cluster that produced the preannotated logs, which end with
+  `# scan failed rc=-11`). `_run_one_scan` keeps the complete alignments printed
+  before the crash (`_complete_alignments`), marks the log the same way, and the
+  run is reported in `partial_runs`; a crash with no complete alignment fails.
+- **P-values** are random estimates (`scan` seeds a simulation with the clock),
+  so borderline hits vary between runs; alignments and scores are deterministic.
 
 The converter accepts both tabular RMSX rows and alignment-report logs
 (`Aligning`, `Alignment score`, `P-value` blocks), applying per-family P-value
@@ -285,25 +316,21 @@ next `rmv_db` and a family deleted from the file returns to its paper default.
   cache using canonical `source_key` values. It auto-migrates a legacy
   integer-keyed schema, and exposes `close()` / `close_hierarchy_cache()` so
   `rmv_reset` can drop and reopen a fresh connection.
-- `rsmviewer/tools/rmsx_runner.py` maintains a per-PDB **preannotated extraction
-  cache** at `output/rmsx_results/.preannotated_cache/<pdb_id>/`. Enumerating
-  members of the large gzip archive requires decompressing the whole stream, so
-  each PDB's small `*_consensus.log` files are extracted once and reused on
-  later loads and across PyMOL sessions. The cache is stamped with the source
-  archive/directory identity (path, mtime, size); a changed source invalidates
-  it automatically.
-- A snapshot of the SQLite hierarchy cache and the preannotated extraction cache
-  is shipped in the repository so a fresh clone works immediately; both are
-  regenerated on demand.
+- RMSX preannotated data is **not** a cache: it is downloaded per PDB into
+  `external/rmsx_preannotated/rmsx_work_default/<pdb>/` and read from there, so
+  `rmv_reset cache` leaves it in place. (It only removes the
+  `output/rmsx_results/.preannotated_cache/` folder that older versions created.)
+- A snapshot of the SQLite hierarchy cache is shipped in the repository so a
+  fresh clone works immediately; it is regenerated on demand.
 
 `rmv_reset` requires an explicit subcommand to actually reset anything. With no
 argument it only prints details about the two subcommands below and performs
 no reset:
 
 - `rmv_reset cache` — clears the caches: the SQLite hierarchy cache (data and
-  file, including `-wal`/`-shm`), the on-disk API response cache, each
-  provider's in-process memory cache, and the preannotated RMSX extraction
-  cache (results already downloaded into `rmsx_work_default/` are kept). Loaded objects, query groups, and other session state are left
+  file, including `-wal`/`-shm`), the on-disk API response cache, and each
+  provider's in-process memory cache (RMSX results downloaded into
+  `rmsx_work_default/` are data, not cache, and are kept). Loaded objects, query groups, and other session state are left
   untouched.
 - `rmv_reset session` — deletes all PyMOL objects and resets session state
   (loaded structures, query groups, source selections, motif loader, custom
@@ -333,7 +360,8 @@ rsmviewer/
 │   └── user_annotations/         FR3D / RMSX converters + provider
 └── tools/
     ├── fr3d_search_runner.py     official FR3D runner (unmodified checkout)
-    └── rmsx_runner.py            RMSX preannotated + from-scratch pipeline
+    ├── rmsx_runner.py            RMSX preannotated data, prepared inputs, scan execution
+    └── rmsx_runtime.py           RMSX scanner runtime: find/build/verify (native, WSL2, Docker), setup, doctor
 ```
 
 ---

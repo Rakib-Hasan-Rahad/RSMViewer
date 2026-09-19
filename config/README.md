@@ -15,8 +15,8 @@ refresh is explicitly requested.
 ### How paths are resolved
 
 All relative paths in these files are resolved **relative to this `config/`
-folder**. For example, `../external/rmsx/bin/scan` points to
-`<project>/external/rmsx/bin/scan`. You may also use absolute paths.
+folder**. For example, `../external/rmsx_preannotated/rmsx_work_default` points to
+`<project>/external/rmsx_preannotated/rmsx_work_default`. You may also use absolute paths.
 
 ### How to load a config
 
@@ -40,19 +40,23 @@ RMSX has two modes, selected by `data_mode`:
   most up-to-date RNAMotifScanX annotations, RSMViewer collects them live from
   our server, downloading each requested PDB's results the first time; no binary
   is executed.
-- **`run_from_scratch`** — runs the RNAMotifScanX `scan` binary on the
-  `.rmsx.in`/`.rmsx.nch` input files **you provide**. RSMViewer does **not** run
-  MC-Annotate or RNAVIEW; you generate those inputs externally (see
-  `external/RMSX_FROM_SCRATCH.md`) and place them under `pdb_prebuild_dir`.
+- **`run_from_scratch`** — runs the RNAMotifScanX `scan` program on the
+  `.rmsx.in`/`.rmsx.nch` input files in `pdb_prebuild_dir` (downloaded from the
+  results server if missing). RSMViewer does **not** run MC-Annotate or RNAVIEW.
+  Prepare the scanner for your OS once with `rmv_setup RNAMotifScanX`.
 
 ### Fields
 
 | Field | Type | Meaning / possible values |
 | --- | --- | --- |
 | `data_mode` | string | `"preannotated"` (default) reads prebuilt results; `"run_from_scratch"` runs the `scan` binary on your prepared inputs. |
-| `rmsx_executable` | path | RNAMotifScanX `scan` binary. Only needed for `run_from_scratch`; the runner also auto-resolves the bundled ELF and Docker wrapper. |
+| `scan_runtime` | string | How `run_from_scratch` runs the scanner: `"auto"` (default: native, then WSL2 on Windows, then Docker) or force `"native"`, `"wsl"`, `"docker"`. Prepared by `rmv_setup RNAMotifScanX`; inspect with `rmv_rmsx_doctor`. |
+| `rmsx_executable` | path | Optional `scan` binary of your own. Leave empty to use the bundled Linux binary or the one `rmv_setup` builds into `external/rmsx/bin/<platform>/`. |
+| `scan_chains` | list | Chains to scan in `run_from_scratch`, e.g. `["9"]`. `[]` (default) = every prepared chain. |
+| `query_motifs_dir` | path | Optional directory of `<family>_consensus.struct` query models. Empty = `external/rmsx/RNAMotifScanX_src/Queries/reduced` (the models behind the published results). |
+| `num_threads` | int | Threads passed to `scan` (default 4). |
+| `scan_timeout_seconds` | int | Time limit per (chain, family) scan (default 21600 = 6 hours). |
 | `preannotated_base_url` | URL | Server folder holding one `<pdb_lowercase>.tar.gz` per PDB. `preannotated` mode downloads `<base>/<pdb>.tar.gz` when the PDB is not already in `pdb_prebuild_dir`. Default: `https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default`. |
-| `pdb_prebuild_archive` | path | Optional local `.tar.gz` bundle of preannotated results, read only as a last-resort offline fallback (slow: the whole archive is decompressed). |
 | `pdb_prebuild_dir` | path | Directory that downloaded results are extracted into, and that holds preannotated logs and your prepared per-chain `.rmsx.in`/`.rmsx.nch` inputs (used by `run_from_scratch`). |
 | `output_dir` | path | Where per-family result logs are written/read (`../output/rmsx_results`). |
 | `motif_families` | list | Families to load: `k-turn`, `c-loop`, `sarcin-ricin`, `reverse-kturn`, `e-loop`. |
@@ -75,9 +79,11 @@ rmv_select SR, 1S72, RNA3DMotifAtlas and RNAMotifScanX, as group_TP
 For the requested PDB, RSMViewer uses the first of these that has data:
 
 1. `pdb_prebuild_dir/<pdb>/` (already downloaded or placed by you);
-2. a download of `<preannotated_base_url>/<pdb>.tar.gz`, extracted into
-   `pdb_prebuild_dir` (needs an internet connection; later loads are local);
-3. the optional `pdb_prebuild_archive` (offline fallback).
+2. a download of `<preannotated_base_url>/<pdb>.tar.gz` (lowercase PDB ID),
+   extracted into `pdb_prebuild_dir` (needs an internet connection; later loads
+   are local). It is attempted only for a 4-character PDB ID with no local
+   results, and accepted only if the archive extracts safely and holds at least
+   one `*_consensus.log`.
 
 It then copies the matching family logs into `output_dir` and loads them. The
 Jaccard/containment consolidation aligns them with the other sources. If the
@@ -109,29 +115,38 @@ block (across all chains of the PDB), applies the family P-value threshold, then
 consolidates. To add a new PDB, drop a `rmsx_work_default/<pdb_id>/` folder in
 the same structure and it becomes available to `rmv_db RNAMotifScanX`.
 
-### Run-from-scratch mode (optional, needs the `scan` binary + your inputs)
+### Run-from-scratch mode (optional)
 
-Set `data_mode` to `"run_from_scratch"`. In this mode you provide the RMSX input
-files yourself: generate them externally with RNAVIEW and MC-Annotate, then place
-the per-chain `.rmsx.in`/`.rmsx.nch` pairs under `pdb_prebuild_dir`:
+```text
+rmv_setup RNAMotifScanX          # once: native build (macOS/Linux), WSL2 (Windows) or Docker
+```
+
+Set `data_mode` to `"run_from_scratch"`, then:
+
+```text
+rmv_fetch 1S72
+rmv_db RNAMotifScanX
+```
+
+The scanner runs on the per-chain inputs in `pdb_prebuild_dir`:
 
 ```text
 <pdb_prebuild_dir>/<pdb_id_lowercase>/<chain>/<pdb>_<chain>.rmsx.in
 <pdb_prebuild_dir>/<pdb_id_lowercase>/<chain>/<pdb>_<chain>.rmsx.nch
 ```
 
-RSMViewer then runs only the RNAMotifScanX `scan` binary on those inputs and
-loads the fresh output. It never runs MC-Annotate/RNAVIEW itself and never falls
-back to preannotated data. Run it with:
+They are downloaded from the results server if you do not have them; for a PDB
+the server lacks, generate them externally with RNAVIEW and MC-Annotate and place
+them there. RSMViewer never runs MC-Annotate/RNAVIEW itself and never falls back
+to preannotated data. PyMOL pauses until the scan finishes. Note that RNAMotifScanX
+estimates P-values by random simulation (so borderline hits vary slightly between
+runs) and can crash on very large RNAs, in which case the hits found before the
+crash are kept and you are warned.
 
-```text
-rmv_fetch 1KXK
-rmv_rmsx run 1KXK
-```
-
-See `external/RMSX_FROM_SCRATCH.md` for the full input-generation and platform
-(native Linux / Docker) instructions. The RNAMotifScanX software and its
-binaries are **not** distributed with RSMViewer.
+See [`external/rmsx_setup.md`](../external/rmsx_setup.md) for the full setup guide
+(config modes, preannotated download, macOS/Windows/Linux requirements, troubleshooting).
+The RNAMotifScanX source and a Linux x86-64 build are included under
+`external/rmsx/`.
 
 ---
 

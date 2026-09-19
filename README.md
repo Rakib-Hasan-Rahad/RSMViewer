@@ -201,15 +201,15 @@ superimposition, combination, coloring, and export.
 | `rmv_db` (no args) | Show the four public sources and usage. |
 | `rmv_source info [<N>]` | Show the active source configuration. |
 | `rmv_fr3d status\|setup\|register\|run [PDB]` | Inspect / install / register / run the FR3D pipeline. |
-| `rmv_rmsx status\|config\|doctor\|setup\|test\|run\|run_current` | Inspect or run the RNAMotifScanX integration. |
-| `rmv_rmsx_doctor` | Diagnose the RMSX runtime and dependencies. |
+| `rmv_setup RNAMotifScanX` | One-shot: prepare the RNAMotifScanX scanner for this machine (native build on macOS/Linux, WSL2 on Windows, or Docker). Needed only for `run_from_scratch`. |
+| `rmv_rmsx_doctor` | Diagnose the RNAMotifScanX scanner runtime, build toolchain, data, and results server. |
 | `rmv_pair <selection>` / `rmv_pair_batch <selection>` | Inspect base-pair interactions. |
 | `rmv_chains` / `rmv_loaded` | Show chain diagnostics / loaded structure and source tags. |
 | `rmv_refresh [PDB]` | Bypass caches and re-fetch. With no argument, refreshes every active structure; with a PDB ID, refreshes only that one. |
 | `rmv_debug ON\|OFF` | Toggle verbose diagnostics (off by default). |
 | `rmv_help` | Show the in-PyMOL command reference. |
 | `rmv_reset` | Show details about `rmv_reset cache`/`rmv_reset session`; performs no reset on its own. |
-| `rmv_reset cache` | Clear only the caches (hierarchy SQLite cache, API response cache, provider in-memory caches, RMSX preannotated cache, FR3D run cache); loaded objects/session state untouched. |
+| `rmv_reset cache` | Clear only the caches (hierarchy SQLite cache, API response cache, provider in-memory caches, FR3D run cache); loaded objects/session state untouched. |
 | `rmv_reset session` | Delete all objects and reset session state (loaded structures, query groups, source selections, colors); on-disk caches untouched. |
 
 The selection grammar has four comma-separated clauses:
@@ -386,36 +386,52 @@ rmv_db RNAMotifScanX
 For each requested PDB RSMViewer looks for the results in this order:
 
 1. **Local folder** `external/rmsx_preannotated/rmsx_work_default/<pdb>/`.
-2. **Download** `<preannotated_base_url>/<pdb>.tar.gz` (lowercase PDB ID, e.g.
-   `.../rmsx_work_default/1s72.tar.gz`) from the public results server, extract
-   it into the folder above, and read it from there. Later loads of the same
-   PDB use the local folder and do not download again.
-3. **Local archive** (offline fallback only): the optional Figshare bundle
-   `pdb_prebuild_archive`, [doi:10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795).
-   It is read last because scanning it means decompressing the whole archive.
+2. **Download** the PDB's archive from the public results server, extract it into
+   the folder above, and read it from there. The link uses the **lowercase** PDB
+   ID; later loads of the same PDB use the local folder and do not download again:
 
-The server address is `preannotated_base_url` in `config/rmsx_config.json`. The
-preannotated dataset may not cover every PDB; if a structure is not available,
-RSMViewer says so and you can scan it yourself with `run_from_scratch` below.
+   ```text
+   https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default/<pdb>.tar.gz
+   e.g. .../rmsx_work_default/1s72.tar.gz
+   ```
+
+A download is attempted only for a 4-character PDB ID with no local results and a
+reachable server, and is accepted only if the archive extracts safely and holds at
+least one `*_consensus.log`. The server address is `preannotated_base_url` in
+`config/rmsx_config.json`. The dataset may not cover every PDB yet; if a
+structure is not available RSMViewer says so and you can scan it yourself with
+`run_from_scratch` below. To refresh a PDB, delete its local folder and rerun.
 
 ### Run-from-scratch
 
-To run the real scanner instead of reading precomputed logs, set
-`"data_mode": "run_from_scratch"` in `config/rmsx_config.json`. In this mode you
-provide the RMSX input files yourself: generate the `.rmsx.in`/`.rmsx.nch` pairs
-externally with RNAVIEW and MC-Annotate, place them under
-`external/rmsx_preannotated/rmsx_work_default/<pdb>/<chain>/`, then run:
+To run the real scanner instead of reading precomputed logs:
 
 ```text
-rmv_fetch 1KXK
-rmv_rmsx run 1KXK
+rmv_setup RNAMotifScanX          # once: prepares the scanner for your OS
 ```
 
-RSMViewer runs only the RNAMotifScanX `scan` binary on your inputs and loads the
-fresh output. It never runs MC-Annotate/RNAVIEW itself and never falls back to
-preannotated data.
+set `"data_mode": "run_from_scratch"` in `config/rmsx_config.json`, then:
 
-> **Detailed RMSX instructions** are in [external/RMSX_FROM_SCRATCH.md](external/RMSX_FROM_SCRATCH.md).
+```text
+rmv_fetch 1S72
+rmv_db RNAMotifScanX
+```
+
+RNAMotifScanX is a C++ program and the binary in this repository is a Linux
+x86-64 executable, so `rmv_setup RNAMotifScanX` picks whatever works on your
+machine: the bundled binary (Linux x86-64), a copy **built from the bundled
+source** (macOS and other Linux; needs a C++ compiler and Boost, and installs
+Boost with Homebrew on macOS), **WSL2** (Windows), or **Docker**. Run
+`rmv_rmsx_doctor` at any time to see what is available.
+
+The scanner runs on the PDB's prepared `.rmsx.in`/`.rmsx.nch` inputs in
+`external/rmsx_preannotated/rmsx_work_default/<pdb>/<chain>/` (downloaded from
+the results server if you do not have them). PyMOL pauses until the scan
+finishes, which takes about a minute and a half for 1S72. RSMViewer never runs
+MC-Annotate/RNAVIEW itself and never falls back to preannotated data.
+
+> **Full RMSX setup guide** (config modes, preannotated download, and
+> run-from-scratch on macOS, Windows and Linux): [external/rmsx_setup.md](external/rmsx_setup.md).
 
 
 ---
@@ -457,7 +473,7 @@ the URL it tried; use `run_from_scratch` to scan the structure yourself.
 
 **RMSX returns no motifs.** A result can legitimately contain zero accepted
 motifs when every reported P-value exceeds the configured threshold. Check
-`data_mode`, the preannotated archive/layout, and `pvalue_thresholds`.
+`data_mode` and `pvalue_thresholds`.
 
 ---
 

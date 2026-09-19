@@ -35,7 +35,7 @@ from .database.consolidated_table import ConsolidatedAnnotationTable, DEFAULT_JA
 from .database.query_parser import QuerySyntaxError, parse_selection_query
 from pathlib import Path
 import platform
-from .tools.runtime_layout import discover_rmsx_runtime_dir, get_runtime_platform_dir, validate_fr3d_checkout
+from .tools.runtime_layout import discover_rmsx_runtime_dir, validate_fr3d_checkout
 
 
  # ---------------------------------------------------------------------------
@@ -515,15 +515,9 @@ class MotifVisualizerGUI:
         self.fr3d_output_dir = str((distribution_dir / 'output' / 'fr3d_runs').resolve())
         self._fr3d_reset_state()
 
-        # RNAMotifScanX wrapper runtime settings (persisted in user_annotations/RNAMotifScanX)
-        rmsx_dir = plugin_dir / 'database' / 'user_annotations' / 'RNAMotifScanX'
-        self.rmsx_config_file = rmsx_dir / '.rmsx_wrapper.json'
-        self.rmsx_executable_path = ''
+        # RNAMotifScanX (Source 7): settings live in config/rmsx_config.json;
+        # the scanner runtime (native / WSL / Docker) is found by tools/rmsx_runtime.py.
         self.rmsx_output_path = str((distribution_dir / 'output' / 'rmsx_results').resolve())
-        self.rmsx_working_dir = ''
-        self.rmsx_args_template = ''
-        self.rmsx_auto_run_on_fetch = False
-        # RMSX runtime config (integrated source-7 runtime)
         self.rmsx_pipeline_config_path = str((distribution_dir / 'config' / 'rmsx_config.json').resolve())
         self.rmsx_pipeline_config = {}
         self.rmsx_runtime_dir = discover_rmsx_runtime_dir(
@@ -532,8 +526,9 @@ class MotifVisualizerGUI:
         )
         if not self.rmsx_runtime_dir:
             self.rmsx_runtime_dir = str((distribution_dir / 'external' / 'rmsx').resolve())
-        self.rmsx_setup_attempted = False
-        self._load_rmsx_wrapper_config()
+        # PDB -> output folder of this session's run_from_scratch scan, so a repeated
+        # rmv_db does not start a scan that can take hours all over again.
+        self._rmsx_scan_runs = {}
 
     def _normalize_filter_motif_name(self, motif_name: str) -> str:
         """Normalize user-entered motif names for RMS/RMSX/NoBIAS P-value maps.
@@ -580,119 +575,26 @@ class MotifVisualizerGUI:
                 return str(candidate.resolve())
         return ''
 
-    def _prepare_local_pdb_for_rmsx(self, pdb_id: str, output_dir: str, force_refresh: bool = False) -> str:
-        """Export a local PDB from the loaded PyMOL object for RMSX preprocessing."""
-        try:
-            pdb_upper = str(pdb_id or '').strip().upper()
-            if not pdb_upper:
-                return ''
-            os.makedirs(output_dir, exist_ok=True)
-            pdb_out = os.path.join(output_dir, f"{pdb_upper}.pdb")
-            if os.path.isfile(pdb_out) and not force_refresh:
-                return pdb_out
-
-            object_names = set(cmd.get_names('objects'))
-            obj_candidates = [
-                str(getattr(self, 'loaded_pdb', '') or '').strip(),
-                pdb_upper.lower(),
-                pdb_upper,
-            ]
-            for obj_name in obj_candidates:
-                if obj_name and obj_name in object_names:
-                    cmd.save(pdb_out, obj_name)
-                    if os.path.isfile(pdb_out):
-                        self.logger.debug(f"Exported local PDB for RMSX preprocessing: {pdb_out}")
-                        return pdb_out
-            return ''
-        except Exception as exc:
-            self.logger.debug(f"RMSX local PDB export step skipped: {exc}")
-            return ''
-
     def _build_internal_rmsx_config(self) -> Dict:
-        """Build Source-7 RMSX runtime config from bundled plugin assets."""
-        runtime_dir = Path(self.rmsx_runtime_dir)
-        bin_root = runtime_dir / 'bin'
-        queries_dir = runtime_dir / 'queries'
+        """Build the RMSX (Source 7) settings: defaults overlaid with config/rmsx_config.json.
 
-        platform_dir = get_runtime_platform_dir()
-
-        platform_bin_dir = bin_root / platform_dir
-        candidate_bin_dirs = []
-        if platform_bin_dir.exists():
-            candidate_bin_dirs.append(platform_bin_dir)
-        if bin_root.exists():
-            for p in sorted(bin_root.iterdir()):
-                if p.is_dir() and p not in candidate_bin_dirs:
-                    candidate_bin_dirs.append(p)
-
-        rmsx_exe = ''
-        mc_exe = ''
-        for bdir in candidate_bin_dirs:
-            if not rmsx_exe:
-                rmsx_exe = self._find_first_existing_path([
-                    bdir / 'RNAMotifScanX',
-                    bdir / 'scan',
-                    bdir / 'RNAMotifScanX.exe',
-                    bdir / 'scan.exe',
-                ])
-            if not mc_exe:
-                mc_exe = self._find_first_existing_path([
-                    bdir / 'MC-Annotate',
-                    bdir / 'mc-annotate',
-                    bdir / 'MC-Annotate.exe',
-                    bdir / 'mc-annotate.exe',
-                ])
-            if rmsx_exe and mc_exe:
-                break
-
-        # RNAVIEW: reference preprocessing merges MC-Annotate with RNAVIEW.
-        # Discover a compiled rnaview binary (if the runtime has been built) and
-        # the bundled RNAVIEW base directory that holds the BASEPARS resources.
-        rnaview_exe = ''
-        for bdir in candidate_bin_dirs:
-            rnaview_exe = self._find_first_existing_path([
-                bdir / 'rnaview',
-                bdir / 'rnaview.exe',
-            ])
-            if rnaview_exe:
-                break
-        rnaview_base = runtime_dir / 'src' / 'RNAMotifScanX_src' / 'ThirdParty' / 'RNAVIEW'
-        rnaview_dir = str(rnaview_base.resolve()) if (rnaview_base / 'BASEPARS').exists() else ''
-        if not rnaview_exe:
-            bundled_rnaview = rnaview_base / 'bin' / 'rnaview'
-            if bundled_rnaview.exists():
-                rnaview_exe = str(bundled_rnaview.resolve())
-
-        prebuild_archive = ''
-        archive_candidates = [
-            runtime_dir.parent.parent / 'database' / 'user_annotations' / 'RNAMotifScanX' / 'PDB_prebuild.tgz',
-            runtime_dir.parent.parent / 'RNAMotifScanX' / 'PDB_prebuild.tgz',
-            runtime_dir.parent / 'RNAMotifScanX' / 'PDB_prebuild.tgz',
-        ]
-        for candidate in archive_candidates:
-            if candidate.exists() and candidate.is_file():
-                prebuild_archive = str(candidate.resolve())
-                break
-
+        Re-run on every rmv_db so edits to the config file apply immediately.
+        """
+        from .tools.rmsx_runner import DEFAULT_PREANNOTATED_BASE_URL, DEFAULT_SCAN_TIMEOUT_SECONDS
         cfg = {
             'data_mode': 'preannotated',
             'jaccard_threshold': self.jaccard_threshold,
-            'rmsx_executable': rmsx_exe,
-            'mc_annotate_executable': mc_exe,
-            'rnaview_executable': rnaview_exe,
-            'rnaview_dir': rnaview_dir,
-            'pdb_prebuild_archive': prebuild_archive,
+            'rmsx_runtime_dir': str(Path(self.rmsx_runtime_dir).resolve()),
+            'rmsx_executable': '',            # optional: a scan binary of your own
+            'scan_runtime': 'auto',           # auto | native | wsl | docker
             'pdb_prebuild_dir': str((Path(__file__).parent.parent / 'external' / 'rmsx_preannotated' / 'rmsx_work_default').resolve()),
-            'incorporate_rnaview': True,
-            'rnaview_required': False,
-            'query_motifs_dir': str(queries_dir.resolve()) if queries_dir.exists() else '',
-            'cif_input_dir': '',
+            'preannotated_base_url': DEFAULT_PREANNOTATED_BASE_URL,
+            'query_motifs_dir': '',
             'output_dir': self.rmsx_output_path,
-            'auto_download_cif': False,
             'motif_families': ['k-turn', 'c-loop', 'sarcin-ricin', 'reverse-kturn', 'e-loop'],
-            'target_chains': ['0'],
-            'max_strands': 3,
+            'scan_chains': [],                # run_from_scratch: [] = every prepared chain
             'num_threads': 4,
+            'scan_timeout_seconds': DEFAULT_SCAN_TIMEOUT_SECONDS,
         }
         self._apply_external_rmsx_config(cfg)
         return cfg
@@ -718,9 +620,8 @@ class MotifVisualizerGUI:
 
         config_dir = Path(path).resolve().parent
         path_keys = {
-            'rmsx_executable', 'mc_annotate_executable', 'rnaview_executable',
-            'rnaview_dir', 'pdb_prebuild_archive', 'pdb_prebuild_dir', 'query_motifs_dir',
-            'cif_input_dir', 'output_dir',
+            'rmsx_executable', 'pdb_prebuild_dir',
+            'query_motifs_dir', 'output_dir',
         }
         for key, value in external.items():
             if key.startswith('_') or key == 'pvalue_thresholds':
@@ -750,104 +651,50 @@ class MotifVisualizerGUI:
             self.logger.debug(f"Loaded {len(overrides)} P-value cutoff(s) from {path}")
 
 
-    def _run_rmsx_runtime_setup(self, build: bool = False) -> Dict:
-        """Run integrated RMSX runtime doctor/setup script and return parsed report."""
-        setup_script = Path(self.rmsx_runtime_dir) / 'setup_runtime.py'
-        if not setup_script.exists():
-            return {
-                'ok': False,
-                'missing': ['setup_runtime.py'],
-                'setup_message': f'Missing setup script: {setup_script}',
-            }
+    def setup_rmsx_runtime(self, install_deps: bool = True) -> bool:
+        """`rmv_setup RNAMotifScanX`: make sure a scanner runs on this machine.
 
-        cmdline = [
-            sys.executable,
-            str(setup_script),
-            '--runtime-dir',
-            self.rmsx_runtime_dir,
-            '--json',
-        ]
-        query_file = str(getattr(self, 'rmsx_query_file', '') or '').strip()
-        if query_file:
-            cmdline.extend(['--query-file', query_file])
-        if build:
-            cmdline.append('--build')
-
-        try:
-            proc = subprocess.run(cmdline, capture_output=True, text=True, check=False)
-            output = (proc.stdout or '').strip()
-            if not output:
-                return {
-                    'ok': False,
-                    'missing': ['runtime setup output'],
-                    'setup_message': (proc.stderr or 'runtime setup produced no output').strip(),
-                }
-            report = json.loads(output)
-            return report
-        except Exception as e:
-            return {
-                'ok': False,
-                'missing': ['runtime setup execution'],
-                'setup_message': f'Failed to run setup script: {type(e).__name__}: {e}',
-            }
-
-    def ensure_rmsx_runtime_ready(self, auto_setup: bool = True) -> bool:
-        """Ensure integrated Source-7 runtime is present. Attempts setup once per session."""
-        report = self._run_rmsx_runtime_setup(build=False)
-        if report.get('ok'):
+        Uses an existing native scanner, otherwise builds one from the bundled
+        source (macOS/Linux), otherwise WSL2 (Windows), otherwise Docker.
+        """
+        from .tools import rmsx_runtime
+        cfg = self._build_internal_rmsx_config()
+        self.rmsx_pipeline_config = dict(cfg)
+        self.logger.info("Setting up the RNAMotifScanX scanner for this machine...")
+        report = rmsx_runtime.setup(cfg, self.rmsx_runtime_dir, self.logger.info, install_deps=install_deps)
+        if report['ok']:
+            self.logger.success(f"RNAMotifScanX is ready: {report['runtime'].note}")
+            self.logger.info("Set \"data_mode\": \"run_from_scratch\" in config/rmsx_config.json, then run: rmv_db RNAMotifScanX")
             return True
-
-        if auto_setup and not self.rmsx_setup_attempted:
-            self.rmsx_setup_attempted = True
-            self.logger.info('RMSX runtime missing; attempting first-run setup...')
-            report = self._run_rmsx_runtime_setup(build=True)
-            if report.get('ok'):
-                self.logger.success('RMSX runtime setup completed successfully')
-                return True
-
-        missing = report.get('missing', []) or []
-        if missing:
-            self.logger.error(f"RMSX runtime is incomplete: {', '.join(str(x) for x in missing)}")
-        setup_message = str(report.get('setup_message', '') or '').strip()
-        if setup_message:
-            self.logger.error(setup_message)
-        self.logger.info('Run: rmv_rmsx_doctor')
+        self.logger.error("RNAMotifScanX could not be set up on this machine.")
+        for problem in report['problems']:
+            self.logger.info(f"  - {problem}")
+        for step in report['next']:
+            self.logger.info(f"  * {step}")
+        self.logger.info("Run rmv_rmsx_doctor for a full diagnosis.")
         return False
 
-    def rmsx_doctor(self, auto_setup: bool = False):
-        """Print integrated Source-7 runtime diagnostics."""
-        report = self._run_rmsx_runtime_setup(build=auto_setup)
-
-        print('\n' + '=' * 70)
-        print('RMSX Doctor')
-        print('=' * 70)
-        print(f"Runtime dir     : {self.rmsx_runtime_dir}")
-        print(f"Platform dir    : {report.get('platform_dir', '(unknown)')}")
-        print(f"Binary dir      : {report.get('bin_dir', '(unknown)')}")
-        print(f"RMSX executable : {report.get('rmsx_executable', '(missing)') or '(missing)'}")
-        print(f"MC-Annotate     : {report.get('mc_annotate_executable', '(missing)') or '(missing)'}")
-        print(f"Status          : {'OK' if report.get('ok') else 'NOT READY'}")
-
-        missing = report.get('missing', []) or []
-        if missing:
-            print('\nMissing items:')
-            for item in missing:
-                print(f"  - {item}")
-
-        mq = report.get('missing_queries', []) or []
-        if mq:
-            print('\nMissing query files:')
-            for item in mq:
-                print(f"  - {item}")
-
-        setup_message = str(report.get('setup_message', '') or '').strip()
-        if setup_message:
-            print(f"\nSetup message: {setup_message}")
-
-        print('\nHints:')
-        print('  - Put platform binaries into rsmviewer/tools/rmsx_runtime/bin/<platform>')
-        print('  - Then run rmv_rmsx run_current or rmv_load_motif with source 7 active')
-        print('=' * 70 + '\n')
+    def rmsx_doctor(self):
+        """`rmv_rmsx_doctor`: report what RNAMotifScanX can and cannot do here."""
+        from .tools import rmsx_runtime
+        cfg = self._build_internal_rmsx_config()
+        self.rmsx_pipeline_config = dict(cfg)
+        report = rmsx_runtime.diagnose(cfg, self.rmsx_runtime_dir, self.loaded_pdb_id or '')
+        marks = {'ok': '[ ok ]', 'warn': '[warn]', 'fail': '[FAIL]', 'info': '      '}
+        print('\n' + '=' * 78)
+        print('RNAMotifScanX Doctor')
+        print('=' * 78)
+        for status, label, detail in report['lines']:
+            print(f"{marks[status]} {label:<36} {detail}".rstrip())
+        mode = str(cfg.get('data_mode', 'preannotated')).lower()
+        print('-' * 78)
+        if mode in ('preannotated', 'cache', 'cached'):
+            print("Mode 'preannotated': results are downloaded per PDB; no scanner is needed.")
+        elif report['ready']:
+            print("Mode 'run_from_scratch': READY. Run: rmv_db RNAMotifScanX")
+        else:
+            print("Mode 'run_from_scratch': NOT READY. Run: rmv_setup RNAMotifScanX")
+        print('=' * 78 + '\n')
 
     def _get_source_suffix(self):
         """Get a source suffix for PyMOL object naming.
@@ -1934,595 +1781,62 @@ class MotifVisualizerGUI:
             self.logger.debug(f"Error parsing CIF for chain mapping: {e}")
             return {}
 
-    def _load_rmsx_wrapper_config(self):
-        """Load persisted RNAMotifScanX wrapper settings if available."""
-        try:
-            cfg_path = self.rmsx_config_file
-            if not cfg_path.exists():
-                return
+    def _run_rmsx_from_scratch(self, rmsx_cfg: Dict, pdb_id: str) -> bool:
+        """Scan a PDB's prepared inputs with RNAMotifScanX and point Source 7 at the output.
 
-            with open(cfg_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-
-            self.rmsx_executable_path = str(data.get('rmsx_executable_path', '') or '').strip()
-            self.rmsx_working_dir = str(data.get('rmsx_working_dir', '') or '').strip()
-            self.rmsx_args_template = str(data.get('rmsx_args_template', '') or '').strip()
-            self.rmsx_auto_run_on_fetch = bool(data.get('rmsx_auto_run_on_fetch', False))
-            self.rmsx_query_file = str(data.get('rmsx_query_file', '') or '').strip()
-            output_path = str(data.get('rmsx_output_path', '') or '').strip()
-            if output_path:
-                self.rmsx_output_path = output_path
-        except Exception as e:
-            self.logger.warning(f"Could not read RNAMotifScanX wrapper config: {e}")
-
-    def _save_rmsx_wrapper_config(self):
-        """Persist RNAMotifScanX wrapper settings."""
-        try:
-            self.rmsx_config_file.parent.mkdir(parents=True, exist_ok=True)
-            payload = {
-                'rmsx_executable_path': self.rmsx_executable_path,
-                'rmsx_working_dir': self.rmsx_working_dir,
-                'rmsx_output_path': self.rmsx_output_path,
-                'rmsx_args_template': self.rmsx_args_template,
-                'rmsx_auto_run_on_fetch': self.rmsx_auto_run_on_fetch,
-                'rmsx_query_file': getattr(self, 'rmsx_query_file', ''),
-            }
-            with open(self.rmsx_config_file, 'w', encoding='utf-8') as f:
-                json.dump(payload, f, indent=2)
-        except Exception as e:
-            self.logger.warning(f"Could not save RNAMotifScanX wrapper config: {e}")
-
-    def _is_executable_runnable(self, executable_path: str) -> bool:
-        """Return True if an executable path exists and can be invoked."""
-        if not executable_path:
-            return False
-
-        expanded = os.path.abspath(os.path.expanduser(executable_path))
-        if not os.path.isfile(expanded):
-            return False
-
-        if not os.access(expanded, os.X_OK):
-            return False
-
-        try:
-            # We only care whether the process can start, not whether it exits 0.
-            subprocess.run(
-                [expanded],
-                capture_output=True,
-                text=True,
-                check=False,
-                timeout=5,
-            )
-            return True
-        except subprocess.TimeoutExpired:
-            return True
-        except Exception:
-            return False
-
-    def print_rmsx_wrapper_status(self):
-        """Print current RNAMotifScanX wrapper settings and quick usage hints."""
-        print("\n" + "=" * 70)
-        print("RNAMotifScanX Wrapper Status")
-        print("=" * 70)
-        print(f"Executable path : {self.rmsx_executable_path or '(not set)'}")
-        print(f"Working dir     : {self.rmsx_working_dir or '(directory of executable)'}")
-        print(f"Output path     : {self.rmsx_output_path}")
-        print(f"Args template   : {self.rmsx_args_template or '(none)'}")
-        print(f"Auto on fetch   : {'on' if self.rmsx_auto_run_on_fetch else 'off'}")
-        print(f"Query file      : {getattr(self, 'rmsx_query_file', '') or '(built-in consensus set)'}")
-        print(f"Runtime dir     : {self.rmsx_runtime_dir}")
-        print("\nCommands:")
-        print("  rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH] [QUERY_FILE]")
-        print("  rmv_rmsx args <ARG_TEMPLATE>")
-        print("  rmv_rmsx doctor")
-        print("  rmv_rmsx setup")
-        print("  rmv_rmsx test")
-        print("  rmv_rmsx run <PDB_ID> [CHAINS]       # run_from_scratch: scan your prepared inputs")
-        print("  rmv_rmsx run_current [CHAINS]")
-        print("  rmv_rmsx cancel                      # Cancel an in-progress run")
-        print("\nTemplate placeholders:")
-        print("  {pdb_id} {pdb_lower} {output_dir} {work_dir}")
-        print("Example:")
-        print("  rmv_rmsx args --pdb {pdb_id} --out {output_dir}")
-        print("=" * 70 + "\n")
-
-    def configure_rmsx_wrapper(self, executable: str, output_dir: str = '', work_dir: str = '', auto_on_fetch: str = '', query_file: str = ''):
-        """Set RNAMotifScanX wrapper settings and persist them."""
-        if not executable:
-            self.logger.error("RNAMotifScanX executable path is required")
-            self.logger.info("Usage: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH] [QUERY_FILE]")
-            return False
-
-        expanded_exe = os.path.abspath(os.path.expanduser(executable))
-        if not os.path.isfile(expanded_exe):
-            self.logger.error(f"RNAMotifScanX executable not found: {expanded_exe}")
-            return False
-        if not os.access(expanded_exe, os.X_OK):
-            self.logger.error(f"RNAMotifScanX executable is not runnable: {expanded_exe}")
-            return False
-
-        self.rmsx_executable_path = expanded_exe
-
-        if output_dir:
-            self.rmsx_output_path = os.path.abspath(os.path.expanduser(output_dir))
-
-        if work_dir:
-            expanded_work = os.path.abspath(os.path.expanduser(work_dir))
-            if not os.path.isdir(expanded_work):
-                self.logger.error(f"Working directory not found: {expanded_work}")
-                return False
-            self.rmsx_working_dir = expanded_work
-
-        if auto_on_fetch:
-            auto_val = auto_on_fetch.strip().lower()
-            if auto_val in ('1', 'on', 'true', 'yes'):
-                self.rmsx_auto_run_on_fetch = True
-            elif auto_val in ('0', 'off', 'false', 'no'):
-                self.rmsx_auto_run_on_fetch = False
-            else:
-                self.logger.error("AUTO_ON_FETCH must be one of: on/off, true/false, 1/0")
-                return False
-
-        if query_file:
-            expanded_query = os.path.abspath(os.path.expanduser(query_file))
-            if not os.path.isfile(expanded_query):
-                self.logger.error(f"RNAMotifScanX query file not found: {expanded_query}")
-                return False
-            self.rmsx_query_file = expanded_query
-
-        try:
-            os.makedirs(self.rmsx_output_path, exist_ok=True)
-        except Exception as e:
-            self.logger.error(f"Could not create RNAMotifScanX output directory {self.rmsx_output_path}: {type(e).__name__}: {e}")
-            return False
-
-        if not self._is_executable_runnable(self.rmsx_executable_path):
-            self.logger.error(f"Configured RNAMotifScanX executable failed test run: {self.rmsx_executable_path}")
-            return False
-
-        self._save_rmsx_wrapper_config()
-        self.logger.success("RNAMotifScanX wrapper configuration updated")
-        self.logger.info(f"Executable path: {self.rmsx_executable_path}")
-        self.logger.info(f"Working dir: {self.rmsx_working_dir or os.path.dirname(self.rmsx_executable_path)}")
-        self.logger.info(f"Output path: {self.rmsx_output_path}")
-        self.logger.info(f"Auto run on rmv_fetch: {'on' if self.rmsx_auto_run_on_fetch else 'off'}")
-        self.logger.info(f"Query file: {getattr(self, 'rmsx_query_file', '') or '(built-in consensus set)'}")
-        return True
-
-    def set_rmsx_args_template(self, arg_template: str):
-        """Set argument template used by rmv_rmsx run."""
-        self.rmsx_args_template = str(arg_template or '').strip()
-        self._save_rmsx_wrapper_config()
-        self.logger.success("RNAMotifScanX argument template updated")
-        self.logger.info(f"Template: {self.rmsx_args_template or '(none)'}")
-        return True
-
-    def test_rmsx_wrapper(self):
-        """Run executable sanity checks for RNAMotifScanX wrapper."""
-        if not self.rmsx_executable_path:
-            self.logger.error("RNAMotifScanX executable is not configured")
-            self.logger.info("Use: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH] [QUERY_FILE]")
-            return False
-
-        if not self._is_executable_runnable(self.rmsx_executable_path):
-            self.logger.error(f"RNAMotifScanX executable failed test run: {self.rmsx_executable_path}")
-            return False
-
-        self.logger.success("RNAMotifScanX executable is available and runnable")
-        return True
-
-    def run_rmsx_wrapper(self, pdb_id: str, extra_args: str = '', force_fresh: bool = False):
-        """Run configured RNAMotifScanX executable and load results from source 7."""
-        pdb_upper = str(pdb_id).strip().upper()
-        if not pdb_upper:
-            self.logger.error("PDB ID is required")
-            self.logger.info("Usage: rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
-            return False
-
-        # run_from_scratch (and legacy scan_prepared) run scan directly on the
-        # user-provided prepared .rmsx.in/.nch inputs; no MC-Annotate/RNAVIEW.
-        rmsx_cfg_probe = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
-        self.rmsx_pipeline_config = dict(rmsx_cfg_probe)
-        if str(rmsx_cfg_probe.get('data_mode', '')).strip().lower() in ('run_from_scratch', 'scan_prepared'):
-            return self.run_rmsx_scan_prepared(pdb_upper, chains=str(extra_args or '').strip())
-
-        query_override = ''
-        if extra_args:
-            try:
-                import shlex
-                tokens = shlex.split(extra_args)
-            except Exception:
-                tokens = [token for token in extra_args.split() if token]
-            for token in tokens:
-                lowered = token.lower()
-                if lowered.endswith('.struct') or lowered.endswith('.txt') or lowered.startswith('query='):
-                    query_override = token.split('=', 1)[1].strip() if '=' in token else token
-                    break
-
-        previous_query_file = getattr(self, 'rmsx_query_file', '')
-        if query_override:
-            self.rmsx_query_file = os.path.abspath(os.path.expanduser(query_override))
-
-        if not self.ensure_rmsx_runtime_ready(auto_setup=True):
-            if query_override:
-                self.rmsx_query_file = previous_query_file
-            return False
-
-        # Preferred path: run integrated source-7 RMSX runtime config
-        rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
-        self.rmsx_pipeline_config = dict(rmsx_cfg)
-        if rmsx_cfg:
-            try:
-                data_mode = str(rmsx_cfg.get('data_mode', 'preannotated')).strip().lower()
-                if data_mode in ('preannotated', 'cache', 'cached') and not force_fresh:
-                    copied = self._copy_preannotated_rmsx(rmsx_cfg, pdb_upper)
-                    if copied.get('copied', 0):
-                        self.logger.info(
-                            f"Loaded {copied['copied']} preannotated RNAMotifScanX result(s) for {pdb_upper}."
-                        )
-                        self.load_user_annotations_action('rnamotifscanx', pdb_upper, auto_pipeline=False)
-                        return True
-                    self.logger.warning(
-                        f"No preannotated RNAMotifScanX results found locally or on the download "
-                        f"server for {pdb_upper}; set data_mode to run_from_scratch in "
-                        "config/rmsx_config.json to execute RMSX."
-                    )
-                    return False
-
-                tools_dir = str(Path(__file__).parent / 'tools')
-                if tools_dir not in sys.path:
-                    sys.path.insert(0, tools_dir)
-
-                from rmsx_runner import run_pipeline as rmsx_run  # type: ignore
-
-                # Ensure output_dir is always defined for predictable loading.
-                if not str(rmsx_cfg.get('output_dir', '') or '').strip():
-                    rmsx_cfg = dict(rmsx_cfg)
-                    rmsx_cfg['output_dir'] = self.rmsx_output_path
-
-                current_query_file = str(getattr(self, 'rmsx_query_file', '') or '').strip()
-                if current_query_file:
-                    rmsx_cfg = dict(rmsx_cfg)
-                    rmsx_cfg['query_file'] = current_query_file
-
-                if not query_override:
-                    query_override = str(rmsx_cfg.get('query_file', '') or '').strip()
-
-                if query_override:
-                    rmsx_cfg = dict(rmsx_cfg)
-                    rmsx_cfg['query_file'] = query_override
-                    self.logger.info(f"Using RNAMotifScanX query file: {query_override}")
-
-                # Source 7 strict mode: never auto-download CIF.
-                rmsx_cfg = dict(rmsx_cfg)
-                rmsx_cfg['auto_download_cif'] = False
-
-                out_dir = os.path.abspath(os.path.expanduser(str(rmsx_cfg.get('output_dir', self.rmsx_output_path))))
-                rmsx_cfg['cif_input_dir'] = out_dir
-                local_pdb = self._prepare_local_pdb_for_rmsx(pdb_upper, out_dir, force_refresh=force_fresh)
-                if local_pdb:
-                    rmsx_cfg['auto_download_pdb'] = False
-
-                mode_text = 'fresh' if force_fresh else 'incremental/prebuilt-aware'
-                self.logger.info(f"Running RNAMotifScanX pipeline for {pdb_upper} ({mode_text})...")
-                if extra_args and not query_override:
-                    self.logger.info("Note: unrecognized extra args are ignored when using pipeline config mode.")
-
-                results = rmsx_run(rmsx_cfg, pdb_upper, force_fresh=force_fresh)
-                if not results:
-                    out_dir = os.path.abspath(os.path.expanduser(str(rmsx_cfg.get('output_dir', self.rmsx_output_path))))
-                    if sys.platform == 'darwin':
-                        self.logger.warning(f"No RNAMotifScanX result files found for {pdb_upper} in {out_dir}.")
-                        self.logger.warning(
-                            "RNAMotifScanX execution is Linux x86-64 only. "
-                            "Generate results on Linux, then copy result_0_100_withbs.log files to this output directory."
-                        )
-                    else:
-                        self.logger.error(
-                            "RNAMotifScanX pipeline produced no result files. "
-                            "Check executable/query/database paths in the RMSX config."
-                        )
-                    return False
-
-                out_dir = os.path.abspath(os.path.expanduser(str(rmsx_cfg.get('output_dir', self.rmsx_output_path))))
-                self.rmsx_output_path = out_dir
-                self.user_data_paths[7] = out_dir
-
-                self._handle_source_by_id(7, out_dir)
-                self.load_user_annotations_action('rnamotifscanx', pdb_upper, auto_pipeline=False)
-
-                loaded_motifs = self.viz_manager.motif_loader.get_loaded_motifs()
-                if loaded_motifs:
-                    total_instances = sum(len(info.get('motif_details', [])) for info in loaded_motifs.values())
-                    self.logger.success(
-                        f"Loaded RNAMotifScanX motifs into RSMViewer: "
-                        f"{len(loaded_motifs)} motif types, {total_instances} instances"
-                    )
-                    self.logger.info(f"RMSX families available: {len(results)}")
-                    return True
-
-                self.logger.warning("RNAMotifScanX pipeline finished, but no motifs were loaded into RSMViewer.")
-                return False
-            except Exception as e:
-                self.logger.error(f"RNAMotifScanX pipeline execution failed: {type(e).__name__}: {e}")
-                return False
-            finally:
-                if query_override:
-                    self.rmsx_query_file = previous_query_file
-
-        if not self.rmsx_executable_path:
-            self.logger.error("RNAMotifScanX executable is not configured")
-            self.logger.info("Use: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]")
-            return False
-
-        if not self._is_executable_runnable(self.rmsx_executable_path):
-            self.logger.error(f"RNAMotifScanX executable is not runnable: {self.rmsx_executable_path}")
-            return False
-
-        try:
-            os.makedirs(self.rmsx_output_path, exist_ok=True)
-        except Exception as e:
-            self.logger.error(f"Could not create RNAMotifScanX output directory {self.rmsx_output_path}: {type(e).__name__}: {e}")
-            return False
-
-        work_dir = self.rmsx_working_dir or os.path.dirname(self.rmsx_executable_path)
-        if not work_dir or not os.path.isdir(work_dir):
-            self.logger.error(f"RNAMotifScanX working directory not found: {work_dir}")
-            return False
-
-        template_values = {
-            'pdb_id': pdb_upper,
-            'pdb_lower': pdb_upper.lower(),
-            'output_dir': self.rmsx_output_path,
-            'work_dir': work_dir,
-        }
-
-        args = []
-        if self.rmsx_args_template:
-            try:
-                rendered = self.rmsx_args_template.format(**template_values)
-            except KeyError as e:
-                self.logger.error(f"Unknown placeholder in RNAMotifScanX args template: {e}")
-                return False
-            args.extend(shlex.split(rendered))
-
-        if extra_args:
-            args.extend(shlex.split(extra_args))
-
-        command = [self.rmsx_executable_path] + args
-        self.logger.info(f"Running RNAMotifScanX wrapper for {pdb_upper}...")
-        self.logger.debug(f"RNAMotifScanX command: {' '.join(command)}")
-        self.logger.debug(f"RNAMotifScanX cwd: {work_dir}")
-
-        try:
-            proc = subprocess.run(
-                command,
-                cwd=work_dir,
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-        except Exception as e:
-            self.logger.error(f"Failed to execute RNAMotifScanX: {type(e).__name__}: {e}")
-            return False
-
-        if proc.returncode != 0:
-            stderr_tail = (proc.stderr or '').strip().splitlines()[-10:]
-            stdout_tail = (proc.stdout or '').strip().splitlines()[-10:]
-            self.logger.error(f"RNAMotifScanX failed (exit code {proc.returncode})")
-            if stderr_tail:
-                self.logger.error("RNAMotifScanX stderr (last lines):")
-                for line in stderr_tail:
-                    self.logger.error(f"  {line}")
-            elif stdout_tail:
-                self.logger.error("RNAMotifScanX output (last lines):")
-                for line in stdout_tail:
-                    self.logger.error(f"  {line}")
-            return False
-
-        self.user_data_paths[7] = self.rmsx_output_path
-        self._handle_source_by_id(7, self.rmsx_output_path)
-        self.load_user_annotations_action('rnamotifscanx', pdb_upper, auto_pipeline=False)
-
-        loaded_motifs = self.viz_manager.motif_loader.get_loaded_motifs()
-        if loaded_motifs:
-            total_instances = sum(len(info.get('motif_details', [])) for info in loaded_motifs.values())
-            self.logger.success(f"Loaded RNAMotifScanX motifs into RSMViewer: {len(loaded_motifs)} motif types, {total_instances} instances")
-            return True
-
-        self.logger.warning("RNAMotifScanX finished, but no motifs were loaded into RSMViewer.")
-        self.logger.info("Check that output files exist under the configured output directory and match RNAMotifScanX format.")
-        return False
-
-    # ── scan_prepared mode ────────────────────────────────────────────────
-    def run_rmsx_scan_prepared(self, pdb_id: str, chains: str = '', compare: bool = False):
-        """Run RNAMotifScanX against locally prepared inputs, off the GUI thread.
-
-        Skips MC-Annotate/RNAVIEW, never reads or substitutes preannotated data,
-        writes to a dedicated per-run output directory, reports progress by
-        chain, supports cancellation, and loads only its own fresh output.
+        Runs synchronously (PyMOL pauses until the scan finishes, as with FR3D).
+        A failed scan is never replaced by preannotated data.
         """
         import datetime
+        from .tools import rmsx_runner
 
-        pdb_upper = str(pdb_id).strip().upper()
-        if not pdb_upper:
-            self.logger.error("PDB ID is required")
-            self.logger.info("Usage: rmv_rmsx run <PDB_ID> [CHAINS]")
-            return False
+        pdb_upper = pdb_id.strip().upper()
+        earlier = self._rmsx_scan_runs.get(pdb_upper)
+        if earlier and os.path.isdir(earlier):
+            self.logger.info(f"Using this session's RMSX scan of {pdb_upper}: {earlier}")
+            self.user_data_paths[7] = earlier
+            return True
 
-        existing = getattr(self, '_rmsx_scan_thread', None)
-        if existing is not None and existing.is_alive():
-            self.logger.error(
-                "An RMSX run is already in progress. Use 'rmv_rmsx cancel' to stop it."
-            )
-            return False
-
-        rmsx_cfg = dict(getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config())
-        self.rmsx_pipeline_config = dict(rmsx_cfg)
-        chain_list = [c for c in re.split(r'[\s,]+', str(chains or '').strip()) if c]
-
-        base_out = os.path.abspath(os.path.expanduser(
-            str(rmsx_cfg.get('output_dir', self.rmsx_output_path) or self.rmsx_output_path)
-        ))
+        base_out = os.path.abspath(os.path.expanduser(str(rmsx_cfg.get('output_dir') or self.rmsx_output_path)))
         stamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
         run_out = os.path.join(base_out, 'run_from_scratch', f"{pdb_upper}_{stamp}")
-
-        self._rmsx_scan_cancel = threading.Event()
+        chains = [str(c) for c in (rmsx_cfg.get('scan_chains') or [])]
         self.logger.info(
-            f"run_from_scratch: starting RMSX for {pdb_upper}"
-            + (f" chains={chain_list}" if chain_list else " (all prepared chains)")
+            f"run_from_scratch: scanning {pdb_upper}"
+            + (f" chains {', '.join(chains)}" if chains else " (all prepared chains)")
+            + " with RNAMotifScanX. PyMOL pauses until this finishes; large RNAs can take a long time."
         )
-        self.logger.info("Using your prepared RMSX inputs; MC-Annotate and RNAVIEW are not run by RSMViewer.")
-
-        worker = threading.Thread(
-            target=self._scan_prepared_worker,
-            args=(rmsx_cfg, pdb_upper, run_out, chain_list, bool(compare)),
-            name=f"rmsx-scan-{pdb_upper}",
-            daemon=True,
+        report = rmsx_runner.run_scan_prepared(
+            rmsx_cfg, pdb_upper, run_out, chains=chains or None, progress_cb=self.logger.info,
         )
-        self._rmsx_scan_thread = worker
-        worker.start()
-        return True
-
-    def cancel_rmsx_scan(self):
-        """Signal an in-progress run_from_scratch RMSX run to stop."""
-        event = getattr(self, '_rmsx_scan_cancel', None)
-        thread = getattr(self, '_rmsx_scan_thread', None)
-        if event is None or thread is None or not thread.is_alive():
-            self.logger.info("No RMSX run is currently active.")
-            return False
-        event.set()
-        self.logger.warning("run_from_scratch: cancellation requested; finishing current step...")
-        return True
-
-    def _scan_prepared_worker(self, rmsx_cfg, pdb_upper, run_out, chain_list, compare):
-        """Background worker: runs scan subprocesses off the PyMOL GUI thread."""
-        try:
-            tools_dir = str(Path(__file__).parent / 'tools')
-            if tools_dir not in sys.path:
-                sys.path.insert(0, tools_dir)
-            from rmsx_runner import run_scan_prepared  # type: ignore
-
-            def progress(message):
-                self.logger.info(f"[run_from_scratch] {message}")
-
-            report = run_scan_prepared(
-                rmsx_cfg, pdb_upper, run_out,
-                chains=chain_list or None,
-                families=rmsx_cfg.get('motif_families'),
-                progress_cb=progress,
-                cancel_event=getattr(self, '_rmsx_scan_cancel', None),
+        for problem in report['problems']:
+            self.logger.warning(f"run_from_scratch: {problem}")
+        if report['failed_runs']:
+            self.logger.error(
+                f"run_from_scratch: {len(report['failed_runs'])} scan(s) failed for {pdb_upper}; "
+                "nothing was loaded and preannotated data is NOT substituted."
             )
-            self._rmsx_last_scan_report = report
-            self._finish_scan_prepared(report, pdb_upper, compare)
-        except Exception as exc:
-            self.logger.error(f"run_from_scratch failed: {type(exc).__name__}: {exc}")
-
-    def _finish_scan_prepared(self, report, pdb_upper, compare):
-        """Load newly generated results (main outcome handling)."""
-        out_dir = report.get('output_dir', '')
-
-        if report.get('cancelled'):
+            return False
+        if not report['runs']:
+            self.logger.error(f"run_from_scratch: no scan ran for {pdb_upper}; nothing was loaded.")
+            return False
+        for run in report.get('partial_runs', []):
             self.logger.warning(
-                f"run_from_scratch CANCELLED for {pdb_upper}. Partial output was not loaded: {out_dir}"
+                f"RNAMotifScanX crashed part-way through chain {run['chain']} / {run['family']} "
+                f"(a known scanner bug on large RNAs; the published preannotated results for such cases "
+                f"end the same way). The {run['hits']} hit(s) found before the crash were kept; "
+                "hits after that point are missing."
             )
-            return False
-
-        if report.get('problems'):
-            for problem in report['problems']:
-                self.logger.warning(f"run_from_scratch: {problem}")
-
-        if report.get('failed_runs'):
-            self.logger.error(
-                f"run_from_scratch: {len(report['failed_runs'])} run(s) FAILED for {pdb_upper}. "
-                "Not loading results and NOT falling back to preannotated data."
-            )
-            for run in report['failed_runs'][:10]:
-                self.logger.error(
-                    f"  chain {run.get('chain')} / {run.get('family')}: "
-                    f"exit {run.get('exit_code')} ({run.get('error')}); stderr: {run.get('stderr')}"
-                )
-            return False
-
-        if not report.get('runs'):
-            self.logger.error(
-                f"run_from_scratch produced no runs for {pdb_upper}. "
-                "See problems above; preannotated data is NOT substituted."
-            )
-            return False
-
-        # All attempted runs exited 0: load strictly from this run's output.
-        self.rmsx_output_path = out_dir
-        self.user_data_paths[7] = out_dir
-        self._rmsx_skip_pipeline_load = True
-        try:
-            try:
-                self._handle_source_by_id(7, out_dir)
-            except Exception:
-                pass
-            self.load_user_annotations_action('rnamotifscanx', pdb_upper, auto_pipeline=False)
-        finally:
-            self._rmsx_skip_pipeline_load = False
-
-        loaded = {}
-        try:
-            loaded = self.viz_manager.motif_loader.get_loaded_motifs() or {}
-        except Exception:
-            loaded = {}
-        total_instances = sum(len(info.get('motif_details', [])) for info in loaded.values())
-
-        self.logger.success("Loaded annotations from the newly generated RMSX output.")
-        self.logger.info(
-            f"run_from_scratch summary for {pdb_upper}: families with hits={len(report['families'])}, "
-            f"total hits={report['total_hits']}, motif types loaded={len(loaded)}, "
-            f"instances={total_instances}"
+        self._rmsx_scan_runs[pdb_upper] = run_out
+        self.user_data_paths[7] = run_out
+        self.logger.success(
+            f"RNAMotifScanX finished for {pdb_upper}: {report['total_hits']} raw hit(s) "
+            f"in {len(report['families'])} famil{'y' if len(report['families']) == 1 else 'ies'} "
+            f"(results: {run_out})"
         )
-        self.logger.info(f"Results saved to: {out_dir}")
         if report['total_hits'] == 0:
-            self.logger.info(
-                "Scan completed successfully with zero hits (a valid result, not a failure)."
-            )
-        if compare:
-            self._compare_scan_prepared_with_preannotated(report, pdb_upper)
+            self.logger.info("Zero hits is a valid scan result, not a failure.")
         return True
-
-    def _compare_scan_prepared_with_preannotated(self, report, pdb_upper):
-        """Development check only: compare fresh scan output with preannotated data.
-
-        This never alters, supplements, or filters the newly generated results;
-        it just reports differences for investigation.
-        """
-        try:
-            from .tools.rmsx_runner import copy_preannotated_results
-
-            rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) or {}
-            import tempfile
-            with tempfile.TemporaryDirectory(prefix='rmsx_preann_cmp_') as tmp_dir:
-                source_dir = str(rmsx_cfg.get('pdb_prebuild_dir', '') or '')
-                source_archive = str(rmsx_cfg.get('pdb_prebuild_archive', '') or '')
-                copied = {'copied': 0}
-                for source in [s for s in (source_dir, source_archive) if s]:
-                    copied = copy_preannotated_results(str(source), pdb_upper, tmp_dir)
-                    if copied.get('copied', 0):
-                        break
-                if not copied.get('copied', 0):
-                    self.logger.info(
-                        f"[compare] No preannotated dataset available for {pdb_upper}; skipping comparison."
-                    )
-                    return
-
-                from .tools.rmsx_runner import _count_alignment_hits  # type: ignore
-                self.logger.info(f"[compare] Fresh vs preannotated hit counts for {pdb_upper}:")
-                families = set(report['families'].keys())
-                for family in sorted(families):
-                    folder = f"{family}_consensus"
-                    pre_log = os.path.join(tmp_dir, folder, 'result_0_100_withbs.log')
-                    pre_hits = _count_alignment_hits(pre_log) if os.path.isfile(pre_log) else 0
-                    new_hits = report['families'].get(family, {}).get('hits', 0)
-                    flag = 'match' if pre_hits == new_hits else 'DIFF -> investigate'
-                    self.logger.info(f"  {family:<18} fresh={new_hits:<4} preannotated={pre_hits:<4} [{flag}]")
-        except Exception as exc:
-            self.logger.info(f"[compare] Comparison skipped: {type(exc).__name__}: {exc}")
 
     def load_structure_action(self, pdb_id_or_path, background_color=None,
                               database=None):
@@ -3244,13 +2558,10 @@ class MotifVisualizerGUI:
         """Copy preannotated RMSX results for a PDB into the working output dir.
 
         Resolution order (first source with data for this PDB wins):
-          1. the local ``rmsx_work_default`` directory (fast);
+          1. the local ``rmsx_work_default`` directory;
           2. download ``<preannotated_base_url>/<pdb_lower>.tar.gz`` from the
-             public results server, extract it into ``rmsx_work_default``, and
-             read it from there (later loads then find it in step 1);
-          3. a local compressed archive, if one is configured. This is last
-             because reading it means decompressing the whole (multi-GB) stream,
-             so it is only an offline fallback for when the download fails.
+             project's results server, extract it into ``rmsx_work_default``, and
+             read it from there (later loads then find it in step 1).
         """
         from .tools.rmsx_runner import (
             DEFAULT_PREANNOTATED_BASE_URL,
@@ -3258,7 +2569,6 @@ class MotifVisualizerGUI:
             download_preannotated_pdb,
         )
         configured_dir = str(rmsx_cfg.get('pdb_prebuild_dir', '') or '')
-        configured_archive = str(rmsx_cfg.get('pdb_prebuild_archive', '') or '')
         pdb_upper = pdb_id.strip().upper()
         copied = {'copied': 0, 'output_dir': self.rmsx_output_path}
 
@@ -3298,7 +2608,8 @@ class MotifVisualizerGUI:
                 self.logger.warning(
                     f"Could not download RMSX results for {pdb_upper} from "
                     f"{downloaded['url'] or base_url}: {downloaded['error']}. "
-                    "Check your internet connection."
+                    "Check your internet connection, or download that file manually and "
+                    f"extract it into {configured_dir} (see external/rmsx_setup.md)."
                 )
         else:
             self.logger.warning(
@@ -3306,45 +2617,38 @@ class MotifVisualizerGUI:
                 "configured, so they cannot be downloaded."
             )
 
-        # 3. Offline fallback: a local compressed archive, if one is configured.
-        if configured_archive and os.path.isfile(configured_archive):
-            self.logger.info("Trying the local RMSX archive (this can be slow for large archives)...")
-            copied = copy_preannotated_results(configured_archive, pdb_upper, self.rmsx_output_path)
         return copied
 
-    def _ensure_rmsx_preannotated(self, pdb_id: str) -> bool:
-        """Copy preannotated RNAMotifScanX results for ``pdb_id`` into the
-        working output directory and point ``user_data_paths[7]`` at it.
+    def _ensure_rmsx_results(self, pdb_id: str) -> bool:
+        """Make RNAMotifScanX results for ``pdb_id`` available and point Source 7 at them.
 
-        Combined-source loading (``rmv_db RNA3DMotifAtlas,RNAMotifScanX``)
-        fetches each source directly via ``_fetch_from_single_source`` and
-        therefore bypasses the ingestion that ``load_user_annotations_action``
-        performs for single-source mode. This helper reproduces just the
-        preannotated-copy step so RMSX rows are available in combine mode too.
-        Returns True when data was made available.
+        Follows ``data_mode`` in config/rmsx_config.json (re-read on every call):
+        ``preannotated`` downloads/reads precomputed results, ``run_from_scratch``
+        scans the prepared inputs. Used by single- and multi-source ``rmv_db``.
         """
         try:
-            # Re-read config/rmsx_config.json on every combined rmv_db, exactly as
-            # single-source rmv_db does, so edited P-value cutoffs and paths apply
-            # and a cleared session cannot leave them unset.
             rmsx_cfg = self._build_internal_rmsx_config()
             self.rmsx_pipeline_config = dict(rmsx_cfg)
-            data_mode = str(rmsx_cfg.get('data_mode', 'preannotated')).strip().lower()
-            if data_mode not in ('preannotated', 'cache', 'cached'):
-                # Non-preannotated modes are handled by the single-source path.
-                return bool(self.user_data_paths.get(7))
-            copied = self._copy_preannotated_rmsx(rmsx_cfg, pdb_id)
-            if copied.get('copied', 0):
-                self.user_data_paths[7] = self.rmsx_output_path
-                self.logger.info(
-                    f"Using {copied['copied']} preannotated RNAMotifScanX result(s) for {pdb_id}."
+            mode = str(rmsx_cfg.get('data_mode', 'preannotated')).strip().lower()
+            if mode in ('preannotated', 'cache', 'cached'):
+                copied = self._copy_preannotated_rmsx(rmsx_cfg, pdb_id)
+                if copied.get('copied', 0):
+                    self.user_data_paths[7] = self.rmsx_output_path
+                    self.logger.info(f"Using {copied['copied']} preannotated RNAMotifScanX result(s) for {pdb_id}.")
+                    return True
+                self.logger.warning(
+                    f"No preannotated RNAMotifScanX results available for {pdb_id}. To scan it "
+                    "yourself set data_mode to run_from_scratch in config/rmsx_config.json."
                 )
-                return True
-            self.logger.warning(
-                f"No preannotated RNAMotifScanX results found for {pdb_id}."
+                return False
+            if mode in ('run_from_scratch', 'scan_prepared'):
+                return self._run_rmsx_from_scratch(rmsx_cfg, pdb_id)
+            self.logger.error(
+                f"config/rmsx_config.json: unknown data_mode '{mode}' "
+                "(use \"preannotated\" or \"run_from_scratch\")."
             )
         except Exception as error:
-            self.logger.warning(f"Could not prepare preannotated RMSX data: {error}")
+            self.logger.error(f"Could not prepare RNAMotifScanX results for {pdb_id}: {type(error).__name__}: {error}")
         return False
 
     def _load_combined_motifs(self, pdb_id: str, source_ids: List[int]):
@@ -3368,7 +2672,7 @@ class MotifVisualizerGUI:
             # RNAMotifScanX (source 7) needs its preannotated results ingested
             # before _fetch_from_single_source can read them in combine mode.
             if 7 in source_ids:
-                self._ensure_rmsx_preannotated(pdb_id)
+                self._ensure_rmsx_results(pdb_id)
             
             pdb_id = pdb_id.upper()
             
@@ -3556,19 +2860,12 @@ class MotifVisualizerGUI:
         
         return {}
     
-    def load_user_annotations_action(
-        self,
-        tool,
-        pdb_id,
-        auto_pipeline: bool = True,
-        force_pipeline_refresh: bool = False,
-        rmsx_query_models_dir: str = '',
-    ):
+    def load_user_annotations_action(self, tool, pdb_id, auto_pipeline: bool = True):
         """
-        Load motifs from user-uploaded annotation files.
-        
+        Load motifs from annotation files of an external tool.
+
         Args:
-            tool (str): Tool name ('fr3d', 'rnamotifscan')
+            tool (str): Tool name ('fr3d' or 'rnamotifscanx')
             pdb_id (str): PDB ID to load annotations for
         """
         try:
@@ -3591,83 +2888,13 @@ class MotifVisualizerGUI:
             # this method with auto_pipeline=False and points source 5 at the
             # freshly ingested CSV directory. There is no in-line auto-run here.
 
-            # -- RMSX pipeline run (prebuilt/cache-aware by default) -----------
-            # Source 7 reuses available/prebuilt results unless explicitly
-            # forced to run fresh. scan_prepared sets _rmsx_skip_pipeline_load so
-            # this block never copies preannotated data over its fresh output.
-            if tool_lower in ['rmsx', 'rnamotifscanx'] and not getattr(self, '_rmsx_skip_pipeline_load', False):
-                rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
-                self.rmsx_pipeline_config = dict(rmsx_cfg)
-                data_mode = str(rmsx_cfg.get('data_mode', 'preannotated')).strip().lower()
-                if data_mode in ('preannotated', 'cache', 'cached') and not force_pipeline_refresh:
-                    try:
-                        copied = self._copy_preannotated_rmsx(rmsx_cfg, pdb_id)
-                        if copied.get('copied', 0):
-                            self.user_data_paths[7] = self.rmsx_output_path
-                            self.logger.debug(
-                                f"Using {copied['copied']} preannotated RNAMotifScanX result(s); no executable run."
-                            )
-                        else:
-                            self.logger.warning(
-                                f"No preannotated RMSX results found locally or on the download "
-                                f"server for {pdb_id}. To scan it yourself, set data_mode to "
-                                "run_from_scratch in config/rmsx_config.json."
-                            )
-                            return
-                    except Exception as error:
-                        self.logger.error(f"Could not load preannotated RMSX data: {error}")
-                        return
-                else:
-                    if not self.ensure_rmsx_runtime_ready(auto_setup=True):
-                        return
-                if rmsx_cfg and not (data_mode in ('preannotated', 'cache', 'cached') and not force_pipeline_refresh):
-                    try:
-                        tools_dir = str(Path(__file__).parent / 'tools')
-                        if tools_dir not in sys.path:
-                            sys.path.insert(0, tools_dir)
-                        from rmsx_runner import run_pipeline as rmsx_run  # type: ignore
-                        pdb_upper = pdb_id.strip().upper()
-                        force_fresh = bool(force_pipeline_refresh)
-
-                        run_cfg = dict(rmsx_cfg)
-                        if rmsx_query_models_dir:
-                            run_cfg['query_motifs_dir'] = os.path.abspath(os.path.expanduser(rmsx_query_models_dir))
-                        run_cfg['auto_download_cif'] = False
-                        out_dir = os.path.abspath(os.path.expanduser(str(run_cfg.get('output_dir', self.rmsx_output_path))))
-                        run_cfg['cif_input_dir'] = out_dir
-
-                        local_pdb = self._prepare_local_pdb_for_rmsx(
-                            pdb_upper, out_dir, force_refresh=force_fresh
-                        )
-                        if local_pdb:
-                            run_cfg['auto_download_pdb'] = False
-
-                        families = rmsx_cfg.get('motif_families', [])
-                        mode_text = 'fresh' if force_fresh else 'incremental/prebuilt-aware'
-                        if rmsx_query_models_dir:
-                            self.logger.info(f"Using RMSX query model directory override: {run_cfg.get('query_motifs_dir')}")
-                        self.logger.info(
-                            f"Running RMSX pipeline for {pdb_upper} ({mode_text}, no external download) in {out_dir}..."
-                        )
-                        existing = (
-                            {}
-                            if data_mode in ('preannotated', 'cache', 'cached') and not force_fresh
-                            else rmsx_run(run_cfg, pdb_upper, force_fresh=force_fresh)
-                        )
-
-                        if existing:
-                            self.logger.info(
-                                f"RMSX run complete: {len(existing)}/{len(families) or len(existing)} families"
-                            )
-                        else:
-                            self.logger.warning(
-                                "RMSX fresh run produced no result files. "
-                                "Ensure rmsx_executable, mc_annotate_executable, query_motifs_dir are configured "
-                                "and CIF is available locally (auto_download_cif is forced off for source 7)."
-                            )
-                            return
-                    except Exception as _rmsx_e:
-                        self.logger.debug(f"RMSX pipeline check error: {_rmsx_e}")
+            # -- RNAMotifScanX (Source 7) --------------------------------------
+            # Follows data_mode in config/rmsx_config.json: 'preannotated'
+            # downloads/reads precomputed results, 'run_from_scratch' scans the
+            # prepared inputs. Nothing is loaded when this returns False.
+            if tool_lower in ['rmsx', 'rnamotifscanx']:
+                if not self._ensure_rmsx_results(pdb_id):
+                    return
             # ----------------------------------------------------------------
 
             # If custom data path is set for this source, override the tool directory
@@ -4476,9 +3703,9 @@ class MotifVisualizerGUI:
         print("  rmv_setup FR3D                      One-shot: install deps and register FR3D")
         print("  rmv_db FR3D                         Run FR3D and load its results")
         print("  rmv_fr3d status|register|run        Inspect or manage the FR3D integration")
-        print("  rmv_db RNAMotifScanX                Load RNAMotifScanX results")
-        print("  rmv_rmsx status|doctor|test|run     Inspect or run the RNAMotifScanX integration")
-        print("  rmv_rmsx_doctor                     Diagnose the RNAMotifScanX runtime")
+        print("  rmv_setup RNAMotifScanX             One-shot: prepare the scanner (native build / WSL2 / Docker)")
+        print("  rmv_db RNAMotifScanX                Load RNAMotifScanX results (downloaded, or scanned from scratch)")
+        print("  rmv_rmsx_doctor                     Diagnose the RNAMotifScanX runtime and data")
         print("      Settings live in config/fr3d_config.json and config/rmsx_config.json.")
 
         print("\n8. SESSION AND DIAGNOSTICS")
@@ -6455,12 +5682,13 @@ class MotifVisualizerGUI:
             elif source_id == 7:
                 pipe_cfg = getattr(self, 'rmsx_pipeline_config', {})
                 print("\n--- Pipeline ---")
-                print("  Runs RNAMotifScanX per motif family, parses result_*.log files,")
-                print("  and loads source 7 motifs directly into RSMViewer.")
+                print("  preannotated     downloads the PDB's precomputed results from the project server.")
+                print("  run_from_scratch scans the PDB's prepared inputs with RNAMotifScanX")
+                print("                   (native build / WSL2 / Docker; prepare it with rmv_setup RNAMotifScanX).")
                 print("\n--- Current configuration ---")
                 print(f"  Mode         : {pipe_cfg.get('data_mode', 'preannotated')}")
                 print(f"  Runtime dir  : {self.rmsx_runtime_dir}")
-                print(f"  Executable   : {pipe_cfg.get('rmsx_executable', '(not found)')}")
+                print(f"  Scanner      : {pipe_cfg.get('scan_runtime', 'auto')} (see rmv_rmsx_doctor)")
                 print(f"  Output dir   : {self.rmsx_output_path}")
                 print(f"  Families     : {', '.join(pipe_cfg.get('motif_families', [])) or 'all defaults'}")
                 print("\n--- Suggested workflow ---")
@@ -6596,6 +5824,7 @@ class MotifVisualizerGUI:
         Args:
             pdb_id (str): PDB ID to refresh, or all active PDBs when omitted
         """
+        self._rmsx_scan_runs = {}
         try:
             if pdb_id:
                 pdb_ids = [str(pdb_id).upper()]
@@ -6906,13 +6135,6 @@ def initialize_gui():
                 if multi and gui.current_source_mode:
                     gui.logger.info(f"Auto-loading motifs for {display_id} from the active source...")
                     load_motif_data()
-                if gui.rmsx_auto_run_on_fetch:
-                    gui.logger.info("RNAMotifScanX auto-run is ON: running RNAMotifScanX wrapper...")
-                    ok = gui.run_rmsx_wrapper(display_id)
-                    if ok:
-                        gui.logger.success("RNAMotifScanX motifs loaded automatically after rmv_fetch")
-                    else:
-                        gui.logger.warning("RNAMotifScanX auto-run after rmv_fetch failed; structure is still loaded")
 
                 return display_id
 
@@ -7043,17 +6265,6 @@ def initialize_gui():
                 path_override, remaining_tokens = _resolve_path_with_spaces(tokens)
                 if not path_override:
                     path_override = os.path.abspath(os.path.expanduser(user_path_arg))
-                if active_source_id == 7:
-                    if not os.path.isdir(path_override):
-                        gui.logger.error(f"RNAMotifScanX query model directory not found: {path_override}")
-                        return
-                    gui.load_user_annotations_action(
-                        gui.current_user_tool,
-                        pdb_id,
-                        rmsx_query_models_dir=path_override,
-                    )
-                    return
-
                 # Sources 1-6 except 5 ignore optional rmv_load_motif path per policy.
                 if active_source_id in [1, 2, 3, 4, 6]:
                     gui.logger.info(
@@ -7061,14 +6272,14 @@ def initialize_gui():
                     )
                 else:
                     gui.logger.info(
-                        "Ignoring path argument for current source; only source 5 (FR3D) and source 7 (RNAMotifScanX) use it."
+                        "Ignoring path argument: rmv_load_motif takes none for this source."
                     )
 
             gui.load_user_annotations_action(gui.current_user_tool, pdb_id)
         else:
             if user_path_arg:
                 gui.logger.info(
-                    "Ignoring path argument for current source mode; only source 5 (FR3D) and source 7 (RNAMotifScanX) use it."
+                    "Ignoring path argument: rmv_load_motif takes none for this source."
                 )
             gui.fetch_motif_data_action(pdb_id, None)
     
@@ -8044,12 +7255,10 @@ def initialize_gui():
             print("  rmv_fr3d register <config>     Register external FR3D from a custom config")
             print("  rmv_fr3d status                 Show FR3D registration status")
             print("  rmv_load_motif                  Run FR3D search on loaded PDB")
-            print("\nRNAMotifScanX wrapper commands:")
-            print("  rmv_db RNAMotifScanX          Activate integrated Source-7 runtime")
-            print("  rmv_rmsx_doctor             Validate Source-7 runtime installation")
-            print("  rmv_rmsx setup              Attempt first-run runtime setup")
-            print("  rmv_rmsx test")
-            print("  rmv_rmsx run 1S72")
+            print("\nRNAMotifScanX commands:")
+            print("  rmv_setup RNAMotifScanX       Prepare the scanner for this machine")
+            print("  rmv_db RNAMotifScanX          Load RNAMotifScanX results")
+            print("  rmv_rmsx_doctor               Diagnose the runtime and data")
             print("="*60 + "\n")
             return
         
@@ -8120,11 +7329,12 @@ def initialize_gui():
     def setup_wrapper(source='', arg1='', *extra_args, **_kwargs):
         """PyMOL command: One-shot setup for an external source.
 
-        Installs everything required and registers the source so the user only
-        needs to paste the external software.
+        Installs/builds everything required so the source is ready to run.
 
         Usage:
             rmv_setup FR3D [PYTHON]     Install deps + register FR3D (Source 5)
+            rmv_setup RNAMotifScanX     Prepare the RNAMotifScanX scanner for this
+                                        machine: native build, WSL2 or Docker (Source 7)
         """
         src = str(source or '').strip()
         arg1_str = str(arg1 or '').strip()
@@ -8136,124 +7346,21 @@ def initialize_gui():
         key = src.lower()
         if key in ('', 'help'):
             gui.logger.info("Usage: rmv_setup FR3D [/abs/path/to/python]")
-            gui.logger.info("  Prepares and registers an external source in one step.")
+            gui.logger.info("       rmv_setup RNAMotifScanX")
+            gui.logger.info("  Prepares an external source in one step.")
             return
         if key in ('fr3d', '5', 'source5'):
             gui.auto_setup_fr3d(arg1_str)
             return
+        if key in ('rnamotifscanx', 'rmsx'):
+            gui.setup_rmsx_runtime()
+            return
         gui.command_error(f"rmv_setup: unknown source '{src}'")
-        gui.logger.info("Supported: rmv_setup FR3D")
-
-    def rmsx_wrapper(action='', arg1='', *extra_args, **_kwargs):
-        """PyMOL command: Configure and run external RNAMotifScanX through RSMViewer.
-
-        Usage:
-            rmv_rmsx status
-            rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH]
-            rmv_rmsx args <ARG_TEMPLATE>
-            rmv_rmsx doctor
-            rmv_rmsx setup
-            rmv_rmsx test
-            rmv_rmsx run <PDB_ID> [CHAINS]
-            rmv_rmsx run_current [CHAINS]
-            rmv_rmsx cancel
-        """
-        action_arg = str(action).strip() if action else ''
-        arg1_str = str(arg1).strip() if arg1 else ''
-
-        if action_arg and not arg1_str:
-            parts = action_arg.split()
-            if len(parts) > 1:
-                action_arg = parts[0]
-                arg1_str = parts[1]
-
-        sub = action_arg.lower() if action_arg else 'status'
-
-        if sub in ['', 'status', 'show']:
-            gui.print_rmsx_wrapper_status()
-            return
-
-        if sub == 'config':
-            if not arg1_str:
-                gui.command_error("Usage: rmv_rmsx config <EXECUTABLE> [OUTPUT_DIR] [WORK_DIR] [AUTO_ON_FETCH] [QUERY_FILE]")
-                return
-            extras = [str(x).strip() for x in extra_args if str(x).strip()]
-            query_file = ''
-            for idx, value in enumerate(list(extras)):
-                lowered = value.lower()
-                if lowered.endswith('.struct') or lowered.endswith('.txt') or lowered.startswith('query='):
-                    query_file = value.split('=', 1)[1].strip() if '=' in value else value
-                    extras.pop(idx)
-                    break
-            output_dir = extras[0] if len(extras) >= 1 else ''
-            work_dir = extras[1] if len(extras) >= 2 else ''
-            auto_on_fetch = extras[2] if len(extras) >= 3 else ''
-            if not query_file and len(extras) >= 4:
-                query_file = extras[3]
-            gui.configure_rmsx_wrapper(arg1_str, output_dir, work_dir, auto_on_fetch, query_file)
-            return
-
-        if sub == 'args':
-            parts = [arg1_str] if arg1_str else []
-            parts.extend(str(x).strip() for x in extra_args if str(x).strip())
-            template = ' '.join(parts).strip()
-            gui.set_rmsx_args_template(template)
-            return
-
-        if sub == 'doctor':
-            gui.rmsx_doctor(auto_setup=False)
-            return
-
-        if sub == 'setup':
-            gui.rmsx_doctor(auto_setup=True)
-            return
-
-        if sub == 'test':
-            gui.test_rmsx_wrapper()
-            return
-
-        if sub == 'run':
-            if not arg1_str:
-                gui.command_error("Usage: rmv_rmsx run <PDB_ID> [EXTRA_ARGS]")
-                return
-            extras = ' '.join(str(x).strip() for x in extra_args if str(x).strip())
-            gui.run_rmsx_wrapper(arg1_str, extras, force_fresh=True)
-            return
-
-        if sub in ['run_from_scratch', 'from_scratch', 'scan_prepared', 'scan']:
-            if not arg1_str:
-                gui.command_error("Usage: rmv_rmsx run <PDB_ID> [CHAINS]")
-                return
-            tokens = [str(x).strip() for x in extra_args if str(x).strip()]
-            compare = False
-            filtered = []
-            for token in tokens:
-                if token.lower() in ('compare', '--compare', 'validate'):
-                    compare = True
-                else:
-                    filtered.append(token)
-            gui.run_rmsx_scan_prepared(arg1_str, chains=' '.join(filtered).strip(), compare=compare)
-            return
-
-        if sub in ['scan_cancel', 'cancel']:
-            gui.cancel_rmsx_scan()
-            return
-
-        if sub in ['run_current', 'current']:
-            if not gui.loaded_pdb_id:
-                gui.logger.error("No active structure. Use rmv_fetch <PDB_ID> first.")
-                return
-            extras = [arg1_str] if arg1_str else []
-            extras.extend(str(x).strip() for x in extra_args if str(x).strip())
-            gui.run_rmsx_wrapper(gui.loaded_pdb_id, ' '.join(extras).strip(), force_fresh=False)
-            return
-
-        gui.command_error(f"Unknown rmv_rmsx subcommand: {sub}")
-        gui.logger.info("Use: rmv_rmsx status | config | args | doctor | setup | test | run | run_current | cancel")
+        gui.logger.info("Supported: rmv_setup FR3D | rmv_setup RNAMotifScanX")
 
     def rmsx_doctor_cmd(*_args, **_kwargs):
-        """PyMOL command: Show integrated RMSX runtime diagnostics."""
-        gui.rmsx_doctor(auto_setup=False)
+        """PyMOL command: Diagnose the RNAMotifScanX runtime and data."""
+        gui.rmsx_doctor()
     
     # Add commands to PyMOL
     cmd.extend('rmv_fetch', fetch_raw_pdb)
@@ -8273,7 +7380,6 @@ def initialize_gui():
     cmd.extend('rmv_combine_groups', combine_sets)
     cmd.extend('rmv_fr3d', fr3d_wrapper)
     cmd.extend('rmv_setup', setup_wrapper)
-    cmd.extend('rmv_rmsx', rmsx_wrapper)
     cmd.extend('rmv_rmsx_doctor', rmsx_doctor_cmd)
     
     def show_colors():
@@ -8785,6 +7891,7 @@ def initialize_gui():
             gui.user_rmsx_filtering_enabled = True
             gui.user_rms_custom_pvalues = {}
             gui.user_rmsx_custom_pvalues = {}
+            gui._rmsx_scan_runs = {}
             gui.cif_use_auth = 1
             gui.auth_to_label_map = {}
             gui.loaded_sources = set()
@@ -8833,16 +7940,16 @@ def initialize_gui():
             except Exception:
                 pass
 
-            # Clear the on-disk RMSX preannotated extraction cache so the next
-            # load re-extracts fresh consensus logs from the archive/folder.
+            # Remove the extraction cache left behind by older versions. Current
+            # versions read preannotated logs straight from rmsx_work_default,
+            # which is data (downloaded per PDB), not cache, and is kept.
             try:
                 import shutil
                 rmsx_out = Path(getattr(gui, 'rmsx_output_path', '') or '')
                 if rmsx_out:
-                    preannotated_cache = rmsx_out / '.preannotated_cache'
-                    if preannotated_cache.exists():
-                        shutil.rmtree(preannotated_cache, ignore_errors=True)
-                        gui.logger.debug(f"Cleared preannotated RMSX cache: {preannotated_cache}")
+                    legacy_cache = rmsx_out / '.preannotated_cache'
+                    if legacy_cache.exists():
+                        shutil.rmtree(legacy_cache, ignore_errors=True)
             except Exception:
                 pass
 
