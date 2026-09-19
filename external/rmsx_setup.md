@@ -351,6 +351,14 @@ Start with `rmv_rmsx_doctor`; it names the exact problem.
 `xcode-select --install` and `brew install boost`, then `rmv_setup RNAMotifScanX`
 again, or use Docker: `brew install docker colima`.
 
+**macOS: "Platform: Darwin x86_64" on an Apple-silicon Mac, or "linking failed".**
+Your PyMOL is an Intel build running under Rosetta. This is handled: RSMViewer
+detects the real hardware (`rmv_rmsx_doctor` shows `arm64` and a Rosetta note),
+builds the scanner natively for arm64 into `external/rmsx/bin/macos-arm64/`
+(matching Homebrew's arm64 Boost), and runs it from PyMOL. If you still see the
+error, update RSMViewer and rerun `rmv_setup RNAMotifScanX`; the compile and link
+log is in `external/rmsx/bin/macos-arm64/build.log`.
+
 **Docker is installed but "daemon not reachable".** Start it (`colima start` on
 macOS, Docker Desktop on Windows) or run `rmv_setup RNAMotifScanX`, which starts
 Colima for you.

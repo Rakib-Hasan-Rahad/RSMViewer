@@ -74,7 +74,37 @@ def _last_line(text: str, default: str = "") -> str:
     return lines[-1][:240] if lines else default
 
 
+_HOST_MACHINE: Optional[str] = None
+
+
+def host_machine() -> str:
+    """CPU architecture of the *hardware*, lower-case (``arm64``, ``x86_64``...).
+
+    ``platform.machine()`` reports the architecture of the running process, so an
+    Intel build of PyMOL running under Rosetta on an Apple-silicon Mac says
+    ``x86_64`` although the machine is ``arm64``. Homebrew's libraries and the
+    scanner we build are arm64 there, so the hardware is what matters.
+    """
+    global _HOST_MACHINE
+    if _HOST_MACHINE is None:
+        machine = platform.machine().lower()
+        if platform.system() == "Darwin":
+            rc, out, _ = run_capture(["/usr/sbin/sysctl", "-n", "hw.optional.arm64"], timeout=10)
+            if rc == 0 and out.strip() == "1":
+                machine = "arm64"
+        _HOST_MACHINE = "arm64" if machine == "aarch64" else machine
+    return _HOST_MACHINE
+
+
+def is_translated() -> bool:
+    """True when this process is an Intel build running under Rosetta on an ARM Mac."""
+    return platform.system() == "Darwin" and host_machine() == "arm64" \
+        and platform.machine().lower() != "arm64"
+
+
 def platform_dir() -> str:
+    if platform.system() == "Darwin":
+        return "macos-arm64" if host_machine() == "arm64" else "macos-x86_64"
     return get_runtime_platform_dir()
 
 
@@ -183,7 +213,15 @@ def binary_matches_host(path: Path) -> bool:
         return {0x3E: machine in ("x86_64", "amd64"), 0xB7: machine in ("aarch64", "arm64")}.get(elf_machine, False)
     if head[:2] == b"MZ":
         return system == "Windows"
-    if head[:4] in (b"\xcf\xfa\xed\xfe", b"\xca\xfe\xba\xbe", b"\xbe\xba\xfe\xca"):
+    if head[:4] == b"\xcf\xfa\xed\xfe":  # thin 64-bit Mach-O: check its CPU type
+        if system != "Darwin":
+            return False
+        cputype = int.from_bytes(head[4:8], "little")
+        allowed = {0x01000007}                      # x86_64 (Rosetta runs it on ARM too)
+        if host_machine() == "arm64":
+            allowed.add(0x0100000C)                 # arm64
+        return cputype in allowed
+    if head[:4] in (b"\xca\xfe\xba\xbe", b"\xbe\xba\xfe\xca"):
         return system == "Darwin"
     return False
 
@@ -329,7 +367,7 @@ def _try_native(config: dict, runtime_dir: str) -> Tuple[Optional[Runtime], str]
     reasons = []
     for path in candidates:
         if not binary_matches_host(path):
-            reasons.append(f"{path} is not a {platform.system()}/{platform.machine()} executable")
+            reasons.append(f"{path} is not a {platform.system()}/{host_machine()} executable")
             continue
         if os.name != "nt" and not os.access(path, os.X_OK):
             try:
@@ -480,7 +518,10 @@ def build_native_scan(runtime_dir: str, progress: Progress, install_deps: bool =
     include, libdir, missing_libs = find_boost()
     if (include is None or missing_libs) and system == "Darwin" and install_deps and shutil.which("brew"):
         progress("Boost is not installed; running: brew install boost  (this can take several minutes)")
-        rc, out, err = run_capture([shutil.which("brew"), "install", "boost"], timeout=3600)
+        brew_cmd = [shutil.which("brew"), "install", "boost"]
+        if is_translated():   # Homebrew refuses to run as x86_64 in its arm64 prefix
+            brew_cmd = ["/usr/bin/arch", "-arm64"] + brew_cmd
+        rc, out, err = run_capture(brew_cmd, timeout=3600)
         if rc != 0:
             result["error"] = f"brew install boost failed: {_last_line(err or out)}"
             return result
@@ -493,6 +534,7 @@ def build_native_scan(runtime_dir: str, progress: Progress, install_deps: bool =
                            + f". Install them with: {need}")
         return result
     progress(f"Boost: {include.parent} (libs in {libdir})")
+    arch_flags = ["-arch", "arm64"] if system == "Darwin" and host_machine() == "arm64" else []
 
     bin_dir = layout(runtime_dir)["bin"]
     bin_dir.mkdir(parents=True, exist_ok=True)
@@ -501,7 +543,7 @@ def build_native_scan(runtime_dir: str, progress: Progress, install_deps: bool =
     try:
         def compile_one(name: str) -> Tuple[str, int, str]:
             obj = build_dir / f"{name}.o"
-            argv = [cxx, "-std=c++14", "-O2", "-w", f"-I{include}", f"-I{threadpool}",
+            argv = [cxx] + arch_flags + ["-std=c++14", "-O2", "-w", f"-I{include}", f"-I{threadpool}",
                     "-c", str(src / f"{name}.cc"), "-o", str(obj)]
             rc, out, err = run_capture(argv, timeout=900)
             return name, rc, (err or out)
@@ -523,7 +565,7 @@ def build_native_scan(runtime_dir: str, progress: Progress, install_deps: bool =
         target = bin_dir / exe_name()
         linked = False
         for sdk in (_macos_sdks() if system == "Darwin" else [""]):
-            argv = [cxx, "-std=c++14", "-O2", "-w"] + (["-isysroot", sdk] if sdk else []) + objects + [
+            argv = [cxx] + arch_flags + ["-std=c++14", "-O2", "-w"] + (["-isysroot", sdk] if sdk else []) + objects + [
                 "-o", str(target), f"-L{libdir}", f"-Wl,-rpath,{libdir}"] + libs
             progress("Linking" + (f" (SDK {Path(sdk).name})" if sdk else "") + "...")
             rc, out, err = run_capture(argv, timeout=900)
@@ -572,7 +614,8 @@ def setup(config: dict, runtime_dir: str, progress: Progress, install_deps: bool
     """
     system = platform.system()
     report = {"ok": False, "runtime": None, "problems": [], "next": []}
-    progress(f"Platform: {system} {platform.machine()} ({platform_dir()})")
+    progress(f"Platform: {system} {host_machine()} ({platform_dir()})"
+             + ("; this PyMOL is an Intel build running under Rosetta" if is_translated() else ""))
 
     rt, why = _try_native(config, runtime_dir)
     if rt:
@@ -642,10 +685,13 @@ def diagnose(config: dict, runtime_dir: str, pdb_id: str = "") -> dict:
     """
     lines: List[Tuple[str, str, str]] = []
     add = lambda status, label, detail="": lines.append((status, label, detail))
-    system, machine = platform.system(), platform.machine()
+    system, machine = platform.system(), host_machine()
     lay = layout(runtime_dir)
 
     add("info", "Platform", f"{system} {machine} ({platform_dir()})")
+    if is_translated():
+        add("info", "Rosetta", "this PyMOL is an Intel build running under Rosetta; "
+            "the scanner is built and run natively for arm64")
     add("info", "Data mode", str(config.get("data_mode", "preannotated")))
 
     # Scanner runtimes -----------------------------------------------------
