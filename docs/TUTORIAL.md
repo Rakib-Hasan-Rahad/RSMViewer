@@ -305,11 +305,11 @@ rmv_super group_combined
 
 ## 10. FR3D pipeline
 
-The repository default is `data_mode: "cache"` in
-`config/fr3d_config.json`. In this mode `rmv_db FR3D` loads local cached
-annotations for the structure from `output/fr3d_runs/` and does not run FR3D or use the
-network. To execute the official FR3D pipeline, change the field to
-`data_mode: "run_from_scratch"`, then complete the setup below.
+The repository default is `data_mode: "run_from_scratch"` in
+`config/fr3d_config.json`: `rmv_db FR3D` executes the official FR3D pipeline
+after the setup below. With `data_mode: "cache"`, `rmv_db FR3D` instead loads
+cached annotations from an earlier run of the structure from `output/fr3d_runs/`
+and does not run FR3D or use the network.
 
 ### Setup
 

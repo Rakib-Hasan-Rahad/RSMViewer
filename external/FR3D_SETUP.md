@@ -7,10 +7,11 @@ RSMViewer PyMOL plugin on any PC (Windows / macOS / Linux).
 
 ## 1. One-time setup
 
-RSMViewer supports two FR3D modes. The repository default is `cache`, which
-serves previously generated FR3D results for the structure from
-`output/fr3d_runs/` and does not run FR3D or make a network call. To execute the
-official FR3D Python pipeline, set this field in `config/fr3d_config.json`:
+RSMViewer supports two FR3D modes. The repository default is `run_from_scratch`,
+which executes the official FR3D Python pipeline (set up as below). The other
+mode, `cache`, serves previously generated FR3D results for the structure from
+`output/fr3d_runs/` and does not run FR3D or make a network call. The mode is
+this field in `config/fr3d_config.json`:
 
 ```json
 "data_mode": "run_from_scratch"

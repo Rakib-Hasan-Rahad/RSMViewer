@@ -140,13 +140,13 @@ FR3D has two supported modes:
 | `cache` | Load previously generated FR3D results for the structure from `output/fr3d_runs/`; no FR3D search or network call is made. |
 | `run_from_scratch` | Run the official `fr3d-python` pipeline using the configured checkout and queries. |
 
-The repository default is `cache`. Cache mode serves results only from
-`output/fr3d_runs/`; when none exist there for the structure it reports that and
-asks you to run from scratch. There is no bundled/external cache.
-To run FR3D itself, change only this field to:
+The repository default is `run_from_scratch`, which needs your FR3D checkout
+(see the setup below). Cache mode serves results only from `output/fr3d_runs/`;
+when none exist there for the structure it reports that and asks you to run from
+scratch. There is no bundled/external cache. To use cache mode, set:
 
 ```json
-"data_mode": "run_from_scratch"
+"data_mode": "cache"
 ```
 
 ### Fields
