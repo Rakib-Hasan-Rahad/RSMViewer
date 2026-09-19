@@ -48,9 +48,7 @@ it, delete its folder and run `rmv_db RNAMotifScanX` again.
 ## Notes
 
 - Downloaded folders are ignored by git, except the sample PDBs the repository
-  tracks (`1s72`, `1ffk`; see `.gitignore`).
-- Prepared `.rmsx.in`/`.rmsx.nch` inputs for `run_from_scratch` live in the same
-  per-PDB folders; a download merges into an existing folder and never deletes
-  your files.
+  tracks (`1s72`; see `.gitignore`).
+- A download merges into an existing folder and never deletes your files.
 - `rmv_reset cache` does not delete this folder: it is data, not cache.
 - Full setup guide: [../rmsx_setup.md](../rmsx_setup.md).

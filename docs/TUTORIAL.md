@@ -384,22 +384,9 @@ only for a 4-character PDB ID with no local results; the archive must extract
 safely and contain at least one `*_consensus.log`. If the server has no results
 for a PDB yet, RSMViewer says so and you can scan it with `run_from_scratch`.
 
-Each PDB's data contains both the RMSX **inputs** (`.rmsx.in` / `.rmsx.nch`) and
-the precomputed **outputs** (`*_consensus.log`). In preannotated mode RSMViewer
-reads the outputs directly.
-
 ### From-scratch mode
 
-RNAMotifScanX is a C++ program and the binary shipped with RSMViewer is a Linux
-x86-64 executable, so first prepare the scanner for your machine (once):
-
-```text
-rmv_setup RNAMotifScanX
-```
-
-It uses the bundled binary on Linux x86-64, builds one from the bundled source on
-macOS and other Linux (needs a C++ compiler and Boost), or falls back to WSL2
-(Windows) or Docker. Run `rmv_rmsx_doctor` to see what is available. Then set:
+Set `data_mode` in `config/rmsx_config.json` to:
 
 ```json
 "data_mode": "run_from_scratch"
@@ -412,15 +399,15 @@ rmv_fetch 1S72
 rmv_db RNAMotifScanX
 ```
 
-RSMViewer scans the PDB's prepared `.rmsx.in`/`.rmsx.nch` inputs from
-`external/rmsx_preannotated/rmsx_work_default/<pdb_id>/<chain>/` (downloaded from
-the results server if you do not have them), prints progress per chain and
-family, and loads the result. PyMOL pauses until the scan finishes (about a
-minute and a half for 1S72). It never runs MC-Annotate/RNAVIEW itself and never
-falls back to preannotated data. RNAMotifScanX estimates P-values by random
-simulation, so borderline hits vary slightly between runs. See
-[external/rmsx_setup.md](../external/rmsx_setup.md) (config modes, and setup for
-macOS, Windows and Linux).
+**The first time you run it, RSMViewer downloads all the required files and
+third-party software by itself** from
+[https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz](https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz)
+into `external/rmsx/` and prepares them for your computer, then runs the analysis
+and loads the result. PyMOL waits until it finishes (about a minute and a half
+for 1S72 after the first-time preparation). On macOS you need the Xcode command
+line tools (`xcode-select --install`); on Windows, WSL2 or Docker Desktop; Linux
+needs nothing extra. `rmv_rmsx_doctor` shows whether everything is ready. See
+[external/rmsx_setup.md](../external/rmsx_setup.md) for the full guide.
 
 P-value thresholds are configured only under `pvalue_thresholds` in
 `config/rmsx_config.json`; the same thresholds apply to preannotated and freshly

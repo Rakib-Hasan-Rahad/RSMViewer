@@ -1,18 +1,24 @@
 # ── External runtimes and datasets ───────────────────────────────────────────
-# The repository ships the external/ folder structure, its README files, and a
-# small RMSX preannotated sample (1s72, 1ffk). Every other PDB is downloaded
-# per PDB into rmsx_work_default/ on first use and is NOT versioned (see
-# external/rmsx_preannotated/README.md). The old offline bundle is no longer used
-# but stays ignored so a copy left on disk is never committed by accident.
-external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz
-external/rmsx_preannotated/rmsx_work_default/
+# Only documentation and folder placeholders are versioned under external/.
+# Everything a user can download or generate is NOT shipped:
+#  - external/rmsx/: the RNAMotifScanX runtime (source, scoring matrices, query
+#    models, scanner binaries) is downloaded on first run_from_scratch use from
+#    https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz
+#    (see external/rmsx_setup.md). Only its README and bin/.gitkeep are tracked.
+#  - external/rmsx_preannotated/rmsx_work_default/: one folder per PDB, downloaded
+#    on first use. Only the 1s72 sample is tracked.
+#  - external/fr3d/fr3d-python-latest/: the user's own FR3D checkout.
+external/rmsx/*
+!external/rmsx/README.md
+!external/rmsx/bin/
+external/rmsx/bin/*
+!external/rmsx/bin/.gitkeep
+external/rmsx_preannotated/*
+!external/rmsx_preannotated/README.md
+!external/rmsx_preannotated/rmsx_work_default/
+external/rmsx_preannotated/rmsx_work_default/*
 !external/rmsx_preannotated/rmsx_work_default/1s72/
 !external/rmsx_preannotated/rmsx_work_default/1s72/**
-!external/rmsx_preannotated/rmsx_work_default/1ffk/
-!external/rmsx_preannotated/rmsx_work_default/1ffk/**
-external/rmsx/**/RNAVIEW/
-# Scanner built from source by `rmv_setup RNAMotifScanX` (one folder per platform)
-external/rmsx/bin/*/
 external/fr3d/fr3d-python-latest/*
 !external/fr3d/fr3d-python-latest/.gitkeep
 
@@ -25,6 +31,7 @@ __pycache__/
 
 # Local instructions; keep out of GitHub
 GITHUB_UPLOAD_INSTRUCTIONS.txt
+git upload.txt
 
 # Local-only audit reports; keep out of GitHub
 RMSX_AUDIT_REPORT.md
@@ -38,11 +45,15 @@ RMSX_AUDIT_REPORT.md
 /cached_structures/*
 !/cached_structures/.gitkeep
 
-# ── RMSX benchmark/test run outputs ──────────────────────────────────────────
-/output/rmsx_results/
-/output/fr3d_runs/*
-!/output/fr3d_runs/1S72/
-!/output/fr3d_runs/1S72/**
+# ── Generated output (recreated by running the plugin; never shipped) ───────
+/output/*
+!/output/README.md
+/motif_structures/
+
+# ── Editor / build leftovers ─────────────────────────────────────────────────
+*.swp
+*~
+*.o
 
 # ── Local manuscript/benchmark work ─────────────────────────────────────────
 # Figure S3 scripts and generated results are kept locally and are not part of

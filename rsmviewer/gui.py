@@ -581,6 +581,7 @@ class MotifVisualizerGUI:
         Re-run on every rmv_db so edits to the config file apply immediately.
         """
         from .tools.rmsx_runner import DEFAULT_PREANNOTATED_BASE_URL, DEFAULT_SCAN_TIMEOUT_SECONDS
+        from .tools.rmsx_runtime import DEFAULT_BUNDLE_URL as DEFAULT_RMSX_BUNDLE_URL
         cfg = {
             'data_mode': 'preannotated',
             'jaccard_threshold': self.jaccard_threshold,
@@ -589,6 +590,7 @@ class MotifVisualizerGUI:
             'scan_runtime': 'auto',           # auto | native | wsl | docker
             'pdb_prebuild_dir': str((Path(__file__).parent.parent / 'external' / 'rmsx_preannotated' / 'rmsx_work_default').resolve()),
             'preannotated_base_url': DEFAULT_PREANNOTATED_BASE_URL,
+            'rmsx_bundle_url': DEFAULT_RMSX_BUNDLE_URL,   # scanner runtime, downloaded on first from-scratch use
             'query_motifs_dir': '',
             'output_dir': self.rmsx_output_path,
             'motif_families': ['k-turn', 'c-loop', 'sarcin-ricin', 'reverse-kturn', 'e-loop'],

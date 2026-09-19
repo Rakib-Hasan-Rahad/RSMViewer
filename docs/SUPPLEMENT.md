@@ -341,17 +341,13 @@ threshold and consolidates. The logs are read directly from the local
 downloaded once and later loads and PyMOL sessions need no connection.
 
 **From-scratch mode.** With `"data_mode": "run_from_scratch"`, `rmv_db
-RNAMotifScanX` runs only the RMSX `scan` step on the PDB's prepared
-`.rmsx.in`/`.nch` inputs (downloaded from the results server if absent); it never
-runs MC-Annotate or RNAVIEW itself and never falls back to preannotated data.
-The scanner is a Linux x86-64 binary, so `rmv_setup RNAMotifScanX` prepares a
-runtime for the host: the bundled binary (Linux x86-64), a native build from the
-bundled source (macOS, other Linux), WSL2 (Windows), or Docker; `rmv_rmsx_doctor`
-diagnoses it. Query models come from `Queries/reduced` (the set that reproduces
-the published results). RMSX estimates P-values by random simulation, so
-borderline hits vary slightly between runs, and the scanner can crash on very
-large RNAs; hits printed before a crash are kept and flagged (see
-`external/rmsx_setup.md`).
+RNAMotifScanX` runs RNAMotifScanX on the loaded structure and loads the fresh
+result; it never falls back to preannotated data. The first time it is used, all
+required files and third-party software are downloaded automatically from
+`https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz` (verified
+against its SHA-256 checksum) into `external/rmsx/` and prepared for the host
+(native build, WSL2, or Docker); `rmv_rmsx_doctor` reports readiness and
+`rmv_setup RNAMotifScanX` prepares it in advance. See `external/rmsx_setup.md`.
 
 **P-value thresholds.** Per-family acceptance thresholds live only under
 `pvalue_thresholds` in `config/rmsx_config.json`; command-line overrides are
@@ -538,10 +534,10 @@ normalization including the `K-TURN`/`REVERSE-K-TURN` separation
 - **Strict residue-identity benchmarking.** As shown in S9, near-duplicate
   residue sets that fall just below the merge thresholds are counted separately.
   Benchmark precision/recall are best interpreted as strict lower bounds.
-- **External software is user-provided.** FR3D and RNAMotifScanX binaries and
-  large offline datasets are not distributed with RSMViewer; the repository
-  ships only the directory structure, documentation, and a small sample so that
-  users can install the software and paste large data locally.
+- **External software and data are not bundled.** FR3D is user-provided; the
+  RNAMotifScanX software and per-PDB annotations are downloaded automatically from
+  the project's server on first use. The repository ships only the directory
+  structure, documentation, and a small `1s72` RMSX sample.
 
 ---
 

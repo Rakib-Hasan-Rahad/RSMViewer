@@ -18,12 +18,14 @@ chosen runtime, translating file paths where the runtime needs it.
 from __future__ import annotations
 
 import concurrent.futures
+import hashlib
 import os
 import platform
 import re
 import shutil
 import ssl
 import subprocess
+import tarfile
 import tempfile
 import time
 import urllib.error
@@ -36,6 +38,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 from .runtime_layout import get_runtime_platform_dir
 
 DOCKER_IMAGE = "ubuntu:22.04"
+DEFAULT_BUNDLE_URL = "https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz"
 SCAN_SOURCES = [
     "structural_motif", "annotated_structure", "scan_structure",
     "motif_graph_matching", "simulation", "parameters", "map_PDB_index",
@@ -256,6 +259,121 @@ def native_candidates(config: dict, runtime_dir: str) -> List[Path]:
         if path.is_file() and path not in out:
             out.append(path)
     return out
+
+
+# ── runtime bundle (downloaded on first use) ────────────────────────────────
+# The scanner's source, scoring matrices, query models and Linux binary are not
+# shipped in the plugin repository. They are downloaded once from the project's
+# server into ``external/rmsx/`` the first time run_from_scratch needs them.
+
+def bundle_ready(runtime_dir: str) -> bool:
+    """True when the runtime folder already holds the scanner source, scoring
+    matrices and query models (so nothing needs downloading)."""
+    src = layout(runtime_dir)["src"]
+    return ((src / "mat" / "iso.mat").is_file()
+            and (src / "Queries" / "reduced").is_dir()
+            and (src / "main_scan.cc").is_file())
+
+
+def _read_sha256(text: str) -> str:
+    for token in (text or "").split():
+        if re.fullmatch(r"[0-9a-fA-F]{64}", token):
+            return token.lower()
+    return ""
+
+
+def ensure_runtime_bundle(config: dict, runtime_dir: str, progress: Progress) -> dict:
+    """Download and unpack ``rmsx.tar.gz`` into ``runtime_dir`` unless it is already there.
+
+    The archive (``<url>``) is verified against ``<url>.sha256`` before anything
+    is unpacked. Members are unpacked into a temporary folder (absolute or ``..``
+    paths are rejected; symbolic links and device files are skipped) and then
+    moved into ``runtime_dir`` without overwriting any file that already exists,
+    so a rerun never clobbers your own files. Returns ``{'ok', 'downloaded',
+    'url', 'error'}``; never raises.
+    """
+    result = {"ok": False, "downloaded": False, "url": "", "error": ""}
+    if bundle_ready(runtime_dir):
+        result["ok"] = True
+        return result
+
+    url = str(config.get("rmsx_bundle_url") or DEFAULT_BUNDLE_URL).strip()
+    result["url"] = url
+    root = layout(runtime_dir)["root"]
+    tmp = None
+    try:
+        root.mkdir(parents=True, exist_ok=True)
+        tmp = Path(tempfile.mkdtemp(prefix=".rmsx_dl_", dir=str(root)))
+        archive = tmp / "rmsx.tar.gz"
+
+        progress(f"RNAMotifScanX runtime not found under {root}.")
+        progress(f"Downloading it once from {url} (about 30 MB)...")
+        response, insecure = open_url(url, timeout=120)
+        digest = hashlib.sha256()
+        with response, open(archive, "wb") as out:
+            for chunk in iter(lambda: response.read(1 << 20), b""):
+                out.write(chunk)
+                digest.update(chunk)
+        if insecure:
+            progress("Warning: this Python has no CA certificates, so the server certificate "
+                     "was not verified (the checksum below still is).")
+
+        sha_response, _ = open_url(url + ".sha256", timeout=60)
+        with sha_response:
+            expected = _read_sha256(sha_response.read().decode("utf-8", errors="replace"))
+        if not expected:
+            raise ValueError(f"could not read a SHA-256 checksum from {url}.sha256")
+        if digest.hexdigest() != expected:
+            raise ValueError("checksum mismatch: the downloaded archive is corrupt or was altered "
+                             f"(expected {expected[:12]}..., got {digest.hexdigest()[:12]}...)")
+        progress("Checksum verified. Unpacking...")
+
+        staging = tmp / "unpacked"
+        staging.mkdir()
+        staging_resolved = staging.resolve()
+        with tarfile.open(archive, "r:*") as tar:
+            members = tar.getmembers()
+            names = [Path(m.name).parts for m in members if Path(m.name).parts]
+            strip = 1 if names and all(parts[0] == "rmsx" for parts in names) else 0
+            keep = []
+            for member in members:
+                parts = Path(member.name).parts
+                if len(parts) <= strip:
+                    continue
+                if Path(member.name).is_absolute() or ".." in parts:
+                    raise ValueError(f"unsafe path in archive: {member.name}")
+                if member.issym() or member.islnk() or member.isdev() or member.isfifo():
+                    continue                     # e.g. a stray libstdc++.a symlink
+                member.name = "/".join(parts[strip:])
+                target = (staging / member.name).resolve()
+                if staging_resolved not in target.parents and target != staging_resolved:
+                    raise ValueError(f"unsafe path in archive: {member.name}")
+                keep.append(member)
+            tar.extractall(staging, members=keep)
+
+        if not (staging / "RNAMotifScanX_src" / "mat").is_dir():
+            raise ValueError("archive does not contain RNAMotifScanX_src/mat")
+
+        moved = 0
+        for path in sorted(staging.rglob("*")):
+            relative = path.relative_to(staging)
+            destination = root / relative
+            if path.is_dir():
+                destination.mkdir(parents=True, exist_ok=True)
+            elif not destination.exists():
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(path), str(destination))
+                moved += 1
+        progress(f"RNAMotifScanX runtime unpacked into {root} ({moved} files).")
+        result.update(ok=True, downloaded=True)
+    except urllib.error.HTTPError as exc:
+        result["error"] = f"HTTP {exc.code} {exc.reason} for {exc.url or url}"
+    except Exception as exc:  # noqa: BLE001 - reported to the caller
+        result["error"] = f"{type(exc).__name__}: {exc}"
+    finally:
+        if tmp is not None:
+            shutil.rmtree(tmp, ignore_errors=True)
+    return result
 
 
 # ── docker / wsl ────────────────────────────────────────────────────────────
@@ -617,6 +735,13 @@ def setup(config: dict, runtime_dir: str, progress: Progress, install_deps: bool
     progress(f"Platform: {system} {host_machine()} ({platform_dir()})"
              + ("; this PyMOL is an Intel build running under Rosetta" if is_translated() else ""))
 
+    bundle = ensure_runtime_bundle(config, runtime_dir, progress)
+    if not bundle["ok"]:
+        report["problems"].append(f"could not download the RNAMotifScanX runtime: {bundle['error']}")
+        report["next"].append(f"Download {bundle['url']} yourself and extract it so that "
+                              f"{layout(runtime_dir)['src']} exists (see external/rmsx_setup.md)")
+        return report
+
     rt, why = _try_native(config, runtime_dir)
     if rt:
         report.update(ok=True, runtime=rt)
@@ -696,6 +821,13 @@ def diagnose(config: dict, runtime_dir: str, pdb_id: str = "") -> dict:
 
     # Scanner runtimes -----------------------------------------------------
     add("info", "--- Scanner (needed only for run_from_scratch) ---")
+    if bundle_ready(runtime_dir):
+        add("ok", "RNAMotifScanX runtime files", str(lay["root"]))
+    else:
+        add("warn", "RNAMotifScanX runtime files",
+            "not downloaded yet; downloaded automatically from "
+            f"{config.get('rmsx_bundle_url') or DEFAULT_BUNDLE_URL} the first time you run from scratch "
+            "(or run: rmv_setup RNAMotifScanX)")
     native, why = _try_native(config, runtime_dir)
     add("ok" if native else "warn", "Native scanner", native.exe if native else why)
     if system == "Windows":

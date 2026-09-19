@@ -31,8 +31,8 @@ import urllib.error
 from pathlib import Path
 
 from .rmsx_runtime import (
-    Runtime, build_command, find_query, find_src_root, open_url, query_dirs,
-    resolve_runtime,
+    Runtime, build_command, ensure_runtime_bundle, find_query, find_src_root,
+    open_url, query_dirs, resolve_runtime, setup,
 )
 
 DEFAULT_FAMILY_FOLDER_MAP = {
@@ -403,13 +403,29 @@ def run_scan_prepared(config: dict, pdb_id: str, output_dir: str, chains=None,
             "(preannotated results are not substituted)")
         return report
 
+    # First use: fetch the scanner runtime (source, scoring matrices, query
+    # models) from the project's server. Already there -> nothing is downloaded.
+    bundle = ensure_runtime_bundle(config, runtime_dir, emit)
+    if not bundle['ok']:
+        report['problems'].append(
+            f"could not download the RNAMotifScanX runtime from {bundle['url']}: {bundle['error']}. "
+            "Download it manually and extract it into external/rmsx/ (see external/rmsx_setup.md)")
+        return report
+
     if runtime is None:
         runtime, reasons = resolve_runtime(config, runtime_dir)
         if runtime is None:
-            report['problems'].append(
-                "no RNAMotifScanX scanner is available on this machine: "
-                + "; ".join(reasons) + ". Run: rmv_setup RNAMotifScanX")
-            return report
+            # No scanner runs on this machine yet: do the one-time preparation
+            # (build from source / WSL2 / Docker) now instead of stopping.
+            emit("No RNAMotifScanX scanner is ready yet; preparing one (first run only)...")
+            prepared = setup(config, runtime_dir, emit, install_deps=True)
+            runtime = prepared['runtime'] if prepared['ok'] else None
+            if runtime is None:
+                report['problems'].append(
+                    "no RNAMotifScanX scanner is available on this machine: "
+                    + "; ".join(reasons + prepared['problems']))
+                report['problems'].extend(prepared['next'])
+                return report
     report['runtime'] = runtime.note
     emit(f"Scanner: {runtime.note}")
 

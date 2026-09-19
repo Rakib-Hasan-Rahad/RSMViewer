@@ -1,51 +1,29 @@
 # RNAMotifScanX Runtime
 
-RSMViewer uses preannotated RNAMotifScanX results by default. In that mode it
-does not execute the programs in this directory. The preannotated data is read
-from `external/rmsx_preannotated/`. To provide the most up-to-date annotations it
-is collected live from our server, per PDB, the first time it is requested; see
-its README for details.
-
-## Included sample
-
-The repository includes a small extracted `1s72` sample at:
+This folder holds the RNAMotifScanX software that RSMViewer uses when
+`data_mode` is `"run_from_scratch"` in `config/rmsx_config.json`. It is **empty
+on purpose** in the repository: the first time you run RNAMotifScanX from scratch,
+RSMViewer downloads all the required files and third-party software by itself
+from
 
 ```text
-external/rmsx_preannotated/rmsx_work_default/1s72/
+https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz
 ```
 
-It contains the consensus result logs for chains `0` and `9` and lets the
-default `rmv_db RNA3DMotifAtlas,RNAMotifScanX` workflow run immediately for
-`1S72`. Other structures are downloaded on first use from the public results
-server, one PDB at a time (see `external/rmsx_preannotated/README.md`).
+(about 30 MB, verified against `rmsx.tar.gz.sha256`) into this folder and prepares
+them for your computer. Later runs start immediately.
 
-## Run RMSX from scratch
-
-Only needed when `data_mode` is `"run_from_scratch"` in `config/rmsx_config.json`.
-This directory holds everything required:
+Nothing here needs to be installed by hand. Just set `data_mode` to
+`run_from_scratch` and run:
 
 ```text
-external/rmsx/
-  RNAMotifScanX_src/     C++ source, scoring matrices (mat/), query models
-                         (Queries/reduced/, Queries/), and a Linux x86-64 build
-                         of `scan`
-  bin/<platform>/scan    a `scan` built from that source on your machine
-                         (created by `rmv_setup RNAMotifScanX`; git-ignored)
+rmv_fetch 1S72
+rmv_db RNAMotifScanX
 ```
 
-The bundled `scan` is a Linux x86-64 executable. Run `rmv_setup RNAMotifScanX`
-once: it uses that binary on Linux x86-64, builds one from source on macOS and
-other Linux (needs a C++ compiler and Boost), or falls back to WSL2 (Windows) or
-Docker. `rmv_rmsx_doctor` shows what is available. See
-[../rmsx_setup.md](../rmsx_setup.md).
+The default `preannotated` mode does not use this folder at all: it downloads
+precomputed annotations per PDB into `external/rmsx_preannotated/`.
 
-## Configuration
-
-```json
-"data_mode": "preannotated"
-```
-
-With `preannotated`, RSMViewer uses the local folder
-`external/rmsx_preannotated/rmsx_work_default/<pdb>/` if it has results, and
-otherwise downloads that PDB's `<pdb>.tar.gz` from `preannotated_base_url`.
-Keep the research-paper cutoffs in `pvalue_thresholds`; PyMOL commands do not
+`rmv_rmsx_doctor` shows whether everything is ready, and `rmv_setup RNAMotifScanX`
+prepares it ahead of time. For requirements on macOS, Windows and Linux, and for
+troubleshooting, see [../rmsx_setup.md](../rmsx_setup.md).

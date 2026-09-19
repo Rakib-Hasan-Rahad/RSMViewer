@@ -230,9 +230,9 @@ Bundled geometric queries reference an external PDB template and require
 
 ### RNAMotifScanX
 
-Modules: `rsmviewer/tools/rmsx_runner.py` (preannotated data, prepared inputs, and
-running scans) and `rsmviewer/tools/rmsx_runtime.py` (finding, building and
-invoking the `scan` executable per platform, plus setup and diagnostics).
+Modules: `rsmviewer/tools/rmsx_runner.py` (preannotated data and running scans) and `rsmviewer/tools/rmsx_runtime.py` (downloading the runtime bundle, finding,
+building and invoking the `scan` executable per platform, plus setup and
+diagnostics).
 `config/rmsx_config.json` controls `data_mode`, `scan_runtime`, paths, motif
 families, output directory, and `pvalue_thresholds`. Commands: `rmv_db
 RNAMotifScanX` (loads results per `data_mode`), `rmv_setup RNAMotifScanX`
@@ -262,17 +262,25 @@ through `MotifVisualizerGUI._ensure_rmsx_results`, which re-reads the config.
   files straight from that folder (no extraction cache) and concatenates **all chains** of a family into one result file (so
   no chain overwrites another).
 - **From-scratch mode:** `_run_rmsx_from_scratch` calls
-  `rmsx_runner.run_scan_prepared`, synchronously, on the `.rmsx.in`/`.rmsx.nch`
-  pairs in `pdb_prebuild_dir/<pdb>/<chain>/` (`ensure_prepared_inputs` downloads
-  them from the results server when missing; the precomputed logs are never used
-  as scan results). RSMViewer never runs MC-Annotate/RNAVIEW and never falls back
-  to preannotated data. Output goes to
+  `rmsx_runner.run_scan_prepared`, synchronously. RSMViewer never runs
+  MC-Annotate/RNAVIEW and never falls back to preannotated data. Output goes to
   `output/rmsx_results/run_from_scratch/<PDB>_<stamp>/`; a same-session repeat
   reuses it (`_rmsx_scan_runs`, cleared by `rmv_refresh` and `rmv_reset session`).
   Query models are searched in `Queries/reduced` before `Queries` because the
   reduced set reproduces the published results.
+- **Runtime bundle (first use):** the scanner source, scoring matrices, query
+  models, Linux binary and third-party tools are not in the repository
+  (`external/rmsx/` is git-ignored except `README.md` and `bin/.gitkeep`).
+  `rmsx_runtime.ensure_runtime_bundle` downloads `rmsx_bundle_url` (default
+  `https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz`) when
+  `bundle_ready` is false, verifies it against `<url>.sha256`, unpacks it in a
+  temporary folder (unsafe paths rejected, symlinks/devices skipped), and moves
+  files into `external/rmsx/` without overwriting existing ones.
+  `run_scan_prepared` calls it, then `resolve_runtime`, and if no scanner runs yet
+  calls `setup` automatically, so the first `rmv_db RNAMotifScanX` prepares
+  everything. `rmv_setup RNAMotifScanX` does the same ahead of time.
 - **Scanner runtime** (`rmsx_runtime.resolve_runtime`, `scan_runtime` config):
-  *native* (a `scan` that runs on this OS/CPU: the bundled ELF on Linux x86-64,
+  *native* (a `scan` that runs on this OS/CPU: the downloaded ELF on Linux x86-64,
   or one built by `build_native_scan` into `bin/<platform>/`), then *WSL2*
   (Windows), then *Docker* (`ubuntu:22.04`, `linux/amd64`). `build_command`
   builds the exact command for each runtime and translates paths (`to_wsl_path`;
@@ -360,7 +368,7 @@ rsmviewer/
 │   └── user_annotations/         FR3D / RMSX converters + provider
 └── tools/
     ├── fr3d_search_runner.py     official FR3D runner (unmodified checkout)
-    ├── rmsx_runner.py            RMSX preannotated data, prepared inputs, scan execution
+    ├── rmsx_runner.py            RMSX preannotated data, scan execution
     └── rmsx_runtime.py           RMSX scanner runtime: find/build/verify (native, WSL2, Docker), setup, doctor
 ```
 

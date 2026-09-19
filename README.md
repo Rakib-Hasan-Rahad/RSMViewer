@@ -69,9 +69,10 @@ Fetch structures  ->  Load named sources  ->  Query motifs  ->  View · Compare 
 - Saved query groups, selectable PyMOL objects, medoid-based superimposition,
   and minimal coordinates-only mmCIF export.
 
-External analysis software (FR3D, the RNAMotifScanX scanner) is **not**
-distributed with this project; it is provided by the user under `external/`.
-RNAMotifScanX preannotated results need no setup: they are downloaded on demand.
+External analysis software is **not** distributed with this project. FR3D is
+provided by the user under `external/fr3d/`. RNAMotifScanX needs no manual setup:
+its annotations (and, for `run_from_scratch`, its software) are downloaded
+automatically the first time you use them.
 
 ---
 
@@ -211,8 +212,8 @@ superimposition, combination, coloring, and export.
 | `rmv_db` (no args) | Show the four public sources and usage. |
 | `rmv_source info [<N>]` | Show the active source configuration. |
 | `rmv_fr3d status\|setup\|register\|run [PDB]` | Inspect / install / register / run the FR3D pipeline. |
-| `rmv_setup RNAMotifScanX` | One-shot: prepare the RNAMotifScanX scanner for this machine (native build on macOS/Linux, WSL2 on Windows, or Docker). Needed only for `run_from_scratch`. |
-| `rmv_rmsx_doctor` | Diagnose the RNAMotifScanX scanner runtime, build toolchain, data, and results server. |
+| `rmv_setup RNAMotifScanX` | Optional: prepare everything for `run_from_scratch` ahead of time (otherwise done automatically on first run). |
+| `rmv_rmsx_doctor` | Check whether RNAMotifScanX is ready and what is missing. |
 | `rmv_pair <selection>` / `rmv_pair_batch <selection>` | Inspect base-pair interactions. |
 | `rmv_chains` / `rmv_loaded` | Show chain diagnostics / loaded structure and source tags. |
 | `rmv_refresh [PDB]` | Bypass caches and re-fetch. With no argument, refreshes every active structure; with a PDB ID, refreshes only that one. |
@@ -414,31 +415,21 @@ structure is not available RSMViewer says so and you can scan it yourself with
 
 ### Run-from-scratch
 
-To run the real scanner instead of reading precomputed logs:
-
-```text
-rmv_setup RNAMotifScanX          # once: prepares the scanner for your OS
-```
-
-set `"data_mode": "run_from_scratch"` in `config/rmsx_config.json`, then:
+To run RNAMotifScanX yourself instead of loading precomputed annotations, set
+`"data_mode": "run_from_scratch"` in `config/rmsx_config.json`, then:
 
 ```text
 rmv_fetch 1S72
 rmv_db RNAMotifScanX
 ```
 
-RNAMotifScanX is a C++ program and the binary in this repository is a Linux
-x86-64 executable, so `rmv_setup RNAMotifScanX` picks whatever works on your
-machine: the bundled binary (Linux x86-64), a copy **built from the bundled
-source** (macOS and other Linux; needs a C++ compiler and Boost, and installs
-Boost with Homebrew on macOS), **WSL2** (Windows), or **Docker**. Run
-`rmv_rmsx_doctor` at any time to see what is available.
-
-The scanner runs on the PDB's prepared `.rmsx.in`/`.rmsx.nch` inputs in
-`external/rmsx_preannotated/rmsx_work_default/<pdb>/<chain>/` (downloaded from
-the results server if you do not have them). PyMOL pauses until the scan
-finishes, which takes about a minute and a half for 1S72. RSMViewer never runs
-MC-Annotate/RNAVIEW itself and never falls back to preannotated data.
+**The first time you run it, RSMViewer downloads all the required files and
+third-party software by itself** from
+[https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz](https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx.tar.gz)
+into `external/rmsx/` and prepares them for your computer; later runs start
+immediately. On macOS you need the Xcode command line tools
+(`xcode-select --install`), and on Windows WSL2 or Docker Desktop; Linux needs
+nothing extra. Use `rmv_rmsx_doctor` to check readiness.
 
 > **Full RMSX setup guide** (config modes, preannotated download, and
 > run-from-scratch on macOS, Windows and Linux): [external/rmsx_setup.md](external/rmsx_setup.md).
