@@ -138,6 +138,11 @@ program that is prepared for your computer on first use. RSMViewer picks the
 right method for you (native build, WSL2 or Docker) and checks that the scanner
 starts before using it.
 
+**Downloaded arm64 scanner:** on Apple Silicon, the downloaded archive includes a
+prebuilt arm64 scanner that is used if it starts. It starts when Homebrew's Boost
+is installed (as in our test); otherwise RSMViewer builds the scanner for you
+(installing Boost with Homebrew first if needed).
+
 An Intel build of PyMOL running under Rosetta on an Apple-silicon Mac is handled
 automatically.
 

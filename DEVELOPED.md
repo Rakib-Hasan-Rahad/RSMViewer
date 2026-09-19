@@ -252,8 +252,9 @@ through `MotifVisualizerGUI._ensure_rmsx_results`, which re-reads the config.
   most up-to-date RNAMotifScanX annotations are used. The download is staged in
   a temporary directory and moved into place only when complete; unsafe archive
   paths, links, and archives with no `*_consensus.log` are rejected; an existing
-  `<pdb>/` folder is merged into, never replaced. TLS is verified (system store, then `certifi`); only if both fail is
-  an unverified connection used, with a warning. An existing local folder is
+  `<pdb>/` folder is merged into, never replaced. TLS is verified (system store,
+  then `certifi`); only if both fail is an unverified connection used, with a
+  warning. An existing local folder is
   never re-downloaded, so to refresh a PDB delete `<pdb>/` under
   `pdb_prebuild_dir`. A PDB the server does not have (HTTP 404) produces an
   explicit message rather than a silent empty result.
@@ -274,6 +275,9 @@ through `MotifVisualizerGUI._ensure_rmsx_results`, which re-reads the config.
   `bundle_ready` is false, verifies it against `<url>.sha256`, unpacks it in a
   temporary folder (unsafe paths rejected, symlinks/devices skipped), and moves
   files into `external/rmsx/` without overwriting existing ones.
+  On Apple Silicon the archive includes a prebuilt `bin/macos-arm64/scan`;
+  `_try_native` probes it and uses it if it starts (it needs Homebrew's arm64
+  Boost), otherwise `setup` builds a native scanner.
   `run_scan_prepared` calls it, then `resolve_runtime`, and if no scanner runs yet
   calls `setup` automatically, so the first `rmv_db RNAMotifScanX` prepares
   everything. `rmv_setup RNAMotifScanX` does the same ahead of time.
