@@ -350,16 +350,12 @@ RMSX has two modes, set by `data_mode` in `config/rmsx_config.json`.
 
 ### Preannotated mode (default)
 
-Download the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`) from
-Figshare: **[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)**.
-
-Place the preannotated bundle at:
-
-```text
-external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz
-```
-
-or an extracted directory at:
+To give you the most up-to-date RNAMotifScanX annotations, RSMViewer collects the
+preannotated data live from our server. You do not download or extract anything
+yourself: the first time you request a PDB, RSMViewer downloads
+`<preannotated_base_url>/<pdb_lowercase>.tar.gz` (for example
+`https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default/1s72.tar.gz`)
+and extracts it to:
 
 ```text
 external/rmsx_preannotated/rmsx_work_default/<pdb_id>/<chain>/
@@ -378,8 +374,16 @@ rmv_fetch 1S72
 rmv_db RNA3DMotifAtlas, RNAMotifScanX
 ```
 
-The bundle contains both the RMSX **inputs** (`.rmsx.in` / `.rmsx.nch`) and the
-precomputed **outputs** (`*_consensus.log`). In preannotated mode RSMViewer
+Later loads of the same PDB use the local copy and need no internet connection
+(delete the `<pdb_id>/` folder to fetch the newest published version again).
+For each PDB the lookup order is: local folder, then download, then an optional
+offline bundle from Figshare
+([https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795))
+set in `pdb_prebuild_archive`. If the server has no results for a PDB yet,
+RSMViewer says so.
+
+Each PDB's data contains both the RMSX **inputs** (`.rmsx.in` / `.rmsx.nch`) and
+the precomputed **outputs** (`*_consensus.log`). In preannotated mode RSMViewer
 reads the outputs directly.
 
 ### From-scratch mode
@@ -390,17 +394,20 @@ Set:
 "data_mode": "run_from_scratch"
 ```
 
-and place binaries under `external/rmsx/bin/` (`scan`, `MC-Annotate`, optional
-`rnaview`). Even then, RSMViewer first reuses prebuilt inputs (`.rmsx.in`) for
-the requested PDB from the preannotated archive/directory if present, skipping
-MC-Annotate; it only regenerates inputs from scratch when none are found. It
-then runs the RMSX `scan` step. If `data_mode` is left as `preannotated`, the
-precomputed outputs from the bundle are shown.
+and provide the RMSX input files yourself (`.rmsx.in`/`.rmsx.nch`, generated
+externally with RNAVIEW and MC-Annotate) under
+`external/rmsx_preannotated/rmsx_work_default/<pdb_id>/<chain>/`. RSMViewer runs
+only the RNAMotifScanX `scan` step on those inputs (`rmv_rmsx run <PDB_ID>`); it
+never runs MC-Annotate/RNAVIEW itself and never falls back to preannotated data
+for a from-scratch run. See
+[external/RMSX_FROM_SCRATCH.md](../external/RMSX_FROM_SCRATCH.md).
 
 P-value thresholds are configured only under `pvalue_thresholds` in
 `config/rmsx_config.json`; the same thresholds apply to preannotated and freshly
-generated logs. A result may legitimately contain zero accepted motifs when
-every P-value exceeds its threshold.
+generated logs, and to single- and multi-source `rmv_db`. The file is re-read on
+every `rmv_db`, so an edit takes effect the next time you run it. A result may
+legitimately contain zero accepted motifs when every P-value exceeds its
+threshold.
 
 See [config/README.md](../config/README.md) for the full field reference.
 
@@ -444,6 +451,12 @@ Inspect the rows with `rmv_list`.
 **RMSX returns zero motifs.** Compare the log P-values against
 `config/rmsx_config.json`. This is usually correct filtering, not a load
 failure.
+
+**RMSX says no results are available for a PDB.** The preannotated results are
+downloaded from our server, which may not have every PDB yet, or the download
+could not reach it (check your internet connection). RSMViewer prints which
+case it is and the URL it tried; use `run_from_scratch` to scan the structure
+yourself.
 
 **FR3D is not found.** Verify the checkout path in `config/fr3d_config.json`,
 run `rmv_setup FR3D`, and check `rmv_fr3d status`.

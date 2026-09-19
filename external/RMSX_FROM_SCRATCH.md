@@ -28,11 +28,13 @@ If you only want annotations quickly, use `preannotated`.
 "data_mode": "preannotated"
 ```
 
-Download the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`) from
-Figshare: **<https://doi.org/10.6084/m9.figshare.33826795>**, then extract it
-inside `external/rmsx_preannotated/` so the `rmsx_work_default/` folder sits
-there. RSMViewer does not execute any RMSX program in this mode. It reads
-consensus logs from:
+RSMViewer does not execute any RMSX program in this mode. To provide the most
+up-to-date RNAMotifScanX annotations, it collects the preannotated data live from
+our server: the first time you request a PDB it downloads that PDB's precomputed
+results from the public results server (`<preannotated_base_url>/<pdb_lowercase>.tar.gz`, e.g.
+`.../rmsx_work_default/1s72.tar.gz`) and extracts them into
+`external/rmsx_preannotated/rmsx_work_default/`; later loads use the local copy
+and need no connection. It reads consensus logs from:
 
 ```text
 external/rmsx_preannotated/rmsx_work_default/<pdb_id_lowercase>/
@@ -57,8 +59,11 @@ rmv_db RNAMotifScanX
 ```
 
 This is the recommended workflow on macOS and Windows when you do not need a
-live scan. To support another PDB, place its preannotated directory under
-`rmsx_work_default`, or configure the supplied preannotated archive.
+live scan. The preannotated dataset may not cover every PDB yet; if the server
+has no results for a structure RSMViewer says so. In that case use
+`run_from_scratch`, place the PDB's preannotated directory under
+`rmsx_work_default` yourself, or configure the optional Figshare bundle
+(<https://doi.org/10.6084/m9.figshare.33826795>) as an offline fallback.
 
 ---
 

@@ -33,6 +33,7 @@ import os
 import platform
 import re
 import shutil
+import ssl
 import subprocess
 import sys
 import tempfile
@@ -302,6 +303,108 @@ def copy_preannotated_results(prebuild_path: str, pdb_id: str, output_dir: str) 
 
     copied = _write_output(family_bytes)
     return {"copied": copied, "output_dir": str(output_dir), "cached": False}
+
+
+DEFAULT_PREANNOTATED_BASE_URL = (
+    "https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default"
+)
+
+
+def download_preannotated_pdb(base_url: str, pdb_id: str, dest_dir: str,
+                              timeout: int = 60) -> dict:
+    """Download ``<base_url>/<pdb_lower>.tar.gz`` and extract it under ``dest_dir``.
+
+    The archive is expected to contain a top-level ``<pdb_lower>/`` folder, i.e.
+    the same layout as ``rmsx_work_default/<pdb_lower>/``; if it does not, its
+    contents are placed under ``dest_dir/<pdb_lower>/`` instead. Extraction is
+    staged in a temporary directory and moved into place only when complete, so
+    an interrupted download never leaves a partial ``<pdb_lower>/`` folder that
+    would later be mistaken for real local data.
+
+    Returns ``{"ok": bool, "url": str, "path": str, "error": str}``; never raises.
+    """
+    import urllib.error
+    import urllib.request
+
+    pdb_lower = str(pdb_id or "").strip().lower()
+    base = str(base_url or DEFAULT_PREANNOTATED_BASE_URL).strip().rstrip("/")
+    result = {"ok": False, "url": "", "path": "", "error": "", "insecure_tls": False}
+    if not re.fullmatch(r"[0-9a-z]{4}", pdb_lower):
+        result["error"] = f"not a 4-character PDB ID: {pdb_id!r}"
+        return result
+
+    url = f"{base}/{pdb_lower}.tar.gz"
+    result["url"] = url
+    dest_root = Path(os.path.expanduser(str(dest_dir))).resolve()
+    final_dir = dest_root / pdb_lower
+
+    tmp_root = None
+    try:
+        dest_root.mkdir(parents=True, exist_ok=True)
+        tmp_root = Path(tempfile.mkdtemp(prefix=f".dl_{pdb_lower}_", dir=str(dest_root)))
+        archive_path = tmp_root / f"{pdb_lower}.tar.gz"
+
+        request = urllib.request.Request(url, headers={"User-Agent": "RSMViewer"})
+        # Verified TLS first. Some Python installs (notably python.org builds on
+        # macOS) ship no CA bundle and reject valid certificates, so retry with
+        # certifi's bundle, and only as a last resort without verification.
+        contexts = [("verified", ssl.create_default_context())]
+        try:
+            import certifi
+            contexts.append(("verified", ssl.create_default_context(cafile=certifi.where())))
+        except ImportError:
+            pass
+        unverified = ssl.create_default_context()
+        unverified.check_hostname = False
+        unverified.verify_mode = ssl.CERT_NONE
+        contexts.append(("unverified", unverified))
+
+        for index, (mode, context) in enumerate(contexts):
+            try:
+                with urllib.request.urlopen(request, timeout=timeout, context=context) as response, \
+                        open(archive_path, "wb") as out_fh:
+                    shutil.copyfileobj(response, out_fh)
+            except urllib.error.URLError as exc:
+                is_cert_error = isinstance(exc.reason, ssl.SSLCertVerificationError)
+                if is_cert_error and index < len(contexts) - 1:
+                    continue
+                raise
+            result["insecure_tls"] = (mode == "unverified")
+            break
+
+        extract_dir = tmp_root / "extracted"
+        extract_dir.mkdir()
+        with tarfile.open(archive_path, "r:*") as archive:
+            members = archive.getmembers()
+            for member in members:
+                target = (extract_dir / member.name).resolve()
+                if extract_dir.resolve() not in target.parents and target != extract_dir.resolve():
+                    raise ValueError(f"unsafe path in archive: {member.name}")
+                if member.issym() or member.islnk() or member.isdev():
+                    raise ValueError(f"unsupported member type in archive: {member.name}")
+            archive.extractall(extract_dir, members=members)
+
+        top_level = {Path(m.name).parts[0] for m in members if Path(m.name).parts}
+        staged = extract_dir / pdb_lower if top_level == {pdb_lower} else extract_dir
+        if not any(staged.rglob("*_consensus.log")):
+            raise ValueError("archive contains no *_consensus.log result files")
+
+        if final_dir.exists():
+            # Merge rather than replace: an existing folder may hold the user's
+            # own prepared .rmsx.in/.nch inputs, which must not be deleted.
+            shutil.copytree(staged, final_dir, dirs_exist_ok=True)
+        else:
+            shutil.move(str(staged), str(final_dir))
+        result["ok"] = True
+        result["path"] = str(final_dir)
+    except urllib.error.HTTPError as exc:
+        result["error"] = f"HTTP {exc.code} {exc.reason}"
+    except Exception as exc:  # noqa: BLE001 - reported to the caller, never raised
+        result["error"] = f"{type(exc).__name__}: {exc}"
+    finally:
+        if tmp_root is not None:
+            shutil.rmtree(tmp_root, ignore_errors=True)
+    return result
 
 
 # ─────────────────────────────────────────────────────────────────────────────

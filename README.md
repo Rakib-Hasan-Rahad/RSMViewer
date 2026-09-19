@@ -61,15 +61,17 @@ Fetch structures  ->  Load named sources  ->  Query motifs  ->  View · Compare 
 - Four public annotation sources: `RNA3DMotifAtlas`, `Rfam`, `FR3D`, `RNAMotifScanX`.
 - Atlas and Rfam retrieved from their public **APIs** with local response caching.
 - FR3D executed through a user-provided checkout; RNAMotifScanX loaded from
-  preannotated data or executed from scratch.
+  preannotated data (collected live from our server, per PDB, on first use) or
+  executed from scratch.
 - Residue-set consolidation that preserves every source's own label and hierarchy.
 - Deterministic, stable motif IDs (e.g. `1S72_00001`).
 - Boolean selection across motifs, structures, and sources (`and`, `or`, `not`).
 - Saved query groups, selectable PyMOL objects, medoid-based superimposition,
   and minimal coordinates-only mmCIF export.
 
-External analysis software and large offline databases are **not** distributed
-with this project; they are provided by the user under `external/`.
+External analysis software (FR3D, the RNAMotifScanX scanner) is **not**
+distributed with this project; it is provided by the user under `external/`.
+RNAMotifScanX preannotated results need no setup: they are downloaded on demand.
 
 ---
 
@@ -367,27 +369,34 @@ To run the pipeline from scratch:
 
 RNAMotifScanX (RMSX) is controlled by `data_mode` in `config/rmsx_config.json`.
 The default is `preannotated`, which loads precomputed results and needs no
-binaries.
+binaries. To give you the most up-to-date RNAMotifScanX annotations, RSMViewer
+collects the preannotated data live from our server: results are downloaded
+automatically, per structure, the first time you request them (an internet
+connection is needed for that first load only).
 
 ### Preannotated mode (default)
 
-1. Download the preannotated bundle from Figshare:
-   **[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)**
-2. Extract `rmsx_preannotated_input_output.tar.gz` inside
-   `external/rmsx_preannotated/` so the extracted folder sits there:
+Keep `"data_mode": "preannotated"` and run:
 
-   ```text
-   external/rmsx_preannotated/rmsx_work_default/
-   ```
+```text
+rmv_fetch 1S72
+rmv_db RNAMotifScanX
+```
 
-   RSMViewer can also read the `.tar.gz` archive directly as a fallback; the
-   extracted folder is faster.
-3. Keep `"data_mode": "preannotated"` and run:
+For each requested PDB RSMViewer looks for the results in this order:
 
-   ```text
-   rmv_fetch 1S72
-   rmv_db RNAMotifScanX
-   ```
+1. **Local folder** `external/rmsx_preannotated/rmsx_work_default/<pdb>/`.
+2. **Download** `<preannotated_base_url>/<pdb>.tar.gz` (lowercase PDB ID, e.g.
+   `.../rmsx_work_default/1s72.tar.gz`) from the public results server, extract
+   it into the folder above, and read it from there. Later loads of the same
+   PDB use the local folder and do not download again.
+3. **Local archive** (offline fallback only): the optional Figshare bundle
+   `pdb_prebuild_archive`, [doi:10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795).
+   It is read last because scanning it means decompressing the whole archive.
+
+The server address is `preannotated_base_url` in `config/rmsx_config.json`. The
+preannotated dataset may not cover every PDB; if a structure is not available,
+RSMViewer says so and you can scan it yourself with `run_from_scratch` below.
 
 ### Run-from-scratch
 
@@ -440,6 +449,11 @@ so they sit on separate rows. Inspect with `rmv_list`.
 **FR3D is unavailable.** Confirm the checkout path in `config/fr3d_config.json`,
 run `rmv_setup FR3D`, and check `rmv_fr3d status`. Geometric queries need
 `allow_network: true`.
+
+**RMSX says no results are available for a PDB.** Preannotated results are
+downloaded from our server, which may not have every PDB yet, or it could not be
+reached (check your internet connection). RSMViewer prints which case it is and
+the URL it tried; use `run_from_scratch` to scan the structure yourself.
 
 **RMSX returns no motifs.** A result can legitimately contain zero accepted
 motifs when every reported P-value exceeds the configured threshold. Check

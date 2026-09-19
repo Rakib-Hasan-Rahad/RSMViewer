@@ -303,11 +303,17 @@ rmv_db FR3D               # run FR3D's default queries and ingest results
 RNAMotifScanX (RMSX) has two modes, selected by `data_mode` in
 `config/rmsx_config.json` and driven by `tools/rmsx_runner.py`.
 
-**Preannotated mode (default).** RSMViewer reads precomputed RMSX results
-distributed as a preannotated bundle under `external/rmsx_preannotated/`
-(available for download from Figshare:
+**Preannotated mode (default).** RSMViewer reads precomputed RMSX results. To
+give users the most up-to-date RNAMotifScanX annotations, the preannotated data
+is collected live from the project's server: the first time a PDB is requested,
+RSMViewer downloads `<preannotated_base_url>/<pdb_lowercase>.tar.gz` (for example
+`https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default/1s72.tar.gz`)
+and extracts it under `external/rmsx_preannotated/rmsx_work_default/`; later
+loads use that local copy. The lookup order is the local folder, then the
+download, then an optional offline bundle (Figshare:
 [https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)).
-The bundle is keyed by PDB ID and chain and contains both the RMSX inputs and the
+If the server has no results for a PDB, RSMViewer reports that explicitly.
+Each PDB's data is keyed by PDB ID and chain and contains both the RMSX inputs and the
 precomputed alignment outputs:
 
 ```text
@@ -328,24 +334,26 @@ rmsx_work_default/
 For each requested PDB, RSMViewer collects the matching `*_consensus.log` files
 across **all** chains of a family, concatenating them into a single result file
 so that no chain's hits overwrite another's, then applies the per-family P-value
-threshold and consolidates. Because enumerating members of the large gzip
-archive requires decompressing the whole stream, the extracted logs are cached
-per PDB (S8) so later loads and later PyMOL sessions are fast. The preferred
-input is an *extracted* `rmsx_work_default/` directory; a compressed
-`.tar.gz` archive is a fallback that is extracted once on first use.
+threshold and consolidates. The extracted logs are cached per PDB (S8) so later
+loads and later PyMOL sessions are fast. The preferred input is the local
+extracted `rmsx_work_default/<pdb>/` folder (populated by the download above); a
+large compressed offline bundle is only a last-resort fallback because enumerating
+its members requires decompressing the whole stream.
 
-**From-scratch mode.** With `"data_mode": "run_from_scratch"` and working
-binaries under `external/rmsx/bin/` (`scan`, `MC-Annotate`, optional `rnaview`),
-RSMViewer executes the standalone RMSX pipeline. Even then, it first reuses
-prebuilt `.rmsx.in`/`.nch` inputs for the requested PDB from the preannotated
-directory or archive (skipping MC-Annotate) and only regenerates inputs from
-scratch when none are found; it then runs the RMSX `scan` step to produce fresh
-alignment logs.
+**From-scratch mode.** With `"data_mode": "run_from_scratch"`, RSMViewer runs
+only the RMSX `scan` step (`rmv_rmsx run <PDB_ID>`) on `.rmsx.in`/`.nch` inputs
+that you provide under the preannotated directory; it never runs MC-Annotate or
+RNAVIEW itself and never falls back to preannotated data. The scanner is the
+native Linux binary or, on macOS/Windows, a Docker wrapper (see
+`external/RMSX_FROM_SCRATCH.md`).
 
 **P-value thresholds.** Per-family acceptance thresholds live only under
 `pvalue_thresholds` in `config/rmsx_config.json`; command-line overrides are
 intentionally unsupported. The same thresholds apply to preannotated and freshly
-generated logs. A result may legitimately contain zero accepted motifs when
+generated logs, and to single- and multi-source `rmv_db`. The file is re-read on
+every `rmv_db`; family names may be spelled `KINK-TURN`/`K-TURN`,
+`REVERSE-KINK-TURN`/`REVERSE-K-TURN`, etc., and a family omitted from the file
+uses its paper default (0.05 for an unknown family). A result may legitimately contain zero accepted motifs when
 every reported P-value exceeds its threshold — this is correct filtering, not a
 load failure. The RNAMotifScanX software and binaries are **not** distributed
 with RSMViewer.
@@ -366,7 +374,9 @@ RSMViewer uses three complementary caches, all cleared by `rmv_reset cache`:
    extracted `*_consensus.log` files at
    `output/rmsx_results/.preannotated_cache/<pdb_id>/`, stamped with the source
    archive/directory identity (path, modification time, size) so a changed
-   source invalidates the cache automatically.
+   source invalidates the cache automatically. The per-PDB results downloaded
+   from the server into `rmsx_work_default/` are data, not cache, and are not
+   removed by `rmv_reset cache`.
 
 A snapshot of the SQLite display cache and the preannotated extraction cache is
 distributed with the repository so a fresh clone works immediately; both are

@@ -1,51 +1,61 @@
 # RMSX Preannotated Data
 
-RSMViewer loads RNAMotifScanX (Source 7) results from preannotated data placed
-in this directory (`external/rmsx_preannotated/`). The preannotated bundle
-`rmsx_preannotated_input_output.tar.gz` can be downloaded from Figshare:
+RSMViewer loads RNAMotifScanX (Source 7) results from the preannotated data in
+`external/rmsx_preannotated/rmsx_work_default/`, one subfolder per PDB (for
+example `rmsx_work_default/1s72/...`).
+
+## Automatic download (default)
+
+You do not need to put anything here. To provide the most up-to-date
+RNAMotifScanX annotations, RSMViewer collects the preannotated data live from
+our server. The first time you request a PDB with
+`rmv_db RNAMotifScanX`, RSMViewer downloads that PDB's results from the public
+results server and extracts them into `rmsx_work_default/<pdb>/`:
+
+```
+<preannotated_base_url>/<pdb_lowercase>.tar.gz
+e.g. https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default/1s72.tar.gz
+```
+
+Later loads of the same PDB read the local folder and do not download again.
+This needs an internet connection for the first load of each PDB only. The
+server address is `preannotated_base_url` in `config/rmsx_config.json`.
+
+The preannotated dataset may not cover every PDB yet. If the server has no
+results for a structure, RSMViewer tells you; you can then scan it yourself with
+`data_mode` set to `run_from_scratch` (see `external/RMSX_FROM_SCRATCH.md`).
+
+## Lookup order
+
+For each requested PDB, the first of these that has data is used:
+
+1. `rmsx_work_default/<pdb>/` (already downloaded, or placed by you);
+2. download from the results server (above);
+3. the optional compressed bundle (below), as an offline fallback.
+
+## Optional: offline bundle
+
+The full preannotated bundle `rmsx_preannotated_input_output.tar.gz` can also be
+downloaded once from Figshare:
 **[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)**.
 
-The extracted `rmsx_work_default/` directory is the repository's preferred
-local runtime data and is versioned when included in a project distribution.
-
-## Recommended: paste the extracted folder
-
-Extract `rmsx_preannotated_input_output.tar.gz` here so that the extracted
-folder sits directly in this directory:
-
-```
-external/rmsx_preannotated/rmsx_work_default/
-```
-
-The extracted folder is named **`rmsx_work_default`** and contains one
-subfolder per PDB (for example `rmsx_work_default/1s72/...`). When this folder
-is present, RSMViewer reads from it directly, which is much faster than reading
-the compressed archive.
-
-To extract from this directory:
-
-```bash
-tar -xzf rmsx_preannotated_input_output.tar.gz
-```
-
-## Fallback: keep the compressed archive
-
-If you forget to extract the folder, keep the compressed archive here with the
-exact name:
+Either extract it here so `rmsx_work_default/` holds every PDB, or keep the
+archive at this exact path:
 
 ```
 external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz
 ```
 
-RSMViewer automatically falls back to reading this archive when
-`rmsx_work_default/` is missing. The first load extracts each PDB's results
-once and caches them, so subsequent loads (and later PyMOL sessions) are fast.
+The archive is only read when a PDB is neither in `rmsx_work_default/` nor
+available from the server. Reading it means decompressing the whole archive, so
+it is slow; the extracted folder is much faster.
 
 ## Notes
 
-- RSMViewer always prefers the extracted `rmsx_work_default/` folder and only
-  falls back to the `.tar.gz` archive when the folder is absent or has no data
-  for the requested PDB.
-- Leave this directory unchanged when preannotated data is not used.
+- Downloaded folders are ignored by git, except the sample PDBs the repository
+  tracks (`1s72`, `1ffk`, `4v88`; see `.gitignore`).
+- Prepared `.rmsx.in`/`.rmsx.nch` inputs for `run_from_scratch` live in the same
+  per-PDB folders; a download merges into an existing folder and never deletes
+  your files.
 - To regenerate results from scratch instead of using preannotated data, set
   `data_mode` to `run_from_scratch` in `config/rmsx_config.json`.

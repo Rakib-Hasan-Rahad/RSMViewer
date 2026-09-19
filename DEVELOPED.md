@@ -163,7 +163,8 @@ containment/Jaccard merging, so overlapping and nested annotations are preserved
 for later `rmv_select` / `rmv_combine_groups`. The load prints one compact table
 per source per structure (`SELECTABLE NAME`, `ANNOTATION NAME`, `COUNT`) via
 `_family_source_breakdown`. When RNAMotifScanX (source 7) is among the sources,
-`_ensure_rmsx_preannotated` ingests its preannotated results first.
+`_ensure_rmsx_preannotated` ingests its preannotated results first (downloading
+them from the results server when the PDB is not already local; see below).
 
 ### `rmv_select`
 
@@ -232,18 +233,47 @@ Runner: `rsmviewer/tools/rmsx_runner.py`. `config/rmsx_config.json` controls
 `data_mode`, executable paths, the preannotated archive/directory, motif
 families, output directory, and `pvalue_thresholds`.
 
-- **Preannotated mode:** `copy_preannotated_results` extracts the matching
-  `*_consensus.log` outputs for the PDB. It concatenates **all chains** of a
-  family into one result file (so no chain overwrites another).
-- **From-scratch mode (`run_pipeline`):** prefers prebuilt `.rmsx.in` inputs
-  from `pdb_prebuild_dir` then `pdb_prebuild_archive`
-  (`_copy_prebuilt_targets_from_directory` / `_extract_prebuilt_targets_from_archive`);
-  only when none are found does it run MC-Annotate to generate inputs. It then
-  runs the RMSX `scan` step.
+- **Preannotated mode:** `MotifVisualizerGUI._copy_preannotated_rmsx` resolves a
+  PDB's results in this order and stops at the first source with data:
+  1. the local `pdb_prebuild_dir` (`external/rmsx_preannotated/rmsx_work_default/<pdb>/`);
+  2. `download_preannotated_pdb`, which fetches
+     `<preannotated_base_url>/<pdb_lowercase>.tar.gz` (default
+     `https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default`)
+     and extracts it into `pdb_prebuild_dir`;
+  3. the optional local `pdb_prebuild_archive` (offline fallback, last because
+     reading it decompresses the whole archive).
+
+  The preannotated data is collected live from the project's server so that the
+  most up-to-date RNAMotifScanX annotations are used. The download is staged in
+  a temporary directory and moved into place only when complete; unsafe archive
+  paths, links, and archives with no `*_consensus.log` are rejected; an existing
+  `<pdb>/` folder is merged into, never replaced (it may hold your own prepared
+  inputs). TLS is verified (system store, then `certifi`); only if both fail is
+  an unverified connection used, with a warning. An existing local folder is
+  never re-downloaded, so to refresh a PDB delete `<pdb>/` under
+  `pdb_prebuild_dir`. A PDB the server does not have (HTTP 404) produces an
+  explicit message rather than a silent empty result.
+  `copy_preannotated_results` then extracts the matching `*_consensus.log`
+  outputs and concatenates **all chains** of a family into one result file (so
+  no chain overwrites another).
+- **From-scratch mode:** `rmv_rmsx run <PDB>` (`run_scan_prepared`) runs the
+  RMSX `scan` step on `.rmsx.in`/`.rmsx.nch` inputs you supply under
+  `pdb_prebuild_dir`. RSMViewer never runs MC-Annotate/RNAVIEW itself (the
+  helpers in `rmsx_runner.py` are not called from any entry point) and never
+  falls back to preannotated data.
 
 The converter accepts both tabular RMSX rows and alignment-report logs
 (`Aligning`, `Alignment score`, `P-value` blocks), applying per-family P-value
-thresholds.
+thresholds (a record is kept when `p_value <= threshold`).
+
+P-value thresholds come from `pvalue_thresholds` in `config/rmsx_config.json`,
+falling back to the paper defaults in `RMSX_PVALUE_THRESHOLDS`
+(`user_annotations/converters.py`) and then to 0.05 for an unknown family.
+Family names are matched by `rmsx_pvalue_threshold` regardless of spelling
+(`KINK-TURN`/`K-TURN`, `REVERSE-KINK-TURN`/`REVERSE-K-TURN`,
+`reverse-kturn_consensus`, ...). The config is re-read on every `rmv_db`, single-
+or multi-source, and replaces any earlier values, so an edit takes effect on the
+next `rmv_db` and a family deleted from the file returns to its paper default.
 
 ---
 
@@ -273,7 +303,7 @@ no reset:
 - `rmv_reset cache` — clears the caches: the SQLite hierarchy cache (data and
   file, including `-wal`/`-shm`), the on-disk API response cache, each
   provider's in-process memory cache, and the preannotated RMSX extraction
-  cache. Loaded objects, query groups, and other session state are left
+  cache (results already downloaded into `rmsx_work_default/` are kept). Loaded objects, query groups, and other session state are left
   untouched.
 - `rmv_reset session` — deletes all PyMOL objects and resets session state
   (loaded structures, query groups, source selections, motif loader, custom

@@ -16,16 +16,47 @@ from typing import Dict, List, Tuple
 from pathlib import Path
 
 
-# P-value thresholds for RMSX by motif family (from RNAMotifScanX paper Table 6)
+# P-value thresholds for RMSX by motif family (from RNAMotifScanX paper Table 6).
+# Keys are the canonical family names produced by RNAMotifScanXConverter.
 RMSX_PVALUE_THRESHOLDS = {
-    'KINK-TURN': 0.066,
-    'K-TURN': 0.066,  # Alternative name
+    'K-TURN': 0.066,
     'C-LOOP': 0.044,
     'SARCIN-RICIN': 0.040,
-    'REVERSE KINK-TURN': 0.018,
-    'REVERSE-KINK-TURN': 0.018,  # Alternative name
+    'REVERSE-K-TURN': 0.018,
     'E-LOOP': 0.018,
 }
+RMSX_DEFAULT_PVALUE = 0.05
+
+# Spelling-insensitive aliases (letters only, upper-case) -> canonical family.
+_RMSX_FAMILY_ALIASES = {
+    'KTURN': 'K-TURN', 'KINKTURN': 'K-TURN',
+    'CLOOP': 'C-LOOP',
+    'SARCIN': 'SARCIN-RICIN', 'SARCINRICIN': 'SARCIN-RICIN',
+    'REVERSEKTURN': 'REVERSE-K-TURN', 'REVERSEKINKTURN': 'REVERSE-K-TURN',
+    'ELOOP': 'E-LOOP',
+}
+
+
+def canonical_rmsx_family(name: str) -> str:
+    """Map any spelling of an RMSX family (e.g. 'reverse-kturn_consensus',
+    'Reverse Kink-Turn', 'K-TURN') to its canonical name, or the upper-cased
+    input when it is not a known family."""
+    text = str(name or '').strip().upper()
+    if text.endswith('_CONSENSUS'):
+        text = text[:-len('_CONSENSUS')]
+    letters = re.sub(r'[^A-Z]', '', text)
+    return _RMSX_FAMILY_ALIASES.get(letters, text)
+
+
+def rmsx_pvalue_threshold(motif_type: str, custom_pvalues: dict = None) -> float:
+    """P-value cutoff for a family: the config/custom value if given, else the
+    paper default, else RMSX_DEFAULT_PVALUE. Family names match regardless of
+    spelling, so 'REVERSE-KINK-TURN' in a config applies to REVERSE-K-TURN."""
+    family = canonical_rmsx_family(motif_type)
+    for name, value in (custom_pvalues or {}).items():
+        if canonical_rmsx_family(name) == family:
+            return float(value)
+    return RMSX_PVALUE_THRESHOLDS.get(family, RMSX_DEFAULT_PVALUE)
 
 
 class MotifInstanceSimple:
@@ -585,7 +616,7 @@ class RNAMotifScanXConverter:
                 blocks.append(current)
 
         instances = []
-        threshold = custom_pvalues.get(motif_type, RMSX_PVALUE_THRESHOLDS.get(motif_type, 0.05))
+        threshold = rmsx_pvalue_threshold(motif_type, custom_pvalues)
         for index, block in enumerate(blocks, start=1):
             pdb_id, chain, ranges = RNAMotifScanXConverter.parse_fragment_id(block['fragment_id'])
             if not ranges or (apply_filters and block['p_value'] > threshold):
@@ -749,10 +780,7 @@ class RNAMotifScanXConverter:
             # Phase 4: Apply P-value filtering (if enabled)
             if apply_filters:
                 # Use custom P-value if provided, otherwise use default threshold
-                if motif_type in custom_pvalues:
-                    threshold = custom_pvalues[motif_type]
-                else:
-                    threshold = RMSX_PVALUE_THRESHOLDS.get(motif_type, 0.05)
+                threshold = rmsx_pvalue_threshold(motif_type, custom_pvalues)
                 
                 filtered_instances = [
                     inst for inst in raw_instances 

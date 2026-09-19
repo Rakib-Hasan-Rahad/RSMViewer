@@ -36,8 +36,10 @@ to apply it.
 
 RMSX has two modes, selected by `data_mode`:
 
-- **`preannotated`** (default) — reads the bundled/downloaded consensus logs; no
-  binary is executed.
+- **`preannotated`** (default) — reads precomputed consensus logs. To provide the
+  most up-to-date RNAMotifScanX annotations, RSMViewer collects them live from
+  our server, downloading each requested PDB's results the first time; no binary
+  is executed.
 - **`run_from_scratch`** — runs the RNAMotifScanX `scan` binary on the
   `.rmsx.in`/`.rmsx.nch` input files **you provide**. RSMViewer does **not** run
   MC-Annotate or RNAVIEW; you generate those inputs externally (see
@@ -49,11 +51,12 @@ RMSX has two modes, selected by `data_mode`:
 | --- | --- | --- |
 | `data_mode` | string | `"preannotated"` (default) reads prebuilt results; `"run_from_scratch"` runs the `scan` binary on your prepared inputs. |
 | `rmsx_executable` | path | RNAMotifScanX `scan` binary. Only needed for `run_from_scratch`; the runner also auto-resolves the bundled ELF and Docker wrapper. |
-| `pdb_prebuild_archive` | path | `.tar.gz` of preannotated results / prepared inputs (default input for `preannotated`). |
-| `pdb_prebuild_dir` | path | Extracted directory holding your prepared per-chain `.rmsx.in`/`.rmsx.nch` inputs (used by `run_from_scratch`) and preannotated logs. |
+| `preannotated_base_url` | URL | Server folder holding one `<pdb_lowercase>.tar.gz` per PDB. `preannotated` mode downloads `<base>/<pdb>.tar.gz` when the PDB is not already in `pdb_prebuild_dir`. Default: `https://cbb.ittc.ku.edu/RNAMotifScanX_Results/RSMViewer/rmsx_work_default`. |
+| `pdb_prebuild_archive` | path | Optional local `.tar.gz` bundle of preannotated results, read only as a last-resort offline fallback (slow: the whole archive is decompressed). |
+| `pdb_prebuild_dir` | path | Directory that downloaded results are extracted into, and that holds preannotated logs and your prepared per-chain `.rmsx.in`/`.rmsx.nch` inputs (used by `run_from_scratch`). |
 | `output_dir` | path | Where per-family result logs are written/read (`../output/rmsx_results`). |
 | `motif_families` | list | Families to load: `k-turn`, `c-loop`, `sarcin-ricin`, `reverse-kturn`, `e-loop`. |
-| `pvalue_thresholds` | object | Per-family P-value cutoff. Lower = stricter (fewer, higher-confidence hits). Omit a family to keep its paper default. |
+| `pvalue_thresholds` | object | Per-family P-value cutoff; a hit is kept when its P-value is `<=` the cutoff. Lower = stricter (fewer, higher-confidence hits). Omit a family to keep its paper default (0.05 if the family is unknown). Names are matched regardless of spelling (`KINK-TURN`/`K-TURN`, `REVERSE-KINK-TURN`/`REVERSE-K-TURN`, ...). Applied to preannotated and from-scratch results, and to single- and multi-source `rmv_db`; the file is re-read on every `rmv_db`. |
 
 Note: the residue-set redundancy threshold (Jaccard 0.60) is **not** a config
 value; it is defined in code (`rsmviewer/database/consolidated_table.py`,
@@ -61,27 +64,29 @@ value; it is defined in code (`rsmviewer/database/consolidated_table.py`,
 
 ### Preannotated mode (default, no binaries needed)
 
-1. Obtain the preannotated bundle (`rmsx_preannotated_input_output.tar.gz`) from Figshare:
-   **[https://doi.org/10.6084/m9.figshare.33826795](https://doi.org/10.6084/m9.figshare.33826795)**.
-2. Place it at the path in `pdb_prebuild_archive`, i.e.
-   `external/rmsx_preannotated/rmsx_preannotated_input_output.tar.gz`.
-   Alternatively, extract it and point `pdb_prebuild_dir` at the resulting
-   `rmsx_work_default/` folder.
-3. Run:
+Run:
 
-   ```text
-   rmv_fetch 1S72
-   rmv_db RNA3DMotifAtlas,RNAMotifScanX
-   rmv_select SR, 1S72, RNA3DMotifAtlas and RNAMotifScanX, as group_TP
-   ```
+```text
+rmv_fetch 1S72
+rmv_db RNA3DMotifAtlas,RNAMotifScanX
+rmv_select SR, 1S72, RNA3DMotifAtlas and RNAMotifScanX, as group_TP
+```
 
-RSMViewer copies the matching family logs for the requested PDB into
-`output_dir` and loads them. The Jaccard/containment consolidation then aligns
-them with the other sources.
+For the requested PDB, RSMViewer uses the first of these that has data:
+
+1. `pdb_prebuild_dir/<pdb>/` (already downloaded or placed by you);
+2. a download of `<preannotated_base_url>/<pdb>.tar.gz`, extracted into
+   `pdb_prebuild_dir` (needs an internet connection; later loads are local);
+3. the optional `pdb_prebuild_archive` (offline fallback).
+
+It then copies the matching family logs into `output_dir` and loads them. The
+Jaccard/containment consolidation aligns them with the other sources. If the
+server has no results for a PDB (the dataset may not cover every structure yet),
+RSMViewer reports that; use `run_from_scratch` to scan it yourself.
 
 ### Preannotated data layout
 
-Inside the archive (or `pdb_prebuild_dir`), data is keyed by PDB id and chain:
+Inside each downloaded archive (and in `pdb_prebuild_dir`), data is keyed by PDB id and chain:
 
 ```text
 rmsx_work_default/

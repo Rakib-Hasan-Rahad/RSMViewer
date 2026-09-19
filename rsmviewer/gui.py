@@ -557,6 +557,8 @@ class MotifVisualizerGUI:
             'SARCINRICIN': 'SARCIN-RICIN',
             'REVERSE-KTURN': 'REVERSE-K-TURN',
             'REVERSEKTURN': 'REVERSE-K-TURN',
+            'REVERSE-KINK-TURN': 'REVERSE-K-TURN',
+            'REVERSEKINKTURN': 'REVERSE-K-TURN',
             'ELOOP': 'E-LOOP',
         }
 
@@ -730,9 +732,12 @@ class MotifVisualizerGUI:
                         value = str((config_dir / configured_path).resolve())
                 cfg[key] = value
 
+        # The config file is the only source of P-value cutoffs, so it replaces
+        # whatever was loaded earlier: a family removed from the file falls back
+        # to its paper default instead of keeping a stale value.
         pvalue_thresholds = external.get('pvalue_thresholds')
-        if isinstance(pvalue_thresholds, dict) and pvalue_thresholds:
-            overrides = {}
+        overrides = {}
+        if isinstance(pvalue_thresholds, dict):
             for motif_name, pvalue in pvalue_thresholds.items():
                 if motif_name.startswith('_'):
                     continue
@@ -740,9 +745,9 @@ class MotifVisualizerGUI:
                     overrides[self._normalize_filter_motif_name(motif_name)] = float(pvalue)
                 except (TypeError, ValueError):
                     self.logger.warning(f"Ignoring invalid P-value for '{motif_name}' in {path}")
-            if overrides:
-                self.user_rmsx_custom_pvalues = overrides
-                self.logger.debug(f"Loaded {len(overrides)} P-value cutoff(s) from {path}")
+        self.user_rmsx_custom_pvalues = overrides
+        if overrides:
+            self.logger.debug(f"Loaded {len(overrides)} P-value cutoff(s) from {path}")
 
 
     def _run_rmsx_runtime_setup(self, build: bool = False) -> Dict:
@@ -2158,8 +2163,9 @@ class MotifVisualizerGUI:
                         self.load_user_annotations_action('rnamotifscanx', pdb_upper, auto_pipeline=False)
                         return True
                     self.logger.warning(
-                        f"No preannotated RNAMotifScanX results found for {pdb_upper}; "
-                        "set data_mode to run_from_scratch in config/rmsx_config.json to execute RMSX."
+                        f"No preannotated RNAMotifScanX results found locally or on the download "
+                        f"server for {pdb_upper}; set data_mode to run_from_scratch in "
+                        "config/rmsx_config.json to execute RMSX."
                     )
                     return False
 
@@ -3235,26 +3241,75 @@ class MotifVisualizerGUI:
             self.logger.debug(f"Hierarchy cache update skipped: {exc}")
     
     def _copy_preannotated_rmsx(self, rmsx_cfg: Dict, pdb_id: str) -> Dict:
-        """Copy preannotated RMSX results, preferring the extracted folder.
+        """Copy preannotated RMSX results for a PDB into the working output dir.
 
-        Tries the extracted ``rmsx_work_default`` directory first (fast) and
-        falls back to the compressed archive when the folder is missing or has
-        no data for this PDB.
+        Resolution order (first source with data for this PDB wins):
+          1. the local ``rmsx_work_default`` directory (fast);
+          2. download ``<preannotated_base_url>/<pdb_lower>.tar.gz`` from the
+             public results server, extract it into ``rmsx_work_default``, and
+             read it from there (later loads then find it in step 1);
+          3. a local compressed archive, if one is configured. This is last
+             because reading it means decompressing the whole (multi-GB) stream,
+             so it is only an offline fallback for when the download fails.
         """
-        from .tools.rmsx_runner import copy_preannotated_results
+        from .tools.rmsx_runner import (
+            DEFAULT_PREANNOTATED_BASE_URL,
+            copy_preannotated_results,
+            download_preannotated_pdb,
+        )
         configured_dir = str(rmsx_cfg.get('pdb_prebuild_dir', '') or '')
         configured_archive = str(rmsx_cfg.get('pdb_prebuild_archive', '') or '')
         pdb_upper = pdb_id.strip().upper()
-        ordered_sources = []
-        if configured_dir and os.path.isdir(configured_dir):
-            ordered_sources.append(configured_dir)
-        if configured_archive:
-            ordered_sources.append(configured_archive)
         copied = {'copied': 0, 'output_dir': self.rmsx_output_path}
-        for source in ordered_sources:
-            copied = copy_preannotated_results(str(source), pdb_upper, self.rmsx_output_path)
+
+        # 1. Local extracted folder.
+        if configured_dir and os.path.isdir(configured_dir):
+            copied = copy_preannotated_results(configured_dir, pdb_upper, self.rmsx_output_path)
             if copied.get('copied', 0):
-                break
+                return copied
+
+        # 2. Download this PDB's archive from the public results server.
+        if configured_dir:
+            base_url = str(rmsx_cfg.get('preannotated_base_url', '') or DEFAULT_PREANNOTATED_BASE_URL)
+            self.logger.info(
+                f"No local RMSX results for {pdb_upper}; downloading "
+                f"{base_url.rstrip('/')}/{pdb_upper.lower()}.tar.gz ..."
+            )
+            downloaded = download_preannotated_pdb(base_url, pdb_upper, configured_dir)
+            if downloaded['ok']:
+                if downloaded.get('insecure_tls'):
+                    self.logger.warning(
+                        "This Python has no usable CA certificates, so the server's TLS "
+                        "certificate could not be verified. Install/update certifi (or run "
+                        "Python's 'Install Certificates.command' on macOS) for verified downloads."
+                    )
+                self.logger.info(f"Downloaded and extracted RMSX results to {downloaded['path']}")
+                copied = copy_preannotated_results(configured_dir, pdb_upper, self.rmsx_output_path)
+                if copied.get('copied', 0):
+                    return copied
+            elif str(downloaded['error']).startswith('HTTP 404'):
+                self.logger.warning(
+                    f"No preannotated RNAMotifScanX results are published for {pdb_upper} "
+                    f"on the results server ({downloaded['url']}). The preannotated dataset "
+                    "may not cover every PDB yet. To scan this structure yourself, set "
+                    "data_mode to run_from_scratch in config/rmsx_config.json."
+                )
+            else:
+                self.logger.warning(
+                    f"Could not download RMSX results for {pdb_upper} from "
+                    f"{downloaded['url'] or base_url}: {downloaded['error']}. "
+                    "Check your internet connection."
+                )
+        else:
+            self.logger.warning(
+                f"No local RMSX results for {pdb_upper} and 'pdb_prebuild_dir' is not "
+                "configured, so they cannot be downloaded."
+            )
+
+        # 3. Offline fallback: a local compressed archive, if one is configured.
+        if configured_archive and os.path.isfile(configured_archive):
+            self.logger.info("Trying the local RMSX archive (this can be slow for large archives)...")
+            copied = copy_preannotated_results(configured_archive, pdb_upper, self.rmsx_output_path)
         return copied
 
     def _ensure_rmsx_preannotated(self, pdb_id: str) -> bool:
@@ -3269,7 +3324,10 @@ class MotifVisualizerGUI:
         Returns True when data was made available.
         """
         try:
-            rmsx_cfg = getattr(self, 'rmsx_pipeline_config', {}) or self._build_internal_rmsx_config()
+            # Re-read config/rmsx_config.json on every combined rmv_db, exactly as
+            # single-source rmv_db does, so edited P-value cutoffs and paths apply
+            # and a cleared session cannot leave them unset.
+            rmsx_cfg = self._build_internal_rmsx_config()
             self.rmsx_pipeline_config = dict(rmsx_cfg)
             data_mode = str(rmsx_cfg.get('data_mode', 'preannotated')).strip().lower()
             if data_mode not in ('preannotated', 'cache', 'cached'):
@@ -3551,8 +3609,9 @@ class MotifVisualizerGUI:
                             )
                         else:
                             self.logger.warning(
-                                "No preannotated RMSX results found. Set data_mode to run_from_scratch "
-                                "in config/rmsx_config.json to execute RNAMotifScanX."
+                                f"No preannotated RMSX results found locally or on the download "
+                                f"server for {pdb_id}. To scan it yourself, set data_mode to "
+                                "run_from_scratch in config/rmsx_config.json."
                             )
                             return
                     except Exception as error:
