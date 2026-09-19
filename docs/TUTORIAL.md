@@ -25,9 +25,11 @@ For the detailed collection and consolidated-table rules, see
 
 ## 1. Install
 
-1. Open PyMOL.
-2. Open **Plugin → Plugin Manager → Settings → Add new directory**.
-3. Select the directory containing this project and restart PyMOL.
+1. Download or clone the RSMViewer repository and extract it if necessary.
+2. Open PyMOL, then **Plugin → Plugin Manager → Settings → Add New Directory**.
+3. Select the `rsmviewer` folder inside the extracted `RSMViewer-main` directory
+   (the path should end with `RSMViewer-main/rsmviewer`; select the whole folder,
+   not `__init__.py`) and restart PyMOL. RSMViewer loads automatically.
 4. Confirm the plugin loaded:
 
    ```text

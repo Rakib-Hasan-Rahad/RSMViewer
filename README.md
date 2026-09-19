@@ -77,11 +77,21 @@ RNAMotifScanX preannotated results need no setup: they are downloaded on demand.
 
 ## Installation in PyMOL
 
-1. Open **PyMOL**, then select **Plugin → Plugin Manager**.
-2. Select **Install New Plugin**.
-3. Under **Install from local file**, choose **Choose File** and navigate to the cloned or extracted `RSMViewer-main` directory.
-4. Open the `rsmviewer` folder and select the `__init__.py` file.
-5. Select **Open**, then confirm the installation when PyMOL prompts you.
+1. Download or clone the RSMViewer repository and extract it if necessary.
+2. Open **PyMOL**.
+3. From the menu bar, select **Plugin → Plugin Manager**.
+4. Open the **Settings** tab.
+5. Under the plug-in search-path settings, select **Add New Directory**.
+6. Navigate to the extracted `RSMViewer-main` directory, open it, and select the `rsmviewer` folder. The selected path should end with:
+
+   ```text
+   RSMViewer-main/rsmviewer
+   ```
+
+7. Confirm the directory selection and restart PyMOL.
+8. RSMViewer should load automatically after PyMOL restarts.
+
+> **Note:** Select the entire `rsmviewer` folder. Do not select the `__init__.py` file individually.
 
 If the plugin is loaded successfully, you should see the startup banner in your PyMOL console:
 
