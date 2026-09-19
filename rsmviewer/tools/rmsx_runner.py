@@ -32,7 +32,8 @@ from pathlib import Path
 
 from .rmsx_runtime import (
     Runtime, build_command, ensure_runtime_bundle, find_query, find_src_root,
-    open_url, query_dirs, resolve_runtime, setup,
+    is_dataless, open_url, query_dirs, resolve_runtime, restore_runtime_files, setup,
+    wait_for_local_files,
 )
 
 DEFAULT_FAMILY_FOLDER_MAP = {
@@ -437,6 +438,30 @@ def run_scan_prepared(config: dict, pdb_id: str, output_dir: str, chains=None,
     if not qdirs:
         report['problems'].append("no query-model directory found")
         return report
+
+    # Files macOS moved to iCloud would make the scanner (and PyMOL) hang while
+    # they are fetched: bring them back now, or repair them from the server copy.
+    needed = [runtime.exe] if runtime.exe else []
+    needed += [str(p) for p in (Path(src_root) / "mat").glob("*")]
+    needed += [q for q in (find_query(f, qdirs) for f in families) if q]
+    for paths in pairs.values():
+        needed += [paths['in'], paths['nch']]
+    stuck = wait_for_local_files(needed)
+    if stuck:
+        emit(f"{len(stuck)} required file(s) are stored only in iCloud and cannot be read "
+             "(macOS offloads Desktop/Documents files when the disk is nearly full); "
+             "restoring them from the server...")
+        fixed = restore_runtime_files(config, runtime_dir, stuck, emit)
+        stuck = [f for f in stuck if is_dataless(f)]
+        if stuck or not fixed['ok']:
+            report['problems'].append(
+                f"{len(stuck) or len(needed)} required file(s), e.g. {(stuck or needed)[0]}, are stored only in "
+                "iCloud, and macOS could not bring them back (Optimize Mac Storage offloaded them). "
+                "Free up disk space, make sure iCloud Drive is syncing, or right-click the RSMViewer "
+                "folder in Finder and choose 'Download Now'; or move RSMViewer out of Desktop/Documents. "
+                "Then run again."
+                + (f" ({fixed['error']})" if fixed.get('error') else ""))
+            return report
 
     os.makedirs(output_dir, exist_ok=True)
     total = len(pairs) * len(families)

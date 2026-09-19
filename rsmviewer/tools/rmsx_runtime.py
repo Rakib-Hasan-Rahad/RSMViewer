@@ -27,6 +27,7 @@ import ssl
 import subprocess
 import tarfile
 import tempfile
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -282,82 +283,87 @@ def _read_sha256(text: str) -> str:
     return ""
 
 
+def _download_bundle(config: dict, root: Path, tmp: Path, progress: Progress) -> Tuple[Path, str]:
+    """Download ``rmsx.tar.gz``, verify its SHA-256, and unpack it into ``tmp/unpacked``.
+
+    Members are checked before anything is written: absolute or ``..`` paths are
+    rejected and symbolic links / device files are skipped. Returns
+    ``(unpacked_dir, url)``; raises on any failure.
+    """
+    url = str(config.get("rmsx_bundle_url") or DEFAULT_BUNDLE_URL).strip()
+    archive = tmp / "rmsx.tar.gz"
+    progress(f"Downloading the RNAMotifScanX files from {url} (about 30 MB)...")
+    response, insecure = open_url(url, timeout=120)
+    digest = hashlib.sha256()
+    with response, open(archive, "wb") as out:
+        for chunk in iter(lambda: response.read(1 << 20), b""):
+            out.write(chunk)
+            digest.update(chunk)
+    if insecure:
+        progress("Warning: this Python has no CA certificates, so the server certificate "
+                 "was not verified (the checksum below still is).")
+
+    sha_response, _ = open_url(url + ".sha256", timeout=60)
+    with sha_response:
+        expected = _read_sha256(sha_response.read().decode("utf-8", errors="replace"))
+    if not expected:
+        raise ValueError(f"could not read a SHA-256 checksum from {url}.sha256")
+    if digest.hexdigest() != expected:
+        raise ValueError("checksum mismatch: the downloaded archive is corrupt or was altered "
+                         f"(expected {expected[:12]}..., got {digest.hexdigest()[:12]}...)")
+    progress("Checksum verified. Unpacking...")
+
+    staging = tmp / "unpacked"
+    staging.mkdir()
+    staging_resolved = staging.resolve()
+    with tarfile.open(archive, "r:*") as tar:
+        members = tar.getmembers()
+        names = [Path(m.name).parts for m in members if Path(m.name).parts]
+        strip = 1 if names and all(parts[0] == "rmsx" for parts in names) else 0
+        keep = []
+        for member in members:
+            parts = Path(member.name).parts
+            if len(parts) <= strip:
+                continue
+            if Path(member.name).is_absolute() or ".." in parts:
+                raise ValueError(f"unsafe path in archive: {member.name}")
+            if member.issym() or member.islnk() or member.isdev() or member.isfifo():
+                continue                     # e.g. a stray libstdc++.a symlink
+            member.name = "/".join(parts[strip:])
+            target = (staging / member.name).resolve()
+            if staging_resolved not in target.parents and target != staging_resolved:
+                raise ValueError(f"unsafe path in archive: {member.name}")
+            keep.append(member)
+        tar.extractall(staging, members=keep)
+    if not (staging / "RNAMotifScanX_src" / "mat").is_dir():
+        raise ValueError("archive does not contain RNAMotifScanX_src/mat")
+    return staging, url
+
+
 def ensure_runtime_bundle(config: dict, runtime_dir: str, progress: Progress) -> dict:
     """Download and unpack ``rmsx.tar.gz`` into ``runtime_dir`` unless it is already there.
 
-    The archive (``<url>``) is verified against ``<url>.sha256`` before anything
-    is unpacked. Members are unpacked into a temporary folder (absolute or ``..``
-    paths are rejected; symbolic links and device files are skipped) and then
-    moved into ``runtime_dir`` without overwriting any file that already exists,
-    so a rerun never clobbers your own files. Returns ``{'ok', 'downloaded',
-    'url', 'error'}``; never raises.
+    The archive is verified against ``<url>.sha256`` before anything is unpacked
+    (see :func:`_download_bundle`) and its files are moved into ``runtime_dir``
+    without overwriting any file that already exists, so a rerun never clobbers
+    your own files. Returns ``{'ok', 'downloaded', 'url', 'error'}``; never raises.
     """
     result = {"ok": False, "downloaded": False, "url": "", "error": ""}
     if bundle_ready(runtime_dir):
         result["ok"] = True
         return result
 
-    url = str(config.get("rmsx_bundle_url") or DEFAULT_BUNDLE_URL).strip()
-    result["url"] = url
+    result["url"] = str(config.get("rmsx_bundle_url") or DEFAULT_BUNDLE_URL).strip()
     root = layout(runtime_dir)["root"]
     tmp = None
     try:
         root.mkdir(parents=True, exist_ok=True)
         tmp = Path(tempfile.mkdtemp(prefix=".rmsx_dl_", dir=str(root)))
-        archive = tmp / "rmsx.tar.gz"
-
         progress(f"RNAMotifScanX runtime not found under {root}.")
-        progress(f"Downloading it once from {url} (about 30 MB)...")
-        response, insecure = open_url(url, timeout=120)
-        digest = hashlib.sha256()
-        with response, open(archive, "wb") as out:
-            for chunk in iter(lambda: response.read(1 << 20), b""):
-                out.write(chunk)
-                digest.update(chunk)
-        if insecure:
-            progress("Warning: this Python has no CA certificates, so the server certificate "
-                     "was not verified (the checksum below still is).")
-
-        sha_response, _ = open_url(url + ".sha256", timeout=60)
-        with sha_response:
-            expected = _read_sha256(sha_response.read().decode("utf-8", errors="replace"))
-        if not expected:
-            raise ValueError(f"could not read a SHA-256 checksum from {url}.sha256")
-        if digest.hexdigest() != expected:
-            raise ValueError("checksum mismatch: the downloaded archive is corrupt or was altered "
-                             f"(expected {expected[:12]}..., got {digest.hexdigest()[:12]}...)")
-        progress("Checksum verified. Unpacking...")
-
-        staging = tmp / "unpacked"
-        staging.mkdir()
-        staging_resolved = staging.resolve()
-        with tarfile.open(archive, "r:*") as tar:
-            members = tar.getmembers()
-            names = [Path(m.name).parts for m in members if Path(m.name).parts]
-            strip = 1 if names and all(parts[0] == "rmsx" for parts in names) else 0
-            keep = []
-            for member in members:
-                parts = Path(member.name).parts
-                if len(parts) <= strip:
-                    continue
-                if Path(member.name).is_absolute() or ".." in parts:
-                    raise ValueError(f"unsafe path in archive: {member.name}")
-                if member.issym() or member.islnk() or member.isdev() or member.isfifo():
-                    continue                     # e.g. a stray libstdc++.a symlink
-                member.name = "/".join(parts[strip:])
-                target = (staging / member.name).resolve()
-                if staging_resolved not in target.parents and target != staging_resolved:
-                    raise ValueError(f"unsafe path in archive: {member.name}")
-                keep.append(member)
-            tar.extractall(staging, members=keep)
-
-        if not (staging / "RNAMotifScanX_src" / "mat").is_dir():
-            raise ValueError("archive does not contain RNAMotifScanX_src/mat")
-
+        staging, _ = _download_bundle(config, root, tmp, progress)
         moved = 0
         for path in sorted(staging.rglob("*")):
-            relative = path.relative_to(staging)
-            destination = root / relative
+            destination = root / path.relative_to(staging)
             if path.is_dir():
                 destination.mkdir(parents=True, exist_ok=True)
             elif not destination.exists():
@@ -367,8 +373,83 @@ def ensure_runtime_bundle(config: dict, runtime_dir: str, progress: Progress) ->
         progress(f"RNAMotifScanX runtime unpacked into {root} ({moved} files).")
         result.update(ok=True, downloaded=True)
     except urllib.error.HTTPError as exc:
-        result["error"] = f"HTTP {exc.code} {exc.reason} for {exc.url or url}"
+        result["error"] = f"HTTP {exc.code} {exc.reason} for {exc.url or result['url']}"
     except Exception as exc:  # noqa: BLE001 - reported to the caller
+        result["error"] = f"{type(exc).__name__}: {exc}"
+    finally:
+        if tmp is not None:
+            shutil.rmtree(tmp, ignore_errors=True)
+    return result
+
+
+# ── files macOS moved to iCloud ─────────────────────────────────────────────
+# With "Desktop & Documents in iCloud" and "Optimize Mac Storage", macOS can
+# replace files under ~/Desktop or ~/Documents by empty "dataless" placeholders
+# when the disk is nearly full. Reading one blocks until iCloud brings it back,
+# which can take forever (or never finish), and the scanner then hangs with
+# PyMOL waiting on it. These helpers find such files and repair them.
+
+_SF_DATALESS = 0x40000000
+
+
+def is_dataless(path) -> bool:
+    try:
+        return bool(getattr(os.lstat(path), "st_flags", 0) & _SF_DATALESS)
+    except OSError:
+        return False
+
+
+def wait_for_local_files(paths, timeout: float = 45.0) -> List[str]:
+    """Make offloaded files readable again. Returns the ones still unavailable
+    after ``timeout`` seconds (an empty list when everything is on disk)."""
+    pending = [str(p) for p in dict.fromkeys(str(p) for p in paths) if is_dataless(p)]
+    if not pending:
+        return []
+
+    def touch(path: str) -> None:
+        try:
+            with open(path, "rb") as fh:
+                fh.read(1)
+        except OSError:
+            pass
+
+    threads = []
+    for path in pending:
+        thread = threading.Thread(target=touch, args=(path,), daemon=True)
+        thread.start()
+        threads.append((path, thread))
+    deadline = time.time() + timeout
+    for _path, thread in threads:
+        thread.join(max(0.0, deadline - time.time()))
+    return [path for path, thread in threads if thread.is_alive() or is_dataless(path)]
+
+
+def restore_runtime_files(config: dict, runtime_dir: str, files, progress: Progress) -> dict:
+    """Replace files under the runtime folder (e.g. offloaded ones) with fresh
+    copies from the verified ``rmsx.tar.gz``. Returns ``{'ok', 'restored', 'error'}``."""
+    result = {"ok": False, "restored": 0, "error": ""}
+    root = layout(runtime_dir)["root"].resolve()
+    tmp = None
+    try:
+        tmp = Path(tempfile.mkdtemp(prefix=".rmsx_fix_", dir=str(root)))
+        staging, _ = _download_bundle(config, root, tmp, progress)
+        for file in files:
+            try:
+                relative = Path(file).resolve().relative_to(root)
+            except ValueError:
+                continue
+            source = staging / relative
+            if not source.is_file():
+                continue
+            destination = root / relative
+            try:
+                destination.unlink()
+            except OSError:
+                pass
+            shutil.copy2(source, destination)
+            result["restored"] += 1
+        result["ok"] = True
+    except Exception as exc:  # noqa: BLE001
         result["error"] = f"{type(exc).__name__}: {exc}"
     finally:
         if tmp is not None:
@@ -864,6 +945,14 @@ def diagnose(config: dict, runtime_dir: str, pdb_id: str = "") -> dict:
     add("ok" if src else "fail", "Scoring matrices (mat/)", str(src / "mat") if src else f"not found under {lay['src']}")
     qdirs = query_dirs(config, runtime_dir)
     families = list(config.get("motif_families") or [])
+    if src:
+        offloaded = [q for q in (find_query(f, qdirs) for f in families) if q and is_dataless(q)]
+        offloaded += [str(p) for p in (src / "mat").glob("*") if is_dataless(p)]
+        if offloaded:
+            add("warn", "Files offloaded to iCloud",
+                f"{len(offloaded)} required file(s), e.g. {offloaded[0]}; macOS moved them off disk "
+                "(disk nearly full). They are restored automatically on the next run, or free up "
+                "disk space / choose 'Download Now' in Finder")
     if qdirs:
         gaps = [f for f in families if not find_query(f, qdirs)]
         add("ok" if not gaps else "warn", "Query models", f"{qdirs[0]}" + (f" (missing: {', '.join(gaps)})" if gaps else ""))

@@ -238,6 +238,15 @@ extract it, and copy its contents into `external/rmsx/` so that
 **"checksum mismatch".** The download was interrupted or altered. Run again; if it
 repeats, download the archive manually as above.
 
+**macOS: PyMOL freezes during `rmv_db RNAMotifScanX`, or "stored only in iCloud".**
+If RSMViewer is inside Desktop or Documents and iCloud's "Optimize Mac Storage" is
+on, macOS can move files off your disk when the disk is nearly full, and reading
+them then waits for iCloud. RSMViewer detects this, restores the affected
+RNAMotifScanX files from the server, and continues. If it cannot, free up disk
+space and make sure iCloud Drive is syncing, right-click the RSMViewer folder in
+Finder and choose **Download Now**, or move RSMViewer out of Desktop/Documents.
+`rmv_rmsx_doctor` reports offloaded files.
+
 **macOS: Boost or a compiler is missing.** Run `xcode-select --install` and
 `brew install boost`, then `rmv_setup RNAMotifScanX` again, or use Docker:
 `brew install docker colima`.
