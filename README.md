@@ -7,6 +7,7 @@
 ![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![DOI](https://img.shields.io/badge/DOI-10.6084%2Fm9.figshare.33826777-orange)](https://doi.org/10.6084/m9.figshare.33826777)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Rakib-Hasan-Rahad/RSMViewer)
 
 RSMViewer is a motif-centric PyMOL plugin for retrieving, consolidating,
 querying, and comparing RNA structural motif (RSM) annotations. It integrates
